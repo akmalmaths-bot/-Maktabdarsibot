@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sehrli Ranglar</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #f8fafc;
+            background-image: radial-gradient(#cbd5e1 2px, transparent 2px);
+            background-size: 30px 30px;
+            touch-action: manipulation;
+            user-select: none;
+        }
+        
+        .pop-animation {
+            animation: pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes pop {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .shake-animation {
+            animation: shake 0.4s ease-in-out;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-10px); }
+            40%, 80% { transform: translateX(10px); }
+        }
+
+        /* Rangli tugmalar dizayni */
+        .color-pad {
+            transition: all 0.15s ease;
+            cursor: pointer;
+            border-radius: 1.5rem;
+            box-shadow: inset 0 -6px 0 rgba(0,0,0,0.2), 0 5px 10px rgba(0,0,0,0.1);
+        }
+        
+        .color-pad:active {
+            transform: translateY(4px);
+            box-shadow: inset 0 -2px 0 rgba(0,0,0,0.2), 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        /* Tugmalarning asl ranglari */
+        .pad-green { background-color: #22c55e; }
+        .pad-red { background-color: #ef4444; }
+        .pad-yellow { background-color: #eab308; }
+        .pad-blue { background-color: #3b82f6; }
+        .pad-orange { background-color: #f97316; } /* Yangi rang 1 */
+        .pad-purple { background-color: #a855f7; } /* Yangi rang 2 */
+
+        /* Tugmalar yongandagi (Aktiv) holati */
+        .pad-green.active { background-color: #86efac; box-shadow: 0 0 30px #4ade80, inset 0 0 20px #ffffff; transform: scale(1.05); }
+        .pad-red.active { background-color: #fca5a5; box-shadow: 0 0 30px #f87171, inset 0 0 20px #ffffff; transform: scale(1.05); }
+        .pad-yellow.active { background-color: #fef08a; box-shadow: 0 0 30px #facc15, inset 0 0 20px #ffffff; transform: scale(1.05); }
+        .pad-blue.active { background-color: #93c5fd; box-shadow: 0 0 30px #60a5fa, inset 0 0 20px #ffffff; transform: scale(1.05); }
+        .pad-orange.active { background-color: #fdba74; box-shadow: 0 0 30px #fb923c, inset 0 0 20px #ffffff; transform: scale(1.05); }
+        .pad-purple.active { background-color: #d8b4fe; box-shadow: 0 0 30px #c084fc, inset 0 0 20px #ffffff; transform: scale(1.05); }
+
+        /* O'yinchi kutish holatida xira ko'rinish */
+        .waiting-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(255,255,255,0.2);
+            z-index: 10;
+            border-radius: 1.5rem;
+            cursor: not-allowed;
+            display: none;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <!-- Asosiy O'yin Konteyneri -->
+    <div class="bg-white rounded-3xl shadow-2xl p-6 md:p-8 max-w-md w-full text-center border-4 border-slate-300 relative overflow-hidden">
+        
+        <!-- Ovozni boshqarish tugmasi -->
+        <button onclick="toggleSound()" id="sound-btn" class="absolute top-4 right-4 text-2xl hover:scale-110 transition-transform bg-gray-100 p-2 rounded-full shadow-sm z-20">
+            🔊
+        </button>
+
+        <!-- Bosh Ekrani -->
+        <div id="start-screen" class="space-y-6">
+            <div class="text-7xl mb-4 animate-pulse">🎨</div>
+            <h1 class="text-4xl md:text-5xl font-black text-slate-800 mb-2 drop-shadow-md">Sehrli Ranglar</h1>
+            <p class="text-gray-600 text-lg mb-4">Musiqiy ketma-ketlikni eslab qoling!</p>
+            <p class="text-indigo-600 font-black text-xl mb-6 bg-indigo-50 p-2 rounded-xl inline-block">O'yin umumiy 30 bosqichdan iborat! 🏁</p>
+            
+            <div class="bg-slate-50 rounded-2xl p-4 inline-block mb-6 border-2 border-slate-200 text-left max-w-sm w-full mx-auto">
+                <h3 class="font-bold text-slate-800 mb-2 text-center">O'yin qoidalari:</h3>
+                <ul class="text-sm text-slate-600 space-y-1 list-disc pl-5 font-bold">
+                    <li>Har bir bosqichda <b>yangi musiqiy ketma-ketlik</b> chiqadi.</li>
+                    <li>Siz aynan shu ketma-ketlikni takrorlashingiz kerak.</li>
+                    <li>Har 2 bosqichda ketma-ketlik bittaga uzayadi.</li>
+                    <li><b>10-bosqichdan boshlab 2 ta yangi rang qo'shiladi!</b></li>
+                </ul>
+            </div>
+
+            <div class="text-left max-w-xs mx-auto mb-4">
+                <input type="text" id="player-name" placeholder="Ismingizni kiriting..." class="w-full p-4 text-xl border-2 border-slate-300 rounded-2xl outline-none focus:border-indigo-500 transition-colors text-center font-bold text-gray-700" autocomplete="off">
+                <p id="name-error" class="text-red-500 text-sm hidden mt-2 text-center font-bold">Faqat harf (3-15 ta) kiritilishi kerak!</p>
+            </div>
+
+            <button onclick="startGame()" class="w-full bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-4 px-8 rounded-2xl text-2xl transition-all transform hover:scale-105 shadow-lg shadow-indigo-500/50">
+                O'yinni Boshlash 🚀
+            </button>
+
+            <!-- Muallif haqida ma'lumot -->
+            <div class="text-sm text-gray-500 mt-6 font-bold border-t-2 border-gray-100 pt-4">
+                <p>Tuzuvchi: Akmaljon Jo'raqo'ziyev</p>
+                <p>Telegram: <a href="https://t.me/Akmalmaths" target="_blank" class="text-indigo-600 hover:text-indigo-700 hover:underline">@Akmalmaths</a></p>
+            </div>
+        </div>
+
+        <!-- O'yin Ekrani -->
+        <div id="game-screen" class="hidden flex-col items-center">
+            
+            <!-- Statistika paneli -->
+            <div class="w-full grid grid-cols-3 gap-2 bg-slate-50 border-2 border-slate-200 p-2 md:p-3 rounded-2xl items-center text-center mb-6">
+                <div class="flex flex-col">
+                    <span class="text-[10px] md:text-xs text-gray-500 font-bold uppercase tracking-wider">Ball</span>
+                    <span id="score" class="text-blue-600 font-black text-lg md:text-xl">0</span>
+                </div>
+                <div class="flex flex-col border-l-2 border-slate-200">
+                    <span class="text-[10px] md:text-xs text-gray-500 font-bold uppercase tracking-wider">Bosqich</span>
+                    <span id="level-display" class="text-purple-600 font-black text-lg md:text-xl">1</span>
+                </div>
+                <div class="flex flex-col border-l-2 border-slate-200">
+                    <span class="text-[10px] md:text-xs text-gray-500 font-bold uppercase tracking-wider">Jon</span>
+                    <span id="lives-display" class="text-red-500 text-sm md:text-lg tracking-widest mt-1">❤️❤️❤️</span>
+                </div>
+            </div>
+
+            <!-- Xabar / Status maydoni -->
+            <h2 id="status-text" class="text-2xl font-black text-indigo-600 mb-6 h-8 transition-opacity duration-300">Diqqat qiling!</h2>
+
+            <!-- Ranglar Maydoni (Dastlab 4 ta, keyin 6 ta) -->
+            <div id="pads-wrapper" class="relative w-full max-w-[320px] aspect-square mx-auto transition-all duration-500">
+                <!-- Bloklovchi ekran -->
+                <div id="block-overlay" class="waiting-overlay"></div>
+                
+                <div class="grid grid-cols-2 gap-4 w-full h-full p-2">
+                    <!-- 0: Yashil, 1: Qizil, 2: Sariq, 3: Ko'k, 4: Apelsin, 5: Binafsha -->
+                    <div id="pad-0" class="color-pad pad-green" onclick="padClicked(0)"></div>
+                    <div id="pad-1" class="color-pad pad-red" onclick="padClicked(1)"></div>
+                    <div id="pad-2" class="color-pad pad-yellow" onclick="padClicked(2)"></div>
+                    <div id="pad-3" class="color-pad pad-blue" onclick="padClicked(3)"></div>
+                    <div id="pad-4" class="color-pad pad-orange hidden" onclick="padClicked(4)"></div>
+                    <div id="pad-5" class="color-pad pad-purple hidden" onclick="padClicked(5)"></div>
+                </div>
+            </div>
+            
+        </div>
+
+        <!-- Natija Ekrani -->
+        <div id="end-screen" class="hidden space-y-6 pop-animation mt-4">
+            <div id="end-emoji" class="text-7xl mb-4">🏆</div>
+            <h1 id="end-title" class="text-4xl font-black text-slate-800 mb-2">O'yin Tugadi!</h1>
+            
+            <div class="bg-slate-50 rounded-2xl p-6 my-6 border-2 border-slate-200">
+                <p class="text-gray-600 text-xl font-bold mb-2"><span id="final-name" class="text-indigo-600">O'yinchi</span></p>
+                <p class="text-gray-600 text-lg mb-2">Yakuniy ballingiz:</p>
+                <div class="text-6xl font-black text-blue-600 mb-4" id="final-score">0</div>
+                <p class="text-gray-600 text-lg mb-2">Yetib kelgan bosqichingiz: <span id="final-level" class="font-bold text-purple-600 text-2xl">1</span></p>
+            </div>
+
+            <p id="rank-message" class="text-lg font-bold text-orange-500 mb-6">Zo'r natija!</p>
+            
+            <button onclick="resetGame()" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-8 rounded-2xl text-2xl transition-all transform hover:scale-105 shadow-lg shadow-green-500/50">
+                Qayta O'ynash 🔄
+            </button>
+
+            <!-- Muallif haqida ma'lumot -->
+            <div class="text-sm text-gray-500 mt-6 font-bold border-t-2 border-gray-100 pt-4">
+                <p>Tuzuvchi: Akmaljon Jo'raqo'ziyev</p>
+                <p>Telegram: <a href="https://t.me/Akmalmaths" target="_blank" class="text-indigo-600 hover:text-indigo-700 hover:underline">@Akmalmaths</a></p>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- Ovoz va Vibratsiya sozlamalari ---
+        let soundEnabled = true;
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx;
+
+        // Tugmalar uchun chastotalar (6 xil chastota kiritildi)
+        // E4, C4, G4, C5, E5, G5
+        const frequencies = [329.63, 261.63, 392.00, 523.25, 659.25, 783.99];
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            document.getElementById('sound-btn').textContent = soundEnabled ? '🔊' : '🔇';
+            if (soundEnabled && !audioCtx) audioCtx = new AudioContext();
+        }
+
+        function playPadSound(padId) {
+            if (!soundEnabled) return;
+            if (!audioCtx) audioCtx = new AudioContext();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            const now = audioCtx.currentTime;
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(frequencies[padId], now);
+            
+            gain.gain.setValueAtTime(0, now);
+            gain.gain.linearRampToValueAtTime(0.3, now + 0.05);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+            
+            osc.start(now);
+            osc.stop(now + 0.5);
+        }
+
+        function playSystemSound(type) {
+            if (!soundEnabled) return;
+            if (!audioCtx) audioCtx = new AudioContext();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            const now = audioCtx.currentTime;
+            
+            if (type === 'wrong') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(150, now);
+                osc.frequency.exponentialRampToValueAtTime(50, now + 0.4);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+                osc.start(now); osc.stop(now + 0.4);
+            } else if (type === 'success') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(400, now);
+                osc.frequency.linearRampToValueAtTime(800, now + 0.15);
+                gain.gain.setValueAtTime(0.1, now);
+                gain.gain.linearRampToValueAtTime(0, now + 0.15);
+                osc.start(now); osc.stop(now + 0.15);
+            } else if (type === 'win') {
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(400, now);
+                osc.frequency.setValueAtTime(600, now + 0.1);
+                osc.frequency.setValueAtTime(800, now + 0.2);
+                gain.gain.setValueAtTime(0.1, now);
+                gain.gain.linearRampToValueAtTime(0, now + 0.4);
+                osc.start(now); osc.stop(now + 0.4);
+            } else if (type === 'gameover') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(200, now);
+                osc.frequency.linearRampToValueAtTime(50, now + 0.6);
+                gain.gain.setValueAtTime(0.1, now);
+                gain.gain.linearRampToValueAtTime(0, now + 0.6);
+                osc.start(now); osc.stop(now + 0.6);
+            }
+        }
+
+        function vibrateDevice(pattern) {
+            if (soundEnabled && navigator.vibrate) {
+                try { navigator.vibrate(pattern); } catch(e) {}
+            }
+        }
+
+        // --- O'yin O'zgaruvchilari ---
+        let sequence = [];
+        let playerStep = 0;
+        let level = 1;
+        let score = 0;
+        let lives = 3;
+        let playerName = "";
+        let isPlayerTurn = false;
+
+        // UI Elementlar
+        const startScreen = document.getElementById('start-screen');
+        const gameScreen = document.getElementById('game-screen');
+        const endScreen = document.getElementById('end-screen');
+        const scoreEl = document.getElementById('score');
+        const levelDisplayEl = document.getElementById('level-display');
+        const livesDisplayEl = document.getElementById('lives-display');
+        const statusText = document.getElementById('status-text');
+        const blockOverlay = document.getElementById('block-overlay');
+        const playerNameInput = document.getElementById('player-name');
+        const nameErrorEl = document.getElementById('name-error');
+        const padsWrapper = document.getElementById('pads-wrapper');
+        const pad4 = document.getElementById('pad-4');
+        const pad5 = document.getElementById('pad-5');
+
+        // Yordamchi funksiya: kutish (pause)
+        const delay = ms => new Promise(res => setTimeout(res, ms));
+
+        function updateUI() {
+            scoreEl.textContent = score;
+            levelDisplayEl.textContent = level <= 30 ? level : 30;
+            
+            let hearts = '';
+            for(let i = 0; i < lives; i++) hearts += '❤️';
+            for(let i = lives; i < 3; i++) hearts += '🖤';
+            livesDisplayEl.textContent = hearts;
+        }
+
+        // --- O'yin Logikasi ---
+        function startGame() {
+            const nameValue = playerNameInput.value.trim();
+            const nameRegex = /^[A-Za-zА-Яа-яЎўҚқҒғҲҳ]{3,15}$/;
+            
+            if (!nameRegex.test(nameValue)) {
+                nameErrorEl.classList.remove('hidden');
+                playerNameInput.classList.add('border-red-500');
+                return;
+            }
+
+            nameErrorEl.classList.add('hidden');
+            playerNameInput.classList.remove('border-red-500');
+            playerName = nameValue;
+            document.getElementById('final-name').textContent = playerName;
+
+            // UI ni boshlang'ich holatga (4 ta rang) qaytarish
+            pad4.classList.add('hidden');
+            pad5.classList.add('hidden');
+            padsWrapper.classList.add('aspect-square');
+            padsWrapper.classList.remove('aspect-[2/3]');
+
+            if (soundEnabled && !audioCtx) audioCtx = new AudioContext();
+            if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+            
+            startScreen.classList.add('hidden');
+            endScreen.classList.add('hidden');
+            gameScreen.classList.remove('hidden');
+            gameScreen.classList.add('pop-animation');
+            
+            sequence = [];
+            level = 1;
+            score = 0;
+            lives = 3;
+            updateUI();
+            
+            setTimeout(startNextLevel, 1000);
+        }
+
+        async function startNextLevel() {
+            // 10-bosqichda yangi ranglar qo'shilishi
+            if (level === 10) {
+                pad4.classList.remove('hidden');
+                pad5.classList.remove('hidden');
+                
+                // Konteynerni 6 ta tugmaga moslash (Balandlikni cho'zish)
+                padsWrapper.classList.remove('aspect-square');
+                padsWrapper.classList.add('aspect-[2/3]');
+                
+                statusText.textContent = "Yangi ranglar qo'shildi! ✨";
+                statusText.className = "text-2xl font-black text-purple-600 mb-6 h-8";
+                playSystemSound('success');
+                await delay(2000);
+            }
+
+            // Har bir bosqich uchun umuman YANGA ketma-ketlik yaratiladi
+            sequence = [];
+            
+            // Ketma-ketlik uzunligi (Har 2 bosqichda 1 taga oshadi: 1, 1, 2, 2, 3, 3... 15, 15)
+            let seqLen = Math.ceil(level / 2);
+            
+            // Tugmalar soni (10-bosqichdan oldin 4 ta, 10 dan boshlab 6 ta)
+            let maxColors = level >= 10 ? 6 : 4;
+
+            for (let i = 0; i < seqLen; i++) {
+                sequence.push(Math.floor(Math.random() * maxColors));
+            }
+
+            playerStep = 0;
+            await playSequence();
+        }
+
+        async function playSequence() {
+            isPlayerTurn = false;
+            blockOverlay.style.display = 'block'; // O'yinchi bosishini taqiqlash
+            statusText.textContent = "Diqqat qiling! 👁️";
+            statusText.className = "text-2xl font-black text-indigo-600 mb-6 h-8";
+
+            await delay(800);
+
+            // Bosqich oshgan sari ko'rsatish tezligi biroz oshadi
+            let speedTime = Math.max(250, 600 - (level * 10)); 
+            let gapTime = Math.max(150, 300 - (level * 5));
+
+            for (let i = 0; i < sequence.length; i++) {
+                const padId = sequence[i];
+                const padObj = document.getElementById(`pad-${padId}`);
+                
+                // Tugmani yoqish va ovoz chiqarish
+                padObj.classList.add('active');
+                playPadSound(padId);
+                
+                await delay(speedTime);
+                
+                // Tugmani o'chirish
+                padObj.classList.remove('active');
+                
+                await delay(gapTime);
+            }
+
+            // O'yinchi navbati
+            isPlayerTurn = true;
+            blockOverlay.style.display = 'none';
+            statusText.textContent = "Takrorlang! 👆";
+            statusText.className = "text-2xl font-black text-green-600 mb-6 h-8";
+        }
+
+        async function padClicked(padId) {
+            if (!isPlayerTurn) return;
+
+            // Vizual va audio javob
+            const padObj = document.getElementById(`pad-${padId}`);
+            padObj.classList.add('active');
+            playPadSound(padId);
+            vibrateDevice(20);
+            
+            setTimeout(() => {
+                padObj.classList.remove('active');
+            }, 200);
+
+            // To'g'ri bosdimi?
+            if (padId === sequence[playerStep]) {
+                playerStep++;
+                score += 5; // Har bir to'g'ri bosilgan tugma uchun 5 ball
+                scoreEl.textContent = score;
+
+                // Ketma-ketlik to'liq to'g'ri bajarildimi?
+                if (playerStep === sequence.length) {
+                    isPlayerTurn = false;
+                    blockOverlay.style.display = 'block';
+                    
+                    statusText.textContent = "Ajoyib! ✅";
+                    playSystemSound('success');
+                    
+                    if (level >= 30) {
+                        // G'alaba!
+                        setTimeout(() => endGame(true), 1000);
+                    } else {
+                        // Keyingi bosqichga
+                        level++;
+                        score += 20; // Bosqichdan o'tganiga bonus ball
+                        updateUI();
+                        setTimeout(startNextLevel, 1000);
+                    }
+                }
+            } else {
+                // Xato qildi!
+                isPlayerTurn = false;
+                blockOverlay.style.display = 'block';
+                
+                statusText.textContent = "Xato qildingiz! ❌";
+                statusText.className = "text-2xl font-black text-red-600 mb-6 h-8";
+                playSystemSound('wrong');
+                vibrateDevice([100, 50, 100]);
+                
+                gameScreen.classList.add('shake-animation');
+                
+                lives--;
+                updateUI();
+
+                setTimeout(() => {
+                    gameScreen.classList.remove('shake-animation');
+                    if (lives > 0) {
+                        // Agar jon qolgan bo'lsa, shu bosqichni qayta ko'rsatadi (qiyinlashmaydi)
+                        statusText.textContent = "Yana urinib ko'ring! 🔄";
+                        statusText.className = "text-2xl font-black text-orange-500 mb-6 h-8";
+                        playerStep = 0;
+                        setTimeout(playSequence, 1000);
+                    } else {
+                        // O'yin tugadi
+                        endGame(false);
+                    }
+                }, 800);
+            }
+        }
+
+        function endGame(isWin) {
+            gameScreen.classList.add('hidden');
+            endScreen.classList.remove('hidden');
+            
+            document.getElementById('final-score').textContent = score;
+            document.getElementById('final-level').textContent = level <= 30 ? level : 30;
+
+            const endTitle = document.getElementById('end-title');
+            const rankMsg = document.getElementById('rank-message');
+            const endEmoji = document.getElementById('end-emoji');
+
+            if (isWin) {
+                playSystemSound('win');
+                vibrateDevice([100, 50, 100, 50, 200]);
+                endTitle.textContent = "G'alaba! 🎉";
+                endEmoji.textContent = "👑";
+                rankMsg.textContent = "Siz 30-bosqichgacha eslab qoldingiz! SIZ XOTIRA DOHIYSISIZ! 🧠🔥";
+                rankMsg.className = "text-xl md:text-2xl font-black text-indigo-600 mb-6 animate-bounce";
+            } else {
+                playSystemSound('gameover');
+                vibrateDevice([200, 100, 200]);
+                endTitle.textContent = "O'yin Tugadi! 💥";
+                endEmoji.textContent = "😵";
+                
+                if (level < 5) {
+                    rankMsg.textContent = "Musiqani tinglashni mashq qiling! 🎵";
+                    rankMsg.className = "text-lg font-bold text-gray-500 mb-6";
+                } else if (level < 15) {
+                    rankMsg.textContent = "Yaxshi xotira egasisiz! 👍";
+                    rankMsg.className = "text-lg font-bold text-blue-500 mb-6";
+                } else {
+                    rankMsg.textContent = "Sizning miyangiz juda kuchli ishlaydi! 🚀";
+                    rankMsg.className = "text-xl font-black text-orange-500 mb-6 animate-bounce";
+                }
+            }
+        }
+
+        function resetGame() {
+            if (soundEnabled && !audioCtx) audioCtx = new AudioContext();
+            if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+            
+            const now = audioCtx.currentTime;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(400, now);
+            gain.gain.setValueAtTime(0, now);
+            gain.gain.linearRampToValueAtTime(0.1, now + 0.05);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+            osc.start(now);
+            osc.stop(now + 0.15);
+
+            startGame();
+        }
+    </script>
+</body>
+</html>
