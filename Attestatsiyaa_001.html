@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attestatsiya Tayyorgarlik Testi</title>
+    
+    <!-- Tailwind CSS ulash -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- React va ReactDOM ulash -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- Babel (JSX ni oddiy JS ga o'girish uchun) -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // Barcha 50 ta savol bazasi
+        const testQuestions = [
+          // --- ONA TILI VA METODIKASI (1-10) ---
+          {
+            id: 1,
+            subject: "Ona tili",
+            question: "Qaysi qatordagi barcha so'zlarda imlo xatosi mavjud emas?",
+            options: ["xaridor, shuhrat, xikoya", "halol, shuxrat, qahramon", "xaridor, shuhrat, hikoya", "halol, xurmat, hikoya"],
+            correct: 2
+          },
+          {
+            id: 2,
+            subject: "Ona tili",
+            question: "Qaysi qatorda faqat jarangli undoshlar qatnashgan so'z berilgan?",
+            options: ["Guldasta", "Baland", "Yomg'ir", "Kitob"],
+            correct: 2
+          },
+          {
+            id: 3,
+            subject: "Ona tili",
+            question: "Boshlang'ich sinflarda ona tili o'qitishning asosiy maqsadi nima?",
+            options: ["Faqat chiroyli yozishga o'rgatish", "Nutq o'stirish, o'qish va yozish savodxonligini shakllantirish", "Tilshunoslik qoidalarini yodlatish", "Faqat ifodali o'qishni o'rgatish"],
+            correct: 1
+          },
+          {
+            id: 4,
+            subject: "Ona tili",
+            question: "O‘zbek alifbosida nechta unli harf bor?",
+            options: ["5 ta", "6 ta", "7 ta", "8 ta"],
+            correct: 1
+          },
+          {
+            id: 5,
+            subject: "Ona tili",
+            question: "Ega va kesimdan tuzilgan gap qanday gap deyiladi?",
+            options: ["Yig'iq gap", "Yoyiq gap", "Qo'shma gap", "So'z gap"],
+            correct: 0
+          },
+          {
+            id: 6,
+            subject: "Ona tili",
+            question: "'Oqqush' so'zida nechta tovush va nechta harf bor?",
+            options: ["6 harf, 5 tovush", "6 harf, 6 tovush", "5 harf, 6 tovush", "5 harf, 5 tovush"],
+            correct: 0
+          },
+          {
+            id: 7,
+            subject: "Ona tili",
+            question: "Sifat yasovchi qo'shimchalar qaysi qatorda berilgan?",
+            options: ["-li, -siz, -dor", "-lar, -ni, -ning", "-chi, -dosh, -kor", "-moq, -b, -ib"],
+            correct: 0
+          },
+          {
+            id: 8,
+            subject: "Ona tili",
+            question: "Ma'nodosh (sinonim) so'zlar qatorini toping.",
+            options: ["Katta - kichik", "Chiroyli - xunuk", "Botir - jasur", "Oq - qora"],
+            correct: 2
+          },
+          {
+            id: 9,
+            subject: "Ona tili",
+            question: "Boshlang'ich sinf ona tili darslarida husnixatga o'rgatish qaysi tamoyilga asoslanadi?",
+            options: ["Ilmiylik", "Ko'rgazmalilik va onglilik", "Tarixiylik", "Faqat amaliyot"],
+            correct: 1
+          },
+          {
+            id: 10,
+            subject: "Ona tili",
+            question: "Qaysi qatordagi so'zlarda tutuq belgisi (') to'g'ri qo'llanilgan?",
+            options: ["San'at, mash'al, ne'mat", "She'r, sh'er, qat'iy", "San'at, d'engiz, e'lon", "A'lo, b'og', ta'lim"],
+            correct: 0
+          },
+
+          // --- O'QISH SAVODXONLIGI (11-20) ---
+          {
+            id: 11,
+            subject: "O'qish savodxonligi",
+            question: "Boshlang'ich sinflarda sinfdan tashqari o'qishning asosiy vazifasi nima?",
+            options: ["O'qish tezligini oshirish", "Kitobxonlik madaniyatini shakllantirish, mustaqil o'qishga qiziqtirish", "Darslikdagi matnlarni yodlatish", "Yozuv malakasini oshirish"],
+            correct: 1
+          },
+          {
+            id: 12,
+            subject: "O'qish savodxonligi",
+            question: "Ertakning o'ziga xos xususiyati nimada?",
+            options: ["Tarixiy dalillarga asoslanishi", "Real voqealarni aniq tasvirlashi", "Fantastik, sehrli va hayotiy to'qimalarga asoslanishi", "Faqat qofiyali bo'lishi"],
+            correct: 2
+          },
+          {
+            id: 13,
+            subject: "O'qish savodxonligi",
+            question: "Alisher Navoiyning qaysi asari bevosita yoshlarga ta'lim-tarbiya berish maqsadida yozilgan?",
+            options: ["Xamsa", "Mahbub ul-qulub", "Majolis un-nafois", "Lison ut-tayr"],
+            correct: 1
+          },
+          {
+            id: 14,
+            subject: "O'qish savodxonligi",
+            question: "Ifodali o'qishning asosiy vositalari qaysilar?",
+            options: ["Faqat baland ovoz", "To'g'ri talaffuz va tezlik", "Mantiqiy urg'u, pauza, intonatsiya, temp", "Faqat imo-ishoralar"],
+            correct: 2
+          },
+          {
+            id: 15,
+            subject: "O'qish savodxonligi",
+            question: "Zahiriddin Muhammad Boburning shoh asari qaysi?",
+            options: ["Hamsa", "Boburnoma", "Qutadg'u bilig", "Devonu lug'otit turk"],
+            correct: 1
+          },
+          {
+            id: 16,
+            subject: "O'qish savodxonligi",
+            question: "Maqol va matalning farqi nimada?",
+            options: ["Farqi yo'q, ikkalasi bir xil", "Maqol tugallangan fikrni bildiradi, matal esa tugallanmagan, ko'chma ma'noli ibora", "Matal faqat she'riy shaklda bo'ladi", "Maqollar faqat yozuvchilar tomonidan yaratiladi"],
+            correct: 1
+          },
+          {
+            id: 17,
+            subject: "O'qish savodxonligi",
+            question: "Topishmoq qanday janr?",
+            options: ["Lirik", "Epik (Folklor)", "Dramatik", "Publitsistik"],
+            correct: 1
+          },
+          {
+            id: 18,
+            subject: "O'qish savodxonligi",
+            question: "O'qish turlari qaysi qatorda to'g'ri ko'rsatilgan?",
+            options: ["Baland ovozda, ichida, tanlab, ko'z yugurtirib", "Tez, sekin, baland, past", "To'g'ri, xato, bo'g'inlab", "Yoddan, kitobdan, daftardan"],
+            correct: 0
+          },
+          {
+            id: 19,
+            subject: "O'qish savodxonligi",
+            question: "'Shum bola' asari muallifi kim?",
+            options: ["Abdulla Qodiriy", "G'afur G'ulom", "Oybek", "Xudoyberdi To'xtaboyev"],
+            correct: 1
+          },
+          {
+            id: 20,
+            subject: "O'qish savodxonligi",
+            question: "Matn ustida ishlashning birinchi bosqichi odatda qanday boshlanadi?",
+            options: ["Matnni qayta hikoyalash", "Matnni qismlarga bo'lish", "Kirish suhbati va lug'at ustida ishlash", "Matn rejasini tuzish"],
+            correct: 2
+          },
+
+          // --- MATEMATIKA VA METODIKASI (21-30) ---
+          {
+            id: 21,
+            subject: "Matematika",
+            question: "Tenglamani yeching: 5x - 15 = 35",
+            options: ["x = 5", "x = 10", "x = 8", "x = 12"],
+            correct: 1
+          },
+          {
+            id: 22,
+            subject: "Matematika",
+            question: "To'g'ri to'rtburchakning perimetri 24 sm, uzunligi 8 sm. Uning yuzini toping.",
+            options: ["32 sm²", "64 sm²", "16 sm²", "48 sm²"],
+            correct: 0
+          },
+          {
+            id: 23,
+            subject: "Matematika",
+            question: "Qoldiqsiz bo'linish alomatlari: Qaysi son 9 ga qoldiqsiz bo'linadi?",
+            options: ["12345", "54321", "72918", "81234"],
+            correct: 2
+          },
+          {
+            id: 24,
+            subject: "Matematika",
+            question: "Boshlang'ich sinflarda matematikadan masala yechishning asosiy maqsadi nima?",
+            options: ["Faqat hisoblash tezligini oshirish", "Mantiqiy fikrlashni o'stirish va hayotiy muammolarni matematik modellashtirish", "Xotirani mustahkamlash", "Ko'paytirish jadvalini yodlatish"],
+            correct: 1
+          },
+          {
+            id: 25,
+            subject: "Matematika",
+            question: "Aralash sonni noto'g'ri kasrga aylantiring: 3 butun 2/5",
+            options: ["17/5", "15/5", "13/5", "11/5"],
+            correct: 0
+          },
+          {
+            id: 26,
+            subject: "Matematika",
+            question: "Tezligi 60 km/soat bo'lgan avtomobil 3 soatda qancha masofani bosib o'tadi?",
+            options: ["120 km", "180 km", "200 km", "150 km"],
+            correct: 1
+          },
+          {
+            id: 27,
+            subject: "Matematika",
+            question: "Boshlang'ich sinf matematikasida qaysi tushunchalar o'rganilmaydi?",
+            options: ["Natural sonlar", "Kasrlar", "Integral va hosila", "Tenglamalar"],
+            correct: 2
+          },
+          {
+            id: 28,
+            subject: "Matematika",
+            question: "1 metrda necha millimetr bor?",
+            options: ["100 mm", "1000 mm", "10000 mm", "10 mm"],
+            correct: 1
+          },
+          {
+            id: 29,
+            subject: "Matematika",
+            question: "Qo'shishning o'rin almashtirish xossasi qaysi qatorda to'g'ri berilgan?",
+            options: ["a + b = b + a", "(a + b) + c = a + (b + c)", "a * b = b * a", "a + 0 = a"],
+            correct: 0
+          },
+          {
+            id: 30,
+            subject: "Matematika",
+            question: "Kvadratning yuzi 81 sm² bo'lsa, uning perimetri qancha?",
+            options: ["18 sm", "36 sm", "27 sm", "45 sm"],
+            correct: 1
+          },
+
+          // --- TABIIY FANLAR (31-40) ---
+          {
+            id: 31,
+            subject: "Tabiiy fanlar",
+            question: "Suv tabiatda necha xil holatda uchraydi?",
+            options: ["2 xil (suyuq, qattiq)", "3 xil (suyuq, qattiq, gaz)", "4 xil", "Faqat suyuq"],
+            correct: 1
+          },
+          {
+            id: 32,
+            subject: "Tabiiy fanlar",
+            question: "O'simliklarning yashil barglarida yorug'lik ta'sirida organik moddalar hosil bo'lish jarayoni nima deyiladi?",
+            options: ["Nafas olish", "Fotosintez", "Bug'lanish", "Oziqlanish"],
+            correct: 1
+          },
+          {
+            id: 33,
+            subject: "Tabiiy fanlar",
+            question: "O'zbekistonning eng katta daryolari qaysilar?",
+            options: ["Sirdaryo va Amudaryo", "Zarafshon va Qashqadaryo", "Chirchiq va Ohangaron", "Surxondaryo va Sheroboddaryo"],
+            correct: 0
+          },
+          {
+            id: 34,
+            subject: "Tabiiy fanlar",
+            question: "Kompasning qizil strelkasi qaysi tomonni ko'rsatadi?",
+            options: ["Shimol", "Janub", "Sharq", "G'arb"],
+            correct: 1
+          },
+          {
+            id: 35,
+            subject: "Tabiiy fanlar",
+            question: "Qizil kitobga qanday o'simlik va hayvonlar kiritiladi?",
+            options: ["Faqat foydali", "Yo'qolib ketish xavfi ostida turgan noyob", "Barcha yovvoyi hayvonlar", "Zaharli o'simliklar"],
+            correct: 1
+          },
+          {
+            id: 36,
+            subject: "Tabiiy fanlar",
+            question: "Sayyoramizning tabiiy yo'ldoshi qaysi?",
+            options: ["Quyosh", "Oy", "Mars", "Venera"],
+            correct: 1
+          },
+          {
+            id: 37,
+            subject: "Tabiiy fanlar",
+            question: "Tabiatni muhofaza qilishning boshlang'ich sinflardagi eng samarali usuli qaysi?",
+            options: ["Ma'ruza o'qish", "Ekskursiyalar va amaliy tadbirlar (daraxt ekish, qushlarga uya yasash)", "Kitobdan o'qib berish", "Test yechish"],
+            correct: 1
+          },
+          {
+            id: 38,
+            subject: "Tabiiy fanlar",
+            question: "O'zbekiston Respublikasi hududining asosiy qismini nimalar tashkil etadi?",
+            options: ["Tog'lar", "O'rmonlar", "Cho'l va tekisliklar", "Ko'llar"],
+            correct: 2
+          },
+          {
+            id: 39,
+            subject: "Tabiiy fanlar",
+            question: "Yil fasllarining almashishiga nima sabab bo'ladi?",
+            options: ["Yerning o'z o'qi atrofida aylanishi", "Yerning Quyosh atrofida aylanishi va o'qining og'ishi", "Oyning Yer atrofida aylanishi", "Quyoshning faollashuvi"],
+            correct: 1
+          },
+          {
+            id: 40,
+            subject: "Tabiiy fanlar",
+            question: "Inson skeletidagi eng uzun suyak qaysi?",
+            options: ["Umurtqa", "Boldir suyagi", "Son suyagi", "To'sh suyagi"],
+            correct: 2
+          },
+
+          // --- PEDAGOGIKA, PSIXOLOGIYA VA METODIKA (41-50) ---
+          {
+            id: 41,
+            subject: "Pedagogika va psixologiya",
+            question: "PIRLS xalqaro baholash dasturi nimanini tadqiq etadi?",
+            options: ["Matematika va tabiiy fanlarni o'zlashtirishini", "Boshlang'ich sinf o'quvchilarining matnni o'qish va tushunish darajasini (o'qish savodxonligi)", "Kompyuter savodxonligini", "Jismoniy tayyorgarlikni"],
+            correct: 1
+          },
+          {
+            id: 42,
+            subject: "Pedagogika va psixologiya",
+            question: "TIMSS tadqiqoti qaysi fanlar bo'yicha yutuqlarni baholaydi?",
+            options: ["Ona tili va adabiyot", "Matematika va tabiiy fanlar", "Chet tillari", "Tarix va huquq"],
+            correct: 1
+          },
+          {
+            id: 43,
+            subject: "Pedagogika va psixologiya",
+            question: "Inkluziv ta'lim nima?",
+            options: ["Iqtidorli bolalarni alohida o'qitish", "Alohida ta'lim ehtiyojlari bo'lgan bolalarni umumiy ta'lim muhitiga jalb etish", "Faqat xususiy maktablarda beriladigan ta'lim", "Chet elda ta'lim olish"],
+            correct: 1
+          },
+          {
+            id: 44,
+            subject: "Pedagogika va psixologiya",
+            question: "Kichik maktab yoshidagi bolalarda qaysi faoliyat turi yetakchi hisoblanadi?",
+            options: ["O'yin faoliyati", "O'quv faoliyati", "Mehnat faoliyati", "Muloqot"],
+            correct: 1
+          },
+          {
+            id: 45,
+            subject: "Pedagogika va psixologiya",
+            question: "Didaktikaning asoschisi kim?",
+            options: ["J.J.Russo", "Ya.A.Komenskiy", "A.S.Makarenko", "I.G.Pestalotsi"],
+            correct: 1
+          },
+          {
+            id: 46,
+            subject: "Pedagogika va psixologiya",
+            question: "Bloom taksonomiyasi bo'yicha bilishning eng yuqori darajasi qaysi?",
+            options: ["Tushunish", "Qo'llash", "Yaratish (Baholash/Sintez)", "Eslab qolish"],
+            correct: 2
+          },
+          {
+            id: 47,
+            subject: "Pedagogika va psixologiya",
+            question: "Formatif (shakllantiruvchi) baholashning maqsadi nima?",
+            options: ["Chorak oxirida baho qo'yish", "O'quvchining o'quv jarayonidagi bo'shliqlarini aniqlash va o'zlashtirishini yaxshilash uchun qayta aloqa berish", "O'quvchini sinfdan sinfga o'tkazish", "O'qituvchining oyligini hisoblash"],
+            correct: 1
+          },
+          {
+            id: 48,
+            subject: "Pedagogika va psixologiya",
+            question: "Pedagogik texnologiyaning an'anaviy metodikadan asosiy farqi nimada?",
+            options: ["Ko'proq kitob o'qishda", "Natijaning kafolatlanishi va oldindan loyihalashtirilganligida", "Faqat kompyuterdan foydalanishda", "Farqi yo'q"],
+            correct: 1
+          },
+          {
+            id: 49,
+            subject: "Pedagogika va psixologiya",
+            question: "Guruhlarda ishlash metodining asosiy afzalligi nimada?",
+            options: ["O'qituvchiga dam olish imkonini beradi", "O'quvchilarda jamoada ishlash, fikr almashish va hamkorlik ko'nikmalarini rivojlantiradi", "Sinfda jimjitlikni ta'minlaydi", "Barcha darslarda foydalanish shartligi"],
+            correct: 1
+          },
+          {
+            id: 50,
+            subject: "Pedagogika va psixologiya",
+            question: "Kichik maktab yoshidagi bolalarda ixtiyoriy diqqat qanday xususiyatga ega?",
+            options: ["Juda uzoq muddatli", "Tez charchaydi va beqaror bo'ladi, ko'rgazmalilikni talab etadi", "Umuman mavjud emas", "Kattalarnikidan farq qilmaydi"],
+            correct: 1
+          }
+        ];
+
+        function App() {
+          const [appState, setAppState] = useState('intro'); // intro, quiz, result
+          const [answers, setAnswers] = useState(Array(50).fill(null));
+          const [currentQuestion, setCurrentQuestion] = useState(0);
+          const [timeLeft, setTimeLeft] = useState(100 * 60); // 100 minutes in seconds
+          const [showConfirm, setShowConfirm] = useState(false);
+          const [firstName, setFirstName] = useState('');
+          const [lastName, setLastName] = useState('');
+
+          // Timer Effect
+          useEffect(() => {
+            let timer;
+            if (appState === 'quiz' && timeLeft > 0) {
+              timer = setInterval(() => {
+                setTimeLeft((prev) => prev - 1);
+              }, 1000);
+            } else if (timeLeft === 0 && appState === 'quiz') {
+              finishTest();
+            }
+            return () => clearInterval(timer);
+          }, [appState, timeLeft]);
+
+          const startTest = () => {
+            if (!firstName.trim() || !lastName.trim()) {
+              return;
+            }
+            setAppState('quiz');
+            setTimeLeft(100 * 60);
+            setAnswers(Array(50).fill(null));
+            setCurrentQuestion(0);
+            setShowConfirm(false);
+          };
+
+          const finishTest = () => {
+            setAppState('result');
+          };
+
+          const handleOptionSelect = (optionIndex) => {
+            const newAnswers = [...answers];
+            newAnswers[currentQuestion] = optionIndex;
+            setAnswers(newAnswers);
+          };
+
+          const formatTime = (seconds) => {
+            const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+            const s = (seconds % 60).toString().padStart(2, '0');
+            return `${m}:${s}`;
+          };
+
+          const calculateScore = () => {
+            return answers.reduce((score, answer, index) => {
+              if (answer === testQuestions[index].correct) return score + 1;
+              return score;
+            }, 0);
+          };
+
+          if (appState === 'intro') {
+            return (
+              <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4 font-sans text-gray-800">
+                <div className="max-w-2xl bg-white p-8 rounded-2xl shadow-xl border border-gray-100 w-full">
+                  <h1 className="text-3xl font-bold text-center text-blue-800 mb-6 border-b pb-4">
+                    Boshlang'ich Ta'lim O'qituvchilari Uchun<br/> Attestatsiya Tayyorgarlik Testi
+                  </h1>
+                  
+                  <div className="space-y-4 mb-8 text-lg">
+                    <p><strong>Umumiy savollar soni:</strong> 50 ta (Har bir to'g'ri javob 2 ball, jami 100 ball)</p>
+                    <ul className="list-disc pl-8 space-y-1 text-gray-600 text-base">
+                      <li>Ona tili va metodikasi (10 ta)</li>
+                      <li>O'qish savodxonligi (10 ta)</li>
+                      <li>Matematika va metodikasi (10 ta)</li>
+                      <li>Tabiiy fanlar (10 ta)</li>
+                      <li>Pedagogika, psixologiya, ta'lim texnologiyalari (10 ta)</li>
+                    </ul>
+                    <p><strong>Ajratilgan vaqt:</strong> 100 daqiqa</p>
+                    <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mt-4 text-sm text-yellow-800 rounded">
+                      <strong>Eslatma:</strong> Test jarayonida sahifani yangilamang, aks holda natijalaringiz o'chib ketadi.
+                    </div>
+                  </div>
+
+                  <div className="space-y-4 mb-6 bg-gray-50 p-6 rounded-xl border border-gray-200">
+                    <div>
+                      <label className="block text-sm font-bold text-gray-700 mb-2">Familiyangiz</label>
+                      <input 
+                        type="text" 
+                        value={lastName} 
+                        onChange={(e) => setLastName(e.target.value)} 
+                        placeholder="Masalan: Valiyev"
+                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-bold text-gray-700 mb-2">Ismingiz</label>
+                      <input 
+                        type="text" 
+                        value={firstName} 
+                        onChange={(e) => setFirstName(e.target.value)} 
+                        placeholder="Masalan: Ali"
+                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+                      />
+                    </div>
+                  </div>
+
+                  <button 
+                    onClick={startTest}
+                    disabled={!firstName.trim() || !lastName.trim()}
+                    className="w-full py-4 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 disabled:cursor-not-allowed text-white text-xl font-bold rounded-xl transition shadow-lg hover:shadow-blue-200"
+                  >
+                    {(!firstName.trim() || !lastName.trim()) ? "Ism va familiyani kiriting" : "Testni Boshlash"}
+                  </button>
+                  
+                  <div className="mt-8 text-center text-sm text-gray-500 border-t pt-4">
+                    <p className="font-semibold text-gray-700">Yaratuvchi: Akmaljon Jo'raqo'ziyev</p>
+                    <p>Telegram: <a href="https://t.me/akmalmaths" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">@akmalmaths</a> va <a href="https://t.me/maktabdarsibot" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">@maktabdarsibot</a></p>
+                  </div>
+                </div>
+              </div>
+            );
+          }
+
+          if (appState === 'quiz') {
+            const question = testQuestions[currentQuestion];
+            const isAnswered = answers[currentQuestion] !== null;
+
+            return (
+              <div className="min-h-screen bg-gray-100 flex flex-col font-sans">
+                {/* Header / Timer */}
+                <div className="bg-white shadow-sm border-b px-6 py-4 flex justify-between items-center sticky top-0 z-10">
+                  <div className="font-semibold text-gray-700 hidden sm:block">
+                    Attestatsiya Testi
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <div className={`text-2xl font-bold flex items-center gap-2 ${timeLeft < 300 ? 'text-red-600' : 'text-blue-700'}`}>
+                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                      {formatTime(timeLeft)}
+                    </div>
+                    <button 
+                      onClick={() => setShowConfirm(true)}
+                      className="px-4 py-2 bg-red-100 text-red-700 rounded hover:bg-red-200 font-medium transition"
+                    >
+                      Yakunlash
+                    </button>
+                  </div>
+                </div>
+
+                {/* Main Content */}
+                <div className="flex-1 flex flex-col md:flex-row max-w-7xl mx-auto w-full p-4 gap-6">
+                  
+                  {/* Question Area */}
+                  <div className="flex-1 bg-white rounded-2xl shadow-sm p-6 flex flex-col">
+                    <div className="mb-6 flex justify-between items-center border-b pb-4">
+                      <span className="bg-blue-100 text-blue-800 text-sm font-bold px-3 py-1 rounded-full">
+                        {question.subject}
+                      </span>
+                      <span className="text-gray-500 font-medium">
+                        Savol {currentQuestion + 1} / 50
+                      </span>
+                    </div>
+                    
+                    <h2 className="text-xl md:text-2xl font-medium text-gray-800 mb-8 leading-relaxed">
+                      {currentQuestion + 1}. {question.question}
+                    </h2>
+
+                    <div className="space-y-3 flex-1">
+                      {question.options.map((option, idx) => (
+                        <button
+                          key={idx}
+                          onClick={() => handleOptionSelect(idx)}
+                          className={`w-full text-left p-4 rounded-xl border-2 transition-all flex items-center gap-4 text-lg
+                            ${answers[currentQuestion] === idx 
+                              ? 'border-blue-600 bg-blue-50 text-blue-900 shadow-sm' 
+                              : 'border-gray-200 hover:border-blue-300 hover:bg-gray-50 text-gray-700'
+                            }`}
+                        >
+                          <span className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm shrink-0
+                            ${answers[currentQuestion] === idx ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'}
+                          `}>
+                            {['A', 'B', 'C', 'D'][idx]}
+                          </span>
+                          {option}
+                        </button>
+                      ))}
+                    </div>
+
+                    <div className="mt-4 text-right text-sm text-gray-400 italic">
+                      Yaratuvchi: Akmaljon Jo'raqo'ziyev
+                    </div>
+
+                    {/* Navigation Buttons */}
+                    <div className="mt-8 flex justify-between items-center pt-4 border-t">
+                      <button
+                        onClick={() => setCurrentQuestion(prev => Math.max(0, prev - 1))}
+                        disabled={currentQuestion === 0}
+                        className="px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed font-medium transition"
+                      >
+                        &larr; Oldingi
+                      </button>
+                      
+                      {currentQuestion < 49 ? (
+                        <button
+                          onClick={() => setCurrentQuestion(prev => Math.min(49, prev + 1))}
+                          className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition shadow-md"
+                        >
+                          Keyingi &rarr;
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => setShowConfirm(true)}
+                          className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium transition shadow-md"
+                        >
+                          Testni Yakunlash
+                        </button>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Sidebar / Grid Navigation */}
+                  <div className="w-full md:w-80 bg-white rounded-2xl shadow-sm p-4 h-fit">
+                    <h3 className="font-bold text-gray-700 mb-4 text-center">Savollar paneli</h3>
+                    <div className="grid grid-cols-5 gap-2">
+                      {answers.map((ans, idx) => (
+                        <button
+                          key={idx}
+                          onClick={() => setCurrentQuestion(idx)}
+                          className={`h-10 w-full rounded font-medium flex items-center justify-center border transition-all
+                            ${currentQuestion === idx ? 'ring-2 ring-blue-600 scale-110 z-10' : ''}
+                            ${ans !== null 
+                              ? 'bg-blue-600 text-white border-blue-600' 
+                              : 'bg-gray-50 text-gray-500 border-gray-200 hover:bg-gray-100'
+                            }
+                          `}
+                        >
+                          {idx + 1}
+                        </button>
+                      ))}
+                    </div>
+                    <div className="mt-6 flex flex-col gap-2 text-sm text-gray-600">
+                      <div className="flex items-center gap-2">
+                        <div className="w-4 h-4 bg-blue-600 rounded"></div> Belgilangan
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-4 h-4 bg-gray-50 border border-gray-200 rounded"></div> Belgilanmagan
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Yakunlash uchun maxsus modal oynasi */}
+                {showConfirm && (
+                  <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-4">
+                    <div className="bg-white rounded-2xl shadow-xl p-6 max-w-sm w-full">
+                      <h3 className="text-xl font-bold text-gray-800 mb-4">Testni yakunlaysizmi?</h3>
+                      <p className="text-gray-600 mb-6">Barcha belgilagan javoblaringiz bo'yicha natijangiz hisoblanadi.</p>
+                      <div className="flex justify-end gap-3">
+                        <button 
+                          onClick={() => setShowConfirm(false)}
+                          className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 font-medium transition"
+                        >
+                          Bekor qilish
+                        </button>
+                        <button 
+                          onClick={() => {
+                            setShowConfirm(false);
+                            finishTest();
+                          }}
+                          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition"
+                        >
+                          Yakunlash
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          }
+
+          if (appState === 'result') {
+            const correctAnswers = calculateScore();
+            const totalPoints = correctAnswers * 2;
+            
+            let category = "Qoniqarsiz / Mutaxassis";
+            let colorClass = "text-red-600";
+            if (totalPoints >= 80) { category = "Oliy toifa darajasi"; colorClass = "text-green-600"; }
+            else if (totalPoints >= 70) { category = "1-toifa darajasi"; colorClass = "text-blue-600"; }
+            else if (totalPoints >= 60) { category = "2-toifa darajasi"; colorClass = "text-yellow-600"; }
+
+            return (
+              <div className="min-h-screen bg-gray-100 p-4 py-8 font-sans">
+                <div className="max-w-4xl mx-auto">
+                  
+                  <div className="bg-white rounded-2xl shadow-sm p-8 mb-8 text-center border-t-8 border-blue-600">
+                    <h1 className="text-3xl font-bold text-gray-800 mb-2">Test Yakunlandi!</h1>
+                    <p className="text-gray-500 mb-6">Diagnostika natijalaringiz bilan tanishing.</p>
+                    
+                    <div className="bg-blue-50 p-4 rounded-xl mb-8 inline-block border border-blue-100 min-w-[250px]">
+                      <h2 className="text-2xl font-bold text-blue-900">{lastName} {firstName}</h2>
+                    </div>
+                    
+                    <div className="flex flex-wrap justify-center gap-8 mb-8">
+                      <div className="bg-gray-50 p-6 rounded-xl border w-48 shadow-sm">
+                        <div className="text-4xl font-bold text-gray-800">{correctAnswers} / 50</div>
+                        <div className="text-gray-500 mt-2">To'g'ri javoblar</div>
+                      </div>
+                      <div className="bg-gray-50 p-6 rounded-xl border w-48 shadow-sm">
+                        <div className="text-4xl font-bold text-blue-600">{totalPoints}</div>
+                        <div className="text-gray-500 mt-2">To'plangan ball</div>
+                      </div>
+                    </div>
+
+                    <h2 className="text-xl font-medium text-gray-700">
+                      Natija: <span className={`font-bold ${colorClass}`}>{category}</span>
+                    </h2>
+                    
+                    <button 
+                      onClick={() => setAppState('intro')}
+                      className="mt-8 px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition shadow"
+                    >
+                      Bosh sahifaga qaytish
+                    </button>
+
+                    <div className="mt-8 text-center text-sm text-gray-500 border-t pt-6">
+                      <p className="font-semibold text-gray-700">Yaratuvchi: Akmaljon Jo'raqo'ziyev</p>
+                      <p>Telegram: <a href="https://t.me/akmalmaths" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">@akmalmaths</a> va <a href="https://t.me/maktabdarsibot" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">@maktabdarsibot</a></p>
+                    </div>
+                  </div>
+
+                  <h3 className="text-2xl font-bold text-gray-800 mb-6">Savollar tahlili</h3>
+                  <div className="space-y-4">
+                    {testQuestions.map((q, idx) => {
+                      const userAnswer = answers[idx];
+                      const isCorrect = userAnswer === q.correct;
+                      const isUnanswered = userAnswer === null;
+
+                      return (
+                        <div key={idx} className={`bg-white rounded-xl shadow-sm p-6 border-l-4 ${isCorrect ? 'border-green-500' : isUnanswered ? 'border-gray-400' : 'border-red-500'}`}>
+                          <div className="flex gap-4">
+                            <div className="font-bold text-gray-500">{idx + 1}.</div>
+                            <div className="flex-1">
+                              <div className="text-sm font-bold text-blue-600 mb-1">{q.subject}</div>
+                              <p className="font-medium text-gray-800 mb-4">{q.question}</p>
+                              
+                              <div className="space-y-2">
+                                {q.options.map((opt, optIdx) => {
+                                  const isThisCorrect = optIdx === q.correct;
+                                  const isThisSelected = optIdx === userAnswer;
+                                  
+                                  let bgClass = "bg-gray-50 text-gray-600";
+                                  if (isThisCorrect) bgClass = "bg-green-100 text-green-800 border border-green-300 font-bold";
+                                  else if (isThisSelected && !isThisCorrect) bgClass = "bg-red-100 text-red-800 border border-red-300";
+
+                                  return (
+                                    <div key={optIdx} className={`p-3 rounded-lg flex items-center gap-3 ${bgClass}`}>
+                                      <span>{['A', 'B', 'C', 'D'][optIdx]})</span>
+                                      {opt}
+                                      {isThisCorrect && <span className="ml-auto text-green-600">✓ To'g'ri javob</span>}
+                                      {isThisSelected && !isThisCorrect && <span className="ml-auto text-red-600">✗ Sizning javobingiz</span>}
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                              
+                              {isUnanswered && (
+                                <div className="mt-3 text-sm text-red-500 font-medium">Bu savolga javob berilmagan.</div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                </div>
+              </div>
+            );
+          }
+
+          return null;
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
