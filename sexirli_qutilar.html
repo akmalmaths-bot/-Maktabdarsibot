@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sehrli Qutilar</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #fef3c7; /* Och sariq qadimgi qog'oz rangi */
+            background-image: radial-gradient(#fde68a 2px, transparent 2px);
+            background-size: 30px 30px;
+            touch-action: manipulation;
+            user-select: none;
+        }
+
+        .pop-animation {
+            animation: pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes pop {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .bounce {
+            animation: bounce 0.3s ease;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        /* Grid kataklari uchun CSS */
+        #game-board {
+            display: grid;
+            gap: 2px;
+            background-color: #d97706; /* G'ishtlar orasidagi rang */
+            padding: 4px;
+            border-radius: 0.5rem;
+            margin: 0 auto;
+            box-shadow: inset 0 4px 6px rgba(0,0,0,0.3), 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .cell {
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            border-radius: 4px;
+        }
+
+        @media (min-width: 768px) {
+            .cell { width: 45px; height: 45px; font-size: 2rem; }
+        }
+
+        .cell-wall { background-color: #b45309; box-shadow: inset 2px 2px 0 rgba(255,255,255,0.2), inset -2px -2px 0 rgba(0,0,0,0.2); }
+        .cell-floor { background-color: #fde68a; box-shadow: inset 0 0 5px rgba(0,0,0,0.05); }
+        .cell-target { background-color: #fef3c7; box-shadow: inset 0 0 5px rgba(0,0,0,0.1); }
+        
+        .d-pad-btn {
+            transition: transform 0.1s;
+            background: linear-gradient(to bottom, #ffffff, #e2e8f0);
+            box-shadow: 0 4px 0 #94a3b8;
+        }
+        .d-pad-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 0 0 #94a3b8;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <div class="bg-white rounded-3xl shadow-[0_10px_40px_rgba(217,119,6,0.2)] p-4 md:p-6 max-w-lg w-full text-center border-4 border-amber-500 relative overflow-hidden">
+        
+        <button onclick="toggleSound()" id="sound-btn" class="absolute top-4 right-4 text-xl hover:scale-110 transition-transform bg-amber-100 p-2 rounded-full shadow-sm z-20 border border-amber-200">
+            🔊
+        </button>
+
+        <!-- Bosh Ekrani -->
+        <div id="start-screen" class="space-y-6 mt-4">
+            <div class="text-7xl mb-4 animate-bounce">📦</div>
+            <h1 class="text-4xl md:text-5xl font-black text-amber-600 mb-2 drop-shadow-sm">Sehrli Qutilar</h1>
+            <p class="text-slate-600 text-lg mb-4">Shoshilmasdan o'ylaydigan mantiqiy o'yin!</p>
+            
+            <div class="bg-amber-50 rounded-2xl p-4 inline-block mb-6 border border-amber-200 text-left max-w-sm w-full mx-auto">
+                <h3 class="font-bold text-amber-800 mb-2 text-center">Qoidalar:</h3>
+                <ul class="text-sm text-slate-700 space-y-2 font-bold">
+                    <li>🧙‍♂️ Sehrgarni boshqarib, 📦 qutilarni itaring.</li>
+                    <li>🎯 Barcha nishonlarni qutilar bilan yoping (🎁).</li>
+                    <li>⚠️ Qutilarni <b>tortib bo'lmaydi</b>, faqat itarish mumkin. Devorga taqab qo'ymang!</li>
+                    <li>⏳ Vaqt chegarasi yo'q. Istagancha o'ylang.</li>
+                </ul>
+            </div>
+
+            <button onclick="startGame()" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-4 px-8 rounded-2xl text-2xl transition-all transform hover:scale-105 shadow-[0_0_15px_rgba(245,158,11,0.4)] border border-amber-400">
+                Aql Mashqini Boshlash 🚀
+            </button>
+            
+            <!-- Muallif haqida -->
+            <div class="text-sm text-slate-500 mt-6 font-bold border-t border-slate-200 pt-4">
+                <p>Tuzuvchi: Akmaljon Jo'raqo'ziyev</p>
+                <p>Telegram: <a href="https://t.me/Akmalmaths" target="_blank" class="text-amber-500 hover:text-amber-600 hover:underline">@Akmalmaths</a></p>
+            </div>
+        </div>
+
+        <!-- O'yin Ekrani -->
+        <div id="game-screen" class="hidden flex-col items-center">
+            
+            <!-- Boshqaruv paneli (Tepada) -->
+            <div class="w-full flex justify-between items-center bg-amber-50 border border-amber-200 p-2 md:p-3 rounded-2xl mb-4">
+                <div class="flex flex-col text-left px-2">
+                    <span class="text-xs text-amber-700 font-black uppercase tracking-wider">Bosqich</span>
+                    <span id="level-display" class="text-amber-600 font-black text-2xl">1</span>
+                </div>
+                <div class="flex flex-col text-center px-2 border-l border-r border-amber-200">
+                    <span class="text-xs text-amber-700 font-black uppercase tracking-wider">Qadamlar</span>
+                    <span id="moves-display" class="text-slate-600 font-black text-2xl">0</span>
+                </div>
+                <div class="flex gap-2">
+                    <!-- Undo tugmasi -->
+                    <button onclick="undoMove()" class="bg-blue-100 hover:bg-blue-200 text-blue-600 p-2 rounded-xl text-xl font-bold border border-blue-200 transition-transform active:scale-95" title="Bitta qadam orqaga">
+                        🔙
+                    </button>
+                    <!-- Restart tugmasi -->
+                    <button onclick="restartLevel()" class="bg-red-100 hover:bg-red-200 text-red-600 p-2 rounded-xl text-xl font-bold border border-red-200 transition-transform active:scale-95" title="Boshidan boshlash">
+                        🔄
+                    </button>
+                </div>
+            </div>
+
+            <!-- O'yin maydoni -->
+            <div id="game-board-container" class="mb-4 pop-animation relative">
+                <!-- Grid shu yerga tushadi -->
+                <div id="game-board"></div>
+                <!-- Xabar oynasi (G'alaba qilganda) -->
+                <div id="win-message" class="hidden absolute inset-0 bg-white/90 flex flex-col items-center justify-center rounded-lg z-10">
+                    <div class="text-6xl mb-2">🎉</div>
+                    <h2 class="text-2xl font-black text-green-600">Ajoyib!</h2>
+                    <button onclick="nextLevel()" class="mt-4 bg-green-500 text-white px-6 py-2 rounded-xl font-bold text-lg hover:bg-green-600 shadow-md">Keyingisi ➡️</button>
+                </div>
+            </div>
+
+            <!-- Mobil Boshqaruv (D-Pad) -->
+            <div class="grid grid-cols-3 gap-2 w-48 mx-auto mt-2">
+                <div></div>
+                <button onclick="move(0, -1)" class="d-pad-btn p-3 rounded-xl text-2xl font-black text-slate-700">⬆️</button>
+                <div></div>
+                <button onclick="move(-1, 0)" class="d-pad-btn p-3 rounded-xl text-2xl font-black text-slate-700">⬅️</button>
+                <button onclick="move(0, 1)" class="d-pad-btn p-3 rounded-xl text-2xl font-black text-slate-700">⬇️</button>
+                <button onclick="move(1, 0)" class="d-pad-btn p-3 rounded-xl text-2xl font-black text-slate-700">➡️</button>
+            </div>
+            
+            <p class="text-xs text-slate-400 mt-4">Klaviatura (Strelkalar) orqali ham boshqarishingiz mumkin.</p>
+        </div>
+
+        <!-- Natija Ekrani (Barcha bosqichlar tugaganda) -->
+        <div id="end-screen" class="hidden space-y-6 pop-animation mt-4">
+            <div class="text-7xl mb-4">🏆</div>
+            <h1 class="text-4xl font-black text-amber-600 mb-2">O'yin Tugadi!</h1>
+            
+            <div class="bg-amber-50 rounded-2xl p-6 my-6 border border-amber-200">
+                <p class="text-slate-600 text-xl font-bold mb-4">Tabriklaymiz!</p>
+                <p class="text-slate-700 text-lg">Siz barcha mantiqiy boshqotirmalarni muvaffaqiyatli yechdingiz!</p>
+                <p class="text-amber-600 font-black text-2xl mt-4">Sizning aqliy salohiyatingiz juda yuqori! 🧠✨</p>
+            </div>
+            
+            <button onclick="backToMenu()" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-8 rounded-2xl text-2xl transition-all transform hover:scale-105 shadow-lg border border-green-400">
+                Bosh Menyuga Qaytish 🏠
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        // --- Ovozlar ---
+        let soundEnabled = true;
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx;
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            document.getElementById('sound-btn').textContent = soundEnabled ? '🔊' : '🔇';
+            if (soundEnabled && !audioCtx) audioCtx = new AudioContext();
+        }
+
+        function playSound(type) {
+            if (!soundEnabled) return;
+            if (!audioCtx) audioCtx = new AudioContext();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            const now = audioCtx.currentTime;
+            
+            if (type === 'step') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(300, now);
+                osc.frequency.exponentialRampToValueAtTime(100, now + 0.05);
+                gain.gain.setValueAtTime(0.1, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+                osc.start(now); osc.stop(now + 0.05);
+            } else if (type === 'push') {
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(150, now);
+                osc.frequency.linearRampToValueAtTime(200, now + 0.1);
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.1);
+                osc.start(now); osc.stop(now + 0.1);
+            } else if (type === 'target') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(600, now);
+                osc.frequency.linearRampToValueAtTime(800, now + 0.1);
+                gain.gain.setValueAtTime(0.1, now);
+                gain.gain.linearRampToValueAtTime(0, now + 0.1);
+                osc.start(now); osc.stop(now + 0.1);
+            } else if (type === 'winLevel') {
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(400, now);
+                osc.frequency.setValueAtTime(500, now + 0.1);
+                osc.frequency.setValueAtTime(600, now + 0.2);
+                gain.gain.setValueAtTime(0.1, now);
+                gain.gain.linearRampToValueAtTime(0, now + 0.4);
+                osc.start(now); osc.stop(now + 0.4);
+            } else if (type === 'error') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(100, now);
+                osc.frequency.linearRampToValueAtTime(50, now + 0.1);
+                gain.gain.setValueAtTime(0.1, now);
+                gain.gain.linearRampToValueAtTime(0, now + 0.1);
+                osc.start(now); osc.stop(now + 0.1);
+            }
+        }
+
+        // --- Xaritalar (Levels) ---
+        // ' ' = Bosh joy, '#' = Devor, '.' = Nishon, '$' = Quti, '@' = O'yinchi
+        // '*' = Nishondagi quti, '+' = Nishondagi o'yinchi
+        const rawLevels = [
+            [ // 1-bosqich: Eng oddiy tanishuv
+                "#####",
+                "#@$.#",
+                "#####"
+            ],
+            [ // 2-bosqich: Burilish
+                "#####",
+                "#   #",
+                "#@$ #",
+                "##. #",
+                "#####"
+            ],
+            [ // 3-bosqich: Ikkita quti
+                "######",
+                "#    #",
+                "#@$$ #",
+                "##.. #",
+                "######"
+            ],
+            [ // 4-bosqich: Burchaklar
+                "######",
+                "#  . #",
+                "# $$ #",
+                "#  @ #",
+                "#  . #",
+                "######"
+            ],
+            [ // 5-bosqich: Kichik labirint
+                "#######",
+                "#     #",
+                "# .$. #",
+                "#  $  #",
+                "#  @  #",
+                "#######"
+            ],
+            [ // 6-bosqich: Qutilar yonma-yon
+                "######",
+                "# .  #",
+                "# $$ #",
+                "#  $ #",
+                "# .@.#",
+                "######"
+            ],
+            [ // 7-bosqich: Tarmoq
+                "########",
+                "#      #",
+                "# .$ $.#",
+                "#  $@  #",
+                "#      #",
+                "########"
+            ],
+            [ // 8-bosqich: O'ylab itarish
+                "########",
+                "# ..   #",
+                "# $$   #",
+                "#  @$  #",
+                "#   .  #",
+                "########"
+            ],
+            [ // 9-bosqich: Simmetriya
+                "#######",
+                "#  .  #",
+                "#  $  #",
+                "#.$@$.#",
+                "#  $  #",
+                "#  .  #",
+                "#######"
+            ],
+            [ // 10-bosqich: Oxirgi sinov
+                "########",
+                "#  ..  #",
+                "#  $$  #",
+                "#  @$  #",
+                "#   .  #",
+                "########"
+            ]
+        ];
+
+        // --- O'yin holati ---
+        let currentLevelIndex = 0;
+        let grid = [];
+        let player = {x: 0, y: 0};
+        let moves = 0;
+        let history = []; // Qadamlarni orqaga qaytarish uchun xotira
+        let levelCompleted = false;
+
+        // Emojilar lug'ati
+        const EMOJI = {
+            '#': '🧱', // Devor
+            ' ': '',   // Bo'sh joy
+            '.': '🎯', // Nishon
+            '$': '📦', // Quti
+            '@': '🧙‍♂️', // Sehrgar
+            '*': '🎁', // Nishondagi quti
+            '+': '🧙‍♂️'  // Nishondagi sehrgar (rasm o'zgarmaydi, fonda nishon qoladi)
+        };
+
+        const boardEl = document.getElementById('game-board');
+        const movesEl = document.getElementById('moves-display');
+        const levelEl = document.getElementById('level-display');
+        const winMessageEl = document.getElementById('win-message');
+        const startScreen = document.getElementById('start-screen');
+        const gameScreen = document.getElementById('game-screen');
+        const endScreen = document.getElementById('end-screen');
+
+        // Klaviatura orqali boshqarish
+        document.addEventListener('keydown', (e) => {
+            if (levelCompleted || gameScreen.classList.contains('hidden')) return;
+            
+            // Strelkalar ekranni surib yubormasligi uchun default harakatni to'xtatamiz
+            if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].indexOf(e.code) > -1) {
+                e.preventDefault();
+            }
+
+            if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') move(0, -1);
+            if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') move(0, 1);
+            if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') move(-1, 0);
+            if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') move(1, 0);
+            
+            // Undo hotkey (Z yoki U)
+            if (e.key === 'z' || e.key === 'Z' || e.key === 'u' || e.key === 'U') undoMove();
+            // Restart hotkey (R)
+            if (e.key === 'r' || e.key === 'R') restartLevel();
+        });
+
+        // Swipe orqali boshqarish (Mobil)
+        let touchStartX = 0, touchStartY = 0;
+        const gameContainer = document.getElementById('game-board-container');
+        
+        gameContainer.addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].screenX;
+            touchStartY = e.changedTouches[0].screenY;
+        }, {passive: true});
+
+        gameContainer.addEventListener('touchend', e => {
+            if (levelCompleted) return;
+            let touchEndX = e.changedTouches[0].screenX;
+            let touchEndY = e.changedTouches[0].screenY;
+            let deltaX = touchEndX - touchStartX;
+            let deltaY = touchEndY - touchStartY;
+            
+            if (Math.abs(deltaX) > 30 || Math.abs(deltaY) > 30) {
+                if (Math.abs(deltaX) > Math.abs(deltaY)) {
+                    if (deltaX > 0) move(1, 0);
+                    else move(-1, 0);
+                } else {
+                    if (deltaY > 0) move(0, 1);
+                    else move(0, -1);
+                }
+            }
+        });
+
+        // --- Asosiy Funksiyalar ---
+        function startGame() {
+            if (soundEnabled && !audioCtx) audioCtx = new AudioContext();
+            if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+            
+            startScreen.classList.add('hidden');
+            endScreen.classList.add('hidden');
+            gameScreen.classList.remove('hidden');
+            gameScreen.classList.add('flex');
+            
+            currentLevelIndex = 0;
+            loadLevel(currentLevelIndex);
+        }
+
+        function loadLevel(index) {
+            history = [];
+            moves = 0;
+            levelCompleted = false;
+            winMessageEl.classList.add('hidden');
+            
+            let raw = rawLevels[index];
+            grid = [];
+            
+            for (let y = 0; y < raw.length; y++) {
+                let row = [];
+                for (let x = 0; x < raw[y].length; x++) {
+                    let char = raw[y][x];
+                    row.push(char);
+                    if (char === '@' || char === '+') {
+                        player = {x: x, y: y};
+                    }
+                }
+                grid.push(row);
+            }
+
+            boardEl.style.gridTemplateColumns = `repeat(${grid[0].length}, minmax(0, 1fr))`;
+            
+            levelEl.textContent = index + 1;
+            movesEl.textContent = moves;
+            
+            renderGrid();
+        }
+
+        function renderGrid() {
+            boardEl.innerHTML = '';
+            for (let y = 0; y < grid.length; y++) {
+                for (let x = 0; x < grid[y].length; x++) {
+                    let char = grid[y][x];
+                    let cellDiv = document.createElement('div');
+                    cellDiv.className = 'cell';
+                    
+                    if (char === '#') {
+                        cellDiv.classList.add('cell-wall');
+                        cellDiv.textContent = EMOJI['#'];
+                    } else {
+                        // Bo'sh joy yoki yurish mumkin bo'lgan qismlar foni
+                        if (char === '.' || char === '*' || char === '+') {
+                            cellDiv.classList.add('cell-target');
+                        } else {
+                            cellDiv.classList.add('cell-floor');
+                        }
+
+                        // Ichidagi obyektlar
+                        if (char === '.') cellDiv.textContent = EMOJI['.'];
+                        if (char === '$') cellDiv.textContent = EMOJI['$'];
+                        if (char === '@') { cellDiv.textContent = EMOJI['@']; cellDiv.id = 'player-node'; }
+                        if (char === '*') { cellDiv.textContent = EMOJI['*']; cellDiv.classList.add('bounce'); }
+                        if (char === '+') { cellDiv.textContent = EMOJI['+']; cellDiv.id = 'player-node'; }
+                    }
+                    
+                    boardEl.appendChild(cellDiv);
+                }
+            }
+        }
+
+        function saveState() {
+            // Chuqur nusxa (Deep copy) olish
+            let gridCopy = grid.map(row => [...row]);
+            history.push({
+                grid: gridCopy,
+                player: {x: player.x, y: player.y},
+                moves: moves
+            });
+        }
+
+        function undoMove() {
+            if (levelCompleted || history.length === 0) {
+                playSound('error');
+                return;
+            }
+            
+            let prevState = history.pop();
+            grid = prevState.grid;
+            player = prevState.player;
+            moves = prevState.moves;
+            
+            movesEl.textContent = moves;
+            renderGrid();
+            playSound('step'); // Yengil qaytish ovozi
+        }
+
+        function restartLevel() {
+            if (levelCompleted) return;
+            loadLevel(currentLevelIndex);
+            playSound('error');
+        }
+
+        function move(dx, dy) {
+            if (levelCompleted) return;
+
+            let targetX = player.x + dx;
+            let targetY = player.y + dy;
+
+            // Xaritadan tashqariga chiqish (xavfsizlik uchun tekshirish)
+            if (targetY < 0 || targetY >= grid.length || targetX < 0 || targetX >= grid[0].length) return;
+
+            let targetCell = grid[targetY][targetX];
+
+            // Devor
+            if (targetCell === '#') {
+                playSound('error');
+                return; 
+            }
+
+            // Bo'sh joy yoki nishon -> Shunchaki yurish
+            if (targetCell === ' ' || targetCell === '.') {
+                saveState();
+                updateGridPos(player.x, player.y, targetX, targetY, false);
+                finishMove('step');
+            } 
+            // Quti yoki nishondagi quti -> Itarishga urinish
+            else if (targetCell === '$' || targetCell === '*') {
+                let beyondX = targetX + dx;
+                let beyondY = targetY + dy;
+                let beyondCell = grid[beyondY][beyondX];
+
+                // Agar qutining orti bo'sh bo'lsa yoki nishon bo'lsa, uni itarish mumkin
+                if (beyondCell === ' ' || beyondCell === '.') {
+                    saveState();
+                    
+                    // Qutini siljitish
+                    grid[targetY][targetX] = (targetCell === '*') ? '.' : ' ';
+                    grid[beyondY][beyondX] = (beyondCell === '.') ? '*' : '$';
+                    
+                    // O'yinchini siljitish
+                    updateGridPos(player.x, player.y, targetX, targetY, true);
+                    
+                    // Agar quti nishonga tushsa alohida ovoz chiqadi
+                    if (grid[beyondY][beyondX] === '*') {
+                        finishMove('target');
+                    } else {
+                        finishMove('push');
+                    }
+                } else {
+                    playSound('error'); // Quti orqasida devor yoki boshqa quti bor
+                }
+            }
+        }
+
+        function updateGridPos(oldX, oldY, newX, newY) {
+            // Eski joydan o'yinchini olib tashlash
+            if (grid[oldY][oldX] === '+') grid[oldY][oldX] = '.';
+            else grid[oldY][oldX] = ' ';
+
+            // Yangi joyga o'yinchini qo'yish
+            if (grid[newY][newX] === '.') grid[newY][newX] = '+';
+            else grid[newY][newX] = '@';
+
+            player.x = newX;
+            player.y = newY;
+        }
+
+        function finishMove(soundType) {
+            moves++;
+            movesEl.textContent = moves;
+            playSound(soundType);
+            renderGrid();
+            checkWin();
+        }
+
+        function checkWin() {
+            let isWin = true;
+            for (let y = 0; y < grid.length; y++) {
+                for (let x = 0; x < grid[y].length; x++) {
+                    // Agar xaritada bitta bo'lsa ham oddiy nishon (.) yoki nishon ustidagi o'yinchi (+) qolgan bo'lsa, yutmadik
+                    if (grid[y][x] === '.' || grid[y][x] === '+') {
+                        isWin = false;
+                        break;
+                    }
+                }
+            }
+
+            if (isWin) {
+                levelCompleted = true;
+                playSound('winLevel');
+                winMessageEl.classList.remove('hidden');
+                winMessageEl.classList.add('pop-animation');
+            }
+        }
+
+        function nextLevel() {
+            currentLevelIndex++;
+            if (currentLevelIndex < rawLevels.length) {
+                loadLevel(currentLevelIndex);
+            } else {
+                // Barcha bosqichlar tugadi
+                gameScreen.classList.remove('flex');
+                gameScreen.classList.add('hidden');
+                endScreen.classList.remove('hidden');
+                playSound('winLevel');
+            }
+        }
+
+        function backToMenu() {
+            endScreen.classList.add('hidden');
+            startScreen.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>

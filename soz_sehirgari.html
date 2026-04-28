@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>So'z Sehrgari</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #2e1065; /* To'q binafsha - sehrli fon */
+            background-image: radial-gradient(#4c1d95 2px, transparent 2px);
+            background-size: 40px 40px;
+            touch-action: manipulation;
+            user-select: none;
+            color: #f8fafc;
+        }
+
+        .pop-animation {
+            animation: pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes pop {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .shake-animation {
+            animation: shake 0.4s ease-in-out;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
+        }
+
+        .glow-success {
+            animation: glowGreen 1s ease-out forwards;
+        }
+        @keyframes glowGreen {
+            0% { box-shadow: 0 0 5px #4ade80, inset 0 0 5px #4ade80; border-color: #4ade80; }
+            50% { box-shadow: 0 0 30px #22c55e, inset 0 0 20px #22c55e; border-color: #22c55e; }
+            100% { box-shadow: 0 0 5px #4ade80, inset 0 0 5px #4ade80; border-color: transparent; }
+        }
+
+        /* Sehrli toshlar (Rune) dizayni */
+        .rune-btn {
+            background: linear-gradient(135deg, #7e22ce, #a855f7);
+            box-shadow: inset 0 4px 0 rgba(255,255,255,0.2), 0 6px 10px rgba(0,0,0,0.4);
+            border: 2px solid #d8b4fe;
+            color: #fef08a; /* Oltin rang harf */
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            transition: all 0.15s ease;
+        }
+        .rune-btn:active {
+            transform: translateY(4px);
+            box-shadow: inset 0 2px 0 rgba(255,255,255,0.2), 0 2px 5px rgba(0,0,0,0.4);
+        }
+        
+        .answer-slot {
+            background-color: rgba(0, 0, 0, 0.3);
+            border: 2px dashed #8b5cf6;
+            box-shadow: inset 0 4px 10px rgba(0,0,0,0.5);
+            color: #fef08a;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            transition: all 0.2s;
+        }
+        .answer-slot.filled {
+            background: linear-gradient(135deg, #0284c7, #3b82f6);
+            border: 2px solid #93c5fd;
+            cursor: pointer;
+            box-shadow: inset 0 4px 0 rgba(255,255,255,0.2), 0 4px 8px rgba(0,0,0,0.4);
+        }
+        .answer-slot.filled:hover {
+            transform: scale(1.05);
+            background: linear-gradient(135deg, #0369a1, #2563eb);
+        }
+
+        .pool-slot {
+            background-color: rgba(255,255,255,0.05);
+            border-radius: 0.75rem;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <!-- Asosiy O'yin Konteyneri -->
+    <div class="bg-indigo-950/80 backdrop-blur-sm rounded-3xl shadow-[0_0_50px_rgba(139,92,246,0.4)] p-4 md:p-8 max-w-lg w-full text-center border-4 border-purple-500 relative overflow-hidden">
+        
+        <button onclick="toggleSound()" id="sound-btn" class="absolute top-4 right-4 text-xl hover:scale-110 transition-transform bg-purple-900 p-2 rounded-full shadow-sm z-20 border border-purple-400 text-white">
+            🔊
+        </button>
+
+        <!-- Bosh Ekrani -->
+        <div id="start-screen" class="space-y-6 mt-4">
+            <div class="text-7xl mb-4 animate-bounce">🧙‍♂️</div>
+            <h1 class="text-4xl md:text-5xl font-black text-purple-300 mb-2 drop-shadow-[0_0_10px_rgba(168,85,247,0.8)]">So'z Sehrgari</h1>
+            <p class="text-purple-200 text-lg mb-4">Aralash harflardan to'g'ri so'zni yig'ing!</p>
+            
+            <div class="bg-purple-900/60 rounded-2xl p-4 inline-block mb-6 border border-purple-400 text-left max-w-sm w-full mx-auto">
+                <h3 class="font-bold text-fuchsia-300 mb-2 text-center">O'yin qoidalari:</h3>
+                <ul class="text-sm text-purple-100 space-y-2 font-bold">
+                    <li>📜 Tepada berilgan <b>Maslahatni</b> o'qing.</li>
+                    <li>🔮 Aralashib ketgan sehrli harflarni bosing.</li>
+                    <li>✨ Ularni to'g'ri ketma-ketlikda yig'ib so'z hosil qiling.</li>
+                    <li>❤️ Vaqt yo'q, lekin xato so'z tersangiz, jon ketadi!</li>
+                    <li>🏆 O'yin tasodifiy so'zli 100 bosqichdan iborat!</li>
+                </ul>
+            </div>
+
+            <div class="text-left max-w-xs mx-auto mb-4">
+                <input type="text" id="player-name" placeholder="Ismingizni kiriting..." class="w-full p-4 text-xl border-2 border-purple-400 bg-purple-950 rounded-2xl outline-none focus:border-fuchsia-400 transition-colors text-center font-bold text-white placeholder-purple-400" autocomplete="off">
+                <p id="name-error" class="text-red-400 text-sm hidden mt-2 text-center font-bold">Faqat harf (3-15 ta) kiritilishi kerak!</p>
+            </div>
+
+            <button onclick="startGame()" class="w-full bg-fuchsia-600 hover:bg-fuchsia-500 text-white font-bold py-4 px-8 rounded-2xl text-2xl transition-all transform hover:scale-105 shadow-[0_0_20px_rgba(192,38,211,0.6)] border border-fuchsia-400">
+                Sehrni Boshlash ✨
+            </button>
+            
+            <div class="text-sm text-purple-400 mt-6 font-bold border-t border-purple-800 pt-4">
+                <p>Tuzuvchi: Akmaljon Jo'raqo'ziyev</p>
+                <p>Telegram: <a href="https://t.me/Akmalmaths" target="_blank" class="text-fuchsia-400 hover:text-fuchsia-300 hover:underline">@Akmalmaths</a></p>
+            </div>
+        </div>
+
+        <!-- O'yin Ekrani -->
+        <div id="game-screen" class="hidden flex-col items-center w-full">
+            
+            <!-- Statistika -->
+            <div class="w-full grid grid-cols-3 gap-2 bg-purple-900/60 border border-purple-500 p-2 md:p-3 rounded-2xl items-center text-center mb-6">
+                <div class="flex flex-col">
+                    <span class="text-[10px] md:text-xs text-purple-300 font-bold uppercase tracking-wider">Ball</span>
+                    <span id="score" class="text-yellow-300 font-black text-xl md:text-2xl">0</span>
+                </div>
+                <div class="flex flex-col border-l border-purple-500">
+                    <span class="text-[10px] md:text-xs text-purple-300 font-bold uppercase tracking-wider">Bosqich</span>
+                    <span id="level-display" class="text-fuchsia-300 font-black text-xl md:text-2xl">1</span>
+                </div>
+                <div class="flex flex-col border-l border-purple-500">
+                    <span class="text-[10px] md:text-xs text-purple-300 font-bold uppercase tracking-wider">Jon</span>
+                    <span id="lives-display" class="text-red-400 text-sm md:text-lg tracking-widest mt-1">❤️❤️❤️</span>
+                </div>
+            </div>
+
+            <!-- Maslahat (Hint) qutisi -->
+            <div class="w-full bg-slate-800/80 border-2 border-slate-600 rounded-xl p-4 mb-6 shadow-inner relative">
+                <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-slate-700 border border-slate-500 px-3 py-1 rounded-full text-xs font-bold text-slate-300 uppercase tracking-widest">
+                    Maslahat
+                </div>
+                <h3 id="hint-text" class="text-lg md:text-xl font-black text-white mt-2 leading-tight">Eng aziz ne'mat</h3>
+            </div>
+
+            <!-- Javob maydoni (Bo'sh kataklar) -->
+            <div id="answer-container" class="flex flex-wrap justify-center gap-2 md:gap-3 mb-8 w-full min-h-[60px]">
+                <!-- Kataklar JS orqali qo'shiladi -->
+            </div>
+
+            <!-- Harflar maydoni (Aralash toshlar) -->
+            <div class="w-full border-t border-purple-500/50 pt-6 relative">
+                <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-indigo-950 px-2 text-xs font-bold text-purple-400">
+                    Harflarni tanlang
+                </div>
+                <div id="pool-container" class="flex flex-wrap justify-center gap-2 md:gap-3 w-full">
+                    <!-- Toshlar JS orqali qo'shiladi -->
+                </div>
+            </div>
+            
+            <div id="feedback" class="text-xl font-bold h-6 text-center transition-opacity opacity-0 text-green-400 mt-6">To'g'ri!</div>
+        </div>
+
+        <!-- Natija Ekrani -->
+        <div id="end-screen" class="hidden space-y-6 pop-animation mt-4">
+            <div id="end-emoji" class="text-7xl mb-4">🏆</div>
+            <h1 id="end-title" class="text-4xl font-black text-fuchsia-400 mb-2">O'yin Tugadi!</h1>
+            
+            <div class="bg-purple-900/60 rounded-2xl p-6 my-6 border border-purple-500">
+                <p class="text-purple-200 text-xl font-bold mb-2"><span id="final-name" class="text-yellow-300">O'yinchi</span></p>
+                <p class="text-purple-200 text-lg mb-2">Yakuniy ballingiz:</p>
+                <div class="text-6xl font-black text-yellow-400 mb-4 drop-shadow-[0_0_15px_rgba(250,204,21,0.5)]" id="final-score">0</div>
+                <p class="text-purple-200 text-lg mb-2">Topgan so'zlaringiz: <span id="final-level" class="font-bold text-fuchsia-300 text-2xl">1</span> ta</p>
+            </div>
+
+            <p id="rank-message" class="text-lg font-bold text-orange-400 mb-6">Zo'r natija!</p>
+            
+            <button onclick="resetGame()" class="w-full bg-green-500 hover:bg-green-400 text-white font-bold py-4 px-8 rounded-2xl text-2xl transition-all transform hover:scale-105 shadow-[0_0_20px_rgba(34,197,94,0.5)] border border-green-300">
+                Yangi Sehrlar 🔄
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        // --- Ovoz va Vibratsiya ---
+        let soundEnabled = true;
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx;
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            document.getElementById('sound-btn').textContent = soundEnabled ? '🔊' : '🔇';
+            if (soundEnabled && !audioCtx) audioCtx = new AudioContext();
+        }
+
+        function playSound(type) {
+            if (!soundEnabled) return;
+            if (!audioCtx) audioCtx = new AudioContext();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            const now = audioCtx.currentTime;
+            
+            if (type === 'tap') {
+                // Harf bosilganda sehrli shiqillash
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(600, now);
+                osc.frequency.exponentialRampToValueAtTime(1200, now + 0.1);
+                gain.gain.setValueAtTime(0.1, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                osc.start(now); osc.stop(now + 0.1);
+            } else if (type === 'untap') {
+                // Harf qaytarilganda
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(1200, now);
+                osc.frequency.exponentialRampToValueAtTime(600, now + 0.1);
+                gain.gain.setValueAtTime(0.05, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                osc.start(now); osc.stop(now + 0.1);
+            } else if (type === 'success') {
+                // To'g'ri so'z
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(400, now);
+                osc.frequency.setValueAtTime(600, now + 0.1);
+                osc.frequency.setValueAtTime(800, now + 0.2);
+                osc.frequency.setValueAtTime(1200, now + 0.3);
+                gain.gain.setValueAtTime(0.1, now);
+                gain.gain.linearRampToValueAtTime(0, now + 0.5);
+                osc.start(now); osc.stop(now + 0.5);
+            } else if (type === 'wrong') {
+                // Xato so'z
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(150, now);
+                osc.frequency.exponentialRampToValueAtTime(50, now + 0.4);
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+                osc.start(now); osc.stop(now + 0.4);
+            } else if (type === 'gameover') {
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(200, now);
+                osc.frequency.linearRampToValueAtTime(50, now + 0.6);
+                gain.gain.setValueAtTime(0.1, now);
+                gain.gain.linearRampToValueAtTime(0, now + 0.6);
+                osc.start(now); osc.stop(now + 0.6);
+            }
+        }
+
+        function vibrateDevice(pattern) {
+            if (soundEnabled && navigator.vibrate) {
+                try { navigator.vibrate(pattern); } catch(e) {}
+            }
+        }
+
+        // --- So'zlar Bazasi (100 ta bosqich uchun boyitilgan) ---
+        const allWords = [
+            // 2-3 harfli
+            { word: "NON", hint: "Dasturxon ko'rki, eng aziz ne'mat" },
+            { word: "GUL", hint: "Bog'da o'sadigan xushbo'y o'simlik" },
+            { word: "KUN", hint: "Quyosh ko'rinib turgan yorug' payt" },
+            { word: "SUV", hint: "Hayot manbai bo'lgan toza ichimlik" },
+            { word: "QOR", hint: "Qishda yog'adigan oq ne'mat" },
+            { word: "MUZ", hint: "Sovuqda qotib qolgan suv" },
+            { word: "FIL", hint: "Xartumli katta quruqlik hayvoni" },
+            { word: "TOJ", hint: "Podshohning boshiga kiyadigan narsasi" },
+            { word: "OY", hint: "Tunda osmonni yoritadi" },
+            { word: "UY", hint: "Oila yashaydigan issiq maskan" },
+            { word: "IT", hint: "Eng vafodor uy hayvoni" },
+            { word: "OT", hint: "Chopag'on ulov hayvoni" },
+
+            // 4 harfli
+            { word: "OLMA", hint: "Qizil yoki yashil dumaloq meva" },
+            { word: "QO'Y", hint: "Bizga jun va go'sht beruvchi hayvon" },
+            { word: "BAXT", hint: "Insonning eng quvonchli holati" },
+            { word: "XONA", hint: "Uyning ichki qismlaridan biri" },
+            { word: "STOL", hint: "Ustida ovqatlaniladi yoki yoziladi" },
+            { word: "STUL", hint: "O'tirish uchun mo'ljallangan jihoz" },
+            { word: "SOAT", hint: "Vaqtni ko'rsatuvchi asbob" },
+            { word: "QUSH", hint: "Osmonda parvoz qiluvchi jonzot" },
+            { word: "SHER", hint: "Hayvonlarning qiroli" },
+            { word: "XALQ", hint: "Bir mamlakatda yashovchi odamlar" },
+            { word: "BOG'", hint: "Meva daraxtlari ko'p ekilgan joy" },
+            { word: "TOG'", hint: "Juda baland va toshli hudud" },
+
+            // 5 harfli
+            { word: "KITOB", hint: "Barcha bilimlarning manbai" },
+            { word: "QALAM", hint: "Daftarga chizish va yozish asbobi" },
+            { word: "TULKI", hint: "Ertaklarda doim ayyor bo'lib keluvchi hayvon" },
+            { word: "ESHIK", hint: "Uyga yoki xonaga kirish joyi" },
+            { word: "DARYO", hint: "Oqib turuvchi katta suv havzasi" },
+            { word: "OSMON", hint: "Tepamizdagi moviy cheksizlik" },
+            { word: "BULUT", hint: "Osmondagi oq momiq parchalari" },
+            { word: "DO'ST", hint: "Eng yaqin va sodiq o'rtoq" },
+            { word: "OLCHA", hint: "Qizil va nordon danakli meva" },
+            { word: "QOVUN", hint: "Sariq va shirin katta poliz ekini" },
+            { word: "PIYOZ", hint: "To'g'raganda ko'zni yoshlantiradigan sabzavot" },
+            { word: "SABZI", hint: "Oshga solinadigan apelsinrang sabzavot" },
+            { word: "QOZON", hint: "Ovqat pishiriladigan katta idish" },
+            { word: "ERTAK", hint: "Yovuzlik va yaxshilik haqidagi qadimiy hikoya" },
+            { word: "KALIT", hint: "Qulfni ochish uchun kerakli buyum" },
+            { word: "VATAN", hint: "Inson tug'ilib o'sgan muqaddas makon" },
+            { word: "BO'RI", hint: "O'rmon sanitari deb ataladigan yirtqich" },
+
+            // 6 harfli
+            { word: "MAKTAB", hint: "Har kuni bilim olish maskani" },
+            { word: "QUYOSH", hint: "Kunduzi osmonni yorituvchi yulduz" },
+            { word: "RUCHKA", hint: "Daftarga yozish uchun kerakli ashyo" },
+            { word: "BAYROQ", hint: "Davlatning asosiy ramzlaridan biri" },
+            { word: "YULDUZ", hint: "Kechasi osmonda miltirab charaqlaydi" },
+            { word: "DARAXT", hint: "Kislorod va meva beruvchi nabotot" },
+            { word: "MUSIQA", hint: "Ohanglar va navolar yig'indisi" },
+            { word: "MEHNAT", hint: "Insonni ulug'laydigan asosiy harakat" },
+            { word: "MEHMON", hint: "Uyga tashrif buyuruvchi aziz inson" },
+            { word: "DERAZA", hint: "Uyni yoritish uchun devordagi oyna" },
+            { word: "KO'ZGU", hint: "O'z aksingizni ko'rsatuvchi shisha" },
+            { word: "BOYLIK", hint: "Juda ko'p pul yoki qadrli narsa" },
+            { word: "YONG'OQ", hint: "Miyaga o'xshash po'stli meva" },
+            { word: "BARMOQ", hint: "Qo'l yoki oyoqdagi qismlar" },
+            { word: "MAYMUN", hint: "Daraxtdan daraxtga sakrovchi hayvon" },
+            { word: "TIMSOH", hint: "Katta tishli yirtqich suv hayvoni" },
+            { word: "PIYOLA", hint: "Choy ichish uchun mo'ljallangan idish" },
+            { word: "QAYMOQ", hint: "Sut yuziga yig'iladigan mazali mahsulot" },
+            { word: "DOSTON", hint: "Qahramonlar haqidagi katta she'riy asar" },
+
+            // 7 harfli
+            { word: "KAPALAK", hint: "Qanotlari naqshdor, go'zal hasharot" },
+            { word: "CHUMOLI", hint: "O'zidan og'ir yuk ko'taruvchi hasharot" },
+            { word: "MUALLIM", hint: "O'quvchilarga ta'lim beruvchi ustoz" },
+            { word: "XOTIRA", hint: "O'tgan narsalarni eslab qolish qobiliyati" },
+            { word: "TELEFON", hint: "Uzoqdagi odam bilan gaplashish vositasi" },
+            { word: "MASHINA", hint: "To'rt g'ildirakli yo'lovchi transporti" },
+            { word: "KAMALAK", hint: "Yomg'irdan so'ng chiqadigan 7 xil rang" },
+            { word: "ZILZILA", hint: "Yer qatlamining qattiq silkinishi" },
+            { word: "CHOYNAK", hint: "Issiq choy damlanadigan idish" },
+            { word: "GULSHAN", hint: "Ko'plab chiroyli gullar ochilgan joy" },
+            { word: "CHAQMOQ", hint: "Yomg'ir paytidagi yorug'lik chaqnashi" },
+            { word: "TARBIYA", hint: "Kattalar bolalarga beradigan odob-axloq" },
+            { word: "ASALARI", hint: "Gullardan shira yig'ib asal qiluvchi hasharot" },
+            { word: "CHUMCHUQ", hint: "Atrofimizda ko'p uchraydigan jajji qush" },
+            { word: "QISHLOQ", hint: "Shahardan uzoqroq joylashgan aholi punkti" },
+            { word: "VILOYAT", hint: "Mamlakatning kattaroq hududiy bo'linishi" },
+            { word: "POYTAXT", hint: "Davlatning bosh va markaziy shahri" },
+            { word: "SAYYORA", hint: "Quyosh atrofida aylanuvchi osmon jismi" },
+            { word: "KELAJAK", hint: "Hali yetib kelmagan ertangi kunlar" },
+            { word: "HAQIQAT", hint: "Yolg'onning teskarisi, to'g'ri so'z" },
+
+            // 8+ harfli
+            { word: "SHIFOKOR", hint: "Bemorlarni davolovchi kasb egasi" },
+            { word: "QAHRAMON", hint: "Vatani va xalqi uchun jasorat ko'rsatgan shaxs" },
+            { word: "TAFAKKUR", hint: "Insonning chuqur aqliy o'ylash qobiliyati" },
+            { word: "SAMOLYOT", hint: "Osmonda uchadigan katta yo'lovchi transporti" },
+            { word: "MUHABBAT", hint: "Insonlar orasidagi eng kuchli mehr tuyg'usi" },
+            { word: "SHAFTOLI", hint: "Tukli, shirin danakli yozgi meva" },
+            { word: "MURABBIY", hint: "Sportchilarni musobaqaga tayyorlovchi ustoz" },
+            { word: "O'YINCHOQ", hint: "Bolalar o'ynashi uchun yasalgan narsa" },
+            { word: "BILIMDON", hint: "Juda ko'p narsani o'qib o'rgangan aqlli kishi" },
+            { word: "MAMLAKAT", hint: "O'z chegarasi va qonunlariga ega davlat" },
+            { word: "SARKARDA", hint: "Jang maydonida qo'shinni boshqaruvchi shaxs" },
+            { word: "TABASSUM", hint: "Quvonganda yuzda paydo bo'ladigan holat" },
+            { word: "DO'STLIK", hint: "Insonlar o'rtasidagi eng ishonchli rishta" },
+            { word: "FALSAFA", hint: "Hayot va borliq haqidagi eng chuqur fan" },
+            { word: "KUTUBXONA", hint: "O'n minglab turli kitoblar saqlanadigan bino" },
+            { word: "KOMPYUTER", hint: "Zamonaviy hisoblash elektron mashinasi" },
+            { word: "VELOSIPED", hint: "Ekologik toza, ikki g'ildirakli sport ulovi" },
+            { word: "KOSMONAVT", hint: "Fazo kiyimi kiyib koinotga uchuvchi inson" },
+            { word: "DONISHMAND", hint: "Ko'p narsani biluvchi juda aqlli inson" },
+            { word: "SHIRINLIK", hint: "Shakardan tayyorlanadigan qandolat mahsuloti" },
+            { word: "TELEVIZOR", hint: "Kino va ko'rsatuvlar ko'rsatuvchi quti" },
+            { word: "QALDIRG'OCH", hint: "Bahor darakchisi bo'lgan ayri dumli qush" },
+            { word: "QARINDOSH", hint: "Sizga qon jihatdan yaqin bo'lgan insonlar" },
+            { word: "DASTURXON", hint: "Ovqatlanish uchun mehmonlar oldiga yoziladigan mato" },
+            { word: "RESPUBLIKA", hint: "Xalq tomonidan saylanadigan davlat boshqaruvi" },
+            { word: "QIZIQARLI", hint: "Hech ham zerikarli bo'lmagan, diqqatni tortuvchi" },
+            { word: "MUZLATGICH", hint: "Oziq-ovqatlarni aynitmasdan saqlovchi sovuq shkaf" },
+            { word: "SARTAROSH", hint: "Sochlarni chiroyli qilib kesib beruvchi usta" },
+            { word: "HUNARMAND", hint: "O'z qo'li bilan chiroyli buyumlar yasovchi usta" },
+            { word: "IQTIDORLI", hint: "O'z tengdoshlaridan aqlli va qobiliyatliroq" },
+            { word: "DUNYOQARASH", hint: "Atrofdagi narsalarga bo'lgan shaxsiy fikr va tushuncha" },
+            { word: "BOSHQOTIRMA", hint: "Miyani charxlash uchun qiyin aql mashqi" },
+            { word: "MUVAFFAQIYAT", hint: "Ko'zlangan maqsadga erishish, g'alaba qozonish" }
+        ];
+
+        // --- O'yin Holati ---
+        let level = 1;
+        let score = 0;
+        let lives = 3;
+        let playerName = "";
+        let isChecking = false;
+        let usedWordsIndices = []; // Ishlatilgan so'zlar ro'yxati
+
+        let currentWordObj = null;
+        let currentWordString = "";
+        
+        let poolArray = [];   // Aralash harflar hovuzi
+        let answerArray = []; // O'yinchi tanlagan harflar uyasi
+
+        // UI Elementlar
+        const startScreen = document.getElementById('start-screen');
+        const gameScreen = document.getElementById('game-screen');
+        const endScreen = document.getElementById('end-screen');
+        const scoreEl = document.getElementById('score');
+        const levelDisplayEl = document.getElementById('level-display');
+        const livesDisplayEl = document.getElementById('lives-display');
+        const hintTextEl = document.getElementById('hint-text');
+        const answerContainer = document.getElementById('answer-container');
+        const poolContainer = document.getElementById('pool-container');
+        const feedbackEl = document.getElementById('feedback');
+        const playerNameInput = document.getElementById('player-name');
+        const nameErrorEl = document.getElementById('name-error');
+
+        // --- Asosiy Funksiyalar ---
+        function startGame() {
+            const nameValue = playerNameInput.value.trim();
+            const nameRegex = /^[A-Za-zА-Яа-яЎўҚқҒғҲҳ'ʻ]{3,15}$/; // ' belgisi uchun ham ruxsat (Bo'ri, O'qituvchi)
+            
+            if (!nameRegex.test(nameValue)) {
+                nameErrorEl.classList.remove('hidden');
+                playerNameInput.classList.add('border-red-500');
+                return;
+            }
+
+            nameErrorEl.classList.add('hidden');
+            playerNameInput.classList.remove('border-red-500');
+            playerName = nameValue;
+            document.getElementById('final-name').textContent = playerName;
+
+            if (soundEnabled && !audioCtx) audioCtx = new AudioContext();
+            if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+            playSound('success');
+            
+            startScreen.classList.add('hidden');
+            endScreen.classList.add('hidden');
+            gameScreen.classList.remove('hidden');
+            gameScreen.classList.add('flex', 'pop-animation');
+            
+            level = 1;
+            score = 0;
+            lives = 3;
+            usedWordsIndices = []; // Yangi o'yinda tozalash
+            
+            setupLevel();
+        }
+
+        function setupLevel() {
+            isChecking = false;
+            updateUI();
+
+            // 100 ta bosqich
+            if (level > 100) {
+                endGame(true);
+                return;
+            }
+
+            // Bosqichga qarab so'z uzunligini belgilash
+            let minLen, maxLen;
+            if (level <= 10) { minLen = 2; maxLen = 4; }
+            else if (level <= 35) { minLen = 4; maxLen = 5; }
+            else if (level <= 65) { minLen = 6; maxLen = 7; }
+            else { minLen = 8; maxLen = 20; }
+
+            // Mos keladigan so'zlarni izlash
+            let candidates = [];
+            for (let i = 0; i < allWords.length; i++) {
+                if (!usedWordsIndices.includes(i)) {
+                    let len = allWords[i].word.replace(/['ʻ]/g, "").length; // Belgilar uzunlikka kirmasin
+                    if (len >= minLen && len <= maxLen) {
+                        candidates.push(i);
+                    }
+                }
+            }
+
+            // Agar qiyinchilik bo'yicha mos so'z qolmagan bo'lsa, istalgan ishlatilmagan so'zni olamiz
+            if (candidates.length === 0) {
+                for (let i = 0; i < allWords.length; i++) {
+                    if (!usedWordsIndices.includes(i)) {
+                        candidates.push(i);
+                    }
+                }
+            }
+            
+            // Agar hammasi ishlatilib bo'lingan bo'lsa, xotirani tozalaymiz (takrorlanishiga ruxsat)
+            if (candidates.length === 0) {
+                usedWordsIndices = [];
+                for (let i = 0; i < allWords.length; i++) {
+                    candidates.push(i);
+                }
+            }
+
+            // Tasodifiy bittasini tanlash
+            let randomIndex = candidates[Math.floor(Math.random() * candidates.length)];
+            usedWordsIndices.push(randomIndex);
+            
+            currentWordObj = allWords[randomIndex];
+            currentWordString = currentWordObj.word.toUpperCase();
+            hintTextEl.textContent = currentWordObj.hint;
+
+            // Harflarga ajratish (o'/g'/sh/ch larni bitta xarf deb olmasdan, oddiy harf-ma-harf ajratamiz, 
+            // bolalar klaviaturadagidek alohida harflarni terishadi).
+            let letters = currentWordString.split('');
+            
+            // Aralashtirish (Asl so'z bilan bir xil bo'lib qolmasligini ta'minlash)
+            let shuffled;
+            do {
+                shuffled = [...letters].sort(() => Math.random() - 0.5);
+            } while (shuffled.join('') === currentWordString && letters.length > 2);
+
+            // Pool va Answer massivlarini shakllantirish
+            poolArray = shuffled.map((char, index) => ({ char: char, id: index }));
+            answerArray = new Array(letters.length).fill(null);
+
+            renderBoard();
+        }
+
+        function renderBoard() {
+            answerContainer.innerHTML = '';
+            poolContainer.innerHTML = '';
+
+            // Javob uyalari
+            answerArray.forEach((item, index) => {
+                const slot = document.createElement('div');
+                slot.className = `w-12 h-14 md:w-16 md:h-16 rounded-xl flex items-center justify-center text-2xl md:text-3xl font-black ${item ? 'answer-slot filled' : 'answer-slot'}`;
+                
+                if (item) {
+                    slot.textContent = item.char;
+                    slot.onclick = () => deselectLetter(index);
+                } else {
+                    // Bo'sh uya animatsiyasi
+                    slot.innerHTML = `<span class="opacity-20">•</span>`;
+                }
+                
+                answerContainer.appendChild(slot);
+            });
+
+            // Hovuzdagi toshlar
+            poolArray.forEach((item, index) => {
+                const slotBox = document.createElement('div');
+                slotBox.className = 'w-12 h-14 md:w-16 md:h-16 pool-slot flex items-center justify-center';
+                
+                if (item) {
+                    const btn = document.createElement('button');
+                    btn.className = 'rune-btn w-full h-full rounded-xl flex items-center justify-center text-2xl md:text-3xl font-black focus:outline-none';
+                    btn.textContent = item.char;
+                    btn.onclick = () => selectLetter(index);
+                    slotBox.appendChild(btn);
+                }
+                
+                poolContainer.appendChild(slotBox);
+            });
+        }
+
+        function selectLetter(poolIndex) {
+            if (isChecking) return;
+
+            // Birinchi bo'sh joyni topish
+            const emptyIndex = answerArray.findIndex(item => item === null);
+            
+            if (emptyIndex !== -1) {
+                playSound('tap');
+                vibrateDevice(15);
+                
+                // Toshni ko'chirish
+                answerArray[emptyIndex] = { ...poolArray[poolIndex], poolIndex: poolIndex };
+                poolArray[poolIndex] = null;
+                
+                renderBoard();
+                
+                // Agar hammasi to'lgan bo'lsa, tekshirish
+                if (answerArray.findIndex(item => item === null) === -1) {
+                    checkAnswer();
+                }
+            }
+        }
+
+        function deselectLetter(answerIndex) {
+            if (isChecking) return;
+
+            playSound('untap');
+            vibrateDevice(15);
+
+            const item = answerArray[answerIndex];
+            // Toshni hovuzdagi o'zining asl o'rniga qaytarish
+            poolArray[item.poolIndex] = { char: item.char, id: item.id };
+            answerArray[answerIndex] = null;
+            
+            renderBoard();
+        }
+
+        function checkAnswer() {
+            isChecking = true;
+            
+            const formedWord = answerArray.map(item => item.char).join('');
+            
+            if (formedWord === currentWordString) {
+                // To'g'ri topildi!
+                playSound('success');
+                vibrateDevice([30, 30, 30]);
+                
+                // Ball: har bir harf uchun 5 ball
+                score += currentWordString.length * 5;
+                updateUI();
+                
+                showFeedback("To'g'ri! ✨", "text-green-400");
+                answerContainer.classList.add('glow-success');
+                
+                setTimeout(() => {
+                    answerContainer.classList.remove('glow-success');
+                    level++;
+                    setupLevel();
+                }, 1500);
+
+            } else {
+                // Xato topildi!
+                playSound('wrong');
+                vibrateDevice([100, 50, 100]);
+                
+                lives--;
+                updateUI();
+                
+                showFeedback("Xato! ❌", "text-red-400");
+                gameScreen.classList.add('shake-animation');
+                
+                // Qizil qilib ko'rsatish
+                const slots = answerContainer.children;
+                for(let i=0; i<slots.length; i++) {
+                    slots[i].style.border = "2px solid #ef4444";
+                    slots[i].style.background = "linear-gradient(135deg, #7f1d1d, #ef4444)";
+                }
+                
+                setTimeout(() => {
+                    gameScreen.classList.remove('shake-animation');
+                    
+                    if (lives <= 0) {
+                        endGame(false);
+                    } else {
+                        // Barcha harflarni orqaga qaytarish
+                        answerArray.forEach((item, index) => {
+                            if (item) {
+                                poolArray[item.poolIndex] = { char: item.char, id: item.id };
+                                answerArray[index] = null;
+                            }
+                        });
+                        isChecking = false;
+                        renderBoard();
+                    }
+                }, 1000);
+            }
+        }
+
+        function updateUI() {
+            scoreEl.textContent = score;
+            levelDisplayEl.textContent = level <= 100 ? level : 100;
+            
+            let hearts = '';
+            for(let i = 0; i < lives; i++) hearts += '❤️';
+            for(let i = lives; i < 3; i++) hearts += '🖤';
+            livesDisplayEl.textContent = hearts;
+        }
+
+        function showFeedback(text, colorClass) {
+            feedbackEl.textContent = text;
+            feedbackEl.className = `text-xl font-bold h-6 text-center transition-opacity opacity-100 mt-6 ${colorClass}`;
+            setTimeout(() => {
+                feedbackEl.classList.remove('opacity-100');
+                feedbackEl.classList.add('opacity-0');
+            }, 1000);
+        }
+
+        function endGame(isWin) {
+            gameScreen.classList.remove('flex');
+            gameScreen.classList.add('hidden');
+            endScreen.classList.remove('hidden');
+            
+            document.getElementById('final-score').textContent = score;
+            document.getElementById('final-level').textContent = level - 1;
+
+            const endTitle = document.getElementById('end-title');
+            const rankMsg = document.getElementById('rank-message');
+            const endEmoji = document.getElementById('end-emoji');
+
+            if (isWin) {
+                playSound('success');
+                vibrateDevice([100, 50, 100, 50, 200]);
+                endTitle.textContent = "G'alaba! 🎉";
+                endEmoji.textContent = "📜";
+                rankMsg.textContent = "Siz barcha 100 ta so'zni topdingiz! SIZ HAQIQIY SO'Z SEHRGARISIZ! ✨🧙‍♂️";
+                rankMsg.className = "text-xl md:text-2xl font-black text-fuchsia-400 mb-6 animate-bounce";
+            } else {
+                playSound('gameover');
+                vibrateDevice([200, 100, 200]);
+                endTitle.textContent = "Sehr Tugadi! 💥";
+                endEmoji.textContent = "😵";
+                
+                if (score < 100) {
+                    rankMsg.textContent = "Ko'proq kitob o'qing! 📚";
+                    rankMsg.className = "text-lg font-bold text-purple-300 mb-6";
+                } else if (score < 400) {
+                    rankMsg.textContent = "Yaxshi lug'at boyligi! 👍";
+                    rankMsg.className = "text-lg font-bold text-fuchsia-300 mb-6";
+                } else {
+                    rankMsg.textContent = "Siz deyarli sehrgarsiz! 🔮🔥";
+                    rankMsg.className = "text-xl font-black text-yellow-300 mb-6 animate-bounce";
+                }
+            }
+        }
+
+        function resetGame() {
+            playSound('tap');
+            startGame();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suvchi Qahramon</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #ecfccb; 
+            background-image: radial-gradient(#d9f99d 2px, transparent 2px);
+            background-size: 30px 30px;
+            touch-action: manipulation;
+            user-select: none;
+        }
+
+        .pop-animation {
+            animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes pop {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .grow-animation {
+            animation: grow 1s ease-out forwards;
+        }
+        @keyframes grow {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+
+        #game-board {
+            display: grid;
+            gap: 2px;
+            background-color: #78350f; 
+            padding: 6px;
+            border-radius: 0.75rem;
+            margin: 0 auto;
+            box-shadow: inset 0 4px 10px rgba(0,0,0,0.5), 0 10px 20px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+            aspect-ratio: 1 / 1;
+        }
+
+        .pipe-cell {
+            background-color: #fef3c7; 
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            overflow: hidden;
+        }
+        .pipe-cell:hover {
+            background-color: #fde68a;
+        }
+
+        .pipe-svg {
+            width: 100%;
+            height: 100%;
+            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            color: #94a3b8; 
+        }
+
+        .watered .pipe-svg {
+            color: #3b82f6; 
+            filter: drop-shadow(0 0 5px rgba(59,130,246,0.6));
+        }
+        .watered {
+            background-color: #dbeafe !important; 
+        }
+
+        .endpoint {
+            font-size: clamp(1.5rem, 5vw, 2.5rem);
+            z-index: 10;
+            background-color: #fffbeb;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        /* O'rgatuvchi animatsiya */
+        .demo-container {
+            display: flex;
+            width: 140px;
+            height: 70px;
+            margin: 0 auto;
+            border-radius: 8px;
+            background-color: #78350f;
+            padding: 4px;
+            gap: 2px;
+            position: relative;
+            box-shadow: inset 0 4px 6px rgba(0,0,0,0.3);
+        }
+        .demo-cell {
+            flex: 1;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #fef3c7;
+        }
+        .demo-watered {
+            background-color: #dbeafe !important;
+            color: #3b82f6;
+            filter: drop-shadow(0 0 5px rgba(59,130,246,0.6));
+        }
+        @keyframes demoHand {
+            0%, 100% { transform: translate(15px, 15px); opacity: 0; }
+            15% { transform: translate(0, 0); opacity: 1; }
+            25% { transform: scale(0.8); opacity: 1; }
+            35% { transform: scale(1); opacity: 1; }
+            50% { transform: translate(15px, 15px); opacity: 0; }
+        }
+        .demo-hand {
+            position: absolute;
+            right: 15px;
+            bottom: -10px;
+            font-size: 2rem;
+            animation: demoHand 4s infinite;
+            z-index: 10;
+        }
+        @keyframes demoPipeRotate {
+            0%, 24% { transform: rotate(0deg); color: #94a3b8; }
+            25%, 80% { transform: rotate(90deg); color: #3b82f6; filter: drop-shadow(0 0 5px rgba(59,130,246,0.6)); }
+            81%, 100% { transform: rotate(0deg); color: #94a3b8; }
+        }
+        .demo-pipe-anim {
+            animation: demoPipeRotate 4s infinite;
+            width: 100%;
+            height: 100%;
+        }
+        @keyframes demoBg {
+             0%, 24% { background-color: #fef3c7; }
+             25%, 80% { background-color: #dbeafe; }
+             81%, 100% { background-color: #fef3c7; }
+        }
+        .demo-bg-anim {
+            animation: demoBg 4s infinite;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <!-- Asosiy O'yin Konteyneri -->
+    <div class="bg-white rounded-3xl shadow-[0_10px_40px_rgba(101,163,13,0.3)] p-4 md:p-8 max-w-lg w-full text-center border-4 border-lime-500 relative overflow-hidden">
+        
+        <button onclick="toggleSound()" id="sound-btn" class="absolute top-4 right-4 text-xl hover:scale-110 transition-transform bg-lime-100 p-2 rounded-full shadow-sm z-20 border border-lime-300">
+            🔊
+        </button>
+
+        <!-- Bosh Ekrani -->
+        <div id="start-screen" class="space-y-6 mt-4">
+            <div class="text-7xl mb-2 animate-bounce">🧑‍🔧</div>
+            <h1 class="text-4xl md:text-5xl font-black text-lime-600 mb-2 drop-shadow-sm">Suvchi Qahramon</h1>
+            <p class="text-slate-600 text-lg mb-4">Tezlik va mantiqni ishga soling!</p>
+            
+            <!-- O'rgatuvchi animatsiya (Mini-Demo) -->
+            <div class="demo-container">
+                <div class="demo-cell demo-watered">
+                    <svg viewBox="0 0 100 100"><rect x="0" y="35" width="100" height="30" fill="currentColor"/></svg>
+                </div>
+                <div class="demo-cell demo-bg-anim relative overflow-hidden">
+                    <svg class="demo-pipe-anim" viewBox="0 0 100 100"><rect x="35" y="0" width="30" height="100" fill="currentColor"/></svg>
+                </div>
+                <div class="demo-hand">👆</div>
+            </div>
+
+            <div class="bg-lime-50 rounded-2xl p-4 inline-block mb-4 border border-lime-200 text-left max-w-sm w-full mx-auto">
+                <h3 class="font-bold text-lime-800 mb-2 text-center">O'yin qoidalari:</h3>
+                <ul class="text-sm text-slate-700 space-y-2 font-bold">
+                    <li>🔄 Quvurlarni bosib <b>aylantiring</b> va suv yo'lini quring.</li>
+                    <li>⏳ <b>Vaqt chegarasi bor!</b> Shoshiling!</li>
+                    <li>🏆 O'yin umumiy <b>100 bosqichdan</b> iborat.</li>
+                </ul>
+            </div>
+
+            <div class="text-left max-w-xs mx-auto mb-4">
+                <input type="text" id="player-name" placeholder="Ismingizni kiriting..." class="w-full p-4 text-xl border-2 border-lime-300 bg-white rounded-2xl outline-none focus:border-lime-500 transition-colors text-center font-bold text-slate-700" autocomplete="off">
+                <p id="name-error" class="text-red-500 text-sm hidden mt-2 text-center font-bold">Faqat harf (3-15 ta) kiritilishi kerak!</p>
+            </div>
+
+            <button onclick="startGame()" class="w-full bg-lime-500 hover:bg-lime-600 text-white font-bold py-4 px-8 rounded-2xl text-2xl transition-all transform hover:scale-105 shadow-[0_0_15px_rgba(132,204,22,0.5)] border border-lime-400">
+                O'yinni Boshlash 🚀
+            </button>
+            
+            <div class="text-sm text-slate-500 mt-6 font-bold border-t border-slate-200 pt-4">
+                <p>Tuzuvchi: Akmaljon Jo'raqo'ziyev</p>
+                <p>Telegram: <a href="https://t.me/Akmalmaths" target="_blank" class="text-lime-600 hover:text-lime-700 hover:underline">@Akmalmaths</a></p>
+            </div>
+        </div>
+
+        <!-- O'yin Ekrani -->
+        <div id="game-screen" class="hidden flex-col items-center">
+            
+            <!-- Boshqaruv paneli (Tepada) -->
+            <div class="w-full flex justify-between items-center bg-lime-50 border border-lime-200 p-3 rounded-2xl mb-4 shadow-sm">
+                <div class="flex flex-col text-center px-1 md:px-2 w-1/4">
+                    <span class="text-[10px] md:text-xs text-lime-700 font-black uppercase tracking-wider">Bosqich</span>
+                    <span id="level-display" class="text-lime-600 font-black text-xl md:text-2xl">1</span>
+                </div>
+                <div class="flex flex-col text-center px-1 md:px-2 border-l border-r border-lime-200 w-1/4">
+                    <span class="text-[10px] md:text-xs text-lime-700 font-black uppercase tracking-wider">Ball</span>
+                    <span id="score-display" class="text-blue-600 font-black text-xl md:text-2xl">0</span>
+                </div>
+                <div class="flex flex-col text-center px-1 md:px-2 border-r border-lime-200 w-1/4">
+                    <span class="text-[10px] md:text-xs text-red-600 font-black uppercase tracking-wider">Vaqt</span>
+                    <span id="time-display" class="text-red-500 font-black text-xl md:text-2xl">40</span>
+                </div>
+                <div class="flex justify-center w-1/4">
+                    <!-- Restart tugmasi -->
+                    <button onclick="restartLevel()" class="bg-red-100 hover:bg-red-200 text-red-600 p-2 rounded-xl text-xl font-bold border border-red-200 transition-transform active:scale-95" title="Qaytadan boshlash">
+                        🔄
+                    </button>
+                </div>
+            </div>
+
+            <!-- O'yin maydoni -->
+            <div id="game-board-container" class="w-full relative pop-animation mb-2">
+                <div id="game-board"></div>
+                
+                <!-- Xabar oynasi (G'alaba qilganda) -->
+                <div id="win-message" class="hidden absolute inset-0 bg-white/90 flex flex-col items-center justify-center rounded-xl z-20">
+                    <div class="text-7xl mb-2 grow-animation">🌻</div>
+                    <h2 class="text-3xl font-black text-green-600 mb-2">Barakalla!</h2>
+                    <p id="level-points-msg" class="text-lg font-bold text-blue-500 mb-4">+15 ball</p>
+                    <button onclick="nextLevel()" class="bg-green-500 text-white px-8 py-3 rounded-2xl font-bold text-xl hover:bg-green-600 shadow-lg border border-green-400 active:scale-95 transition-transform">Keyingisi ➡️</button>
+                </div>
+            </div>
+            
+            <p class="text-sm text-slate-500 mt-2 font-bold">Barcha quvurlarni to'g'ri ulang!</p>
+        </div>
+
+        <!-- Natija Ekrani -->
+        <div id="end-screen" class="hidden space-y-6 pop-animation mt-4">
+            <div id="end-emoji" class="text-7xl mb-4">🏆</div>
+            <h1 id="end-title" class="text-4xl font-black text-lime-600 mb-2">O'yin Tugadi!</h1>
+            
+            <div class="bg-lime-50 rounded-2xl p-6 my-6 border border-lime-200">
+                <p class="text-slate-600 text-xl font-bold mb-4"><span id="final-name" class="text-lime-600">O'yinchi</span></p>
+                <p class="text-slate-700 text-lg mb-2">Yakuniy ballingiz:</p>
+                <div class="text-6xl font-black text-lime-600 mb-4" id="final-score-display">0</div>
+                <p id="end-desc" class="text-slate-700 text-lg">Siz barcha 100 ta bosqichdan o'tdingiz!</p>
+                <p id="end-rank" class="text-lime-600 font-black text-2xl mt-4">Sizning mantiqingiz a'lo darajada! 🌍✨</p>
+            </div>
+            
+            <button onclick="backToMenu()" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-4 px-8 rounded-2xl text-2xl transition-all transform hover:scale-105 shadow-[0_0_15px_rgba(59,130,246,0.5)] border border-blue-400">
+                Bosh Menyuga Qaytish 🏠
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        // --- Ovoz va Vibratsiya ---
+        let soundEnabled = true;
+        let audioCtx;
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            document.getElementById('sound-btn').textContent = soundEnabled ? '🔊' : '🔇';
+            if (soundEnabled && !audioCtx) audioCtx = new AudioContext();
+        }
+
+        function playSound(type) {
+            if (!soundEnabled) return;
+            if (!audioCtx) audioCtx = new AudioContext();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            const now = audioCtx.currentTime;
+            
+            if (type === 'rotate') {
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(800, now);
+                osc.frequency.exponentialRampToValueAtTime(400, now + 0.05);
+                gain.gain.setValueAtTime(0.05, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+                osc.start(now); osc.stop(now + 0.05);
+            } else if (type === 'water') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(300, now);
+                osc.frequency.linearRampToValueAtTime(400, now + 0.2);
+                gain.gain.setValueAtTime(0.1, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
+                osc.start(now); osc.stop(now + 0.3);
+            } else if (type === 'win') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(400, now);
+                osc.frequency.setValueAtTime(600, now + 0.1);
+                osc.frequency.setValueAtTime(800, now + 0.2);
+                osc.frequency.setValueAtTime(1200, now + 0.3);
+                gain.gain.setValueAtTime(0.1, now);
+                gain.gain.linearRampToValueAtTime(0, now + 0.6);
+                osc.start(now); osc.stop(now + 0.6);
+            } else if (type === 'error') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(150, now);
+                osc.frequency.linearRampToValueAtTime(50, now + 0.5);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.5);
+                osc.start(now); osc.stop(now + 0.5);
+            }
+        }
+
+        function vibrateDevice(pattern) {
+            if (soundEnabled && navigator.vibrate) {
+                try { navigator.vibrate(pattern); } catch(e) {}
+            }
+        }
+
+        // --- O'yin Logikasi va Algoritmlar ---
+        const DIRS = [
+            {dx: 0, dy: -1, opp: 2}, 
+            {dx: 1, dy: 0, opp: 3},  
+            {dx: 0, dy: 1, opp: 0},  
+            {dx: -1, dy: 0, opp: 1}  
+        ];
+
+        const PIPE_TYPES = {
+            'straight': {
+                conns: [[0, 2], [1, 3], [0, 2], [1, 3]], 
+                svg: `<svg class="pipe-svg" viewBox="0 0 100 100"><rect x="35" y="0" width="30" height="100" fill="currentColor"/></svg>`
+            },
+            'corner': {
+                conns: [[0, 1], [1, 2], [2, 3], [3, 0]],
+                svg: `<svg class="pipe-svg" viewBox="0 0 100 100">
+                        <rect x="35" y="0" width="30" height="65" fill="currentColor"/>
+                        <rect x="35" y="35" width="65" height="30" fill="currentColor"/>
+                      </svg>`
+            }
+        };
+
+        let level = 1;
+        let score = 0;
+        let playerName = "";
+        let moves = 0;
+        let gridW = 3, gridH = 3;
+        let grid = [];
+        let isLevelComplete = false;
+        let timeLeft = 40;
+        let timerInterval;
+        let initialTimeForLevel = 40;
+
+        const startScreen = document.getElementById('start-screen');
+        const gameScreen = document.getElementById('game-screen');
+        const endScreen = document.getElementById('end-screen');
+        const boardEl = document.getElementById('game-board');
+        const levelEl = document.getElementById('level-display');
+        const scoreEl = document.getElementById('score-display');
+        const winMessageEl = document.getElementById('win-message');
+        const playerNameInput = document.getElementById('player-name');
+        const nameErrorEl = document.getElementById('name-error');
+
+        function startGame() {
+            const nameValue = playerNameInput.value.trim();
+            const nameRegex = /^[A-Za-zА-Яа-яЎўҚқҒғҲҳ'ʻ]{3,15}$/;
+            
+            if (!nameRegex.test(nameValue)) {
+                nameErrorEl.classList.remove('hidden');
+                playerNameInput.classList.add('border-red-500');
+                return;
+            }
+
+            nameErrorEl.classList.add('hidden');
+            playerNameInput.classList.remove('border-red-500');
+            playerName = nameValue;
+
+            if (soundEnabled && !audioCtx) audioCtx = new AudioContext();
+            if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+            playSound('water');
+            
+            startScreen.classList.add('hidden');
+            endScreen.classList.add('hidden');
+            gameScreen.classList.remove('hidden');
+            gameScreen.classList.add('flex', 'pop-animation');
+            
+            level = 1;
+            score = 0;
+            scoreEl.textContent = score;
+            setupLevel();
+        }
+
+        function setupLevel() {
+            isLevelComplete = false;
+            moves = 0;
+            winMessageEl.classList.add('hidden');
+            
+            // Bosqichga qarab o'lcham va vaqtni aniqlash
+            if (level <= 30) { 
+                gridW = 3; gridH = 3; 
+                initialTimeForLevel = 40; 
+            }
+            else if (level <= 60) { 
+                gridW = 4; gridH = 4; 
+                initialTimeForLevel = 50; 
+            }
+            else { 
+                gridW = 5; gridH = 5; 
+                initialTimeForLevel = 60; 
+            }
+            timeLeft = initialTimeForLevel;
+
+            levelEl.textContent = level;
+            document.getElementById('time-display').textContent = timeLeft;
+
+            generateMaze();
+            renderBoard();
+            checkWaterFlow(); 
+            
+            if (!isLevelComplete) startTimer();
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            document.getElementById('time-display').classList.remove('animate-pulse', 'text-red-700');
+            
+            timerInterval = setInterval(() => {
+                if (isLevelComplete) {
+                    clearInterval(timerInterval);
+                    return;
+                }
+                
+                timeLeft--;
+                document.getElementById('time-display').textContent = timeLeft;
+                
+                if (timeLeft <= 10) {
+                    document.getElementById('time-display').classList.add('animate-pulse', 'text-red-700');
+                }
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    handleTimeOut();
+                }
+            }, 1000);
+        }
+
+        function handleTimeOut() {
+            isLevelComplete = true;
+            playSound('error');
+            vibrateDevice([100, 50, 100]);
+            endGame(false);
+        }
+
+        function generateMaze() {
+            grid = Array(gridH).fill().map(() => Array(gridW).fill(null));
+            
+            let path = [];
+            let visited = new Set();
+            
+            function dfs(x, y) {
+                visited.add(`${x},${y}`);
+                path.push({x, y});
+
+                if (x === gridW - 1 && y === gridH - 1) return true;
+
+                let ds = [0, 1, 2, 3];
+                ds.sort(() => Math.random() - 0.5);
+
+                for (let d of ds) {
+                    let nx = x + DIRS[d].dx;
+                    let ny = y + DIRS[d].dy;
+                    if (nx >= 0 && nx < gridW && ny >= 0 && ny < gridH && !visited.has(`${nx},${ny}`)) {
+                        if (dfs(nx, ny)) return true;
+                    }
+                }
+
+                path.pop();
+                return false;
+            }
+
+            dfs(0, 0);
+
+            for (let i = 0; i < path.length; i++) {
+                let cell = path[i];
+                let inDir = -1, outDir = -1;
+
+                if (i > 0) { 
+                    let prev = path[i-1];
+                    if (prev.y < cell.y) inDir = 0; 
+                    else if (prev.x > cell.x) inDir = 1; 
+                    else if (prev.y > cell.y) inDir = 2; 
+                    else if (prev.x < cell.x) inDir = 3; 
+                } else {
+                    inDir = 0;
+                }
+
+                if (i < path.length - 1) { 
+                    let next = path[i+1];
+                    if (next.y < cell.y) outDir = 0;
+                    else if (next.x > cell.x) outDir = 1;
+                    else if (next.y > cell.y) outDir = 2;
+                    else if (next.x < cell.x) outDir = 3;
+                } else {
+                    outDir = 2;
+                }
+
+                let type = 'straight';
+                if ((inDir === 0 && outDir === 2) || (inDir === 2 && outDir === 0) ||
+                    (inDir === 1 && outDir === 3) || (inDir === 3 && outDir === 1)) {
+                    type = 'straight';
+                } else {
+                    type = 'corner';
+                }
+
+                grid[cell.y][cell.x] = {
+                    type: type,
+                    rot: Math.floor(Math.random() * 4), 
+                    isPath: true,
+                    correctConns: [inDir, outDir] 
+                };
+            }
+
+            for (let y = 0; y < gridH; y++) {
+                for (let x = 0; x < gridW; x++) {
+                    if (grid[y][x] === null) {
+                        grid[y][x] = {
+                            type: Math.random() > 0.5 ? 'straight' : 'corner',
+                            rot: Math.floor(Math.random() * 4),
+                            isPath: false
+                        };
+                    }
+                    grid[y][x].isWatered = false;
+                }
+            }
+        }
+
+        function renderBoard() {
+            boardEl.style.gridTemplateColumns = `repeat(${gridW}, minmax(0, 1fr))`;
+            boardEl.innerHTML = '';
+
+            for (let y = 0; y < gridH; y++) {
+                for (let x = 0; x < gridW; x++) {
+                    let cell = grid[y][x];
+                    let div = document.createElement('div');
+                    
+                    if (x === 0 && y === 0) {
+                        div.className = 'pipe-cell endpoint';
+                        div.innerHTML = `💧`;
+                    } else if (x === gridW - 1 && y === gridH - 1) {
+                        div.className = 'pipe-cell endpoint';
+                        div.innerHTML = cell.isWatered ? `🌻` : `🌱`;
+                        if(cell.isWatered) div.classList.add('grow-animation');
+                    } else {
+                        div.className = 'pipe-cell';
+                        if (cell.isWatered) div.classList.add('watered');
+                        
+                        let svgWrap = document.createElement('div');
+                        svgWrap.innerHTML = PIPE_TYPES[cell.type].svg;
+                        let svgEl = svgWrap.firstElementChild;
+                        svgEl.style.transform = `rotate(${cell.rot * 90}deg)`;
+                        div.appendChild(svgEl);
+
+                        div.onclick = () => rotatePipe(x, y);
+                    }
+                    
+                    boardEl.appendChild(div);
+                }
+            }
+        }
+
+        function rotatePipe(x, y) {
+            if (isLevelComplete) return;
+
+            let cell = grid[y][x];
+            cell.rot = (cell.rot + 1) % 4; 
+            
+            moves++;
+            playSound('rotate');
+            vibrateDevice(15);
+            
+            checkWaterFlow();
+        }
+
+        function checkWaterFlow() {
+            for (let y = 0; y < gridH; y++) {
+                for (let x = 0; x < gridW; x++) {
+                    grid[y][x].isWatered = false;
+                }
+            }
+
+            let queue = [];
+            let startCell = grid[0][0];
+            startCell.isWatered = true;
+            queue.push({x: 0, y: 0, outDir: 1}); 
+            queue.push({x: 0, y: 0, outDir: 2}); 
+
+            let visited = new Set(['0,0']);
+
+            while (queue.length > 0) {
+                let curr = queue.shift();
+                
+                let nx = curr.x + DIRS[curr.outDir].dx;
+                let ny = curr.y + DIRS[curr.outDir].dy;
+                
+                if (nx >= 0 && nx < gridW && ny >= 0 && ny < gridH) {
+                    if (nx === gridW - 1 && ny === gridH - 1) {
+                        grid[ny][nx].isWatered = true;
+                        continue; 
+                    }
+
+                    if (!visited.has(`${nx},${ny}`)) {
+                        let neighbor = grid[ny][nx];
+                        let neighborConns = PIPE_TYPES[neighbor.type].conns[neighbor.rot];
+                        
+                        let inDir = DIRS[curr.outDir].opp; 
+                        
+                        if (neighborConns.includes(inDir)) {
+                            neighbor.isWatered = true;
+                            visited.add(`${nx},${ny}`);
+                            
+                            let nextOutDir = neighborConns.find(c => c !== inDir);
+                            queue.push({x: nx, y: ny, outDir: nextOutDir});
+                        }
+                    }
+                }
+            }
+
+            renderBoard();
+
+            if (grid[gridH - 1][gridW - 1].isWatered) {
+                isLevelComplete = true;
+                
+                // Ballarni hisoblash: 10 yoki 15 ball beriladi
+                let earnedPoints = 10;
+                if (timeLeft >= Math.floor(initialTimeForLevel / 2)) {
+                    earnedPoints = 15;
+                }
+                
+                score += earnedPoints;
+                scoreEl.textContent = score;
+                document.getElementById('level-points-msg').textContent = `+${earnedPoints} ball`;
+
+                playSound('win');
+                vibrateDevice([50, 50, 100]);
+                
+                setTimeout(() => {
+                    winMessageEl.classList.remove('hidden');
+                    winMessageEl.classList.add('pop-animation');
+                }, 500);
+            }
+        }
+
+        function restartLevel() {
+            if (isLevelComplete) return;
+            setupLevel(); 
+        }
+
+        function nextLevel() {
+            if (level >= 100) {
+                endGame(true);
+            } else {
+                level++;
+                setupLevel();
+            }
+        }
+
+        function endGame(isWin = false) {
+            clearInterval(timerInterval);
+            gameScreen.classList.remove('flex');
+            gameScreen.classList.add('hidden');
+            endScreen.classList.remove('hidden');
+            
+            document.getElementById('final-name').textContent = playerName;
+            document.getElementById('final-score-display').textContent = score + " ball";
+
+            const endTitle = document.getElementById('end-title');
+            const endDesc = document.getElementById('end-desc');
+            const endRank = document.getElementById('end-rank');
+            const endEmoji = document.getElementById('end-emoji');
+
+            if (isWin) {
+                playSound('win');
+                endTitle.textContent = "Ajoyib G'alaba!";
+                endEmoji.textContent = "🏆";
+                endDesc.textContent = "Siz barcha 100 ta bosqichdan o'tdingiz!";
+                endRank.textContent = "Sizning mantiqingiz a'lo darajada! 🌍✨";
+            } else {
+                endTitle.textContent = "Vaqt Tugadi! ⏰";
+                endEmoji.textContent = "⏳";
+                endDesc.textContent = `Siz ${level}-bosqichgacha yetib keldingiz.`;
+                endRank.textContent = "Tezroq harakat qiling va yutib oling! 💧🏃‍♂️";
+            }
+        }
+
+        function backToMenu() {
+            endScreen.classList.add('hidden');
+            startScreen.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
