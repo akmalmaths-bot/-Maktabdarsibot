@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quvnoq Savat</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #e0f2fe; /* Och moviy osmon */
+            background-image: radial-gradient(#bae6fd 2px, transparent 2px);
+            background-size: 40px 40px;
+            touch-action: manipulation;
+            user-select: none;
+            overflow-x: hidden; /* Faqat yonga surilishni bloklaymiz, pastga surish mumkin */
+        }
+
+        .pop-animation {
+            animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes pop {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .shake-animation {
+            animation: shake 0.4s ease-in-out;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-15px); }
+            40%, 80% { transform: translateX(15px); }
+        }
+
+        #game-canvas {
+            display: block;
+            margin: 0 auto;
+            touch-action: none; /* Canvas ichida mobil surishlarni o'chirish */
+            background: linear-gradient(to bottom, #7dd3fc, #e0f2fe 70%, #86efac 100%);
+            border-radius: 1rem;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.1), 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Orqa fon bulutlari effekti uchun */
+        .cloud {
+            position: absolute;
+            font-size: 4rem;
+            opacity: 0.5;
+            z-index: 0;
+            pointer-events: none;
+            animation: floatCloud 20s linear infinite;
+        }
+        @keyframes floatCloud {
+            from { transform: translateX(-100px); }
+            to { transform: translateX(500px); }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-2 md:p-4">
+
+    <!-- Asosiy O'yin Konteyneri -->
+    <div class="bg-white/90 backdrop-blur-md rounded-3xl shadow-[0_15px_50px_rgba(2,132,199,0.3)] p-4 md:p-6 max-w-md w-full text-center border-4 border-sky-400 relative overflow-hidden" id="main-container">
+        
+        <button onclick="toggleSound()" id="sound-btn" class="absolute top-4 right-4 text-xl hover:scale-110 transition-transform bg-white/80 p-2 rounded-full shadow-sm z-20 border border-slate-200">
+            🔊
+        </button>
+
+        <!-- Bosh Ekrani -->
+        <div id="start-screen" class="space-y-6 mt-4 relative z-10">
+            <div class="text-7xl mb-2 animate-bounce">🧺</div>
+            <h1 class="text-4xl md:text-5xl font-black text-sky-500 mb-2 drop-shadow-sm">Quvnoq Savat</h1>
+            <p class="text-slate-600 text-lg mb-4">Mevalarni tuting, bombalardan qoching!</p>
+            
+            <div class="bg-sky-50 rounded-2xl p-4 inline-block mb-4 border border-sky-200 text-left max-w-sm w-full mx-auto">
+                <h3 class="font-bold text-sky-800 mb-2 text-center">O'yin qoidalari:</h3>
+                <ul class="text-sm text-slate-700 space-y-2 font-bold">
+                    <li>👆 Savatni barmog'ingiz bilan <b>surib</b> boshqaring.</li>
+                    <li>🍎 Mazali mevalarni savatga tuting (+10 ball).</li>
+                    <li>💣 Zararkunanda va bombalarga tegmang (-1 jon).</li>
+                    <li>⚠️ Mevalarni yerga tushirib yubormang (-1 jon).</li>
+                    <li>⭐ Yulduzchalar ko'proq bonus beradi (+50 ball).</li>
+                </ul>
+            </div>
+
+            <div class="text-left max-w-xs mx-auto mb-4">
+                <input type="text" id="player-name" placeholder="Ismingizni kiriting..." class="w-full p-4 text-xl border-2 border-sky-300 bg-white rounded-2xl outline-none focus:border-blue-500 transition-colors text-center font-bold text-slate-700" autocomplete="off">
+                <p id="name-error" class="text-red-500 text-sm hidden mt-2 text-center font-bold">Faqat harf (3-15 ta) kiritilishi kerak!</p>
+            </div>
+
+            <button onclick="startGame()" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-4 px-8 rounded-2xl text-2xl transition-all transform hover:scale-105 shadow-[0_0_15px_rgba(59,130,246,0.5)] border border-blue-400">
+                Hosilni Yig'ish 🍏
+            </button>
+            
+            <div class="text-sm text-slate-500 mt-6 font-bold border-t border-slate-200 pt-4">
+                <p>Tuzuvchi: Akmaljon Jo'raqo'ziyev</p>
+                <p>Telegram: <a href="https://t.me/Akmalmaths" target="_blank" class="text-blue-500 hover:text-blue-600 hover:underline">@Akmalmaths</a></p>
+            </div>
+        </div>
+
+        <!-- O'yin Ekrani -->
+        <div id="game-screen" class="hidden flex-col items-center">
+            
+            <!-- Statistika -->
+            <div class="w-full flex justify-between items-center bg-white/90 border border-slate-200 p-2 md:p-3 rounded-2xl mb-4 shadow-sm z-10">
+                <div class="flex flex-col text-center px-2 w-1/3">
+                    <span class="text-[10px] md:text-xs text-slate-500 font-bold uppercase tracking-wider">Bosqich</span>
+                    <span id="level-display" class="text-sky-600 font-black text-2xl md:text-3xl">1</span>
+                </div>
+                <div class="flex flex-col text-center px-2 border-l border-slate-200 w-1/3">
+                    <span class="text-[10px] md:text-xs text-slate-500 font-bold uppercase tracking-wider">Ball</span>
+                    <span id="score-display" class="text-blue-600 font-black text-2xl md:text-3xl">0</span>
+                </div>
+                <div class="flex flex-col text-center px-2 border-l border-slate-200 w-1/3">
+                    <span class="text-[10px] md:text-xs text-red-500 font-bold uppercase tracking-wider">Jon</span>
+                    <span id="lives-display" class="text-red-500 font-black tracking-widest text-lg md:text-xl mt-1">❤️❤️❤️</span>
+                </div>
+            </div>
+
+            <!-- O'yin maydoni (Canvas) -->
+            <div class="relative w-full flex justify-center">
+                <!-- Bulutlar fon uchun -->
+                <div class="cloud" style="top: 20px; animation-duration: 25s; left: -100px;">☁️</div>
+                <div class="cloud" style="top: 80px; animation-duration: 18s; left: -200px; transform: scale(0.7);">☁️</div>
+                <div class="cloud" style="top: 150px; animation-duration: 30s; left: -50px; transform: scale(0.5);">☁️</div>
+
+                <canvas id="game-canvas" width="350" height="480" class="border-4 border-sky-300"></canvas>
+            </div>
+            
+            <p class="text-sm text-slate-600 mt-3 font-bold bg-sky-50 px-4 py-2 rounded-full border border-sky-200 shadow-sm animate-pulse">Savatni barmog'ingiz bilan chapga/o'ngga suring ↔️</p>
+        </div>
+
+        <!-- Natija Ekrani -->
+        <div id="end-screen" class="hidden space-y-4 pop-animation mt-4 w-full relative z-10">
+            <div id="end-emoji" class="text-6xl mb-2">💥</div>
+            <h1 id="end-title" class="text-3xl font-black text-red-500 mb-2">O'yin Tugadi!</h1>
+            
+            <div class="bg-sky-50 rounded-2xl p-4 mb-4 border border-sky-200 text-center">
+                <p class="text-slate-600 text-xl font-bold mb-1"><span id="final-name" class="text-blue-600">O'yinchi</span></p>
+                <p class="text-slate-500 text-sm font-bold">Siz yig'gan jami hosil (ball):</p>
+                <div class="text-6xl font-black text-blue-600 my-2 drop-shadow-sm" id="final-score">0</div>
+                <p class="text-slate-600 text-md font-bold mt-2">Yetib kelgan bosqichingiz: <span id="final-level" class="text-purple-600 text-xl">1</span></p>
+                
+                <div class="mt-4 bg-white p-2 rounded-lg border border-slate-200 shadow-inner">
+                    <p class="text-xs text-slate-500 font-bold uppercase">Maqom</p>
+                    <p class="text-xl font-black text-orange-500 leading-tight mt-1" id="final-rank">Oddiy Yig'imchi</p>
+                </div>
+            </div>
+            
+            <button onclick="startGame()" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-8 rounded-2xl text-xl transition-all transform hover:scale-105 shadow-[0_0_15px_rgba(34,197,94,0.5)] border border-green-400">
+                Yana Yig'ish 🔄
+            </button>
+            <button onclick="backToMenu()" class="w-full mt-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-3 px-8 rounded-2xl text-lg transition-all border border-slate-300">
+                Bosh Menyuga 🏠
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        // --- Ovoz va Vibratsiya ---
+        let soundEnabled = true;
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx;
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            document.getElementById('sound-btn').textContent = soundEnabled ? '🔊' : '🔇';
+            if (soundEnabled && !audioCtx) audioCtx = new AudioContext();
+        }
+
+        function playSound(type) {
+            if (!soundEnabled) return;
+            if (!audioCtx) audioCtx = new AudioContext();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            const now = audioCtx.currentTime;
+            
+            if (type === 'catch') {
+                // Meva ushlanganda qisqa jarangdor ovoz
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(600, now);
+                osc.frequency.exponentialRampToValueAtTime(1200, now + 0.1);
+                gain.gain.setValueAtTime(0.1, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                osc.start(now); osc.stop(now + 0.1);
+            } else if (type === 'bonus') {
+                // Yulduzcha ushlanganda
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(400, now);
+                osc.frequency.setValueAtTime(600, now + 0.1);
+                osc.frequency.setValueAtTime(800, now + 0.2);
+                gain.gain.setValueAtTime(0.1, now);
+                gain.gain.linearRampToValueAtTime(0, now + 0.3);
+                osc.start(now); osc.stop(now + 0.3);
+            } else if (type === 'hurt') {
+                // Bombaga tushganda (portlashga o'xshash)
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(150, now);
+                osc.frequency.linearRampToValueAtTime(50, now + 0.3);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
+                osc.start(now); osc.stop(now + 0.3);
+            } else if (type === 'miss') {
+                // Meva tushib ketsa
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(300, now);
+                osc.frequency.linearRampToValueAtTime(100, now + 0.2);
+                gain.gain.setValueAtTime(0.1, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.2);
+                osc.start(now); osc.stop(now + 0.2);
+            } else if (type === 'levelUp') {
+                // Bosqich oshganda
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(400, now);
+                osc.frequency.setValueAtTime(600, now + 0.15);
+                osc.frequency.setValueAtTime(800, now + 0.3);
+                gain.gain.setValueAtTime(0.1, now);
+                gain.gain.linearRampToValueAtTime(0, now + 0.45);
+                osc.start(now); osc.stop(now + 0.45);
+            } else if (type === 'gameover') {
+                // O'yin tugaganda
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(200, now);
+                osc.frequency.linearRampToValueAtTime(50, now + 0.6);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.linearRampToValueAtTime(0, now + 0.6);
+                osc.start(now); osc.stop(now + 0.6);
+            }
+        }
+
+        function vibrateDevice(pattern) {
+            if (soundEnabled && navigator.vibrate) {
+                try { navigator.vibrate(pattern); } catch(e) {}
+            }
+        }
+
+        // --- O'yin O'zgaruvchilari va Fizika ---
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Elementlar
+        const scoreEl = document.getElementById('score-display');
+        const levelEl = document.getElementById('level-display');
+        const livesEl = document.getElementById('lives-display');
+        const playerNameInput = document.getElementById('player-name');
+        const nameErrorEl = document.getElementById('name-error');
+        const startScreen = document.getElementById('start-screen');
+        const gameScreen = document.getElementById('game-screen');
+        const endScreen = document.getElementById('end-screen');
+
+        // Konstanta turlari
+        const FRUITS = ['🍎', '🍐', '🍊', '🍋', '🍌', '🍉', '🍇', '🍓', '🍒', '🍑'];
+        const DANGERS = ['💣', '🕷️', '🐛', '🪨', '🤢'];
+        const BONUS = ['⭐', '💎'];
+        
+        let animationId;
+        let isGameRunning = false;
+        let score = 0;
+        let level = 1;
+        let lives = 3;
+        let playerName = "";
+        let frameCount = 0;
+        
+        // Obyektlar massivi
+        let items = [];
+        let particles = [];
+        let floatingTexts = [];
+
+        // Savat (Basket)
+        let basket = {
+            x: canvas.width / 2 - 35, // markazda
+            y: canvas.height - 60,
+            width: 70,
+            height: 50,
+            emoji: '🧺'
+        };
+
+        // Boshqaruvni eshitish (Mouse, Touch va Keyboard)
+        function updateBasketPosition(clientX) {
+            if (!isGameRunning) return;
+            const rect = canvas.getBoundingClientRect();
+            // Ekranga nisbatan to'g'ri joylashuvni hisoblash (Scale ni inobatga olgan holda)
+            const scaleX = canvas.width / rect.width;
+            let newX = (clientX - rect.left) * scaleX - basket.width / 2;
+            
+            // Savat ekrandan chiqib ketmasligini ta'minlash
+            basket.x = Math.max(0, Math.min(canvas.width - basket.width, newX));
+        }
+
+        canvas.addEventListener('touchmove', e => {
+            e.preventDefault();
+            updateBasketPosition(e.touches[0].clientX);
+        }, {passive: false});
+
+        canvas.addEventListener('touchstart', e => {
+            e.preventDefault();
+            updateBasketPosition(e.touches[0].clientX);
+        }, {passive: false});
+
+        canvas.addEventListener('mousemove', e => {
+            updateBasketPosition(e.clientX);
+        });
+
+        // Klaviatura
+        let keys = { ArrowLeft: false, ArrowRight: false };
+        document.addEventListener('keydown', e => { if (keys.hasOwnProperty(e.key)) keys[e.key] = true; });
+        document.addEventListener('keyup', e => { if (keys.hasOwnProperty(e.key)) keys[e.key] = false; });
+
+        // --- O'yinni Boshlash ---
+        function startGame() {
+            const nameValue = playerNameInput.value.trim();
+            const nameRegex = /^[A-Za-zА-Яа-яЎўҚқҒғҲҳ'ʻ]{3,15}$/;
+            
+            if (!nameRegex.test(nameValue)) {
+                nameErrorEl.classList.remove('hidden');
+                playerNameInput.classList.add('border-red-500');
+                return;
+            }
+            nameErrorEl.classList.add('hidden');
+            playerNameInput.classList.remove('border-red-500');
+            playerName = nameValue;
+
+            if (soundEnabled && !audioCtx) audioCtx = new AudioContext();
+            if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+            playSound('levelUp');
+            
+            startScreen.classList.add('hidden');
+            endScreen.classList.add('hidden');
+            gameScreen.classList.remove('hidden');
+            gameScreen.classList.add('flex', 'pop-animation');
+            
+            initGame();
+        }
+
+        function backToMenu() {
+            endScreen.classList.add('hidden');
+            startScreen.classList.remove('hidden');
+        }
+
+        function initGame() {
+            score = 0;
+            level = 1;
+            lives = 3;
+            frameCount = 0;
+            items = [];
+            particles = [];
+            floatingTexts = [];
+            
+            basket.x = canvas.width / 2 - basket.width / 2;
+            
+            updateUI();
+            
+            isGameRunning = true;
+            cancelAnimationFrame(animationId);
+            gameLoop();
+        }
+
+        function updateUI() {
+            scoreEl.textContent = score;
+            levelEl.textContent = level;
+            
+            let hearts = '';
+            for(let i = 0; i < lives; i++) hearts += '❤️';
+            for(let i = lives; i < 3; i++) hearts += '🖤';
+            livesEl.textContent = hearts;
+        }
+
+        function spawnItem() {
+            let typeRand = Math.random();
+            let itemType = 'fruit';
+            let emojiList = FRUITS;
+            
+            // Xavflar va bonuslar chiqish ehtimoli
+            // Bosqich oshganda bombalar ko'payadi
+            let dangerChance = Math.min(0.1 + (level * 0.015), 0.35); 
+            let bonusChance = 0.03; // 3% ehtimol bilan yulduz
+            
+            if (typeRand < dangerChance) {
+                itemType = 'danger';
+                emojiList = DANGERS;
+            } else if (typeRand < dangerChance + bonusChance) {
+                itemType = 'bonus';
+                emojiList = BONUS;
+            }
+
+            let emoji = emojiList[Math.floor(Math.random() * emojiList.length)];
+            let radius = 20;
+            let x = radius + Math.random() * (canvas.width - radius * 2);
+            
+            // Tushish tezligi (bosqichga qarab)
+            let speed = 2 + (level * 0.3) + Math.random() * 1.5;
+            
+            items.push({
+                x: x,
+                y: -radius,
+                radius: radius,
+                type: itemType,
+                emoji: emoji,
+                speed: speed,
+                rot: 0,
+                rotSpeed: (Math.random() - 0.5) * 0.1
+            });
+        }
+
+        function createParticles(x, y, color) {
+            for (let i = 0; i < 10; i++) {
+                particles.push({
+                    x: x,
+                    y: y,
+                    vx: (Math.random() - 0.5) * 6,
+                    vy: (Math.random() - 0.5) * 6,
+                    radius: Math.random() * 4 + 2,
+                    color: color,
+                    life: 1.0,
+                    decay: Math.random() * 0.05 + 0.05
+                });
+            }
+        }
+
+        function addFloatingText(x, y, text, color) {
+            floatingTexts.push({
+                x: x,
+                y: y,
+                text: text,
+                color: color,
+                life: 1.0
+            });
+        }
+
+        function handleCollision(item, index) {
+            items.splice(index, 1);
+            
+            if (item.type === 'fruit') {
+                playSound('catch');
+                vibrateDevice(15);
+                score += 10;
+                createParticles(item.x, item.y, '#4ade80'); // Yashil uchqunlar
+                addFloatingText(item.x, item.y, "+10", "#22c55e");
+                
+                checkLevelUp();
+            } else if (item.type === 'danger') {
+                playSound('hurt');
+                vibrateDevice([100, 50, 100]);
+                loseLife("Xavfli narsa tutdingiz! 💥");
+                createParticles(item.x, item.y, '#ef4444'); // Qizil portlash
+                
+            } else if (item.type === 'bonus') {
+                playSound('bonus');
+                vibrateDevice([30, 30, 30]);
+                score += 50;
+                createParticles(item.x, item.y, '#fef08a'); // Sariq uchqunlar
+                addFloatingText(item.x, item.y, "+50", "#eab308");
+                
+                checkLevelUp();
+            }
+            updateUI();
+        }
+
+        function checkLevelUp() {
+            // Har 100 ballda yangi bosqich
+            let newLevel = Math.floor(score / 100) + 1;
+            if (newLevel > level) {
+                level = newLevel;
+                playSound('levelUp');
+                addFloatingText(canvas.width/2, canvas.height/2, `Bosqich ${level}!`, "#3b82f6");
+            }
+        }
+
+        function loseLife(msg) {
+            lives--;
+            updateUI();
+            
+            document.getElementById('main-container').classList.add('shake-animation');
+            setTimeout(() => {
+                document.getElementById('main-container').classList.remove('shake-animation');
+            }, 400);
+
+            if (lives <= 0) {
+                endGame();
+            }
+        }
+
+        function endGame() {
+            isGameRunning = false;
+            playSound('gameover');
+            vibrateDevice([200, 100, 200]);
+            
+            gameScreen.classList.remove('flex');
+            gameScreen.classList.add('hidden');
+            endScreen.classList.remove('hidden');
+
+            document.getElementById('final-name').textContent = playerName;
+            document.getElementById('final-score').textContent = score;
+            document.getElementById('final-level').textContent = level;
+
+            const rankEl = document.getElementById('final-rank');
+            const endTitle = document.getElementById('end-title');
+
+            if (score < 50) {
+                rankEl.textContent = "Yangi Yig'imchi 🌱";
+                rankEl.className = "text-xl font-black text-slate-500 mt-1";
+                endTitle.textContent = "Hosil Kamyob!";
+            } else if (score < 200) {
+                rankEl.textContent = "Chaqqon Bog'bon 🍎";
+                rankEl.className = "text-xl font-black text-blue-500 mt-1";
+                endTitle.textContent = "Yaxshi Natija!";
+            } else if (score < 500) {
+                rankEl.textContent = "Professional Dehqon 🚜";
+                rankEl.className = "text-xl font-black text-green-600 mt-1";
+                endTitle.textContent = "Ajoyib Hosil!";
+            } else {
+                rankEl.textContent = "AFSONAVIY FERMER! 👑🌍";
+                rankEl.className = "text-xl font-black text-orange-500 mt-1 animate-pulse";
+                endTitle.textContent = "Rekord Natija!";
+            }
+        }
+
+        // --- Asosiy O'yin Sikli (Loop) ---
+        function gameLoop() {
+            if (!isGameRunning) return;
+
+            update();
+            draw();
+            animationId = requestAnimationFrame(gameLoop);
+        }
+
+        function update() {
+            frameCount++;
+
+            // Keyboard harakati
+            if (keys.ArrowLeft) basket.x = Math.max(0, basket.x - 6);
+            if (keys.ArrowRight) basket.x = Math.min(canvas.width - basket.width, basket.x + 6);
+
+            // Buyumlar tushish chastotasi (Bosqich oshganda tezlashadi)
+            let spawnRate = Math.max(20, 80 - level * 3);
+            if (frameCount % Math.floor(spawnRate) === 0) {
+                spawnItem();
+            }
+
+            // Buyumlar harakati
+            for (let i = items.length - 1; i >= 0; i--) {
+                let item = items[i];
+                item.y += item.speed;
+                item.rot += item.rotSpeed;
+
+                // Savat bilan to'qnashuv tekshiruvi (AABB)
+                let itemRight = item.x + item.radius;
+                let itemLeft = item.x - item.radius;
+                let itemBottom = item.y + item.radius;
+                
+                // Savatning eng ustki cheti va kengligini tekshirish
+                if (itemBottom >= basket.y && item.y < basket.y + basket.height) {
+                    if (itemRight > basket.x && itemLeft < basket.x + basket.width) {
+                        handleCollision(item, i);
+                        continue;
+                    }
+                }
+
+                // Ekranning pastidan tushib ketsa
+                if (item.y - item.radius > canvas.height) {
+                    if (item.type === 'fruit') {
+                        // Mevani tushirib yubordi!
+                        playSound('miss');
+                        vibrateDevice(30);
+                        loseLife("Mevani o'tkazib yubordingiz!");
+                    }
+                    items.splice(i, 1);
+                }
+            }
+
+            // Zarrachalar
+            for (let i = particles.length - 1; i >= 0; i--) {
+                let p = particles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.life -= p.decay;
+                if (p.life <= 0) particles.splice(i, 1);
+            }
+
+            // Qalqib chiquvchi yozuvlar
+            for (let i = floatingTexts.length - 1; i >= 0; i--) {
+                let ft = floatingTexts[i];
+                ft.y -= 1; // Tepaga harakat
+                ft.life -= 0.02; // Xira tortish
+                if (ft.life <= 0) floatingTexts.splice(i, 1);
+            }
+        }
+
+        function draw() {
+            // Fon (Gradient CSS dan olinadi, shuning uchun clearRect qilamiz)
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Zarrachalar
+            particles.forEach(p => {
+                ctx.fillStyle = p.color;
+                ctx.globalAlpha = Math.max(0, p.life);
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            ctx.globalAlpha = 1.0;
+
+            // Buyumlar (Mevalar / Bombalar)
+            ctx.font = 'black 30px "Nunito", sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            items.forEach(item => {
+                ctx.save();
+                ctx.translate(item.x, item.y);
+                ctx.rotate(item.rot);
+                ctx.fillText(item.emoji, 0, 0);
+                ctx.restore();
+            });
+
+            // Savat
+            ctx.font = 'black 50px "Nunito", sans-serif'; // Savat hajmi
+            ctx.textAlign = 'center';
+            // Emoji pastga qarab moslashishi uchun
+            ctx.fillText(basket.emoji, basket.x + basket.width / 2, basket.y + basket.height / 2 + 10);
+
+            // Qalqib chiquvchi yozuvlar
+            floatingTexts.forEach(ft => {
+                ctx.globalAlpha = Math.max(0, ft.life);
+                ctx.fillStyle = ft.color;
+                ctx.font = '900 24px "Nunito", sans-serif';
+                ctx.strokeStyle = 'white';
+                ctx.lineWidth = 3;
+                ctx.strokeText(ft.text, ft.x, ft.y);
+                ctx.fillText(ft.text, ft.x, ft.y);
+            });
+            ctx.globalAlpha = 1.0;
+        }
+
+    </script>
+</body>
+</html>
