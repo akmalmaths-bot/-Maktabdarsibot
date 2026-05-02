@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Umumiy Reyting Paneli</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f1f5f9; }
+        .tab-btn.active { background-color: #2563eb; color: white; border-color: #2563eb; }
+        .tab-btn { background-color: white; color: #475569; border-color: #e2e8f0; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <header class="bg-blue-700 text-white shadow-md sticky top-0 z-20">
+        <div class="max-w-6xl mx-auto px-4 py-5 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <span class="text-3xl">🏆</span>
+                <h1 class="text-xl md:text-2xl font-bold tracking-wide">Umumiy Reyting Paneli</h1>
+            </div>
+            <div id="connection-status" class="flex items-center gap-2 text-sm font-medium bg-blue-800 px-3 py-1.5 rounded-full">
+                <span class="relative flex h-3 w-3">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-3 w-3 bg-yellow-500"></span>
+                </span>
+                Ulanmoqda...
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-6xl mx-auto w-full px-4 py-8">
+        
+        <div class="text-center mb-8">
+            <h2 class="text-2xl md:text-3xl font-bold text-slate-800 mb-2">Maktab O'quvchilari Reytingi</h2>
+            <p class="text-slate-500">Real vaqt rejimida yangilanib turuvchi TOP-10 o'quvchilar ro'yxati</p>
+        </div>
+
+        <div class="flex flex-wrap justify-center gap-2 mb-8" id="tabs-container">
+            <button class="tab-btn active px-5 py-2.5 rounded-full border shadow-sm font-bold text-sm transition-all" data-class="1-sinf">1-sinf</button>
+            <button class="tab-btn px-5 py-2.5 rounded-full border shadow-sm font-bold text-sm transition-all" data-class="2-sinf">2-sinf</button>
+            <button class="tab-btn px-5 py-2.5 rounded-full border shadow-sm font-bold text-sm transition-all" data-class="3-sinf">3-sinf</button>
+            <button class="tab-btn px-5 py-2.5 rounded-full border shadow-sm font-bold text-sm transition-all" data-class="4-sinf">4-sinf</button>
+            <button class="tab-btn px-5 py-2.5 rounded-full border shadow-sm font-bold text-sm transition-all" data-class="5-sinf">5-sinf</button>
+            <button class="tab-btn px-5 py-2.5 rounded-full border shadow-sm font-bold text-sm transition-all" data-class="6-sinf">6-sinf</button>
+            <button class="tab-btn px-5 py-2.5 rounded-full border shadow-sm font-bold text-sm transition-all" data-class="PM">PM Tayyorlov</button>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden relative min-h-[400px]">
+            
+            <div id="loading-overlay" class="absolute inset-0 bg-white/90 backdrop-blur-sm z-10 flex flex-col justify-center items-center p-6 text-center">
+                <div class="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mb-4" id="spinner"></div>
+                <div id="error-message-box">
+                    <p class="text-slate-600 font-medium animate-pulse">Ma'lumotlar yuklanmoqda...</p>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-50 border-b border-slate-200 text-slate-500 text-sm uppercase tracking-wider">
+                            <th class="py-4 px-6 text-center w-20 font-bold">O'rin</th>
+                            <th class="py-4 px-6 font-bold">O'quvchi Ismi</th>
+                            <th class="py-4 px-6 text-center font-bold">To'g'ri Javoblar</th>
+                            <th class="py-4 px-6 text-center font-bold">Yulduzchalar</th>
+                            <th class="py-4 px-6 text-right font-bold">Sana va Vaqt</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboard-body" class="divide-y divide-slate-100">
+                    </tbody>
+                </table>
+            </div>
+            
+            <div id="empty-state" class="hidden flex flex-col items-center justify-center py-16 text-center px-4">
+                <div class="text-6xl mb-4 grayscale opacity-50">📭</div>
+                <h3 class="text-xl font-bold text-slate-700 mb-1">Hozircha natijalar yo'q</h3>
+                <p class="text-slate-500">Ushbu sinf o'quvchilari hali testni ishlashmagan yoki yakunlashmagan.</p>
+            </div>
+        </div>
+
+    </main>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        let currentActiveTab = "1-sinf";
+        let allData = [];
+
+        const tbody = document.getElementById('leaderboard-body');
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const emptyState = document.getElementById('empty-state');
+        const connStatus = document.getElementById('connection-status');
+        const errorBox = document.getElementById('error-message-box');
+        const spinner = document.getElementById('spinner');
+        const tabs = document.querySelectorAll('.tab-btn');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', (e) => {
+                tabs.forEach(t => t.classList.remove('active', 'bg-blue-600', 'text-white'));
+                tabs.forEach(t => t.classList.add('bg-white', 'text-slate-600'));
+                e.target.classList.add('active');
+                e.target.classList.remove('bg-white', 'text-slate-600');
+                currentActiveTab = e.target.getAttribute('data-class');
+                renderLeaderboard();
+            });
+        });
+
+        const initFirebase = async () => {
+            try {
+                // Firebase sozlamalari
+                const firebaseConfig = {
+                  apiKey: "AIzaSyAkEt0HxuL62v832nMpH8D36bR28FU7dhk",
+                  authDomain: "maktab-darslari.firebaseapp.com",
+                  databaseURL: "https://maktab-darslari-default-rtdb.firebaseio.com",
+                  projectId: "maktab-darslari",
+                  storageBucket: "maktab-darslari.firebasestorage.app",
+                  messagingSenderId: "375361700394",
+                  appId: "1:375361700394:web:c7b74f29fb302e7743f953",
+                  measurementId: "G-8S1HF14QEH"
+                };
+                const appId = "maktab-darslari";
+                
+                const app = initializeApp(firebaseConfig);
+                const auth = getAuth(app);
+                const db = getFirestore(app);
+
+                // Muhim joyi: Anonim kirish
+                await signInAnonymously(auth);
+
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        connStatus.innerHTML = `<span class="h-3 w-3 bg-green-400 rounded-full inline-block mr-1"></span> Tarmoqqa ulandi`;
+                        connStatus.classList.replace('bg-blue-800', 'bg-green-800');
+                        
+                        const leaderboardRef = collection(db, 'artifacts', appId, 'public', 'data', 'leaderboards');
+                        
+                        onSnapshot(leaderboardRef, (snapshot) => {
+                            allData = [];
+                            snapshot.forEach(doc => {
+                                allData.push({ id: doc.id, ...doc.data() });
+                            });
+                            loadingOverlay.classList.add('hidden');
+                            renderLeaderboard();
+                        }, (error) => {
+                            console.error("Firestore o'qish xatosi:", error);
+                            showError(`Baza xatosi (Baza ochilmagan yoki ruxsat yo'q): ${error.message}`);
+                        });
+                    }
+                });
+
+            } catch (error) {
+                console.error("Firebase ulanish xatosi:", error);
+                showError(`Ulanish xatosi (Authentication yoqilmagan bo'lishi mumkin): ${error.message}`);
+            }
+        };
+
+        function showError(msg) {
+            spinner.classList.add('hidden');
+            errorBox.innerHTML = `
+                <p class="text-red-600 font-bold text-lg mb-2">Xatolik yuz berdi ⚠️</p>
+                <div class="bg-red-50 text-red-700 text-xs p-3 rounded-lg border border-red-200 inline-block max-w-lg text-left">
+                    ${msg}
+                </div>
+            `;
+            connStatus.innerHTML = `<span class="h-3 w-3 bg-red-400 rounded-full inline-block mr-1"></span> Xatolik`;
+            connStatus.classList.replace('bg-blue-800', 'bg-red-800');
+        }
+
+        function renderLeaderboard() {
+            let filteredData = allData.filter(item => item.className === currentActiveTab);
+            
+            filteredData.sort((a, b) => {
+                if (b.score !== a.score) return b.score - a.score;
+                if (b.stars !== a.stars) return b.stars - a.stars;
+                return a.timeUsed - b.timeUsed; 
+            });
+
+            const top10 = filteredData.slice(0, 10);
+            tbody.innerHTML = '';
+            
+            if (top10.length === 0) {
+                emptyState.classList.remove('hidden');
+            } else {
+                emptyState.classList.add('hidden');
+                
+                top10.forEach((student, index) => {
+                    let rankHTML = `<span class="font-bold text-slate-500">${index + 1}</span>`;
+                    if (index === 0) rankHTML = `<span class="text-2xl">🥇</span>`;
+                    if (index === 1) rankHTML = `<span class="text-2xl">🥈</span>`;
+                    if (index === 2) rankHTML = `<span class="text-2xl">🥉</span>`;
+
+                    const dateObj = student.timestamp ? new Date(student.timestamp.toMillis ? student.timestamp.toMillis() : Date.now()) : new Date();
+                    const timeString = `${dateObj.getHours().toString().padStart(2, '0')}:${dateObj.getMinutes().toString().padStart(2, '0')} - ${dateObj.getDate().toString().padStart(2, '0')}.${(dateObj.getMonth()+1).toString().padStart(2, '0')}`;
+
+                    const tr = document.createElement('tr');
+                    tr.className = `hover:bg-blue-50 transition-colors ${index < 3 ? 'bg-amber-50/30' : 'bg-white'}`;
+                    tr.innerHTML = `
+                        <td class="py-4 px-6 text-center">${rankHTML}</td>
+                        <td class="py-4 px-6 font-bold text-slate-800 text-lg truncate max-w-[200px]">${student.name}</td>
+                        <td class="py-4 px-6 text-center">
+                            <span class="inline-flex items-center justify-center bg-blue-100 text-blue-700 font-bold px-3 py-1 rounded-full">
+                                ${student.score} / 20
+                            </span>
+                        </td>
+                        <td class="py-4 px-6 text-center">
+                            <span class="font-black text-yellow-500 text-lg">${student.stars} ⭐</span>
+                        </td>
+                        <td class="py-4 px-6 text-right text-xs font-medium text-slate-400">
+                            ${timeString}
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', initFirebase);
+    </script>
+</body>
+</html>
