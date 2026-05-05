@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Matematika 1-sinf (9-qism)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #1e293b;
+            min-height: 100vh;
+        }
+        button { touch-action: manipulation; }
+        #edit-with-js-bin { display: none !important; }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        .emoji-pic { font-family: "Apple Color Emoji", "Segoe UI Emoji", sans-serif; text-shadow: 0px 4px 10px rgba(0,0,0,0.15); }
+        
+        @keyframes pop { 0% { transform: scale(0.95); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        .animate-pop { animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+        .animate-float { animation: float 3s infinite ease-in-out; }
+
+        .option-btn { transition: all 0.2s ease; }
+        .option-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+        .option-btn:active { transform: translateY(1px); }
+        
+        .timer-bar { transition: width 1s linear; }
+    </style>
+</head>
+<body class="antialiased flex flex-col overflow-x-hidden">
+
+    <!-- Header -->
+    <header class="bg-black/20 backdrop-blur-sm text-white py-2 sm:py-4 px-3 sm:px-4 shadow-lg sticky top-0 z-50">
+        <div class="max-w-3xl mx-auto flex items-center justify-between gap-2">
+            <div class="flex items-center gap-2 sm:gap-3 flex-1">
+                <div id="header-icon" class="text-2xl sm:text-3xl animate-float">🚀</div>
+                <h1 id="title-default" class="text-lg sm:text-xl md:text-2xl font-black tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-yellow-500 drop-shadow-sm">1-sinf (9-qism)</h1>
+                <a href="https://t.me/Matemdarsi" target="_blank" id="title-telegram" class="hidden items-center gap-1.5 text-lg sm:text-xl md:text-2xl font-black tracking-wide text-yellow-300 hover:text-yellow-400 drop-shadow-sm transition-colors decoration-transparent">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.295-.6.295-.002 0-.003 0-.005 0l.213-3.054 5.56-5.022c.24-.213-.054-.334-.373-.121l-6.869 4.326-2.96-.924c-.64-.203-.658-.64.135-.954l11.566-4.458c.538-.196 1.006.128.832.94z"/></svg>
+                    @Matemdarsi
+                </a>
+            </div>
+            <div id="user-display" class="hidden text-xs sm:text-base font-bold bg-white/20 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl sm:rounded-2xl shadow-inner max-w-[120px] sm:max-w-[150px] truncate text-right border border-white/10"></div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-3xl mx-auto w-full p-2 sm:p-4 md:p-6 lg:py-8 flex flex-col items-center justify-center">
+        
+        <!-- Boshlash Oynasi -->
+        <div id="screen-start" class="glass-card w-full p-6 sm:p-8 md:p-12 rounded-[1.5rem] sm:rounded-[2rem] text-center animate-pop mt-2 sm:mt-4">
+            <div class="text-5xl sm:text-6xl mb-4 sm:mb-6 animate-float">🎮</div>
+            <h2 class="text-2xl sm:text-3xl md:text-4xl font-black text-slate-800 mb-3 sm:mb-4 tracking-tight">Super Matematika!</h2>
+            <p class="text-slate-600 mb-6 sm:mb-8 leading-relaxed text-sm sm:text-lg font-medium max-w-md mx-auto">
+                Jami 20 ta qiziqarli savol. Javobni tanlaganingizdan so'ng, test avtomatik tarzda o'zi keyingisiga o'tadi. Ovoz balandligini to'g'rilab oling! 🎵
+            </p>
+            <form id="form-start" class="max-w-sm mx-auto space-y-4 sm:space-y-6">
+                <div class="relative">
+                    <input type="text" id="input-name" required minlength="3" maxlength="15" placeholder="Ismingizni yozing..." 
+                           class="w-full pl-10 sm:pl-12 pr-4 py-3 sm:py-4 rounded-xl sm:rounded-2xl border-2 border-indigo-200 focus:ring-0 focus:border-indigo-500 outline-none text-lg sm:text-xl font-bold transition-all bg-indigo-50/50 text-indigo-900 placeholder-indigo-300">
+                    <span class="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-xl sm:text-2xl">👤</span>
+                    <p id="name-error" class="hidden text-red-500 text-xs sm:text-sm mt-1 sm:mt-2 text-left font-bold">Faqat harflar (3-15 belgi).</p>
+                </div>
+                <button type="submit" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-black text-lg sm:text-xl py-3 sm:py-4 rounded-xl sm:rounded-2xl hover:opacity-90 active:scale-95 transition-all shadow-xl shadow-indigo-600/30 flex items-center justify-center gap-2">
+                    <span>Boshladik!</span> <span class="text-xl sm:text-2xl">✨</span>
+                </button>
+            </form>
+        </div>
+
+        <!-- Savollar Oynasi -->
+        <div id="screen-quiz" class="hidden glass-card w-full rounded-[1.5rem] sm:rounded-[2rem] flex flex-col overflow-hidden animate-pop mt-1 sm:mt-2 relative">
+            
+            <!-- Progress & Stats Header -->
+            <div class="bg-indigo-50/80 p-3 sm:p-5 flex flex-col gap-2 sm:gap-4 border-b border-indigo-100">
+                <div class="flex justify-between items-center w-full">
+                    <div class="flex items-center gap-2">
+                        <div class="bg-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl shadow-sm border border-indigo-100 font-black text-indigo-800 text-sm sm:text-lg">
+                            <span id="progress-indicator">1 / 20</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 sm:gap-3">
+                        <div class="bg-gradient-to-r from-yellow-400 to-yellow-500 px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl shadow-md font-black text-white text-sm sm:text-lg flex items-center gap-1">
+                            <span>⭐</span> <span id="current-score">0</span>
+                        </div>
+                        <div id="timer-box" class="bg-slate-800 px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl shadow-md font-black text-white text-sm sm:text-lg w-16 sm:w-20 text-center transition-colors">
+                            <span id="time-left">0</span><span class="text-xs sm:text-sm text-slate-300 ml-0.5">s</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Timer Bar -->
+                <div class="w-full bg-indigo-200/50 rounded-full h-1.5 sm:h-2 overflow-hidden">
+                    <div id="timer-bar" class="timer-bar bg-gradient-to-r from-indigo-500 to-purple-500 h-full w-full rounded-full shadow-[0_0_10px_rgba(99,102,241,0.8)]"></div>
+                </div>
+            </div>
+            
+            <!-- Question Content -->
+            <div class="p-4 sm:p-6 md:p-10 w-full flex flex-col items-center flex-grow">
+                <div id="question-container" class="w-full max-w-2xl mx-auto flex flex-col items-center">
+                    <div id="image-container" class="hidden text-3xl sm:text-5xl md:text-7xl text-center mb-3 sm:mb-6 tracking-[0.1em] sm:tracking-[0.2em] emoji-pic bg-gradient-to-br from-indigo-50 to-purple-50 p-4 sm:p-6 md:p-8 rounded-2xl sm:rounded-[2rem] border-2 border-indigo-100 shadow-inner w-full flex-wrap justify-center leading-normal"></div>
+                    <h4 id="question-text" class="text-lg sm:text-xl md:text-3xl font-black text-slate-800 mb-4 sm:mb-8 text-center w-full leading-tight">Yuklanmoqda...</h4>
+                    
+                    <!-- Options Grid (2 USTUN) -->
+                    <div id="options-container" class="grid grid-cols-2 gap-2 sm:gap-4 md:gap-5 w-full"></div>
+                </div>
+            </div>
+
+            <!-- Auto-advance Feedback overlay (Absolute) -->
+            <div id="feedback-overlay" class="absolute inset-0 bg-white/90 backdrop-blur-sm z-10 hidden flex-col items-center justify-center">
+                <div id="feedback-emoji" class="text-6xl sm:text-8xl mb-2 sm:mb-4 animate-pop">✅</div>
+                <h3 id="feedback-title" class="text-2xl sm:text-3xl font-black mb-1 sm:mb-2">Barakalla!</h3>
+                <p id="feedback-points" class="text-base sm:text-xl font-bold text-slate-600 bg-white px-4 py-2 rounded-full shadow-sm">+5 ⭐</p>
+            </div>
+        </div>
+
+        <!-- Natija Oynasi -->
+        <div id="screen-result" class="hidden glass-card w-full p-6 sm:p-8 md:p-12 rounded-[1.5rem] sm:rounded-[2rem] text-center relative overflow-hidden animate-pop mt-2 sm:mt-4">
+            
+            <!-- SAQLASH OYNASI -->
+            <div id="saving-overlay" class="absolute inset-0 bg-white/95 backdrop-blur-md z-20 flex flex-col justify-center items-center hidden">
+                <div class="w-16 h-16 sm:w-20 sm:h-20 border-8 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mb-4 sm:mb-6 shadow-lg"></div>
+                <h3 class="text-xl sm:text-2xl font-black text-indigo-900 animate-pulse">Reytingga yuborilmoqda...</h3>
+            </div>
+
+            <div id="result-emoji" class="text-6xl sm:text-8xl mb-4 sm:mb-6 animate-float">🏆</div>
+            <h2 id="result-title" class="text-2xl sm:text-4xl font-black text-slate-800 mb-1 sm:mb-2">Ajoyib Natija!</h2>
+            <p id="result-name" class="text-lg sm:text-2xl text-slate-600 mb-4 sm:mb-8 font-bold truncate"></p>
+            
+            <div class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl sm:rounded-3xl p-5 sm:p-8 border-2 border-indigo-100 max-w-sm mx-auto mb-6 sm:mb-8 shadow-inner relative overflow-hidden">
+                <div class="absolute -right-4 -top-4 text-6xl sm:text-8xl opacity-10">⭐</div>
+                <p class="text-indigo-800/60 mb-1 sm:mb-2 font-black uppercase tracking-widest text-[10px] sm:text-sm">To'plangan yulduzlar</p>
+                <p id="result-stars" class="text-4xl sm:text-6xl font-black text-yellow-500 mb-4 sm:mb-8 drop-shadow-md">0 ⭐</p>
+                
+                <p class="text-indigo-800/60 mb-1 sm:mb-2 font-black uppercase tracking-widest text-[10px] sm:text-sm">To'g'ri javoblar</p>
+                <p id="result-score" class="text-3xl sm:text-5xl font-black text-indigo-600 mb-2 sm:mb-4">0 / 20</p>
+                
+                <div class="w-full bg-indigo-200/50 rounded-full h-3 sm:h-4 mb-2 overflow-hidden p-0.5">
+                    <div id="result-bar" class="bg-gradient-to-r from-indigo-500 to-purple-500 h-full rounded-full transition-all duration-1000 shadow-sm" style="width: 0%"></div>
+                </div>
+                <p id="result-percent" class="text-lg sm:text-xl font-black text-indigo-900">0%</p>
+            </div>
+
+            <div id="success-msg" class="hidden max-w-sm mx-auto mb-6 sm:mb-8 bg-green-100 border-2 border-green-400 text-green-800 p-4 sm:p-5 rounded-xl sm:rounded-2xl shadow-sm">
+                <p class="font-black text-sm sm:text-lg flex items-center justify-center gap-2"><span>✅</span> Reytingga qo'shildi!</p>
+            </div>
+
+            <div class="max-w-sm mx-auto mb-6 sm:mb-10 bg-yellow-100 border-2 border-yellow-400 text-yellow-800 p-4 sm:p-5 rounded-xl sm:rounded-2xl shadow-lg animate-pulse-soft">
+                <p class="text-lg sm:text-xl font-black flex items-center justify-center gap-2"><span>📸</span> DIQQAT!</p>
+                <p class="text-sm sm:text-base font-bold mt-1 sm:mt-2">Shu ekranni rasmga olib ustoza yuboring!</p>
+            </div>
+
+            <button id="btn-restart" class="bg-slate-800 text-white font-black text-lg sm:text-xl py-3 sm:py-4 px-8 sm:px-10 rounded-xl sm:rounded-2xl hover:bg-slate-700 transition-colors shadow-xl w-full max-w-sm">Qaytadan ishlash ↻</button>
+        </div>
+    </main>
+
+    <!-- Doimiy Footer -->
+    <footer class="bg-black/20 backdrop-blur-sm text-white py-4 mt-auto w-full z-10 shrink-0 border-t border-white/10">
+        <div class="max-w-4xl mx-auto px-4 flex flex-col items-center justify-center gap-1 text-xs sm:text-sm text-center opacity-90 font-medium">
+            <p>Test tuzuvchi: Akmaljon Jo'raqo'ziyev</p>
+            <p>
+                Telegram: 
+                <a href="https://t.me/akmalmaths" class="text-yellow-300 hover:text-yellow-400 transition-colors font-bold" target="_blank">@Akmalmaths</a> 
+                va 
+                <a href="https://t.me/maktabdarsibot" class="text-yellow-300 hover:text-yellow-400 transition-colors font-bold" target="_blank">@Maktabdarsibot</a>
+            </p>
+        </div>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const CLASS_NAME = "1-sinf"; 
+        const TEST_PART = "9-qism";  
+
+        // 1-sinf 9-qism: 10 ta rasmli (emojili), 5 ta standart, 5 ta olimpiada
+        const originalQuizData = [
+            // RASMLI (10 ta)
+            { image: "🍎 🍎 &nbsp;+&nbsp; 🍎", question: "Jami nechta olma bor?", options: ["3 ta", "2 ta", "4 ta", "1 ta"], correctIndex: 0, time: 30 },
+            { image: "🎈 🎈 🎈 &nbsp;-&nbsp; 🎈", question: "3 ta shardan 1 tasi uchib ketdi. Nechta qoldi?", options: ["2 ta", "3 ta", "1 ta", "4 ta"], correctIndex: 0, time: 30 },
+            { image: "🚗 🚗 &nbsp;+&nbsp; 🚗 🚗", question: "Jami mashinalar nechta?", options: ["4 ta", "3 ta", "5 ta", "2 ta"], correctIndex: 0, time: 30 },
+            { image: "🧸 🧸 🧸 🧸 &nbsp;-&nbsp; 🧸 🧸", question: "4 ta ayiqchadan 2 tasini ukangizga berdingiz. Nechta qoldi?", options: ["2 ta", "1 ta", "3 ta", "4 ta"], correctIndex: 0, time: 30 },
+            { image: "🐥 🐥 &nbsp;+&nbsp; 🐥 🐥 🐥", question: "Jami jo'jalar soni nechta?", options: ["5 ta", "4 ta", "6 ta", "3 ta"], correctIndex: 0, time: 30 },
+            { image: "🍓 🍓 🍓 🍓 🍓 &nbsp;-&nbsp; 🍓", question: "5 ta qulupnaydan 1 tasini yedingiz. Nechta qoldi?", options: ["4 ta", "5 ta", "3 ta", "2 ta"], correctIndex: 0, time: 30 },
+            { image: "⚽ ⚽ ⚽ &nbsp;+&nbsp; ⚽", question: "To'plar jami nechta bo'ldi?", options: ["4 ta", "3 ta", "5 ta", "2 ta"], correctIndex: 0, time: 30 },
+            { image: "🦋 🦋 🦋 &nbsp;-&nbsp; 🦋 🦋", question: "3 ta kapalakdan 2 tasi uchib ketdi. Qancha qoldi?", options: ["1 ta", "2 ta", "0 ta", "3 ta"], correctIndex: 0, time: 30 },
+            { image: "🍬 🍬 &nbsp;+&nbsp; 🍬 🍬 &nbsp;+&nbsp; 🍬", question: "Jami konfetlar nechta?", options: ["5 ta", "4 ta", "6 ta", "3 ta"], correctIndex: 0, time: 40 },
+            { image: "🐶🐶🐶🐶🐶🐶 <br> - <br> 🐶🐶🐶", question: "6 ta kuchukchadan 3 tasi uxlab qoldi. Nechtasi uyg'oq?", options: ["3 ta", "4 ta", "2 ta", "5 ta"], correctIndex: 0, time: 40 },
+            
+            // STANDART (5 ta)
+            { question: "6 ga 4 ni qo'shsak necha bo'ladi?", options: ["10", "9", "8", "7"], correctIndex: 0, time: 30 },
+            { question: "9 dan 3 ni ayirsak necha qoladi?", options: ["6", "5", "7", "4"], correctIndex: 0, time: 30 },
+            { question: "5 sonidan oldin qaysi son keladi?", options: ["4", "6", "3", "7"], correctIndex: 0, time: 30 },
+            { question: "8 va 2 ning yig'indisi necha?", options: ["10", "9", "6", "8"], correctIndex: 0, time: 30 },
+            { question: "10 dan 5 ni ayiring.", options: ["5", "4", "6", "10"], correctIndex: 0, time: 30 },
+
+            // OLIMPIADA (5 ta)
+            { question: "🏆 Olimpiada: Stol ustida 3 ta stakan turibdi. Ulardan bittasini to'ntarib qo'ydim. Stolda nechta stakan qoldi?", options: ["3 ta", "2 ta", "1 ta", "4 ta"], correctIndex: 0, time: 60 },
+            { question: "🏆 Olimpiada: Zinapoya 5 ta pog'onadan iborat. Uning o'rtasidagi pog'ona nechanchi pog'ona hisoblanadi?", options: ["3-pog'ona", "2-pog'ona", "4-pog'ona", "1-pog'ona"], correctIndex: 0, time: 60 },
+            { question: "🏆 Olimpiada: Ayiq 4 ta baliq tutdi. Tulkida esa ayiqdan 2 ta kam baliq bor. Ular ikkisi birgalikda nechta baliq tutishgan?", options: ["6 ta", "4 ta", "2 ta", "8 ta"], correctIndex: 0, time: 60 },
+            { question: "🏆 Olimpiada: Bitta g'ozning 2 ta oyog'i bor. Ikkita g'ozning nechta oyog'i bo'ladi?", options: ["4 ta", "2 ta", "6 ta", "8 ta"], correctIndex: 0, time: 60 },
+            { question: "🏆 Olimpiada: 5 ta olma bor. 3 ta o'rtog'ingizga bittadan olma bersangiz, o'zingizda nechta olma qoladi?", options: ["2 ta", "3 ta", "5 ta", "1 ta"], correctIndex: 0, time: 60 }
+        ];
+
+        let quizData = [];
+        let currentIndex = 0;
+        let userAnswers = [];
+        let questionScores = [];
+        let questionTimes = []; 
+        let totalScore = 0;
+        let userName = "";
+
+        let timerInterval;
+        let timeLeft = 0;
+        let totalTimeForQ = 0;
+        let isSubmitting = false; 
+
+        // AUDIO ENGINE (Web Audio API)
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx;
+
+        function initAudio() {
+            if (!audioCtx) { audioCtx = new AudioContext(); }
+            if (audioCtx.state === 'suspended') { audioCtx.resume(); }
+        }
+
+        function playTone(freq, type, duration, vol) {
+            if(!audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + duration);
+        }
+
+        function playCorrect() {
+            playTone(523.25, 'sine', 0.1, 0.4); // C5
+            setTimeout(() => playTone(659.25, 'sine', 0.1, 0.4), 100); // E5
+            setTimeout(() => playTone(783.99, 'sine', 0.2, 0.4), 200); // G5
+        }
+
+        function playWrong() {
+            playTone(300, 'sawtooth', 0.3, 0.3);
+            setTimeout(() => playTone(250, 'sawtooth', 0.4, 0.3), 150);
+        }
+
+        function playTick() {
+            playTone(800, 'sine', 0.05, 0.05);
+        }
+
+        function playFinish() {
+            playTone(440, 'square', 0.1, 0.2);
+            setTimeout(() => playTone(554.37, 'square', 0.1, 0.2), 150);
+            setTimeout(() => playTone(659.25, 'square', 0.1, 0.2), 300);
+            setTimeout(() => playTone(880, 'square', 0.4, 0.2), 450);
+        }
+
+        // FIREBASE SETUP
+        let db, appAuth, currentUser;
+        let isFirebaseReady = false;
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'maktab-darslari';
+
+        async function initFirebase() {
+            try {
+                let firebaseConfig;
+                if (typeof __firebase_config !== 'undefined') {
+                    firebaseConfig = JSON.parse(__firebase_config);
+                } else {
+                    firebaseConfig = {
+                      apiKey: "AIzaSyAkEt0HxuL62v832nMpH8D36bR28FU7dhk",
+                      authDomain: "maktab-darslari.firebaseapp.com",
+                      databaseURL: "https://maktab-darslari-default-rtdb.firebaseio.com",
+                      projectId: "maktab-darslari",
+                      storageBucket: "maktab-darslari.firebasestorage.app",
+                      messagingSenderId: "375361700394",
+                      appId: "1:375361700394:web:c7b74f29fb302e7743f953",
+                      measurementId: "G-8S1HF14QEH"
+                    };
+                }
+                const app = initializeApp(firebaseConfig);
+                appAuth = getAuth(app);
+                db = getFirestore(app);
+
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(appAuth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(appAuth);
+                }
+                onAuthStateChanged(appAuth, (user) => {
+                    if(user) { currentUser = user; isFirebaseReady = true; }
+                });
+            } catch(e) {
+                console.error("Firebase init xatosi:", e);
+                isFirebaseReady = false;
+            }
+        }
+
+        function shuffleArray(array) {
+            let newArray = JSON.parse(JSON.stringify(array)); 
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        function prepareQuizData(data) {
+            let shuffledQuestions = shuffleArray(data);
+            shuffledQuestions.forEach(q => {
+                let correctText = q.options[q.correctIndex]; 
+                q.options = shuffleArray(q.options); 
+                q.correctIndex = q.options.indexOf(correctText);
+            });
+            return shuffledQuestions;
+        }
+
+        const screenStart = document.getElementById('screen-start');
+        const screenQuiz = document.getElementById('screen-quiz');
+        const screenResult = document.getElementById('screen-result');
+        const formStart = document.getElementById('form-start');
+        const inputName = document.getElementById('input-name');
+        const nameError = document.getElementById('name-error');
+        
+        formStart.addEventListener('submit', (e) => {
+            e.preventDefault();
+            initAudio(); // Initialize audio context on first user interaction
+            userName = inputName.value.trim();
+            const namePattern = /^[a-zA-Zа-яА-ЯўЎқҚғҒҳҲ'’\s\-]+$/;
+            if (!namePattern.test(userName) || userName.length < 3) {
+                nameError.classList.remove('hidden'); return;
+            }
+            startQuiz();
+        });
+
+        function startQuiz() {
+            screenStart.classList.add('hidden');
+            screenQuiz.classList.remove('hidden');
+            document.getElementById('user-display').textContent = userName;
+            document.getElementById('user-display').classList.remove('hidden');
+
+            document.getElementById('title-default').classList.add('hidden');
+            document.getElementById('header-icon').classList.add('hidden');
+            document.getElementById('title-telegram').classList.remove('hidden');
+            document.getElementById('title-telegram').classList.add('flex');
+
+            quizData = prepareQuizData(originalQuizData);
+            userAnswers = new Array(quizData.length).fill(null);
+            questionScores = new Array(quizData.length).fill(0);
+            questionTimes = quizData.map(q => q.time);
+            
+            totalScore = 0;
+            currentIndex = 0;
+            isSubmitting = false;
+            
+            renderQuestion();
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            totalTimeForQ = questionTimes[currentIndex];
+            timeLeft = totalTimeForQ;
+            
+            const timeDisplay = document.getElementById('time-left');
+            const timerBox = document.getElementById('timer-box');
+            const timerBar = document.getElementById('timer-bar');
+            
+            timeDisplay.textContent = timeLeft;
+            timerBox.className = 'bg-indigo-600 px-4 py-2 rounded-xl shadow-md font-black text-white text-lg w-20 text-center transition-colors';
+            timerBar.style.width = '100%';
+            timerBar.className = 'timer-bar bg-gradient-to-r from-indigo-500 to-purple-500 h-full rounded-full shadow-[0_0_10px_rgba(99,102,241,0.8)]';
+
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                questionTimes[currentIndex] = timeLeft; 
+                timeDisplay.textContent = timeLeft;
+                
+                // Update Bar
+                const percent = (timeLeft / totalTimeForQ) * 100;
+                timerBar.style.width = `${percent}%`;
+
+                if(timeLeft <= 10) {
+                    timerBox.className = 'bg-red-500 px-4 py-2 rounded-xl shadow-md font-black text-white text-lg w-20 text-center transition-colors shadow-[0_0_15px_rgba(239,68,68,0.8)] animate-pulse';
+                    timerBar.className = 'timer-bar bg-red-500 h-full rounded-full shadow-[0_0_10px_rgba(239,68,68,0.8)]';
+                    playTick();
+                }
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    processAnswer(-1); // Timeout
+                }
+            }, 1000);
+        }
+
+        function renderQuestion() {
+            // Overlay reset
+            document.getElementById('feedback-overlay').classList.add('hidden');
+            document.getElementById('feedback-overlay').classList.remove('flex');
+            
+            const data = quizData[currentIndex];
+            const elImg = document.getElementById('image-container');
+            if(data.image) {
+                elImg.innerHTML = data.image; elImg.classList.remove('hidden'); elImg.classList.add('flex');
+            } else {
+                elImg.innerHTML = ''; elImg.classList.add('hidden'); elImg.classList.remove('flex');
+            }
+
+            let formattedQuestion = data.question;
+            if(formattedQuestion.includes('Olimpiada:')) {
+                formattedQuestion = formattedQuestion.replace('Olimpiada:', '<span class="text-red-500 font-black tracking-widest uppercase text-sm sm:text-lg block mb-1 sm:mb-2">🏆 Olimpiada</span>');
+            }
+
+            document.getElementById('question-text').innerHTML = formattedQuestion;
+            document.getElementById('progress-indicator').textContent = `${currentIndex + 1} / ${quizData.length}`;
+            
+            startTimer();
+            
+            const optsContainer = document.getElementById('options-container');
+            optsContainer.innerHTML = '';
+            optsContainer.style.pointerEvents = 'auto'; // allow clicking
+
+            data.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn w-full text-left p-3 sm:p-5 rounded-xl sm:rounded-2xl border-2 border-indigo-100 bg-white hover:border-indigo-400 hover:bg-indigo-50 font-bold text-slate-700 text-sm sm:text-xl shadow-sm flex items-center leading-tight';
+                let icon = `<span class="inline-flex items-center justify-center shrink-0 w-8 h-8 sm:w-10 sm:h-10 bg-indigo-100 text-indigo-700 rounded-lg sm:rounded-xl mr-2 sm:mr-4 font-black shadow-inner text-sm sm:text-base">${String.fromCharCode(65 + idx)}</span>`;
+                
+                btn.innerHTML = `${icon}<span class="flex-1">${opt}</span>`;
+                btn.addEventListener('click', () => processAnswer(idx));
+                optsContainer.appendChild(btn);
+            });
+        }
+
+        // Changed from handleAnswer to handle auto-advance immediately
+        function processAnswer(selectedIdx) {
+            clearInterval(timerInterval);
+            const data = quizData[currentIndex];
+            userAnswers[currentIndex] = selectedIdx;
+            
+            const optsContainer = document.getElementById('options-container');
+            optsContainer.style.pointerEvents = 'none'; // Lock clicks
+            const buttons = optsContainer.querySelectorAll('button');
+
+            let isCorrect = (selectedIdx === data.correctIndex);
+            
+            // Calculate score if correct
+            let earnedPts = 0;
+            if (selectedIdx !== -1 && isCorrect) {
+                earnedPts = Math.ceil((timeLeft / totalTimeForQ) * 5);
+                earnedPts = Math.max(1, Math.min(earnedPts, 5));
+                questionScores[currentIndex] = earnedPts;
+                totalScore += earnedPts;
+                document.getElementById('current-score').textContent = totalScore;
+                playCorrect();
+            } else {
+                playWrong();
+            }
+
+            // Visual updates on buttons
+            buttons.forEach((btn, idx) => {
+                btn.classList.remove('hover:border-indigo-400', 'hover:bg-indigo-50');
+                if (idx === data.correctIndex) {
+                    btn.classList.replace('border-indigo-100', 'border-green-500');
+                    btn.classList.replace('bg-white', 'bg-green-50');
+                    btn.classList.add('text-green-800');
+                    btn.innerHTML = btn.innerHTML.replace(/<span class="inline-flex.*?<\/span>/, `<span class="inline-flex items-center justify-center shrink-0 w-8 h-8 sm:w-10 sm:h-10 bg-green-500 text-white rounded-lg sm:rounded-xl mr-2 sm:mr-4 font-black shadow-md text-sm sm:text-base">✓</span>`);
+                } else if (idx === selectedIdx) {
+                    btn.classList.replace('border-indigo-100', 'border-red-500');
+                    btn.classList.replace('bg-white', 'bg-red-50');
+                    btn.classList.add('text-red-800');
+                    btn.innerHTML = btn.innerHTML.replace(/<span class="inline-flex.*?<\/span>/, `<span class="inline-flex items-center justify-center shrink-0 w-8 h-8 sm:w-10 sm:h-10 bg-red-500 text-white rounded-lg sm:rounded-xl mr-2 sm:mr-4 font-black shadow-md text-sm sm:text-base">✗</span>`);
+                } else {
+                    btn.classList.add('opacity-40', 'grayscale');
+                }
+            });
+
+            // Show Feedback Overlay
+            const overlay = document.getElementById('feedback-overlay');
+            const fEmoji = document.getElementById('feedback-emoji');
+            const fTitle = document.getElementById('feedback-title');
+            const fPoints = document.getElementById('feedback-points');
+            
+            overlay.classList.remove('hidden');
+            overlay.classList.add('flex');
+            
+            if(selectedIdx === -1) {
+                fEmoji.textContent = '⏱'; fTitle.textContent = "Vaqt tugadi!"; fTitle.className = "text-3xl sm:text-4xl font-black mb-2 text-orange-600";
+                fPoints.classList.add('hidden');
+            } else if(isCorrect) {
+                fEmoji.textContent = '🎉'; fTitle.textContent = "To'g'ri!"; fTitle.className = "text-3xl sm:text-4xl font-black mb-2 text-green-600";
+                fPoints.textContent = `+${earnedPts} ⭐`; fPoints.classList.remove('hidden');
+                fPoints.className = "text-lg sm:text-2xl font-black text-yellow-600 bg-yellow-100 px-4 sm:px-6 py-1.5 sm:py-2 rounded-full shadow-md border border-yellow-300 animate-pop";
+            } else {
+                fEmoji.textContent = '💔'; fTitle.textContent = "Noto'g'ri!"; fTitle.className = "text-3xl sm:text-4xl font-black mb-2 text-red-600";
+                fPoints.classList.add('hidden');
+            }
+
+            // Auto Advance after 2 seconds
+            setTimeout(() => {
+                if (currentIndex < quizData.length - 1) {
+                    currentIndex++;
+                    renderQuestion();
+                } else {
+                    finishQuiz();
+                }
+            }, 2000);
+        }
+
+        async function finishQuiz() {
+            if (isSubmitting) return; 
+            isSubmitting = true;
+            playFinish();
+
+            let correctCount = userAnswers.filter((ans, idx) => ans === quizData[idx].correctIndex).length;
+            const percentage = Math.round((correctCount / quizData.length) * 100);
+            
+            document.getElementById('screen-quiz').classList.add('hidden');
+            document.getElementById('screen-result').classList.remove('hidden');
+            
+            document.getElementById('result-name').textContent = userName;
+            document.getElementById('result-stars').textContent = `${totalScore} ⭐`;
+            document.getElementById('result-score').textContent = `${correctCount} / 20`;
+            document.getElementById('result-percent').textContent = `${percentage}%`;
+
+            setTimeout(() => { document.getElementById('result-bar').style.width = `${percentage}%`; }, 300);
+
+            const resultTitle = document.getElementById('result-title');
+            const resultEmoji = document.getElementById('result-emoji');
+            
+            if (percentage >= 80) {
+                resultEmoji.textContent = '🌟';
+                resultTitle.textContent = "A'lo Natija!";
+                resultTitle.className = "text-4xl font-black text-green-600 mb-2";
+                document.getElementById('result-score').classList.replace('text-indigo-600', 'text-green-600');
+                document.getElementById('result-bar').classList.replace('from-indigo-500', 'from-green-500');
+                document.getElementById('result-bar').classList.replace('to-purple-500', 'to-green-400');
+            } else if (percentage >= 60) {
+                resultEmoji.textContent = '👍';
+                resultTitle.textContent = "Yaxshi Natija!";
+            } else {
+                resultEmoji.textContent = '📚';
+                resultTitle.textContent = "Ko'proq o'qish kerak!";
+                resultTitle.className = "text-4xl font-black text-orange-500 mb-2";
+                document.getElementById('result-score').classList.replace('text-indigo-600', 'text-orange-500');
+                document.getElementById('result-bar').classList.replace('from-indigo-500', 'from-orange-500');
+                document.getElementById('result-bar').classList.replace('to-purple-500', 'to-red-400');
+            }
+
+            const savingOverlay = document.getElementById('saving-overlay');
+            const successMsg = document.getElementById('success-msg');
+            
+            if (isFirebaseReady && currentUser) {
+                savingOverlay.classList.remove('hidden'); 
+                try {
+                    const leaderboardRef = collection(db, 'artifacts', appId, 'public', 'data', 'leaderboards');
+                    let timeUsed = quizData.reduce((acc, q, i) => acc + (q.time - questionTimes[i]), 0);
+
+                    const savePromise = addDoc(leaderboardRef, {
+                        name: userName,
+                        score: correctCount,
+                        stars: totalScore,
+                        className: CLASS_NAME, 
+                        testPart: TEST_PART, 
+                        timeUsed: timeUsed,
+                        timestamp: serverTimestamp()
+                    });
+
+                    const timeoutPromise = new Promise((_, reject) => 
+                        setTimeout(() => reject(new Error("Baza bilan bog'lanishda vaqt tugadi. Internetni tekshiring.")), 8000)
+                    );
+
+                    await Promise.race([savePromise, timeoutPromise]);
+                    
+                    savingOverlay.classList.add('hidden');
+                    successMsg.classList.remove('hidden');
+                } catch(e) {
+                    console.error("Saqlashda xatolik:", e);
+                    savingOverlay.innerHTML = `
+                        <div class="glass-card p-6 rounded-3xl text-center max-w-sm border-2 border-red-200">
+                            <div class="text-5xl mb-2">⚠️</div>
+                            <h3 class="text-2xl font-black text-red-600 mb-2">Xatolik yuz berdi</h3>
+                            <p class="text-sm text-slate-600 mb-4 font-bold">Natija serverga yuborilmadi. Internet yo'q yoki baza yopiq.</p>
+                            <button onclick="document.getElementById('saving-overlay').classList.add('hidden')" class="px-8 py-3 bg-red-100 text-red-800 rounded-2xl font-black hover:bg-red-200 w-full transition-colors">Tushunarli</button>
+                        </div>
+                    `;
+                }
+            } else {
+                savingOverlay.classList.add('hidden');
+            }
+            window.scrollTo(0,0);
+        }
+
+        document.getElementById('btn-restart').addEventListener('click', () => { location.reload(); });
+        
+        initFirebase();
+    </script>
+</body>
+</html>
