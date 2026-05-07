@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rus-O'zbek Lug'at Testi</title>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide ikonkalarini ulash -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        const vocabulary = [
+            // Oldingi 25 ta so'z (Uy-ro'zg'or buyumlari va umumiy)
+            { id: 1, ru: "Дом", ruAlt: ["дом"], uz: "Uy", uzAlt: ["uy"], en: "House", ruPron: "dom" },
+            { id: 2, ru: "Квартира", ruAlt: ["квартира"], uz: "Kvartira / Uy", uzAlt: ["kvartira", "uy"], en: "Apartment", ruPron: "kvartira" },
+            { id: 3, ru: "Комната", ruAlt: ["комната"], uz: "Xona", uzAlt: ["xona"], en: "Room", ruPron: "komnata" },
+            { id: 4, ru: "Дверь", ruAlt: ["дверь"], uz: "Eshik", uzAlt: ["eshik"], en: "Door", ruPron: "dver'" },
+            { id: 5, ru: "Окно", ruAlt: ["окно"], uz: "Deraza", uzAlt: ["deraza"], en: "Window", ruPron: "okno" },
+            { id: 6, ru: "Телевизор", ruAlt: ["телевизор"], uz: "Televizor", uzAlt: ["televizor"], en: "Television", ruPron: "televizor" },
+            { id: 7, ru: "Телефон", ruAlt: ["телефон"], uz: "Telefon", uzAlt: ["telefon"], en: "Phone", ruPron: "telefon" },
+            { id: 8, ru: "Компьютер", ruAlt: ["компьютер"], uz: "Kompyuter", uzAlt: ["kompyuter"], en: "Computer", ruPron: "kompyuter" },
+            { id: 9, ru: "Книга", ruAlt: ["книга"], uz: "Kitob", uzAlt: ["kitob"], en: "Book", ruPron: "kniga" },
+            { id: 10, ru: "Ручка", ruAlt: ["ручка"], uz: "Ruchka", uzAlt: ["ruchka"], en: "Pen", ruPron: "ruchka" },
+            { id: 11, ru: "Бумага", ruAlt: ["бумага"], uz: "Qog'oz", uzAlt: ["qog'oz", "qog‘oz", "qogoz"], en: "Paper", ruPron: "bumaga" },
+            { id: 12, ru: "Деньги", ruAlt: ["деньги"], uz: "Pul", uzAlt: ["pul"], en: "Money", ruPron: "den'gi" },
+            { id: 13, ru: "Ключ", ruAlt: ["ключ"], uz: "Kalit", uzAlt: ["kalit"], en: "Key", ruPron: "klyuch" },
+            { id: 14, ru: "Свет", ruAlt: ["свет"], uz: "Chiroq / Yorug'lik", uzAlt: ["chiroq", "yorug'lik", "yorug‘lik", "yoruglik"], en: "Light", ruPron: "svet" },
+            { id: 15, ru: "Вода", ruAlt: ["вода"], uz: "Suv", uzAlt: ["suv"], en: "Water", ruPron: "voda" },
+            { id: 16, ru: "Еда", ruAlt: ["еда"], uz: "Ovqat / Taom", uzAlt: ["ovqat", "taom"], en: "Food", ruPron: "yeda" },
+            { id: 17, ru: "Чай", ruAlt: ["чай"], uz: "Choy", uzAlt: ["choy"], en: "Tea", ruPron: "chay" },
+            { id: 18, ru: "Кофе", ruAlt: ["кофе"], uz: "Kofe", uzAlt: ["kofe"], en: "Coffee", ruPron: "kofe" },
+            { id: 19, ru: "Хлеб", ruAlt: ["хлеб"], uz: "Non", uzAlt: ["non"], en: "Bread", ruPron: "xleb" },
+            { id: 20, ru: "Стол", ruAlt: ["стол"], uz: "Stol", uzAlt: ["stol"], en: "Table", ruPron: "stol" },
+            { id: 21, ru: "Стул", ruAlt: ["стул"], uz: "Stul", uzAlt: ["stul"], en: "Chair", ruPron: "stul" },
+            { id: 22, ru: "Посуда", ruAlt: ["посуда"], uz: "Idish-tovoq", uzAlt: ["idish-tovoq", "idishtovoq", "idish tovoq"], en: "Dishes", ruPron: "posuda" },
+            { id: 23, ru: "Одежда", ruAlt: ["одежда"], uz: "Kiyim", uzAlt: ["kiyim"], en: "Clothes", ruPron: "odejda" },
+            { id: 24, ru: "Сумка", ruAlt: ["сумка"], uz: "Sumka", uzAlt: ["sumka"], en: "Bag", ruPron: "sumka" },
+            { id: 25, ru: "Постель", ruAlt: ["постель"], uz: "O'rin-joy / Karovat", uzAlt: ["o'rin-joy", "o‘rin-joy", "orin joy", "karovat"], en: "Bed", ruPron: "postel'" },
+            
+            // Yangi 17 ta so'z (Odamlar va Oila)
+            { id: 26, ru: "Человек", ruAlt: ["человек"], uz: "Inson / Odam", uzAlt: ["inson", "odam"], en: "Person", ruPron: "chelovek" },
+            { id: 27, ru: "Мужчина", ruAlt: ["мужчина"], uz: "Erkak", uzAlt: ["erkak"], en: "Man", ruPron: "mujchina" },
+            { id: 28, ru: "Женщина", ruAlt: ["женщина"], uz: "Ayol", uzAlt: ["ayol"], en: "Woman", ruPron: "jenщina" },
+            { id: 29, ru: "Ребёнок", ruAlt: ["ребенок", "ребёнок"], uz: "Bola", uzAlt: ["bola"], en: "Child", ruPron: "rebyonok" },
+            { id: 30, ru: "Друг", ruAlt: ["друг"], uz: "Do'st", uzAlt: ["do'st", "dost"], en: "Friend", ruPron: "drug" },
+            { id: 31, ru: "Семья", ruAlt: ["семья"], uz: "Oila", uzAlt: ["oila"], en: "Family", ruPron: "sem'ya" },
+            { id: 32, ru: "Родители", ruAlt: ["родители"], uz: "Ota-ona", uzAlt: ["ota-ona", "ota ona"], en: "Parents", ruPron: "roditeli" },
+            { id: 33, ru: "Отец / Папа", ruAlt: ["отец", "папа"], uz: "Ota / Dada", uzAlt: ["ota", "dada"], en: "Father", ruPron: "otets / papa" },
+            { id: 34, ru: "Мать / Мама", ruAlt: ["мать", "мама"], uz: "Ona / Oyi", uzAlt: ["ona", "oyi", "aya"], en: "Mother", ruPron: "mat' / mama" },
+            { id: 35, ru: "Сын", ruAlt: ["сын"], uz: "O'g'il", uzAlt: ["o'g'il", "og'il", "ogil"], en: "Son", ruPron: "sin" },
+            { id: 36, ru: "Дочь", ruAlt: ["дочь"], uz: "Qiz (farzand)", uzAlt: ["qiz", "qiz farzand"], en: "Daughter", ruPron: "doch'" },
+            { id: 37, ru: "Брат", ruAlt: ["брат"], uz: "Aka / Uka", uzAlt: ["aka", "uka", "aka-uka"], en: "Brother", ruPron: "brat" },
+            { id: 38, ru: "Сестра", ruAlt: ["сестра"], uz: "Opa / Singil", uzAlt: ["opa", "singil", "opa-singil"], en: "Sister", ruPron: "sestra" },
+            { id: 39, ru: "Муж", ruAlt: ["муж"], uz: "Er (turmush o'rtoq)", uzAlt: ["er", "turmush o'rtoq", "turmush ortoq"], en: "Husband", ruPron: "muj" },
+            { id: 40, ru: "Жена", ruAlt: ["жена"], uz: "Xotin (rafika)", uzAlt: ["xotin", "rafika", "ayol"], en: "Wife", ruPron: "jena" },
+            { id: 41, ru: "Гость", ruAlt: ["гость"], uz: "Mehmon", uzAlt: ["mehmon"], en: "Guest", ruPron: "gost'" },
+            { id: 42, ru: "Сосед", ruAlt: ["сосед"], uz: "Qo'shni", uzAlt: ["qo'shni", "qoshni"], en: "Neighbor", ruPron: "sosed" }
+        ];
+
+        const TOTAL_QUESTIONS = vocabulary.length * 2; // 42 * 2 = 84 ta savol
+
+        const shuffleArray = (array) => {
+            let newArr = [...array];
+            for (let i = newArr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
+            }
+            return newArr;
+        };
+
+        const normalize = (str) => {
+            if (!str) return "";
+            return str.toLowerCase().replace(/['‘`]/g, '').replace(/[\s\-\/]/g, '').trim();
+        };
+
+        function App() {
+            const [mode, setMode] = useState(0);
+            const [questions, setQuestions] = useState([]);
+            const [currentIndex, setCurrentIndex] = useState(0);
+            const [score, setScore] = useState(0);
+            const [userAnswer, setUserAnswer] = useState('');
+            const [isAnswered, setIsAnswered] = useState(false);
+            const [isCorrect, setIsCorrect] = useState(false);
+            const [isListening, setIsListening] = useState(false);
+            const [showTextFallback, setShowTextFallback] = useState(false);
+            const [timeLeft, setTimeLeft] = useState(5);
+
+            const inputRef = useRef(null);
+            const audioCtxRef = useRef(null);
+
+            useEffect(() => {
+                lucide.createIcons();
+            });
+
+            const playSound = (type) => {
+                try {
+                    if (!audioCtxRef.current) {
+                        const AudioContext = window.AudioContext || window.webkitAudioContext;
+                        if (AudioContext) audioCtxRef.current = new AudioContext();
+                    }
+                    const ctx = audioCtxRef.current;
+                    if (!ctx) return;
+                    if (ctx.state === 'suspended') ctx.resume();
+
+                    const osc = ctx.createOscillator();
+                    const gainNode = ctx.createGain();
+                    osc.connect(gainNode);
+                    gainNode.connect(ctx.destination);
+                    
+                    if (type === 'correct') {
+                        osc.type = 'sine';
+                        osc.frequency.setValueAtTime(523.25, ctx.currentTime);
+                        osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.1);
+                        gainNode.gain.setValueAtTime(0.3, ctx.currentTime);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
+                        osc.start(ctx.currentTime);
+                        osc.stop(ctx.currentTime + 0.2);
+                    } else {
+                        osc.type = 'triangle';
+                        osc.frequency.setValueAtTime(200, ctx.currentTime);
+                        osc.frequency.exponentialRampToValueAtTime(100, ctx.currentTime + 0.2);
+                        gainNode.gain.setValueAtTime(0.3, ctx.currentTime);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
+                        osc.start(ctx.currentTime);
+                        osc.stop(ctx.currentTime + 0.2);
+                    }
+                } catch (e) { console.error("Audio error:", e); }
+            };
+
+            const speakWord = (text, lang) => {
+                if (!text) return;
+                let textToSpeak = text.split('/')[0].trim();
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(textToSpeak);
+                utterance.lang = lang;
+                window.speechSynthesis.speak(utterance);
+            };
+
+            const generateOptions = (correctStr, langKey) => {
+                let options = [correctStr];
+                let others = vocabulary.map(v => v[langKey]).filter(v => v !== correctStr);
+                others = shuffleArray(others);
+                options.push(others[0], others[1], others[2]);
+                return shuffleArray(options);
+            };
+
+            const startMode = (selectedMode) => {
+                let pool = [...vocabulary, ...vocabulary]; 
+                pool = shuffleArray(pool);
+
+                const generatedQs = pool.map(word => {
+                    let q = { wordItem: word, mode: selectedMode };
+                    switch (selectedMode) {
+                        case 1: 
+                            q.prompt = word.uz; q.correctAnswer = word.ru; q.options = generateOptions(word.ru, 'ru'); q.type = 'mcq'; break;
+                        case 2: 
+                            q.prompt = word.ru; q.correctAnswer = word.uz; q.options = generateOptions(word.uz, 'uz'); q.type = 'mcq'; break;
+                        case 3: 
+                            q.prompt = word.ru; q.correctAnswers = word.uzAlt; q.type = 'text'; break;
+                        case 4: 
+                            q.prompt = word.uz; q.correctAnswers = word.ruAlt; q.type = 'text'; break;
+                        case 5: 
+                            q.prompt = `${word.ru} [${word.ruPron}]`; q.correctAnswers = word.uzAlt; q.type = 'voice'; q.lang = 'uz-UZ'; break;
+                        case 6: 
+                            q.prompt = word.uz; q.correctAnswers = word.ruAlt; q.type = 'voice'; q.lang = 'ru-RU'; break;
+                    }
+                    return q;
+                });
+                setQuestions(generatedQs); setCurrentIndex(0); setScore(0); setMode(selectedMode); resetQuestionState();
+            };
+
+            const resetQuestionState = () => { 
+                setUserAnswer(''); 
+                setIsAnswered(false); 
+                setIsCorrect(false); 
+                setShowTextFallback(false); 
+                setIsListening(false); 
+                setTimeLeft(5); 
+            };
+
+            useEffect(() => {
+                let timerId;
+                if ((mode === 1 || mode === 2) && !isAnswered && timeLeft > 0) {
+                    timerId = setTimeout(() => setTimeLeft(prev => prev - 1), 1000);
+                } else if ((mode === 1 || mode === 2) && !isAnswered && timeLeft === 0) {
+                    checkMcqAnswer('timeout');
+                }
+                return () => clearTimeout(timerId);
+            }, [timeLeft, isAnswered, mode]);
+
+            useEffect(() => {
+                if ((questions[currentIndex]?.type === 'text' || showTextFallback) && !isAnswered && inputRef.current) {
+                    inputRef.current.focus();
+                }
+            }, [currentIndex, isAnswered, showTextFallback, questions]);
+
+            useEffect(() => {
+                const handleKeyDown = (e) => { if (e.key === 'Enter' && isAnswered) handleNext(); };
+                window.addEventListener('keydown', handleKeyDown);
+                return () => window.removeEventListener('keydown', handleKeyDown);
+            }, [isAnswered, currentIndex, questions.length]);
+
+            useEffect(() => {
+                let timeout;
+                if (isAnswered && isCorrect) {
+                    timeout = setTimeout(() => handleNext(), 1500); 
+                }
+                return () => clearTimeout(timeout);
+            }, [isAnswered, isCorrect, currentIndex, questions]);
+
+            const checkMcqAnswer = (selectedOption) => {
+                if (isAnswered) return;
+                const q = questions[currentIndex];
+                const correct = selectedOption === q.correctAnswer;
+                setUserAnswer(selectedOption); setIsCorrect(correct); setIsAnswered(true);
+                if (correct) setScore(s => s + 1);
+
+                playSound(correct ? 'correct' : 'error');
+                
+                if (q.mode === 1) speakWord(q.correctAnswer, 'ru-RU');
+                else if (q.mode === 2) speakWord(q.prompt, 'ru-RU');
+            };
+
+            const checkTextAnswer = (textInput = userAnswer) => {
+                if (isAnswered) return;
+                const q = questions[currentIndex];
+                const inputText = typeof textInput === 'string' ? textInput : '';
+                const normalizedUser = normalize(inputText);
+                const correctArr = q.correctAnswers;
+                const correct = inputText.trim() !== '' && correctArr.some(ans => normalize(ans) === normalizedUser);
+                setUserAnswer(inputText); setIsCorrect(correct); setIsAnswered(true);
+                if (correct) setScore(s => s + 1);
+
+                playSound(correct ? 'correct' : 'error');
+
+                if (q.mode === 3) speakWord(q.prompt, 'ru-RU');
+                else if (q.mode === 4) speakWord(q.correctAnswers[0], 'ru-RU');
+                else if (q.type === 'voice' && !correct) speakWord(q.correctAnswers[0], q.lang);
+            };
+
+            const handleNext = () => {
+                if (currentIndex < questions.length - 1) { setCurrentIndex(curr => curr + 1); resetQuestionState(); } 
+                else { setMode(7); }
+            };
+
+            const startListening = () => {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                if (!SpeechRecognition) {
+                    alert("Brauzeringiz ovoz aniqlashni qo'llab-quvvatlamaydi."); setShowTextFallback(true); return;
+                }
+                const recognition = new SpeechRecognition();
+                recognition.lang = questions[currentIndex].lang;
+                recognition.interimResults = false; recognition.maxAlternatives = 1;
+                recognition.onstart = () => setIsListening(true);
+                recognition.onresult = (event) => { checkTextAnswer(event.results[0][0].transcript); setIsListening(false); };
+                recognition.onerror = (event) => {
+                    setIsListening(false);
+                    if (event.error === 'not-allowed') { alert("Mikrofonga ruxsat yo'q."); setShowTextFallback(true); }
+                };
+                recognition.onend = () => setIsListening(false);
+                recognition.start();
+            };
+
+            if (mode === 0) return (
+                <div className="max-w-3xl mx-auto p-6 bg-white rounded-xl shadow-lg border border-gray-100 mt-10">
+                    <h1 className="text-3xl font-bold text-center mb-8 text-blue-800">So'z Boyligi Testi ({vocabulary.length} ta so'z)</h1>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <button onClick={() => startMode(1)} className="p-4 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg text-left transition-colors">
+                            <div className="font-bold text-blue-900">1. O'zbekcha ➔ Ruscha variantlar</div>
+                            <div className="text-sm text-blue-600 mt-1">⏳ 5 soniya vaqt beriladi</div>
+                        </button>
+                        <button onClick={() => startMode(2)} className="p-4 bg-green-50 hover:bg-green-100 border border-green-200 rounded-lg text-left transition-colors">
+                            <div className="font-bold text-green-900">2. Ruscha ➔ O'zbekcha variantlar</div>
+                            <div className="text-sm text-green-600 mt-1">⏳ 5 soniya vaqt beriladi</div>
+                        </button>
+                        <button onClick={() => startMode(3)} className="p-4 bg-purple-50 hover:bg-purple-100 border border-purple-200 rounded-lg text-left transition-colors">
+                            <div className="font-bold text-purple-900">3. Ruscha ➔ O'zbekcha (Yozish)</div>
+                        </button>
+                        <button onClick={() => startMode(4)} className="p-4 bg-orange-50 hover:bg-orange-100 border border-orange-200 rounded-lg text-left transition-colors">
+                            <div className="font-bold text-orange-900">4. O'zbekcha ➔ Ruscha (Yozish)</div>
+                        </button>
+                        <button onClick={() => startMode(5)} className="p-4 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg text-left transition-colors">
+                            <div className="font-bold text-red-900">5. Ruscha ➔ O'zbekcha (Talaffuz)</div>
+                        </button>
+                        <button onClick={() => startMode(6)} className="p-4 bg-teal-50 hover:bg-teal-100 border border-teal-200 rounded-lg text-left transition-colors">
+                            <div className="font-bold text-teal-900">6. O'zbekcha ➔ Ruscha (Talaffuz)</div>
+                        </button>
+                    </div>
+                </div>
+            );
+
+            if (mode === 7) return (
+                <div className="max-w-xl mx-auto p-8 bg-white rounded-xl shadow-lg border border-gray-100 text-center mt-10">
+                    <h2 className="text-4xl font-bold text-gray-800 mb-2">Test Yakunlandi!</h2>
+                    <div className="text-5xl font-black text-blue-600 my-8">{score} / {TOTAL_QUESTIONS}</div>
+                    <button onClick={() => setMode(0)} className="w-full p-4 bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold rounded-xl transition">Bosh menuga qaytish</button>
+                </div>
+            );
+
+            const q = questions[currentIndex];
+            return (
+                <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-lg border border-gray-100 mt-10 flex flex-col h-[550px]">
+                    <div className="bg-gray-50 p-4 border-b flex justify-between items-center">
+                        <button onClick={() => setMode(0)} className="text-gray-600 hover:text-blue-600 font-medium">⬅ Bosh menu</button>
+                        <div className="font-semibold text-gray-700">Savol: {currentIndex + 1} / {TOTAL_QUESTIONS}</div>
+                        <div className="font-bold text-blue-600">Ball: {score}</div>
+                    </div>
+                    <div className="h-2 bg-gray-200"><div className="h-full bg-blue-500 transition-all duration-300" style={{ width: `${(currentIndex / TOTAL_QUESTIONS) * 100}%` }}></div></div>
+                    
+                    <div className="p-8 flex-grow flex flex-col items-center justify-center text-center">
+                        
+                        {(q.mode === 1 || q.mode === 2) && !isAnswered && (
+                            <div className={`text-xl font-bold mb-4 transition-colors ${timeLeft <= 2 ? 'text-red-500 animate-pulse' : 'text-orange-500'}`}>
+                                ⏳ Qolgan vaqt: {timeLeft} soniya
+                            </div>
+                        )}
+
+                        <div className="text-4xl md:text-5xl font-bold text-gray-800 mb-10">{q.prompt}</div>
+
+                        {q.type === 'mcq' && (
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+                                {q.options.map((opt, idx) => {
+                                    let cls = "p-4 text-lg font-medium rounded-xl border-2 transition ";
+                                    if (!isAnswered) cls += "bg-white border-gray-200 hover:border-blue-400";
+                                    else if (opt === q.correctAnswer) cls += "bg-green-100 border-green-500 text-green-800";
+                                    else if (opt === userAnswer) cls += "bg-red-100 border-red-500 text-red-800";
+                                    else cls += "bg-gray-50 border-gray-200 opacity-50";
+                                    return <button key={idx} disabled={isAnswered} onClick={() => checkMcqAnswer(opt)} className={cls}>{opt}</button>
+                                })}
+                            </div>
+                        )}
+
+                        {(q.type === 'text' || (q.type === 'voice' && showTextFallback)) && (
+                            <div className="w-full flex flex-col items-center">
+                                <input ref={inputRef} type="text" disabled={isAnswered} value={userAnswer === 'timeout' ? '' : userAnswer} onChange={(e) => setUserAnswer(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && !isAnswered && checkTextAnswer(userAnswer)} placeholder="Yozing..." className="w-full max-w-lg p-4 text-center text-xl border-2 border-gray-300 rounded-xl outline-none" />
+                                {!isAnswered && (
+                                    <div className="flex gap-3 mt-4">
+                                        <button onClick={() => checkTextAnswer(userAnswer)} className="px-8 py-3 bg-blue-600 text-white font-bold rounded-xl">Tekshirish</button>
+                                        <button onClick={() => checkTextAnswer('')} className="px-6 py-3 bg-gray-200 text-gray-700 font-bold rounded-xl">Bilmayman</button>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        {q.type === 'voice' && !showTextFallback && (
+                            <div className="w-full flex flex-col items-center">
+                                <button disabled={isAnswered || isListening} onClick={startListening} className={`p-6 rounded-full text-white ${isListening ? 'bg-red-500 animate-pulse' : 'bg-blue-600'}`}>
+                                    <i data-lucide="mic" class="w-10 h-10"></i>
+                                </button>
+                                <p className="mt-4 text-gray-500">{isListening ? "Eshitilmoqda..." : (isAnswered ? "Qabul qilindi" : "Bosib gapiring")}</p>
+                                {!isAnswered && !isListening && <button onClick={() => setShowTextFallback(true)} className="mt-4 text-sm text-gray-400">Yozish orqali javob berish</button>}
+                            </div>
+                        )}
+
+                        {isAnswered && (
+                            <div className={`mt-8 p-4 rounded-xl w-full max-w-lg ${isCorrect ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'} font-bold`}>
+                                {isCorrect ? "✅ To'g'ri!" : userAnswer === 'timeout' ? `⏳ Vaqt tugadi! To'g'ri javob: ${q.correctAnswers?.[0] || q.correctAnswer}` : `❌ Xato! To'g'ri javob: ${q.correctAnswers?.[0] || q.correctAnswer}`}
+                            </div>
+                        )}
+                    </div>
+                    
+                    <div className="p-4 bg-gray-50 border-t flex justify-end h-20 items-center">
+                        {isAnswered && <button onClick={handleNext} autoFocus className="px-6 py-2 bg-gray-800 text-white font-bold rounded-lg">Keyingisi ➡</button>}
+                    </div>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
