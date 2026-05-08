@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Matematika 1-sinf (14-qism) - Kosmik Sayohat</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&display=swap');
+
+        body { 
+            font-family: 'Montserrat', sans-serif; 
+            /* Yangi dizayn: Kosmik tun ranglari */
+            background: radial-gradient(circle at center, #1e1b4b 0%, #0f172a 100%);
+            color: #f8fafc;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Yulduzlar foni uchun animatsiya */
+        .stars-container {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background-image: 
+                radial-gradient(1px 1px at 20px 30px, #fff, rgba(0,0,0,0)),
+                radial-gradient(1.5px 1.5px at 40px 70px, #fff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 50px 160px, #ddd, rgba(0,0,0,0));
+            background-repeat: repeat;
+            background-size: 200px 200px;
+            opacity: 0.3;
+            animation: twinkle 5s infinite alternate;
+        }
+
+        @keyframes twinkle { 0% { opacity: 0.2; } 100% { opacity: 0.5; } }
+
+        button { touch-action: manipulation; }
+        #edit-with-js-bin { display: none !important; }
+        
+        .cosmic-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 2px solid rgba(139, 92, 246, 0.3);
+            box-shadow: 0 0 40px rgba(139, 92, 246, 0.2);
+            border-radius: 2.5rem;
+        }
+
+        .emoji-pic { font-family: "Apple Color Emoji", "Segoe UI Emoji", sans-serif; text-shadow: 0px 0px 20px rgba(255,255,255,0.4); }
+        
+        @keyframes pop { 0% { transform: scale(0.9); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        .animate-pop { animation: pop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        
+        @keyframes rocket-float { 
+            0% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(2deg); }
+            100% { transform: translateY(0) rotate(0deg); }
+        }
+        .animate-rocket { animation: rocket-float 4s infinite ease-in-out; }
+
+        .option-btn { 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+        .option-btn:hover:not(:disabled) { 
+            background: rgba(139, 92, 246, 0.2); 
+            transform: scale(1.03); 
+            border-color: #8b5cf6;
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
+        }
+        .option-btn:active { transform: scale(0.97); }
+        
+        .timer-bar { transition: width 1s linear; box-shadow: 0 0 10px #8b5cf6; }
+
+        .neon-text { text-shadow: 0 0 10px rgba(139, 92, 246, 0.8), 0 0 20px rgba(139, 92, 246, 0.5); }
+    </style>
+</head>
+<body class="antialiased flex flex-col">
+
+    <div class="stars-container"></div>
+
+    <!-- Header -->
+    <header class="bg-black/30 backdrop-blur-lg text-white py-3 sm:py-5 px-4 sm:px-6 shadow-2xl sticky top-0 z-50 border-b border-white/10">
+        <div class="max-w-4xl mx-auto flex items-center justify-between gap-2">
+            <div class="flex items-center gap-3 flex-1">
+                <div id="header-icon" class="text-3xl sm:text-4xl animate-rocket">🚀</div>
+                <h1 id="title-default" class="text-xl sm:text-2xl md:text-3xl font-black tracking-tighter neon-text">KOSMIK TEST (14-qism)</h1>
+                <a href="https://t.me/Matemdarsi" target="_blank" id="title-telegram" class="hidden items-center gap-2 text-xl sm:text-2xl md:text-3xl font-black tracking-tighter text-cyan-400 hover:text-white transition-all decoration-transparent">
+                    <svg class="w-6 h-6 sm:w-8 sm:h-8 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.295-.6.295-.002 0-.003 0-.005 0l.213-3.054 5.56-5.022c.24-.213-.054-.334-.373-.121l-6.869 4.326-2.96-.924c-.64-.203-.658-.64.135-.954l11.566-4.458c.538-.196 1.006.128.832.94z"/></svg>
+                    @Matemdarsi
+                </a>
+            </div>
+            <div id="user-display" class="hidden text-xs sm:text-sm font-black bg-indigo-500/30 px-4 py-2 rounded-full border border-indigo-500/50 text-indigo-200 uppercase tracking-widest"></div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-4xl mx-auto w-full p-4 sm:p-6 lg:py-12 flex flex-col items-center justify-center">
+        
+        <!-- Boshlash Oynasi -->
+        <div id="screen-start" class="cosmic-card w-full p-8 sm:p-14 text-center animate-pop">
+            <div class="text-8xl sm:text-[11rem] mb-8 animate-rocket">👨‍🚀</div>
+            <h2 class="text-4xl sm:text-6xl md:text-7xl font-black text-white mb-6 tracking-tighter neon-text">Koinot Sari!</h2>
+            <p class="text-indigo-200 mb-12 leading-relaxed text-base sm:text-2xl font-medium max-w-2xl mx-auto">
+                1-sinf matematik qahramonlari uchun yangi kosmik sarguzasht. Yulduzlarni to'plashga tayyormisiz?
+            </p>
+            <form id="form-start" class="max-w-md mx-auto space-y-6">
+                <div class="relative">
+                    <input type="text" id="input-name" required minlength="3" maxlength="15" placeholder="Ismingizni kiriting..." 
+                           class="w-full pl-14 pr-6 py-5 sm:py-6 rounded-3xl border-2 border-indigo-500/50 bg-black/40 text-white text-xl sm:text-2xl font-black focus:border-cyan-400 focus:ring-4 focus:ring-cyan-400/20 outline-none transition-all placeholder-indigo-300/50">
+                    <span class="absolute left-5 top-1/2 -translate-y-1/2 text-3xl sm:text-4xl">🛸</span>
+                    <p id="name-error" class="hidden text-rose-400 text-sm mt-3 font-bold">Faqat harf bo'lsin (3-15 belgi).</p>
+                </div>
+                <button type="submit" class="w-full bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white font-black text-2xl sm:text-3xl py-5 sm:py-6 rounded-3xl hover:brightness-110 active:scale-95 transition-all shadow-2xl shadow-indigo-500/40 flex items-center justify-center gap-4 group">
+                    <span>Parvozni boshlash</span> 
+                    <span class="text-3xl group-hover:translate-x-2 transition-transform">🛰️</span>
+                </button>
+            </form>
+        </div>
+
+        <!-- Savollar Oynasi -->
+        <div id="screen-quiz" class="hidden cosmic-card w-full flex flex-col overflow-hidden animate-pop relative">
+            
+            <!-- Stats Header -->
+            <div class="bg-white/5 p-5 sm:p-8 flex flex-col gap-4 sm:gap-6 border-b border-white/10">
+                <div class="flex justify-between items-center w-full">
+                    <div class="bg-indigo-600/30 px-5 py-2 sm:py-3 rounded-2xl border border-indigo-400/50 font-black text-indigo-300 text-base sm:text-2xl">
+                        <span id="progress-indicator">1 / 20</span>
+                    </div>
+                    <div class="flex items-center gap-3 sm:gap-5">
+                        <div class="bg-gradient-to-br from-yellow-400 to-orange-600 px-5 py-2 sm:py-3 rounded-2xl shadow-lg font-black text-white text-base sm:text-2xl flex items-center gap-2 border border-white/20">
+                            <span>⭐</span> <span id="current-score">0</span>
+                        </div>
+                        <div id="timer-box" class="bg-black/60 px-5 py-2 sm:py-3 rounded-2xl border border-white/20 font-black text-white text-base sm:text-2xl min-w-[80px] sm:min-w-[100px] text-center transition-colors">
+                            <span id="time-left">0</span><span class="text-sm text-gray-400 ml-1">s</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Timer Bar -->
+                <div class="w-full bg-white/10 rounded-full h-2 sm:h-3 overflow-hidden">
+                    <div id="timer-bar" class="timer-bar bg-gradient-to-r from-cyan-400 via-indigo-500 to-purple-600 h-full w-full rounded-full"></div>
+                </div>
+            </div>
+            
+            <!-- Question Content -->
+            <div class="p-6 sm:p-10 md:p-14 w-full flex flex-col items-center flex-grow min-h-[450px]">
+                <div id="question-container" class="w-full max-w-3xl mx-auto flex flex-col items-center">
+                    <div id="image-container" class="hidden text-7xl sm:text-9xl md:text-[10rem] text-center mb-8 sm:mb-14 emoji-pic bg-white/5 p-10 sm:p-14 rounded-[3rem] border-2 border-white/10 shadow-inner w-full flex-wrap justify-center items-center leading-normal"></div>
+                    <h4 id="question-text" class="text-2xl sm:text-3xl md:text-5xl font-black text-white mb-10 sm:mb-14 text-center w-full leading-tight neon-text">...</h4>
+                    
+                    <!-- Options Grid -->
+                    <div id="options-container" class="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-8 w-full"></div>
+                </div>
+            </div>
+
+            <!-- Auto-advance Feedback overlay -->
+            <div id="feedback-overlay" class="absolute inset-0 bg-indigo-950/90 backdrop-blur-xl z-10 hidden flex-col items-center justify-center animate-pop">
+                <div id="feedback-emoji" class="text-9xl sm:text-[13rem] mb-6 drop-shadow-2xl">🌍</div>
+                <h3 id="feedback-title" class="text-4xl sm:text-7xl font-black mb-4 text-white uppercase tracking-tighter">Ofarin!</h3>
+                <p id="feedback-points" class="text-2xl sm:text-4xl font-black text-cyan-400 bg-cyan-400/10 px-10 py-4 rounded-full border-2 border-cyan-400/50 shadow-xl">+5 ⭐</p>
+            </div>
+        </div>
+
+        <!-- Natija Oynasi -->
+        <div id="screen-result" class="hidden cosmic-card w-full p-8 sm:p-16 text-center relative overflow-hidden animate-pop">
+            
+            <div id="saving-overlay" class="absolute inset-0 bg-black/90 backdrop-blur-2xl z-20 flex flex-col justify-center items-center hidden">
+                <div class="w-20 h-20 border-8 border-indigo-500/20 border-t-cyan-400 rounded-full animate-spin mb-8"></div>
+                <h3 class="text-3xl font-black text-cyan-400 animate-pulse">Yer bilan bog'lanilmoqda...</h3>
+            </div>
+
+            <div id="result-emoji" class="text-9xl sm:text-[11rem] mb-8 animate-rocket drop-shadow-2xl">🌌</div>
+            <h2 id="result-title" class="text-4xl sm:text-6xl font-black text-white mb-4 neon-text">Super Kapitan!</h2>
+            <p id="result-name" class="text-2xl sm:text-4xl text-cyan-300 mb-12 font-black tracking-widest"></p>
+            
+            <div class="bg-black/30 rounded-[3rem] p-10 sm:p-14 border-2 border-white/10 max-w-lg mx-auto mb-12 shadow-2xl relative">
+                <div class="absolute -right-10 -top-10 text-9xl opacity-10">🪐</div>
+                <p class="text-indigo-300 mb-4 font-black uppercase tracking-[0.2em] text-xs sm:text-base">Koinot yulduzlari</p>
+                <p id="result-stars" class="text-7xl sm:text-9xl font-black text-yellow-400 mb-12 drop-shadow-lg">0 ⭐</p>
+                
+                <p class="text-indigo-300 mb-4 font-black uppercase tracking-[0.2em] text-xs sm:text-base">To'g'ri nishonlar</p>
+                <p id="result-score" class="text-5xl sm:text-7xl font-black text-white mb-8">0 / 20</p>
+                
+                <div class="w-full bg-white/10 rounded-full h-5 sm:h-8 mb-4 p-1.5 overflow-hidden">
+                    <div id="result-bar" class="bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 h-full rounded-full transition-all duration-1000" style="width: 0%"></div>
+                </div>
+                <p id="result-percent" class="text-3xl font-black text-indigo-200">0%</p>
+            </div>
+
+            <div id="success-msg" class="hidden max-w-lg mx-auto mb-12 bg-cyan-950/50 border-2 border-cyan-500/50 text-cyan-200 p-8 rounded-[2.5rem] shadow-2xl text-center flex flex-col gap-4">
+                <p class="font-black text-xl sm:text-3xl tracking-tighter">✅ Missiya yakunlandi!</p>
+                <p class="text-base sm:text-xl font-bold opacity-80">Natijangiz galaktika reytingiga kiritildi.</p>
+            </div>
+
+            <button id="btn-restart" class="bg-white text-indigo-950 font-black text-xl sm:text-3xl py-6 sm:py-8 px-14 rounded-3xl hover:bg-cyan-400 hover:text-white transition-all shadow-2xl w-full max-w-md mx-auto flex items-center justify-center gap-4 active:scale-95">
+                <span>Yangi Missiya</span> <span class="text-3xl">🔄</span>
+            </button>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-black/50 backdrop-blur-xl text-indigo-300/80 py-8 sm:py-10 mt-auto w-full z-10 shrink-0 border-t border-white/5">
+        <div class="max-w-4xl mx-auto px-6 flex flex-col items-center justify-center gap-4 text-xs sm:text-lg text-center font-bold tracking-widest">
+            <p>KOMANDIR: AKMALJON JO'RAQO'ZIYEV</p>
+            <div class="flex gap-6 sm:gap-10">
+                <a href="https://t.me/akmalmaths" class="text-cyan-400 hover:text-white transition-colors" target="_blank">@AKMALMATHS</a> 
+                <a href="https://t.me/maktabdarsibot" class="text-cyan-400 hover:text-white transition-colors" target="_blank">@MAKTABDARSIIBOT</a>
+            </div>
+        </div>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const CLASS_NAME = "1-sinf"; 
+        const TEST_PART = "14-qism";  
+
+        const originalQuizData = [
+            // HAYOTIY VA RASMLI (10 ta)
+            { image: "⭐ 7 ta <br> + <br> ⭐ 3 ta", question: "Koinotda 7 ta yulduz bor edi, yana 3 tasi paydo bo'ldi. Jami nechta?", options: ["10 ta", "9 ta", "11 ta", "8 ta"], correctIndex: 0, time: 30 },
+            { image: "🚀 12 ta <br> - <br> 🔥 2 tasi uchdi", question: "12 ta raketadan 2 tasi fazoga uchib ketdi. Nechtasi qoldi?", options: ["10 ta", "11 ta", "9 ta", "12 ta"], correctIndex: 0, time: 30 },
+            { image: "🪐 Jupiter <br> 🪐 Saturn", question: "Hayotiy: Osmonda 2 ta katta va 4 ta kichik sayyora bor. Jami nechta?", options: ["6 ta", "5 ta", "7 ta", "8 ta"], correctIndex: 0, time: 30 },
+            { image: "👽 5 ta <br> + <br> 👽 5 ta", question: "Bitta kemada 5 ta, ikkinchisida ham 5 ta o'zga sayyoralik bor. Jami nechta?", options: ["10 ta", "12 ta", "8 ta", "15 ta"], correctIndex: 0, time: 30 },
+            { image: "🕒 Soat 5:00", question: "Hozir soat 5 bo'lsa, yana 2 soatdan keyin necha bo'ladi?", options: ["7:00", "6:00", "8:00", "5:00"], correctIndex: 0, time: 30 },
+            { image: "🍎 8 ta <br> - <br> 🧒 3 ta yedi", question: "Astronavtda 8 ta olma bor edi, u 3 tasini yedi. Nechta qoldi?", options: ["5 ta", "4 ta", "6 ta", "3 ta"], correctIndex: 0, time: 30 },
+            { image: "🛸 10 ta <br> - <br> 🛸 5 ta", question: "10 ta uchar likopchadan 5 tasi g'oyib bo'ldi. Nechta qoldi?", options: ["5 ta", "6 ta", "4 ta", "10 ta"], correctIndex: 0, time: 30 },
+            { image: "🌙 Oy", question: "Mantiq: Osmonda nechta Quyosh va nechta Oy bor?", options: ["1 ta Quyosh, 1 ta Oy", "2 ta Quyosh", "1 ta Quyosh, 2 ta Oy", "Ko'p"], correctIndex: 0, time: 30 },
+            { image: "📦 6 ta <br> + <br> 📦 4 ta", question: "Omborda 6 quti ovqat bor edi, yana 4 quti keltirildi. Jami nechta?", options: ["10 ta", "11 ta", "9 ta", "12 ta"], correctIndex: 0, time: 30 },
+            { image: "📐 Uchburchak", question: "Uchburchakning nechta uchi bor?", options: ["3 ta", "4 ta", "2 ta", "5 ta"], correctIndex: 0, time: 30 },
+            
+            // STANDART (5 ta)
+            { question: "15 va 4 sonlarining yig'indisini toping. (15 + 4 = ?)", options: ["19", "18", "20", "17"], correctIndex: 0, time: 30 },
+            { question: "20 dan 7 ni ayiring. (20 - 7 = ?)", options: ["13", "12", "14", "15"], correctIndex: 0, time: 30 },
+            { question: "Sanaganimizda 19 dan keyin qaysi son keladi?", options: ["20", "18", "21", "10"], correctIndex: 0, time: 30 },
+            { question: "9 va 9 ning yig'indisi nechaga teng?", options: ["18", "19", "17", "16"], correctIndex: 0, time: 30 },
+            { question: "Qaysi son 12 dan kichik va 10 dan katta?", options: ["11", "9", "13", "10"], correctIndex: 0, time: 30 },
+
+            // OLIMPIADA (5 ta)
+            { question: "🏆 Olimpiada: Bir qo'lda 5 ta barmoq bo'lsa, ikkita qo'lda jami nechta barmoq bor?", options: ["10 ta", "5 ta", "12 ta", "8 ta"], correctIndex: 0, time: 50 },
+            { question: "🏆 Olimpiada: 10 metrli tasmadan 2 metr qirqib olindi. Yana 3 metr qirqildi. Jami necha metr qoldi?", options: ["5 metr", "6 metr", "4 metr", "7 metr"], correctIndex: 0, time: 60 },
+            { question: "🏆 Olimpiada: Akam 10 yoshda, u mendan 3 yosh katta. Men necha yoshdaman?", options: ["7 yosh", "8 yosh", "13 yosh", "6 yosh"], correctIndex: 0, time: 60 },
+            { question: "🏆 Olimpiada: 3 ta bola bittadan muzqaymoq yedi. Jami nechta muzqaymoq yeyildi?", options: ["3 ta", "1 ta", "4 ta", "6 ta"], correctIndex: 0, time: 50 },
+            { question: "🏆 Olimpiada: Savatda 3 ta oq va 2 ta qizil koptok bor. Eng kamida nechta koptok olsak, aniq bitta oq koptok chiqadi?", options: ["3 ta", "2 ta", "4 ta", "1 ta"], correctIndex: 0, time: 60 }
+        ];
+
+        let quizData = [];
+        let currentIndex = 0;
+        let userAnswers = [];
+        let totalScore = 0;
+        let userName = "";
+        let timerInterval;
+        let timeLeft = 0;
+        let isSubmitting = false; 
+
+        // AUDIO
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx;
+        function initAudio() { if (!audioCtx) audioCtx = new AudioContext(); if (audioCtx.state === 'suspended') audioCtx.resume(); }
+        function playTone(f, t, d, v) { if(!audioCtx) return; const o = audioCtx.createOscillator(), g = audioCtx.createGain(); o.type = t; o.frequency.setValueAtTime(f, audioCtx.currentTime); g.gain.setValueAtTime(v, audioCtx.currentTime); g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + d); o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime + d); }
+        function playCorrect() { playTone(880, 'sine', 0.2, 0.3); setTimeout(() => playTone(1108, 'sine', 0.2, 0.3), 100); }
+        function playWrong() { playTone(220, 'sawtooth', 0.4, 0.2); }
+        function playTick() { playTone(1500, 'sine', 0.05, 0.05); }
+
+        // FIREBASE
+        let db, appAuth, currentUser;
+        let isFirebaseReady = false;
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'maktab-darslari';
+        async function initFirebase() {
+            try {
+                let firebaseConfig;
+                if (typeof __firebase_config !== 'undefined') firebaseConfig = JSON.parse(__firebase_config);
+                else firebaseConfig = { apiKey: "", authDomain: "maktab-darslari.firebaseapp.com", projectId: "maktab-darslari", storageBucket: "maktab-darslari.firebasestorage.app", messagingSenderId: "375361700394", appId: "1:375361700394:web:c7b74f29fb302e7743f953" };
+                const app = initializeApp(firebaseConfig);
+                appAuth = getAuth(app);
+                db = getFirestore(app);
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) await signInWithCustomToken(appAuth, __initial_auth_token);
+                else await signInAnonymously(appAuth);
+                onAuthStateChanged(appAuth, (user) => { if(user) { currentUser = user; isFirebaseReady = true; } });
+            } catch(e) { isFirebaseReady = false; }
+        }
+
+        function shuffleArray(array) { let n = JSON.parse(JSON.stringify(array)); for (let i = n.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [n[i], n[j]] = [n[j], n[i]]; } return n; }
+        function prepareQuizData(data) { let s = shuffleArray(data); s.forEach(q => { let correctText = q.options[q.correctIndex]; q.options = shuffleArray(q.options); q.correctIndex = q.options.indexOf(correctText); }); return s; }
+
+        document.getElementById('form-start').addEventListener('submit', (e) => {
+            e.preventDefault(); initAudio();
+            userName = document.getElementById('input-name').value.trim();
+            const pattern = /^[a-zA-Zа-яА-ЯўЎқҚғҒҳҲ'’\s\-]+$/;
+            if (!pattern.test(userName) || userName.length < 3) { document.getElementById('name-error').classList.remove('hidden'); return; }
+            startQuiz();
+        });
+
+        function startQuiz() {
+            document.getElementById('screen-start').classList.add('hidden');
+            document.getElementById('screen-quiz').classList.remove('hidden');
+            document.getElementById('user-display').textContent = userName;
+            document.getElementById('user-display').classList.remove('hidden');
+            document.getElementById('title-default').classList.add('hidden');
+            document.getElementById('header-icon').classList.add('hidden');
+            document.getElementById('title-telegram').classList.remove('hidden');
+            document.getElementById('title-telegram').classList.add('flex');
+            quizData = prepareQuizData(originalQuizData);
+            userAnswers = new Array(quizData.length).fill(null);
+            currentIndex = 0; totalScore = 0; isSubmitting = false;
+            renderQuestion();
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            let totalTimeForQ = quizData[currentIndex].time;
+            timeLeft = totalTimeForQ;
+            document.getElementById('time-left').textContent = timeLeft;
+            document.getElementById('timer-bar').style.width = '100%';
+            document.getElementById('timer-box').classList.replace('border-rose-500', 'border-white/20');
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                document.getElementById('time-left').textContent = timeLeft;
+                document.getElementById('timer-bar').style.width = `${(timeLeft / totalTimeForQ) * 100}%`;
+                if(timeLeft <= 5) {
+                    document.getElementById('timer-box').classList.replace('border-white/20', 'border-rose-500');
+                    playTick();
+                }
+                if (timeLeft <= 0) { clearInterval(timerInterval); processAnswer(-1); }
+            }, 1000);
+        }
+
+        function renderQuestion() {
+            document.getElementById('feedback-overlay').classList.add('hidden');
+            document.getElementById('feedback-overlay').classList.remove('flex');
+            const data = quizData[currentIndex];
+            const elImg = document.getElementById('image-container');
+            if(data.image) { elImg.innerHTML = data.image; elImg.classList.remove('hidden'); elImg.classList.add('flex'); }
+            else { elImg.innerHTML = ''; elImg.classList.add('hidden'); elImg.classList.remove('flex'); }
+            
+            let text = data.question;
+            if(text.includes('Olimpiada:')) text = text.replace('Olimpiada:', '<span class="text-yellow-400 font-black tracking-widest uppercase text-sm block mb-1">🏆 Olimpiada missiyasi</span>');
+            document.getElementById('question-text').innerHTML = text;
+            document.getElementById('progress-indicator').textContent = `${currentIndex + 1} / ${quizData.length}`;
+            startTimer();
+            const opts = document.getElementById('options-container');
+            opts.innerHTML = ''; opts.style.pointerEvents = 'auto';
+            data.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn w-full text-left p-5 sm:p-7 rounded-3xl border-2 font-black text-white text-lg sm:text-2xl shadow-lg flex items-center leading-tight';
+                btn.innerHTML = `<span class="inline-flex items-center justify-center shrink-0 w-10 h-10 sm:w-14 sm:h-14 bg-white/10 rounded-2xl mr-4 sm:mr-6 font-black border border-white/20 text-cyan-300">${String.fromCharCode(65 + idx)}</span><span class="flex-1">${opt}</span>`;
+                btn.onclick = () => processAnswer(idx);
+                opts.appendChild(btn);
+            });
+        }
+
+        function processAnswer(selected) {
+            clearInterval(timerInterval);
+            const data = quizData[currentIndex];
+            userAnswers[currentIndex] = selected;
+            document.getElementById('options-container').style.pointerEvents = 'none';
+            let isCorrect = (selected === data.correctIndex);
+            let earned = 0;
+            if (selected !== -1 && isCorrect) {
+                earned = Math.ceil((timeLeft / quizData[currentIndex].time) * 5); earned = Math.max(1, earned);
+                totalScore += earned; document.getElementById('current-score').textContent = totalScore; playCorrect();
+            } else playWrong();
+
+            const btns = document.querySelectorAll('.option-btn');
+            btns.forEach((btn, idx) => {
+                if (idx === data.correctIndex) btn.classList.add('border-emerald-500', 'bg-emerald-500/20', 'text-emerald-400');
+                else if (idx === selected) btn.classList.add('border-rose-500', 'bg-rose-500/20', 'text-rose-400');
+                else btn.classList.add('opacity-20', 'scale-95');
+            });
+
+            const overlay = document.getElementById('feedback-overlay');
+            overlay.classList.remove('hidden'); overlay.classList.add('flex');
+            const fEmoji = document.getElementById('feedback-emoji');
+            const fTitle = document.getElementById('feedback-title');
+            const fPoints = document.getElementById('feedback-points');
+
+            if(selected === -1) { fEmoji.textContent = '⏱'; fTitle.textContent = "Vaqt tugadi!"; fTitle.className = "text-5xl font-black text-rose-500"; fPoints.classList.add('hidden'); }
+            else if(isCorrect) { fEmoji.textContent = '🌟'; fTitle.textContent = "Ajoyib!"; fTitle.className = "text-5xl font-black text-cyan-400"; fPoints.textContent = `+${earned} ⭐`; fPoints.classList.remove('hidden'); }
+            else { fEmoji.textContent = '👾'; fTitle.textContent = "Xato!"; fTitle.className = "text-5xl font-black text-rose-500"; fPoints.classList.add('hidden'); }
+
+            setTimeout(() => { if (currentIndex < quizData.length - 1) { currentIndex++; renderQuestion(); } else finishQuiz(); }, 1800);
+        }
+
+        async function finishQuiz() {
+            if (isSubmitting) return; isSubmitting = true;
+            let correct = userAnswers.filter((ans, idx) => ans === quizData[idx].correctIndex).length;
+            const pct = Math.round((correct / quizData.length) * 100);
+            document.getElementById('screen-quiz').classList.add('hidden');
+            document.getElementById('screen-result').classList.remove('hidden');
+            document.getElementById('result-name').textContent = userName;
+            document.getElementById('result-stars').textContent = `${totalScore} ⭐`;
+            document.getElementById('result-score').textContent = `${correct} / 20`;
+            document.getElementById('result-percent').textContent = `${pct}%`;
+            setTimeout(() => { document.getElementById('result-bar').style.width = `${pct}%`; }, 300);
+
+            if (isFirebaseReady && currentUser) {
+                document.getElementById('saving-overlay').classList.remove('hidden'); 
+                try {
+                    const leaderboardRef = collection(db, 'artifacts', appId, 'public', 'data', 'leaderboards');
+                    let timeUsed = quizData.reduce((acc, q) => acc + q.time, 0); // Simplified for calculation
+                    await addDoc(leaderboardRef, { name: userName, score: correct, stars: totalScore, className: CLASS_NAME, testPart: TEST_PART, timeUsed: 0, timestamp: serverTimestamp() });
+                    document.getElementById('saving-overlay').classList.add('hidden');
+                    document.getElementById('success-msg').classList.remove('hidden');
+                } catch(e) { document.getElementById('saving-overlay').innerHTML = `<div class="p-6 text-center text-rose-400 font-bold">Xatolik: Aloqa uzildi</div>`; }
+            }
+        }
+        document.getElementById('btn-restart').onclick = () => location.reload();
+        initFirebase();
+    </script>
+</body>
+</html>

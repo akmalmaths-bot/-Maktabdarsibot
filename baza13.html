@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>O'quvchilar Natijalari (13-qism)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@600;800;900&display=swap');
+        body { 
+            font-family: 'Nunito', sans-serif; 
+            /* 13-qismga mos Iliq Quyoshli / Shirinliklar fon */
+            background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 50%, #ffe4e6 100%);
+            color: #4c0519; 
+            min-height: 100vh;
+        }
+        .glass-panel { 
+            background: rgba(255, 255, 255, 0.85); 
+            backdrop-filter: blur(16px); 
+            border-radius: 2.5rem; 
+            box-shadow: 0 25px 50px -12px rgba(244, 63, 94, 0.15); 
+        }
+        
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+        .animate-float { animation: float 3s infinite ease-in-out; }
+    </style>
+</head>
+<body class="p-3 sm:p-6 md:p-10 flex flex-col items-center">
+
+    <div class="max-w-5xl w-full glass-panel p-5 sm:p-8 border-4 border-white flex flex-col">
+        
+        <!-- Header va Umumiy ishtirokchilar -->
+        <div class="flex flex-col items-center text-center mb-8">
+            <div class="text-5xl sm:text-6xl mb-4 animate-float">☀️</div>
+            <h1 class="text-3xl sm:text-4xl md:text-5xl font-black text-rose-600 mb-2 tracking-tight drop-shadow-sm">O'quvchilar Natijalari</h1>
+            <p class="text-orange-600 font-bold mb-6 text-base sm:text-lg">13-qism bo'yicha jonli reyting paneli</p>
+            
+            <div class="bg-gradient-to-r from-orange-100 to-rose-100 text-rose-900 px-6 sm:px-8 py-3 rounded-full font-black text-base sm:text-xl border-2 border-white shadow-sm inline-flex items-center gap-3">
+                <span>👥 Umumiy ishtirokchilar:</span>
+                <span id="total-count" class="text-rose-600 text-2xl drop-shadow-sm">0 ta</span>
+            </div>
+        </div>
+
+        <!-- FILTR QISMI (Markazlashgan) -->
+        <div class="flex flex-row justify-center items-center gap-3 sm:gap-6 mb-6 sm:mb-8 bg-white/60 p-3 sm:p-5 rounded-3xl shadow-sm border-2 border-rose-50 shrink-0 w-full max-w-2xl mx-auto backdrop-blur-sm">
+            <div class="flex flex-col w-1/2 sm:w-auto">
+                <label class="text-[10px] sm:text-xs font-black text-rose-300 uppercase ml-1 mb-1 tracking-wider">Sinfni tanlang</label>
+                <select id="class-select" class="px-3 sm:px-5 py-3 rounded-2xl border-2 border-rose-100 font-black text-sm sm:text-lg text-rose-700 bg-white outline-none focus:border-orange-400 cursor-pointer w-full sm:w-48 shadow-sm transition-colors hover:bg-orange-50">
+                    <option value="1-sinf" selected>1-sinf</option>
+                    <option value="2-sinf">2-sinf</option>
+                    <option value="3-sinf">3-sinf</option>
+                    <option value="4-sinf">4-sinf</option>
+                    <option value="5-sinf">5-sinf</option>
+                    <option value="Prezident maktabi">PM Tayyorlov</option>
+                </select>
+            </div>
+            
+            <div class="flex flex-col w-1/2 sm:w-auto">
+                <label class="text-[10px] sm:text-xs font-black text-rose-300 uppercase ml-1 mb-1 tracking-wider">Test Qismi</label>
+                <select id="part-select" class="px-3 sm:px-5 py-3 rounded-2xl border-2 border-orange-100 font-black text-sm sm:text-lg text-orange-700 bg-white outline-none cursor-pointer w-full sm:w-36 shadow-sm">
+                    <option value="13-qism" selected>13-qism</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- NATIJALAR JADVALI -->
+        <div class="bg-white rounded-[2rem] border-4 border-rose-50 overflow-hidden flex-grow shadow-md">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse min-w-[500px]">
+                    <thead>
+                        <tr class="bg-gradient-to-r from-orange-50 to-rose-50 border-b-2 border-rose-100">
+                            <th class="p-4 sm:p-5 text-xs font-black text-rose-800/60 uppercase tracking-widest w-16 text-center">O'rin</th>
+                            <th class="p-4 sm:p-5 text-xs font-black text-rose-800/60 uppercase tracking-widest">O'quvchi ismi</th>
+                            <th class="p-4 sm:p-5 text-xs font-black text-rose-800/60 uppercase tracking-widest text-center">To'g'ri</th>
+                            <th class="p-4 sm:p-5 text-xs font-black text-rose-800/60 uppercase tracking-widest text-center">Yulduz</th>
+                            <th class="p-4 sm:p-5 text-xs font-black text-rose-800/60 uppercase tracking-widest text-right">Sana</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboard-body">
+                        <!-- Ma'lumotlar JS orqali yuklanadi -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Yuklanish holati -->
+            <div id="loader" class="p-16 flex justify-center items-center">
+                <div class="w-14 h-14 border-4 border-orange-100 border-t-orange-500 rounded-full animate-spin"></div>
+            </div>
+            
+            <!-- Bo'sh holat -->
+            <div id="empty-state" class="p-20 text-center hidden flex flex-col items-center">
+                <div class="text-7xl mb-4 opacity-50 grayscale animate-pulse">🍭</div>
+                <h3 class="text-xl font-black text-rose-300">Hozircha bu sinfda natijalar yo'q</h3>
+            </div>
+        </div>
+
+        <div class="mt-8 text-center pb-4">
+            <a href="https://t.me/Matemdarsi" target="_blank" class="inline-flex items-center gap-2 bg-gradient-to-r from-orange-500 to-rose-500 text-white px-8 py-4 rounded-2xl font-black hover:brightness-110 transition-all shadow-lg active:scale-95 border-2 border-white/30">
+                <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.295-.6.295-.002 0-.003 0-.005 0l.213-3.054 5.56-5.022c.24-.213-.054-.334-.373-.121l-6.869 4.326-2.96-.924c-.64-.203-.658-.64.135-.954l11.566-4.458c.538-.196 1.006.128.832.94z"/></svg>
+                @Matemdarsi kanaliga qaytish
+            </a>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, query, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // FIREBASE CONFIG
+        const firebaseConfig = {
+            apiKey: "AIzaSyAkEt0HxuL62v832nMpH8D36bR28FU7dhk",
+            authDomain: "maktab-darslari.firebaseapp.com",
+            projectId: "maktab-darslari",
+            storageBucket: "maktab-darslari.firebasestorage.app",
+            messagingSenderId: "375361700394",
+            appId: "1:375361700394:web:c7b74f29fb302e7743f953"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'maktab-darslari';
+
+        let user = null;
+        let unsubscribe = null;
+
+        const classSelect = document.getElementById('class-select');
+        const partSelect = document.getElementById('part-select');
+        const leaderboardBody = document.getElementById('leaderboard-body');
+        const loader = document.getElementById('loader');
+        const emptyState = document.getElementById('empty-state');
+        const totalCountEl = document.getElementById('total-count');
+
+        // INITIALIZE AUTH
+        const initAuth = async () => {
+            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                await signInWithCustomToken(auth, __initial_auth_token);
+            } else {
+                await signInAnonymously(auth);
+            }
+        };
+
+        onAuthStateChanged(auth, (u) => {
+            user = u;
+            if (user) fetchData(); 
+        });
+
+        // FETCH DATA
+        const fetchData = () => {
+            if (!user) return;
+            if (unsubscribe) unsubscribe();
+
+            loader.classList.remove('hidden');
+            leaderboardBody.innerHTML = '';
+            emptyState.classList.add('hidden');
+            totalCountEl.textContent = '...';
+
+            const classVal = classSelect.value;
+            const partVal = partSelect.value;
+
+            const collRef = collection(db, 'artifacts', appId, 'public', 'data', 'leaderboards');
+            
+            unsubscribe = onSnapshot(collRef, (snapshot) => {
+                loader.classList.add('hidden');
+                let data = [];
+                snapshot.forEach(doc => {
+                    const item = doc.data();
+                    if (item.className === classVal && item.testPart === partVal) {
+                        data.push(item);
+                    }
+                });
+
+                totalCountEl.textContent = `${data.length} ta`;
+
+                data.sort((a, b) => {
+                    if (b.score !== a.score) return b.score - a.score;
+                    return (b.stars || 0) - (a.stars || 0);
+                });
+
+                renderTable(data);
+            }, (error) => {
+                console.error("Firebase error:", error);
+                loader.classList.add('hidden');
+            });
+        };
+
+        const renderTable = (data) => {
+            leaderboardBody.innerHTML = '';
+            if (data.length === 0) {
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            data.forEach((item, index) => {
+                const date = item.timestamp ? new Date(item.timestamp.seconds * 1000).toLocaleDateString('uz-UZ', { hour: '2-digit', minute: '2-digit' }) : '---';
+                const row = document.createElement('tr');
+                row.className = "border-b border-rose-50 hover:bg-orange-50/60 transition-colors";
+                
+                let rankBadge = `<span class="font-black text-rose-300 text-lg">${index + 1}</span>`;
+                if(index === 0) rankBadge = `<span class="bg-yellow-100 border-2 border-yellow-300 text-yellow-600 px-3 py-1 rounded-xl font-black shadow-sm">🥇 1</span>`;
+                if(index === 1) rankBadge = `<span class="bg-slate-100 border-2 border-slate-300 text-slate-600 px-3 py-1 rounded-xl font-black shadow-sm">🥈 2</span>`;
+                if(index === 2) rankBadge = `<span class="bg-orange-100 border-2 border-orange-300 text-orange-600 px-3 py-1 rounded-xl font-black shadow-sm">🥉 3</span>`;
+
+                row.innerHTML = `
+                    <td class="p-4 sm:p-5 text-center">${rankBadge}</td>
+                    <td class="p-4 sm:p-5 font-black text-rose-900 text-base sm:text-lg">${item.name}</td>
+                    <td class="p-4 sm:p-5 text-center">
+                        <span class="bg-rose-100 text-rose-700 px-3 sm:px-4 py-1.5 rounded-xl font-black border-2 border-rose-200">${item.score} / 20</span>
+                    </td>
+                    <td class="p-4 sm:p-5 text-center font-black text-amber-500 text-base sm:text-lg">${item.stars || 0} ⭐</td>
+                    <td class="p-4 sm:p-5 text-right font-bold text-rose-400 text-xs sm:text-sm">${date}</td>
+                `;
+                leaderboardBody.appendChild(row);
+            });
+        };
+
+        classSelect.addEventListener('change', fetchData);
+
+        initAuth();
+    </script>
+</body>
+</html>
