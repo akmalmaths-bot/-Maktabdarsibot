@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Yakuniy Imtihon | Matematika</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* --- QAT'IY HIMOYALAR --- */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            background-color: #f1f5f9;
+        }
+        
+        /* Blur effect when leaving the page to prevent screenshot cheating */
+        .blur-protection {
+            filter: blur(15px);
+            pointer-events: none;
+        }
+
+        .fade-in { animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Formal option buttons */
+        .option-btn {
+            transition: all 0.2s ease;
+            border-width: 2px;
+        }
+        .option-btn:hover:not(:disabled) {
+            background-color: #f8fafc;
+            border-color: #94a3b8;
+        }
+        .option-btn.selected {
+            background-color: #e0e7ff !important;
+            border-color: #4f46e5 !important;
+            color: #312e81 !important;
+        }
+        .option-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.9;
+        }
+
+        /* Scrollbars */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f8fafc; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col items-center justify-center p-3" oncontextmenu="return false;" onselectstart="return false;" ondragstart="return false;">
+
+    <!-- Anti-Cheat Overlay Indicator -->
+    <div id="cheatWarning" class="fixed inset-0 bg-slate-900/90 z-50 hidden flex-col items-center justify-center text-white p-6 text-center">
+        <i class="fa-solid fa-eye-slash text-5xl mb-4 text-red-500"></i>
+        <h2 class="text-2xl font-bold mb-2">Test ekranidan chiqish taqiqlanadi!</h2>
+        <p class="text-slate-300">Skrinshot qilish yoki boshqa dasturga o'tish qoidalarga zid.</p>
+    </div>
+
+    <!-- MAIN EXAM CONTAINER -->
+    <main class="w-full max-w-2xl bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden relative fade-in" id="mainCard">
+        
+        <!-- HEADER -->
+        <header class="bg-indigo-700 text-white p-4 flex justify-between items-center shadow-sm">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-graduation-cap text-xl"></i>
+                <h1 class="text-base font-bold tracking-wide uppercase">Yakuniy Imtihon</h1>
+            </div>
+            <div id="connection-status" class="text-xs font-medium bg-indigo-800 px-3 py-1 rounded-full border border-indigo-600 flex items-center gap-2 hidden">
+                <span class="w-2 h-2 rounded-full bg-yellow-400 animate-pulse"></span> Ulanmoqda
+            </div>
+        </header>
+
+        <!-- WELCOME / LOGIN SCREEN -->
+        <div id="welcomeScreen" class="p-6 md:p-8 relative">
+            <h2 class="text-xl md:text-2xl font-bold text-slate-800 mb-2">Hurmatli o'quvchi!</h2>
+            <div class="text-sm text-slate-600 space-y-2 mb-6">
+                <p><i class="fa-solid fa-circle-info text-indigo-500 w-5"></i> Imtihon 30 ta savoldan iborat.</p>
+                <p><i class="fa-solid fa-stopwatch text-indigo-500 w-5"></i> Misollar uchun 1 daqiqa, masalalar uchun 3 daqiqa vaqt beriladi.</p>
+                <p><i class="fa-solid fa-shield-halved text-indigo-500 w-5"></i> Dasturdan chiqib ketsangiz ham vaqt to'xtamaydi. Faqat bir marta ishlash mumkin!</p>
+            </div>
+            
+            <div class="bg-slate-50 border border-slate-200 rounded-lg p-4">
+                <label class="block text-xs font-bold text-slate-500 uppercase mb-2">O'zingizni ro'yxatdan tanlang:</label>
+                <input type="text" id="searchStudent" placeholder="Ismni qidiring..." class="w-full px-4 py-3 mb-2 rounded-md border border-slate-300 focus:outline-none focus:border-indigo-500 text-sm transition-colors">
+                
+                <div id="studentList" class="max-h-52 overflow-y-auto space-y-1 mt-2">
+                    <div class="text-center text-sm text-slate-500 py-4"><i class="fa-solid fa-spinner fa-spin mr-2"></i> Ro'yxat bazadan yuklanmoqda...</div>
+                </div>
+                
+                <div id="loadingStatus" class="hidden text-indigo-600 font-bold mt-4 text-sm text-center">
+                    <i class="fa-solid fa-spinner fa-spin mr-2"></i> Test tayyorlanmoqda...
+                </div>
+            </div>
+        </div>
+
+        <!-- QUIZ SCREEN -->
+        <div id="quizScreen" class="hidden flex flex-col bg-white min-h-[450px]">
+            <!-- Top Info Bar -->
+            <div class="bg-slate-100 px-4 py-3 border-b border-slate-200 flex justify-between items-center text-sm">
+                <div class="font-bold text-slate-700 bg-white px-3 py-1 rounded border border-slate-200">
+                    Savol <span id="currentQNum" class="text-indigo-600 font-black">1</span> / 30
+                </div>
+                <div id="timerContainer" class="font-mono font-bold text-slate-700 bg-white px-3 py-1 rounded border border-slate-200 flex items-center gap-2">
+                    <i class="fa-solid fa-clock text-indigo-500"></i>
+                    <span id="timer">00:00</span>
+                </div>
+            </div>
+
+            <!-- Question Area -->
+            <div class="p-5 md:p-8 flex-grow flex flex-col">
+                <h3 id="questionText" class="text-base md:text-lg font-bold text-slate-800 mb-6 leading-relaxed">
+                    Savol matni shu yerda...
+                </h3>
+
+                <!-- Options -->
+                <div id="optionsContainer" class="flex flex-col gap-3 mb-6">
+                    <!-- Javascript orqali qo'shiladi -->
+                </div>
+
+                <!-- Action Button -->
+                <div class="mt-auto pt-4 border-t border-slate-100">
+                    <button id="btnConfirm" disabled class="w-full bg-indigo-600 disabled:bg-slate-300 text-white font-bold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2">
+                        <span>Tasdiqlash va Keyingisi</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- END RESULT SCREEN (FullScreen style) -->
+    <div id="resultScreen" class="hidden w-full max-w-2xl bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden fade-in text-center p-6 md:p-10">
+        <div id="alreadyDoneAlert" class="hidden text-rose-600 font-bold text-sm mb-4 bg-rose-50 py-2 rounded-lg border border-rose-200">
+            <i class="fa-solid fa-circle-exclamation mr-1"></i> Siz avval bu testni ishlagansiz! Natijangiz:
+        </div>
+
+        <div class="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4 text-indigo-600 text-3xl">
+            <i class="fa-solid fa-check-double"></i>
+        </div>
+        
+        <h2 class="text-2xl font-black text-slate-800 mb-6 uppercase tracking-wide">Test Yakunlandi</h2>
+
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-6 text-left mb-6">
+            <div class="text-xs text-slate-500 font-bold uppercase mb-1">O'quvchi:</div>
+            <div class="text-lg font-bold text-slate-800 mb-4 pb-4 border-b border-slate-200" id="resName">Ism Familiya</div>
+            
+            <div class="text-xs text-slate-500 font-bold uppercase mb-1">Ishlangan savollar soni:</div>
+            <div class="text-3xl font-black text-indigo-600 mb-1"><span id="resScore">0</span><span class="text-base text-slate-400 font-bold ml-1">/ 30</span></div>
+            <div class="text-[10px] text-slate-400 font-medium uppercase tracking-wider mb-4">Har bir to'g'ri javob uchun 1 yulduz berildi.</div>
+
+            <div class="text-xs text-slate-500 font-bold uppercase mb-2">Siz bergan to'g'ri javoblar:</div>
+            <div id="resCorrectNumbers" class="text-sm font-bold text-slate-700 bg-white p-3 rounded border border-slate-200 leading-relaxed">
+                Yashirin
+            </div>
+        </div>
+
+        <div class="text-xs text-slate-400 font-medium">Ushbu tizim qat'iy himoyalangan. Natijangiz bazaga yuborildi.</div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // --- AUDIO SYSTEM ---
+        let audioCtx;
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function playSound(type) {
+            if (!audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            
+            if (type === 'click') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+                gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.1);
+            } else if (type === 'confirm') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+                gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.2);
+            } else if (type === 'finish') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+                osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.2); // E5
+                osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.4); // G5
+                gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 1.0);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 1.0);
+            }
+        }
+
+        // --- 1. QUIZ DATA (25 SAVOL) ---
+        const originalQuizData = [
+            // Bo'linish belgilari 1-2 qism (10 ta: 4 misol, 6 masala)
+            { type: "Misol", topic: "Bo'linish belgilari", q: "2345 soni qaysi raqamga qoldiqsiz bo'linadi?", options: ["5", "3", "2", "9"], ans: "5", time: 60 },
+            { type: "Misol", topic: "Bo'linish belgilari", q: "Quyidagilardan qaysi biri 3 ga qoldiqsiz bo'linadi?", options: ["123", "124", "125", "127"], ans: "123", time: 60 },
+            { type: "Misol", topic: "Bo'linish belgilari", q: "Quyidagilardan qaysi biri 4 ga qoldiqsiz bo'linadi?", options: ["116", "118", "122", "126"], ans: "116", time: 60 },
+            { type: "Misol", topic: "Bo'linish belgilari", q: "Quyidagilardan qaysi biri 9 ga qoldiqsiz bo'linadi?", options: ["819", "820", "821", "822"], ans: "819", time: 60 },
+            { type: "Masala", topic: "Bo'linish belgilari", q: "Do'konga 150 ta olma keltirildi. Ularni 6 ta qutiga teng taqsimlash mumkinmi?", options: ["Ha, chunki 150 ham 2 ga, ham 3 ga bo'linadi", "Yo'q, chunki 150 soni 4 ga bo'linmaydi", "Yo'q, olma soni toq emas", "Ha, chunki 150 faqat 5 ga bo'linadi"], ans: "Ha, chunki 150 ham 2 ga, ham 3 ga bo'linadi", time: 180 },
+            { type: "Masala", topic: "Bo'linish belgilari", q: "Omborga 1234 kg bug'doy keltirildi. Uni 4 kg dan qoplarga qoldiqsiz joylash mumkinmi?", options: ["Yo'q, chunki oxirgi ikki raqami (34) 4 ga bo'linmaydi", "Ha, chunki juft son", "Ha, chunki oxiri 4 bilan tugagan", "Yo'q, chunki raqamlar yig'indisi kichik"], ans: "Yo'q, chunki oxirgi ikki raqami (34) 4 ga bo'linmaydi", time: 180 },
+            { type: "Masala", topic: "Bo'linish belgilari", q: "Sinfdagi o'quvchilarni 5 tadan va 9 tadan qatorga qoldiqsiz tizish mumkin. Agar ular 50 nafardan kam bo'lsa, jami o'quvchilar nechta?", options: ["45 nafar", "35 nafar", "40 nafar", "30 nafar"], ans: "45 nafar", time: 180 },
+            { type: "Masala", topic: "Bo'linish belgilari", q: "Zavodda ishlangan poyabzallar soni 45 ga qoldiqsiz bo'linadi. Agar poyabzallar 4000 va 4100 orasida bo'lsa, u qaysi son bo'lishi mumkin?", options: ["4050", "4045", "4060", "4095"], ans: "4050", time: 180 },
+            { type: "Masala", topic: "Bo'linish belgilari", q: "Kabisa yili doim 4 ga bo'linadi. Ammo ba'zan 12 ga ham bo'linadi. 2000 yildan keyingi birinchi 12 ga bo'linadigan yil qaysi?", options: ["2004", "2008", "2012", "2016"], ans: "2004", time: 180 },
+            { type: "Masala", topic: "Bo'linish belgilari", q: "Qaysi raqamni 27_4 sonidagi bo'sh o'ringa qo'ysak, u 9 ga qoldiqsiz bo'linadi?", options: ["5", "4", "6", "9"], ans: "5", time: 180 },
+
+            // Sonining bo'luvchilari va karralilari (5 ta: 2 misol, 3 masala)
+            { type: "Misol", topic: "Bo'luvchi va Karrali", q: "24 sonining nechta natural bo'luvchisi bor?", options: ["8 ta", "6 ta", "10 ta", "7 ta"], ans: "8 ta", time: 60 },
+            { type: "Misol", topic: "Bo'luvchi va Karrali", q: "12 sonining eng kichik karralisini toping.", options: ["12", "24", "1", "0"], ans: "12", time: 60 },
+            { type: "Masala", topic: "Bo'luvchi va Karrali", q: "Qutidagi qalamlar soni 30 ning bo'luvchisi, lekin 5 ning karralisi emas. Qalamlar soni nechta bo'lishi mumkin?", options: ["6 ta", "10 ta", "15 ta", "20 ta"], ans: "6 ta", time: 180 },
+            { type: "Masala", topic: "Bo'luvchi va Karrali", q: "Anvarning yoshi 36 ning bo'luvchisi. 4 yildan keyin uning yoshi 5 ning karralisi bo'ladi. Anvar hozir necha yoshda?", options: ["6 yoshda", "12 yoshda", "18 yoshda", "9 yoshda"], ans: "6 yoshda", time: 180 },
+            { type: "Masala", topic: "Bo'luvchi va Karrali", q: "40 ta o'quvchini shunday teng guruhlarga ajratingki, guruhdagi bolalar soni tub son bo'lsin. Guruhlar soni nechta bo'lishi mumkin?", options: ["8 ta guruh", "10 ta guruh", "4 ta guruh", "6 ta guruh"], ans: "8 ta guruh", time: 180 },
+
+            // EKUB (5 ta: 2 misol, 3 masala)
+            { type: "Misol", topic: "EKUB", q: "EKUB(36, 48) ni toping.", options: ["12", "24", "6", "18"], ans: "12", time: 60 },
+            { type: "Misol", topic: "EKUB", q: "O'zaro tub bo'lgan ikkita sonning EKUBi nechaga teng?", options: ["1", "0", "Sonlarning yig'indisiga", "Sonlarning ko'paytmasiga"], ans: "1", time: 60 },
+            { type: "Masala", topic: "EKUB", q: "Uzunligi 120 sm va 150 sm bo'lgan ikkita taxtani eng katta va bir xil uzunlikdagi bo'laklarga qoldiqsiz kesish kerak. Bitta bo'lak uzunligi qancha bo'ladi?", options: ["30 sm", "10 sm", "60 sm", "50 sm"], ans: "30 sm", time: 180 },
+            { type: "Masala", topic: "EKUB", q: "48 ta qizil, 72 ta ko'k va 120 ta yashil sharlardan bir xil sovg'alar to'plami yig'ish kerak. Eng ko'pi bilan nechta shunday to'plam chiqadi?", options: ["24 ta", "12 ta", "48 ta", "8 ta"], ans: "24 ta", time: 180 },
+            { type: "Masala", topic: "EKUB", q: "O'lchamlari 420 sm va 540 sm bo'lgan xonaga eng katta o'lchamdagi qanday kvadrat kafel yotqizish mumkin?", options: ["60 sm x 60 sm", "30 sm x 30 sm", "100 sm x 100 sm", "20 sm x 20 sm"], ans: "60 sm x 60 sm", time: 180 },
+
+            // EKUK (5 ta: 2 misol, 3 masala)
+            { type: "Misol", topic: "EKUK", q: "EKUK(12, 15) ni toping.", options: ["60", "30", "120", "150"], ans: "60", time: 60 },
+            { type: "Misol", topic: "EKUK", q: "EKUK(8, 9) ni toping.", options: ["72", "36", "1", "17"], ans: "72", time: 60 },
+            { type: "Masala", topic: "EKUK", q: "Uchta avtobus bekatdan mos ravishda 15, 20 va 25 daqiqada yo'lga chiqadi. 08:00 da birga chiqqan bo'lsa, keyingi safar necha daqiqadan so'ng yana birga chiqishadi?", options: ["300 daqiqadan so'ng", "150 daqiqadan so'ng", "60 daqiqadan so'ng", "400 daqiqadan so'ng"], ans: "300 daqiqadan so'ng", time: 180 },
+            { type: "Masala", topic: "EKUK", q: "Aylanma yo'lakda 1-sportchi 12 daqiqada, 2-sportchi 16 daqiqada aylanib chiqadi. Birga start olgach, necha daqiqadan so'ng startda uchrashadilar?", options: ["48 daqiqa", "24 daqiqa", "36 daqiqa", "64 daqiqa"], ans: "48 daqiqa", time: 180 },
+            { type: "Masala", topic: "EKUK", q: "Qutidagi yong'oqlarni 4, 5 va 6 tadan sanaganda ham doim 3 ta yong'oq ortib qoladi. Qutida kamida nechta yong'oq bor?", options: ["63 ta", "60 ta", "123 ta", "33 ta"], ans: "63 ta", time: 180 },
+
+            // Yangi 5 ta aralash savol
+            { type: "Misol", topic: "Bo'luvchilar", q: "18 sonining natural bo'luvchilari yig'indisini toping.", options: ["39", "36", "38", "40"], ans: "39", time: 60 },
+            { type: "Misol", topic: "Bo'luvchilar", q: "60 sonining tub bo'luvchilari yig'indisini toping.", options: ["10", "12", "15", "8"], ans: "10", time: 60 },
+            { type: "Misol", topic: "Bo'luvchilar", q: "24 sonining barcha butun bo'luvchilari yig'indisini toping.", options: ["0", "60", "24", "-24"], ans: "0", time: 60 },
+            { type: "Misol", topic: "Tub sonlar", q: "Eng katta 3 xonali tub son qaysi?", options: ["997", "999", "991", "983"], ans: "997", time: 60 },
+            { type: "Misol", topic: "EKUK va EKUB", q: "EKUK(12, 15) * EKUB(12, 15) ni hisoblang.", options: ["180", "60", "150", "225"], ans: "180", time: 60 }
+        ];
+
+        // --- 2. BAZA VA HOLAT O'ZGARUVCHILARI ---
+        const ALL_STUDENTS = [
+            "Abdumurodov Dovud", "Abdurashidov Abdumalik", "Abduraxmonova Nigina", "Alisherova Asila", 
+            "Azamatov Sarvarbek", "Baxtiyorova Mohina", "Boyqo'ziyeva Barnoxon", "Dehqonaliyeva Jasmina", 
+            "Djumayev Abdulloh", "Fayzullaeva Aziza", "Jumoboyev Aslanbek", "Mahamadjonov Muhammadsodiqxon", 
+            "Mamajonova Robiya", "Mamarasulova Ifora", "Manasjonov Mustafo", "Mansurova Parizoda", 
+            "Mirzakxanov Shohjahon", "Murodjonova Mehrinoz", "Nozimboyeva Rayxona", "Olimboyeva Dildora", 
+            "Olimova Asila", "Qurbonova Mavluda", "Rashidova Gulchehra", "Rayimberdiyeva Odinabonu", 
+            "Ro'zmatboyev Bilolbek", "Rustamov Dostonbek", "Sabina Abduraimova", "Sadriddinov Samandar", 
+            "Saliyeva Kamola", "Suyunov Ibrohimbek", "Xoliqulov Shoxruh", "Xolmurodov Nurshodbek", 
+            "Xo'jamurodov Hikmatillo"
+        ];
+        
+        let availableStudents = [...ALL_STUDENTS];
+        const STATE_KEY = "yakuniy_exam_state";
+
+        let appState = {
+            inProgress: false,
+            isCompleted: false,
+            userName: "",
+            quizData: [], // Shuffled version stored here
+            currentIndex: 0,
+            answers: [], // Array of objects { selected: string|null, correct: string, isCorrect: boolean }
+            currentQEndTime: null, // Absolute time when current question must end
+            score: 0,
+            startTime: null
+        };
+
+        let timerInterval;
+        let db, appAuth, currentUser;
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'maktab-darslari';
+
+        // DOM Elements
+        const mainCard = document.getElementById('mainCard');
+        const welcomeScreen = document.getElementById('welcomeScreen');
+        const quizScreen = document.getElementById('quizScreen');
+        const resultScreen = document.getElementById('resultScreen');
+        const studentListEl = document.getElementById('studentList');
+        const searchInput = document.getElementById('searchStudent');
+        const btnConfirm = document.getElementById('btnConfirm');
+        
+        // --- 3. BLUR/ANTI-CHEAT LISTENER ---
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden && appState.inProgress && !appState.isCompleted) {
+                document.getElementById('cheatWarning').classList.remove('hidden');
+                document.getElementById('cheatWarning').classList.add('flex');
+                document.body.classList.add('blur-protection');
+            } else {
+                document.getElementById('cheatWarning').classList.add('hidden');
+                document.getElementById('cheatWarning').classList.remove('flex');
+                document.body.classList.remove('blur-protection');
+            }
+        });
+
+        // --- 4. INITIALIZATION ---
+        window.onload = async function() {
+            loadState();
+            
+            // Firebase Init
+            try {
+                let firebaseConfig;
+                if (typeof __firebase_config !== 'undefined') {
+                    firebaseConfig = JSON.parse(__firebase_config);
+                } else {
+                    firebaseConfig = {
+                        apiKey: "AIzaSyAkEt0HxuL62v832nMpH8D36bR28FU7dhk",
+                        authDomain: "maktab-darslari.firebaseapp.com",
+                        projectId: "maktab-darslari",
+                        storageBucket: "maktab-darslari.firebasestorage.app",
+                        messagingSenderId: "375361700394",
+                        appId: "1:375361700394:web:c7b74f29fb302e7743f953"
+                    };
+                }
+                const app = initializeApp(firebaseConfig);
+                appAuth = getAuth(app);
+                db = getFirestore(app);
+
+                const connStatus = document.getElementById('connection-status');
+                connStatus.classList.remove('hidden');
+
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) await signInWithCustomToken(appAuth, __initial_auth_token);
+                else await signInAnonymously(appAuth);
+
+                connStatus.innerHTML = `<span class="w-2 h-2 rounded-full bg-green-400"></span> Ulangan`;
+                
+                // Fetch completed students to hide them
+                const resultsRef = collection(db, 'artifacts', appId, 'public', 'data', 'yakuniy_exam_results');
+                onSnapshot(resultsRef, (snapshot) => {
+                    let completedNames = [];
+                    snapshot.forEach(doc => { completedNames.push(doc.data().name); });
+                    
+                    availableStudents = ALL_STUDENTS.filter(name => !completedNames.includes(name));
+                    if(!appState.inProgress && !appState.isCompleted) renderStudentList();
+                });
+            } catch(e) {
+                console.error(e);
+                // Fallback rendering if DB fails
+                if(!appState.inProgress && !appState.isCompleted) renderStudentList();
+            }
+
+            // Route based on state
+            if (appState.isCompleted) {
+                showResultScreen(true);
+            } else if (appState.inProgress) {
+                resumeQuiz();
+            }
+        };
+
+        // --- 5. STATE MANAGEMENT ---
+        function loadState() {
+            const saved = localStorage.getItem(STATE_KEY);
+            if (saved) appState = JSON.parse(saved);
+        }
+        function saveState() {
+            localStorage.setItem(STATE_KEY, JSON.stringify(appState));
+        }
+
+        function shuffleArray(array) {
+            let curId = array.length;
+            while (0 !== curId) {
+                let randId = Math.floor(Math.random() * curId);
+                curId -= 1;
+                let tmp = array[curId]; array[curId] = array[randId]; array[randId] = tmp;
+            }
+            return array;
+        }
+
+        // --- 6. STUDENT SELECTION ---
+        function renderStudentList() {
+            studentListEl.innerHTML = '';
+            if (availableStudents.length === 0) {
+                studentListEl.innerHTML = `<div class="text-sm text-slate-500 py-2">Barcha o'quvchilar testni ishladi.</div>`;
+                return;
+            }
+            availableStudents.forEach(student => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left px-4 py-3 rounded border border-slate-200 bg-white hover:bg-indigo-50 font-bold text-sm text-slate-600 transition-colors flex justify-between items-center group mb-1";
+                btn.innerHTML = `<span>${student}</span> <i class="fa-solid fa-chevron-right text-indigo-400 opacity-0 group-hover:opacity-100"></i>`;
+                btn.onclick = () => selectStudent(student);
+                studentListEl.appendChild(btn);
+            });
+        }
+
+        searchInput.addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase();
+            const btns = studentListEl.querySelectorAll('button');
+            btns.forEach(btn => {
+                if(btn.innerText.toLowerCase().includes(term)) btn.style.display = 'flex';
+                else btn.style.display = 'none';
+            });
+        });
+
+        function selectStudent(name) {
+            initAudio();
+            appState.userName = name;
+            appState.inProgress = true;
+            appState.isCompleted = false;
+            
+            // Prepare shuffled quiz data once
+            let dataCopy = JSON.parse(JSON.stringify(originalQuizData));
+            dataCopy = shuffleArray(dataCopy);
+            dataCopy.forEach(q => { q.options = shuffleArray(q.options); });
+            appState.quizData = dataCopy;
+            appState.currentIndex = 0;
+            appState.answers = [];
+            appState.score = 0;
+            appState.currentQEndTime = null;
+            appState.startTime = Date.now();
+            saveState();
+
+            document.getElementById('loadingStatus').classList.remove('hidden');
+            setTimeout(() => { resumeQuiz(); }, 1000);
+        }
+
+        // --- 7. QUIZ EXECUTION ---
+        function resumeQuiz() {
+            welcomeScreen.classList.add('hidden');
+            quizScreen.classList.remove('hidden');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            clearInterval(timerInterval);
+            btnConfirm.disabled = true;
+            btnConfirm.onclick = null; // Clear old bindings
+
+            const qData = appState.quizData[appState.currentIndex];
+            
+            // Set or Calculate Time
+            if (!appState.currentQEndTime) {
+                appState.currentQEndTime = Date.now() + (qData.time * 1000);
+                saveState();
+            }
+
+            // Update UI
+            document.getElementById('currentQNum').textContent = appState.currentIndex + 1;
+            document.getElementById('questionText').textContent = qData.q;
+
+            const optsCont = document.getElementById('optionsContainer');
+            optsCont.innerHTML = '';
+            
+            let selectedValue = null;
+
+            qData.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "option-btn w-full text-left bg-white p-4 rounded border text-sm font-bold text-slate-700 flex items-center";
+                btn.innerHTML = `<span class="w-8 h-8 flex items-center justify-center bg-slate-100 rounded mr-3 text-xs shrink-0">${String.fromCharCode(65+idx)}</span> <span>${opt}</span>`;
+                
+                btn.onclick = () => {
+                    playSound('click');
+                    // Remove selection from all
+                    optsCont.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                    selectedValue = opt;
+                    btnConfirm.disabled = false;
+                };
+                optsCont.appendChild(btn);
+            });
+
+            btnConfirm.onclick = () => {
+                playSound('confirm');
+                submitAnswer(selectedValue, qData.ans);
+            };
+
+            // Start Timer checking
+            checkTimer();
+            timerInterval = setInterval(checkTimer, 1000);
+        }
+
+        function checkTimer() {
+            let leftMs = appState.currentQEndTime - Date.now();
+            let leftS = Math.ceil(leftMs / 1000);
+
+            if (leftS <= 0) {
+                clearInterval(timerInterval);
+                document.getElementById('timer').textContent = "00:00";
+                // Time's up -> save as null
+                submitAnswer(null, appState.quizData[appState.currentIndex].ans);
+                return;
+            }
+
+            let m = Math.floor(leftS / 60).toString().padStart(2, '0');
+            let s = (leftS % 60).toString().padStart(2, '0');
+            document.getElementById('timer').textContent = `${m}:${s}`;
+            
+            if(leftS <= 10) document.getElementById('timerContainer').classList.add('text-red-600', 'border-red-300', 'bg-red-50');
+            else document.getElementById('timerContainer').classList.remove('text-red-600', 'border-red-300', 'bg-red-50');
+        }
+
+        function submitAnswer(userAns, correctAns) {
+            clearInterval(timerInterval);
+            
+            let isCorrect = (userAns === correctAns);
+            if (isCorrect) appState.score++;
+
+            appState.answers.push({
+                q: appState.quizData[appState.currentIndex].q,
+                selected: userAns,
+                correct: correctAns,
+                isCorrect: isCorrect
+            });
+
+            appState.currentIndex++;
+            appState.currentQEndTime = null; // Clear for next question
+            saveState();
+
+            if (appState.currentIndex < appState.quizData.length) {
+                loadQuestion();
+            } else {
+                finishQuiz();
+            }
+        }
+
+        // --- 8. FINISH & DB SAVE ---
+        async function finishQuiz() {
+            playSound('finish');
+            appState.inProgress = false;
+            appState.isCompleted = true;
+            
+            let totalTimeMs = Date.now() - (appState.startTime || Date.now());
+            let totalTimeSec = Math.floor(totalTimeMs / 1000);
+            
+            saveState();
+
+            // Save to Firebase
+            try {
+                if(db && currentUser) {
+                    const resultsRef = collection(db, 'artifacts', appId, 'public', 'data', 'yakuniy_exam_results');
+                    await addDoc(resultsRef, {
+                        name: appState.userName,
+                        score: appState.score,
+                        total: appState.quizData.length,
+                        timeSpent: totalTimeSec,
+                        answers: appState.answers,
+                        timestamp: serverTimestamp()
+                    });
+                }
+            } catch(e) { console.error("Baza xatosi:", e); }
+
+            showResultScreen(false);
+        }
+
+        function showResultScreen(isReturning) {
+            mainCard.classList.add('hidden');
+            resultScreen.classList.remove('hidden');
+
+            if(isReturning) document.getElementById('alreadyDoneAlert').classList.remove('hidden');
+
+            document.getElementById('resName').textContent = appState.userName;
+            document.getElementById('resScore').textContent = appState.score;
+
+            // Generate "To'g'ri javoblar: 1, 4, 5..." based on the SHUFFLED order they saw
+            let correctIndexes = [];
+            appState.answers.forEach((ans, i) => {
+                if (ans.isCorrect) correctIndexes.push(i + 1);
+            });
+
+            let str = correctIndexes.length > 0 ? correctIndexes.join(", ") : "Hali to'g'ri topilmadi.";
+            document.getElementById('resCorrectNumbers').textContent = str;
+        }
+
+    </script>
+</body>
+</html>
