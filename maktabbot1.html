@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Maktab Bot - Web Ilova</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Nunito', sans-serif; }
+        body { background-color: #e0f7fa; display: flex; justify-content: center; height: 100vh; overflow: hidden; }
+        
+        /* Telefon ekrani formati */
+        .app-container {
+            width: 100%;
+            max-width: 480px;
+            background-color: #ffffff;
+            height: 100vh;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        /* Yuqori sarlavha */
+        .header { background-color: #00bcd4; color: white; padding: 15px; text-align: center; font-size: 20px; font-weight: 900; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+
+        /* Asosiy oyna */
+        .content { flex-grow: 1; overflow-y: auto; padding: 20px; padding-bottom: 80px; }
+        .tab-pane { display: none; animation: fadeIn 0.3s ease; }
+        .tab-pane.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Profil qismi */
+        .profile-pic-container { text-align: center; margin-bottom: 20px; }
+        .profile-pic { width: 100px; height: 100px; background-color: #ffeb3b; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 40px; border: 4px solid #00bcd4; cursor: pointer; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+        .stars-badge { background-color: #ff9800; color: white; font-weight: 900; padding: 10px 20px; border-radius: 20px; display: inline-block; margin-top: -15px; position: relative; z-index: 10; font-size: 18px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; margin-bottom: 5px; font-weight: 700; color: #0097a7; font-size: 14px; }
+        .input-group input { width: 100%; padding: 12px; border: 2px solid #b2ebf2; border-radius: 12px; font-size: 16px; outline: none; transition: 0.3s; background-color: #fafafa; }
+        .input-group input:focus { border-color: #00bcd4; background-color: white; }
+        .input-group input:disabled { background-color: #eeeeee; color: #757575; border-color: #e0e0e0; font-weight: 900; }
+
+        /* Sovg'alar qismi */
+        .gift-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .gift-card { background-color: #fff8e1; border: 2px solid #ffe082; border-radius: 15px; padding: 15px; text-align: center; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .gift-card:active { transform: scale(0.95); }
+        .gift-emoji { font-size: 40px; margin-bottom: 10px; }
+        .gift-title { font-weight: 900; color: #ff8f00; font-size: 16px; margin-bottom: 5px; }
+        .gift-price { color: #d84315; font-weight: 700; font-size: 14px; }
+
+        /* Modallar (Sovg'a ichiga kirganda) */
+        .modal-overlay { display: none; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 100; justify-content: center; align-items: center; padding: 20px; }
+        .modal-content { background: white; width: 100%; border-radius: 25px; padding: 20px; text-align: center; box-shadow: 0 10px 20px rgba(0,0,0,0.2); animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .modal-img { font-size: 80px; margin: 20px 0; }
+        .btn { width: 100%; padding: 15px; border-radius: 15px; font-size: 18px; font-weight: 900; border: none; cursor: pointer; margin-top: 10px; }
+        .btn-buy { background-color: #4caf50; color: white; box-shadow: 0 4px 0 #388e3c; }
+        .btn-buy:disabled { background-color: #9e9e9e; box-shadow: 0 4px 0 #757575; cursor: not-allowed; }
+        .btn-close { background-color: #f44336; color: white; box-shadow: 0 4px 0 #d32f2f; margin-top: 15px; }
+
+        /* Oddiy Oynalar uchun Placholder */
+        .coming-soon { text-align: center; margin-top: 50px; color: #00bcd4; }
+        .coming-soon h1 { font-size: 60px; margin-bottom: 10px; }
+
+        /* Pastki tugmalar (Nav Bar) */
+        .bottom-nav { position: absolute; bottom: 0; width: 100%; background: white; border-top: 2px solid #e0f7fa; display: flex; justify-content: space-around; padding: 10px 5px 20px 5px; border-top-left-radius: 20px; border-top-right-radius: 20px; box-shadow: 0 -4px 10px rgba(0,0,0,0.05); z-index: 50; }
+        .nav-item { text-align: center; color: #b0bec5; font-size: 12px; font-weight: 800; cursor: pointer; flex: 1; transition: 0.3s; }
+        .nav-item .icon { font-size: 24px; display: block; margin-bottom: 5px; transition: 0.3s; filter: grayscale(100%); }
+        .nav-item.active { color: #00bcd4; transform: translateY(-5px); }
+        .nav-item.active .icon { filter: grayscale(0%); transform: scale(1.2); }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <div class="header" id="mainHeader">Maktab Bot</div>
+
+    <div class="content">
+        <div id="tab-homework" class="tab-pane">
+            <div class="coming-soon">
+                <h1>📚</h1>
+                <h2>Uy ishlari tizimi</h2>
+                <p>Tez kunda bu yerda uy ishlarini topshirish oynasi paydo bo'ladi.</p>
+            </div>
+        </div>
+
+        <div id="tab-quiz" class="tab-pane">
+            <div class="coming-soon">
+                <h1>🌟</h1>
+                <h2>Yulduzli Savol</h2>
+                <p>Bugungi qiziqarli savolga javob berish uchun kuting.</p>
+            </div>
+        </div>
+
+        <div id="tab-gifts" class="tab-pane">
+            <h2 style="color: #ff8f00; margin-bottom: 15px; font-weight: 900; text-align: center;">🎁 Sovg'alar Do'koni</h2>
+            <div class="gift-grid">
+                <div class="gift-card" onclick="openGift('Kitob', '📚', 50)">
+                    <div class="gift-emoji">📚</div>
+                    <div class="gift-title">Qiziqarli Kitob</div>
+                    <div class="gift-price">50 ⭐</div>
+                </div>
+                <div class="gift-card" onclick="openGift('Ruchka', '🖊️', 10)">
+                    <div class="gift-emoji">🖊️</div>
+                    <div class="gift-title">Ajoyib Ruchka</div>
+                    <div class="gift-price">10 ⭐</div>
+                </div>
+                <div class="gift-card" onclick="openGift('Shokolad', '🍫', 30)">
+                    <div class="gift-emoji">🍫</div>
+                    <div class="gift-title">Shokolad</div>
+                    <div class="gift-price">30 ⭐</div>
+                </div>
+                <div class="gift-card" onclick="openGift('Chizgich', '📏', 15)">
+                    <div class="gift-emoji">📏</div>
+                    <div class="gift-title">Sehrli Chizgich</div>
+                    <div class="gift-price">15 ⭐</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-profile" class="tab-pane active">
+            <div class="profile-pic-container">
+                <div class="profile-pic">📷</div>
+                <br>
+                <div class="stars-badge">⭐ 45 ta yulduz</div>
+            </div>
+
+            <div class="input-group">
+                <label>O'quvchi (F.I.SH):</label>
+                <input type="text" value="Burxonov Bobur" disabled>
+            </div>
+            
+            <div class="input-group">
+                <label>Sinfingiz:</label>
+                <input type="text" placeholder="Masalan: 3-A sinf">
+            </div>
+
+            <div class="input-group">
+                <label>Maktabingiz:</label>
+                <input type="text" placeholder="Masalan: 6-maktab">
+            </div>
+
+            <div class="input-group">
+                <label>Viloyat / Tuman:</label>
+                <input type="text" placeholder="Masalan: Farg'ona v., O'zbekiston t.">
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="giftModal">
+        <div class="modal-content">
+            <h2 id="giftModalTitle" style="color:#ff8f00;">Sovg'a nomi</h2>
+            <div class="modal-img" id="giftModalImg">🎁</div>
+            <h3 id="giftModalPrice" style="color: #d84315; margin-bottom: 20px;">0 ⭐</h3>
+            
+            <button class="btn btn-buy" id="btnOrder" onclick="placeOrder()">Buyurtma berish</button>
+            <button class="btn btn-close" onclick="closeGift()">Yopish</button>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <div class="nav-item" onclick="switchTab('homework')">
+            <span class="icon">📚</span>
+            Uy ishlari
+        </div>
+        <div class="nav-item" onclick="switchTab('quiz')">
+            <span class="icon">🌟</span>
+            Yulduzli savol
+        </div>
+        <div class="nav-item" onclick="switchTab('gifts')">
+            <span class="icon">🎁</span>
+            Sovg'alar
+        </div>
+        <div class="nav-item active" onclick="switchTab('profile')">
+            <span class="icon">👤</span>
+            Profil
+        </div>
+    </div>
+</div>
+
+<script>
+    // Soxta bazadagi ma'lumot (buni keyin botdan keladigan qilamiz)
+    const userStars = 45; 
+
+    function switchTab(tabId) {
+        // Hamma tablarni yashirish
+        document.querySelectorAll('.tab-pane').forEach(tab => tab.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+        
+        // Tanlanganini ko'rsatish
+        document.getElementById('tab-' + tabId).classList.add('active');
+        event.currentTarget.classList.add('active');
+
+        // Sarlavhani o'zgartirish
+        const titles = { 'homework': 'Uy ishlari', 'quiz': 'Yulduzli savol', 'gifts': "Sovg'alar do'koni", 'profile': 'Mening Profilim' };
+        document.getElementById('mainHeader').innerText = titles[tabId];
+    }
+
+    // Sovg'a ustiga bosilganda
+    function openGift(name, emoji, price) {
+        document.getElementById('giftModalTitle').innerText = name;
+        document.getElementById('giftModalImg').innerText = emoji;
+        document.getElementById('giftModalPrice').innerText = "Kerakli yulduz: " + price + " ⭐";
+        
+        const btnOrder = document.getElementById('btnOrder');
+        const today = new Date().getDate();
+
+        // 1-qadam: Vaqtni tekshiramiz (Faqat 25 dan 31 gacha)
+        if (today < 25) {
+            btnOrder.disabled = true;
+            btnOrder.innerText = "Faqat 25-31 kunlari ochiq";
+        } 
+        // 2-qadam: Yulduz yetarlimi?
+        else if (userStars < price) {
+            btnOrder.disabled = true;
+            btnOrder.innerText = "Yulduz yig'ishingiz kerak";
+        } 
+        // 3-qadam: Hamma shart bajarildi!
+        else {
+            btnOrder.disabled = false;
+            btnOrder.innerText = "✅ Buyurtma berish";
+        }
+
+        document.getElementById('giftModal').style.display = 'flex';
+    }
+
+    function closeGift() {
+        document.getElementById('giftModal').style.display = 'none';
+    }
+
+    function placeOrder() {
+        alert("Tabriklaymiz! Buyurtmangiz qabul qilindi. Ustoz sizga sovg'ani topshiradi!");
+        closeGift();
+    }
+</script>
+
+</body>
+</html>
