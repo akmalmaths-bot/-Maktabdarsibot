@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Yozgi Matematika Testlari</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body { font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif; background-color: #e0f7fa; margin: 0; padding: 20px; text-align: center; user-select: none; }
+        h1 { color: #ff9800; font-size: 28px; text-shadow: 2px 2px #fff; }
+        .hidden { display: none !important; }
+        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 20px; }
+        .btn { background-color: #4caf50; color: white; border: none; padding: 15px; border-radius: 15px; font-size: 20px; font-weight: bold; cursor: pointer; box-shadow: 0 4px #388e3c; transition: 0.1s; }
+        .btn:active { transform: translateY(4px); box-shadow: 0 0 #388e3c; }
+        .btn:disabled { background-color: #ccc; box-shadow: 0 4px #999; cursor: not-allowed; }
+        .locked { background-color: #9e9e9e; box-shadow: 0 4px #616161; }
+        .grade-btn { background-color: #2196f3; box-shadow: 0 4px #1976d2; width: 100%; margin-bottom: 15px; padding: 20px; font-size: 24px; }
+        .answer-btn { background-color: #fff; color: #333; border: 3px solid #4caf50; width: 100%; margin-bottom: 10px; box-shadow: none; }
+        .correct { background-color: #4caf50 !important; color: white !important; }
+        .wrong { background-color: #f44336 !important; color: white !important; border-color: #f44336 !important; }
+        #timer { font-size: 24px; color: #e91e63; font-weight: bold; margin-bottom: 15px; }
+        #question-text { font-size: 26px; font-weight: bold; color: #333; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+
+    <!-- SINFLARNI TANLASH EKRANI -->
+    <div id="screen-grades">
+        <h1>🎓 Qaysi sinfni tanlaysiz?</h1>
+        <button class="btn grade-btn" onclick="openDays(1)">1-sinf testlari</button>
+        <button class="btn grade-btn" onclick="openDays(2)">2-sinf testlari</button>
+        <!-- 3, 4, 5, 6 sinflar shunday qo'shiladi -->
+    </div>
+
+    <!-- KUNLARNI TANLASH EKRANI -->
+    <div id="screen-days" class="hidden">
+        <h1 id="grade-title">Testga tayyormisiz?</h1>
+        <div class="grid" id="days-grid"></div>
+        <button class="btn" style="margin-top: 20px; width: 100%; background-color: #ff9800;" onclick="goBack()">🔙 Ortga</button>
+    </div>
+
+    <!-- TEST ISHLASH EKRANI -->
+    <div id="screen-quiz" class="hidden">
+        <div id="timer">⏱ 03:00</div>
+        <div id="question-text">Savol yuklanmoqda...</div>
+        <div id="answers-container"></div>
+    </div>
+
+    <!-- NATIJA EKRANI -->
+    <div id="screen-result" class="hidden">
+        <h1>🎉 Ajoyib natija!</h1>
+        <h2 id="final-score" style="font-size: 50px; margin: 10px 0;">0 ⭐</h2>
+        <p style="font-size: 20px;">Yulduzlar hisobingizga qo'shildi!</p>
+        <button class="btn grade-btn" onclick="sendDataToBot()">📥 Botga qaytish</button>
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+
+        let currentGrade = 1;
+        let currentDay = 1;
+        let score = 0;
+        let currentQuestionIndex = 0;
+        let timerInterval;
+        let timeLeft = 180; // 3 minut
+        let quizActive = false;
+
+        // Baza sifatida ishlatamiz (aslida buni fetch orqali JSON dan tortib olish kerak)
+        const demoQuestions = [
+            { q: "2 + 3 = ?", a: "5", options: ["3", "4", "5", "6"] },
+            { q: "10 - 4 = ?", a: "6", options: ["5", "6", "7", "8"] },
+            // ... 10 ta savol shu tartibda yoziladi
+        ];
+
+        function openDays(grade) {
+            currentGrade = grade;
+            document.getElementById('screen-grades').classList.add('hidden');
+            document.getElementById('screen-days').classList.remove('hidden');
+            document.getElementById('grade-title').innerText = grade + "-sinf Testlari";
+            
+            const grid = document.getElementById('days-grid');
+            grid.innerHTML = '';
+            
+            // Xotiradan qaysi kunlar ochiqligini tekshirish
+            let maxUnlocked = localStorage.getItem(`unlocked_grade_${grade}`) || 1;
+
+            for (let i = 1; i <= 20; i++) {
+                let btn = document.createElement('button');
+                btn.className = 'btn';
+                btn.innerText = i;
+                
+                if (i > maxUnlocked) {
+                    btn.classList.add('locked');
+                    btn.disabled = true;
+                } else {
+                    btn.onclick = () => startQuiz(i);
+                }
+                grid.appendChild(btn);
+            }
+        }
+
+        function goBack() {
+            document.getElementById('screen-days').classList.add('hidden');
+            document.getElementById('screen-grades').classList.remove('hidden');
+        }
+
+        function startQuiz(day) {
+            currentDay = day;
+            score = 0;
+            currentQuestionIndex = 0;
+            timeLeft = 180;
+            quizActive = true;
+
+            document.getElementById('screen-days').classList.add('hidden');
+            document.getElementById('screen-quiz').classList.remove('hidden');
+            
+            startTimer();
+            loadQuestion();
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                if(!quizActive) return;
+                timeLeft--;
+                let m = Math.floor(timeLeft / 60);
+                let s = timeLeft % 60;
+                document.getElementById('timer').innerText = `⏱ 0${m}:${s < 10 ? '0'+s : s}`;
+                if (timeLeft <= 0) {
+                    endQuiz();
+                }
+            }, 1000);
+        }
+
+        function loadQuestion() {
+            // Aslida bu yerda: let q = allQuestions[currentGrade][currentDay][currentQuestionIndex] bo'ladi
+            let q = demoQuestions[currentQuestionIndex % 2]; // Demo uchun
+            
+            document.getElementById('question-text').innerText = `${currentQuestionIndex + 1}) ${q.q}`;
+            let container = document.getElementById('answers-container');
+            container.innerHTML = '';
+
+            q.options.forEach(opt => {
+                let btn = document.createElement('button');
+                btn.className = 'btn answer-btn';
+                btn.innerText = opt;
+                btn.onclick = () => checkAnswer(btn, opt, q.a);
+                container.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(clickedBtn, selected, correct) {
+            quizActive = false; // Vaqtni va tugmalarni vaqtincha to'xtatish
+            let allBtns = document.querySelectorAll('.answer-btn');
+            allBtns.forEach(b => b.disabled = true); // Bosishni taqiqlash
+
+            if (selected === correct) {
+                clickedBtn.classList.add('correct');
+                score++;
+                setTimeout(nextQuestion, 500); // To'g'ri bo'lsa tez o'tadi
+            } else {
+                clickedBtn.classList.add('wrong');
+                // To'g'ri javobni yashil qilib ko'rsatish
+                allBtns.forEach(b => {
+                    if (b.innerText === correct) b.classList.add('correct');
+                });
+                // Xato qilsa 2 sekund (2000 ms) kutib, keyingisiga o'tadi
+                setTimeout(nextQuestion, 2000); 
+            }
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            quizActive = true;
+            if (currentQuestionIndex < 10 && timeLeft > 0) {
+                loadQuestion();
+            } else {
+                endQuiz();
+            }
+        }
+
+        function endQuiz() {
+            quizActive = false;
+            clearInterval(timerInterval);
+            document.getElementById('screen-quiz').classList.add('hidden');
+            document.getElementById('screen-result').classList.remove('hidden');
+            document.getElementById('final-score').innerText = `${score} ⭐`;
+
+            // Agar hammasi yoki ma'lum qismi ishlanib bo'lsa, keyingi kunni ochish
+            let maxUnlocked = localStorage.getItem(`unlocked_grade_${currentGrade}`) || 1;
+            if (currentDay == maxUnlocked && currentDay < 20) {
+                localStorage.setItem(`unlocked_grade_${currentGrade}`, parseInt(maxUnlocked) + 1);
+            }
+        }
+
+        function sendDataToBot() {
+            // Telegram botga yig'ilgan yulduzlar va qaysi mavzuni ishlaganini JSON formatda jo'natamiz
+            let data = {
+                grade: currentGrade,
+                day: currentDay,
+                stars_earned: score
+            };
+            tg.sendData(JSON.stringify(data));
+        }
+    </script>
+</body>
+</html>
