@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attestatsiya bo'ylab 80 kun</title>
+    <style>
+        :root {
+            --primary-pink: #ffb6c1; /* Och pushti */
+            --light-pink: #ffe4e1;
+            --primary-green: #2ecc71; /* Yashil */
+            --dark-green: #27ae60;
+            --disabled-bg: #e0e0e0;
+            --text-color: #333;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light-pink);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px; /* Telefonga mos o'lcham */
+            background-color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: var(--dark-green);
+            margin-bottom: 20px;
+        }
+
+        .screen {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        /* Form elements */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--primary-pink);
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        input[type="text"]:focus, input[type="number"]:focus {
+            border-color: var(--primary-green);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background-color: var(--primary-green);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background 0.3s;
+        }
+
+        .btn:hover {
+            background-color: var(--dark-green);
+        }
+
+        .btn.btn-back {
+            background-color: var(--primary-pink);
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        /* Menu */
+        .menu-btn {
+            height: 80px;
+            margin-bottom: 15px;
+            font-size: 20px;
+            background-color: var(--primary-green);
+        }
+
+        /* Topics Grid */
+        .topics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .topic-btn {
+            padding: 15px 0;
+            text-align: center;
+            background-color: var(--primary-green);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .topic-btn:disabled {
+            background-color: var(--disabled-bg);
+            color: #888;
+            cursor: not-allowed;
+        }
+
+        .topic-btn.completed {
+            background-color: var(--primary-pink);
+            color: #fff;
+            cursor: not-allowed;
+        }
+
+        /* Quiz Inputs */
+        .quiz-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .quiz-item span {
+            width: 30px;
+            font-weight: bold;
+        }
+
+        /* Results */
+        .result-box {
+            background-color: var(--light-pink);
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .correct { color: var(--dark-green); font-weight: bold; }
+        .wrong { color: red; font-weight: bold; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    
+    <!-- LOGIN OYNASI -->
+    <div id="loginScreen" class="screen active">
+        <h1>Attestatsiya bo'ylab 80 kun</h1>
+        <h2>Tizimga kirish</h2>
+        <div class="form-group">
+            <label>Ismingiz:</label>
+            <input type="text" id="ism" placeholder="Ismingizni kiriting">
+        </div>
+        <div class="form-group">
+            <label>Familyangiz:</label>
+            <input type="text" id="familya" placeholder="Familyangizni kiriting">
+        </div>
+        <div class="form-group">
+            <label>Viloyatingiz:</label>
+            <input type="text" id="viloyat" placeholder="Viloyatingizni kiriting">
+        </div>
+        <div class="form-group">
+            <label>Maktab raqami:</label>
+            <input type="number" id="maktab" placeholder="Maktab raqamini kiriting">
+        </div>
+        <button class="btn" onclick="login()">Kirish</button>
+    </div>
+
+    <!-- ASOSIY MENU -->
+    <div id="menuScreen" class="screen">
+        <h2 id="userNameDisplay"></h2>
+        <h1>Asosiy Menyu</h1>
+        <button class="btn menu-btn" onclick="openSection('sinf')">Sinf ishi</button>
+        <button class="btn menu-btn" onclick="openSection('uy')">Uy ishi</button>
+        <button class="btn menu-btn" onclick="openSection('test')">Test</button>
+    </div>
+
+    <!-- MAVZULAR (1-80) / TESTLAR (1-10) ROYXATI -->
+    <div id="topicsScreen" class="screen">
+        <button class="btn btn-back" onclick="showScreen('menuScreen')">Orqaga qaytish</button>
+        <h2 id="sectionTitle">Bo'lim</h2>
+        <p style="text-align:center; font-size:14px; margin-bottom: 10px;">
+            Yashil = Ochiq | Kulrang = Yopiq | Pushti = Ishlangan
+        </p>
+        <div class="topics-grid" id="topicsGrid"></div>
+    </div>
+
+    <!-- JAVOBLARNI KIRITISH OYNASI -->
+    <div id="quizScreen" class="screen">
+        <button class="btn btn-back" onclick="showScreen('topicsScreen')">Bekor qilish</button>
+        <h2 id="quizTitle">Dars</h2>
+        <div id="quizForm"></div>
+        <button class="btn" onclick="submitQuiz()">Tasdiqlash</button>
+    </div>
+
+    <!-- NATIJALAR OYNASI -->
+    <div id="resultScreen" class="screen">
+        <button class="btn btn-back" onclick="showScreen('menuScreen')">Bosh sahifaga qaytish</button>
+        <h2>Natijangiz</h2>
+        <div class="result-box">
+            <h1 id="scorePercentage" style="font-size: 36px; margin-bottom: 10px;"></h1>
+            <p>To'g'ri javoblar: <span id="correctCount" class="correct"></span></p>
+            <p>Xato javoblar: <span id="wrongCount" class="wrong"></span></p>
+        </div>
+        <h3 style="margin-bottom: 10px;">Batafsil:</h3>
+        <div id="detailedResults"></div>
+    </div>
+
+</div>
+
+<script>
+    // ==========================================
+    // 1. ADMIN PANEL (JAVOBLAR BAZASI)
+    // ==========================================
+    // Admin aynan shu yerga javoblarni kiritishi kerak.
+    // Javoblar kiritilmagan raqamlar foydalanuvchi uchun yopiq turadi.
+    const ADMIN_ANSWERS = {
+        sinf: {
+            1: ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t'],
+            2: ['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20']
+            // 3 dan 80 gacha yo'q, demak ular yopiq turadi.
+        },
+        uy: {
+            1: ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T']
+        },
+        test: {
+            1: ['A','B','C','D','A','B','C','D','A','B','C','D','A','B','C','D','A','B','C','D','A','B','C','D','A','B','C','D','A','B'] // 30 ta javob
+        }
+    };
+
+    // ==========================================
+    // 2. TIZIM O'ZGARUVCHILARI
+    // ==========================================
+    let currentUser = null;
+    let userProgress = { sinf: {}, uy: {}, test: {} };
+    let currentSection = ''; // 'sinf', 'uy', 'test'
+    let currentTopicId = 0;
+
+    // Dastur ishga tushganda tekshirish
+    window.onload = function() {
+        const savedUser = localStorage.getItem('attestatsiyaUser');
+        const savedProgress = localStorage.getItem('attestatsiyaProgress');
+        
+        if (savedUser) {
+            currentUser = JSON.parse(savedUser);
+            if(savedProgress) userProgress = JSON.parse(savedProgress);
+            
+            document.getElementById('userNameDisplay').innerText = `Xush kelibsiz, ${currentUser.ism} ${currentUser.familya}!`;
+            showScreen('menuScreen');
+        }
+    };
+
+    // ==========================================
+    // 3. FUNKSIYALAR
+    // ==========================================
+    
+    // Oynalarni o'zgartirish
+    function showScreen(screenId) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(screenId).classList.add('active');
+    }
+
+    // Tizimga kirish
+    function login() {
+        const ism = document.getElementById('ism').value.trim();
+        const familya = document.getElementById('familya').value.trim();
+        const viloyat = document.getElementById('viloyat').value.trim();
+        const maktab = document.getElementById('maktab').value.trim();
+
+        if (!ism || !familya || !viloyat || !maktab) {
+            alert("Iltimos, barcha maydonlarni to'ldiring!");
+            return;
+        }
+
+        currentUser = { ism, familya, viloyat, maktab };
+        localStorage.setItem('attestatsiyaUser', JSON.stringify(currentUser));
+        localStorage.setItem('attestatsiyaProgress', JSON.stringify(userProgress));
+        
+        document.getElementById('userNameDisplay').innerText = `Xush kelibsiz, ${currentUser.ism} ${currentUser.familya}!`;
+        showScreen('menuScreen');
+    }
+
+    // Bo'limni ochish (Sinf, Uy, Test)
+    function openSection(type) {
+        currentSection = type;
+        const grid = document.getElementById('topicsGrid');
+        grid.innerHTML = '';
+        
+        let totalItems = (type === 'test') ? 10 : 80;
+        let title = type === 'sinf' ? 'Sinf ishi' : type === 'uy' ? 'Uy ishi' : 'Test';
+        document.getElementById('sectionTitle').innerText = title;
+
+        for (let i = 1; i <= totalItems; i++) {
+            const btn = document.createElement('button');
+            btn.className = 'topic-btn';
+            btn.innerText = i;
+            
+            // Holatni tekshirish
+            if (userProgress[type] && userProgress[type][i]) {
+                // Agar ishlagan bo'lsa
+                btn.classList.add('completed');
+                btn.disabled = true;
+                btn.innerText += " ✔";
+            } else if (!ADMIN_ANSWERS[type][i]) {
+                // Agar admin javob kiritmagan bo'lsa
+                btn.disabled = true;
+            } else {
+                // Ishlashga tayyor
+                btn.onclick = () => openQuiz(i);
+            }
+            
+            grid.appendChild(btn);
+        }
+        
+        showScreen('topicsScreen');
+    }
+
+    // Darsni (Quiz) ochish
+    function openQuiz(id) {
+        currentTopicId = id;
+        const quizForm = document.getElementById('quizForm');
+        quizForm.innerHTML = '';
+        
+        let title = currentSection === 'sinf' ? 'Sinf ishi' : currentSection === 'uy' ? 'Uy ishi' : 'Test';
+        document.getElementById('quizTitle').innerText = `${title} - ${id}`;
+        
+        let inputsCount = (currentSection === 'test') ? 30 : 20;
+
+        for (let i = 1; i <= inputsCount; i++) {
+            const div = document.createElement('div');
+            div.className = 'quiz-item';
+            div.innerHTML = `
+                <span>${i}.</span>
+                <input type="text" id="ans_${i}" placeholder="Javobni kiriting" autocomplete="off">
+            `;
+            quizForm.appendChild(div);
+        }
+
+        showScreen('quizScreen');
+    }
+
+    // Javoblarni tekshirish va saqlash
+    function submitQuiz() {
+        if (!confirm("Barcha javoblarni kiritganingizga ishonchingiz komilmi? Qayta ishlash imkoni yo'q!")) return;
+
+        let inputsCount = (currentSection === 'test') ? 30 : 20;
+        let correctAnswers = ADMIN_ANSWERS[currentSection][currentTopicId];
+        let correctCount = 0;
+        let detailedHTML = '';
+
+        for (let i = 1; i <= inputsCount; i++) {
+            let userAns = document.getElementById(`ans_${i}`).value.trim().toLowerCase();
+            let rightAns = correctAnswers[i-1].trim().toLowerCase();
+            
+            let isCorrect = (userAns === rightAns);
+            if (isCorrect) correctCount++;
+
+            detailedHTML += `
+                <div class="result-item">
+                    <span>${i}-savol: Sening javobing "<b>${userAns || 'bo\'sh'}</b>"</span>
+                    <span class="${isCorrect ? 'correct' : 'wrong'}">${isCorrect ? 'To\'g\'ri ✔' : 'Xato ✖'}</span>
+                </div>
+            `;
+        }
+
+        let percentage = Math.round((correctCount / inputsCount) * 100);
+        let wrongCount = inputsCount - correctCount;
+
+        // Ekranga chiqarish
+        document.getElementById('scorePercentage').innerText = `${percentage}%`;
+        document.getElementById('correctCount').innerText = correctCount;
+        document.getElementById('wrongCount').innerText = wrongCount;
+        document.getElementById('detailedResults').innerHTML = detailedHTML;
+
+        // Ruxsatni yopish (saqlash)
+        userProgress[currentSection][currentTopicId] = {
+            score: percentage,
+            correct: correctCount,
+            wrong: wrongCount
+        };
+        localStorage.setItem('attestatsiyaProgress', JSON.stringify(userProgress));
+
+        showScreen('resultScreen');
+    }
+</script>
+
+</body>
+</html>
