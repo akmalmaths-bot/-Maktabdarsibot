@@ -6,58 +6,46 @@
     <title>Attestatsiya bo'ylab 80 kun</title>
     <style>
         :root {
-            --primary-pink: #ffb6c1;
-            --light-pink: #ffe4e1;
-            --primary-green: #2ecc71;
-            --dark-green: #27ae60;
-            --disabled-bg: #e0e0e0;
-            --text-color: #333;
+            --primary-pink: #ffb6c1; --light-pink: #ffe4e1;
+            --primary-green: #2ecc71; --dark-green: #27ae60;
+            --disabled-bg: #e0e0e0; --text-color: #333;
         }
-
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background-color: var(--light-pink); color: var(--text-color); display: flex; justify-content: center; min-height: 100vh; }
         .container { width: 100%; max-width: 480px; background-color: #fff; min-height: 100vh; padding: 20px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
         h1, h2, h3 { text-align: center; color: var(--dark-green); margin-bottom: 20px; }
-        
         .screen { display: none; animation: fadeIn 0.3s ease; }
         .screen.active { display: block; }
-
         .form-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 5px; font-weight: bold; }
         input, select { width: 100%; padding: 12px; border: 2px solid var(--primary-pink); border-radius: 8px; font-size: 16px; outline: none; }
         input:focus, select:focus { border-color: var(--primary-green); }
-
         .btn { width: 100%; padding: 15px; background-color: var(--primary-green); color: white; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 10px; transition: 0.3s; }
         .btn:hover { background-color: var(--dark-green); }
         .btn-back { background-color: var(--primary-pink); color: #333; margin-bottom: 15px; }
         .btn-admin { background-color: #34495e; margin-top: 20px; }
-        .btn-admin:hover { background-color: #2c3e50; }
-        
-        /* Admin Tabs */
         .admin-tabs { display: flex; margin-bottom: 20px; gap: 5px; }
         .tab-btn { flex: 1; padding: 10px; text-align: center; background-color: var(--disabled-bg); border-radius: 5px; font-weight: bold; cursor: pointer; }
         .tab-btn.active { background-color: var(--primary-green); color: white; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
-
-        /* Tables & Lists */
         .data-list { background: var(--light-pink); padding: 10px; border-radius: 8px; margin-bottom: 10px; }
         .data-list p { margin-bottom: 5px; border-bottom: 1px solid #ffb6c1; padding-bottom: 5px; }
-        
         .topics-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 20px; }
         .topic-btn { padding: 15px 0; text-align: center; background-color: var(--primary-green); color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; }
         .topic-btn:disabled { background-color: var(--disabled-bg); color: #888; }
         .topic-btn.completed { background-color: var(--primary-pink); color: #fff; }
-
         .quiz-item { display: flex; align-items: center; margin-bottom: 10px; }
         .quiz-item span { width: 30px; font-weight: bold; }
         .correct { color: var(--dark-green); font-weight: bold; }
         .wrong { color: red; font-weight: bold; }
-
+        #loadingOverlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(255,255,255,0.8); display: none; justify-content: center; align-items: center; z-index: 9999; font-size: 20px; font-weight: bold; color: var(--dark-green); }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
+
+<div id="loadingOverlay">Server bilan ulanmoqda...</div>
 
 <div class="container">
     
@@ -131,7 +119,6 @@
             <div class="tab-btn" onclick="switchAdminTab('oquvchilar')">O'quvchilar</div>
         </div>
 
-        <!-- Javoblar kiritish tab -->
         <div id="tab-javoblar" class="tab-content active">
             <div class="form-group">
                 <label>Bo'limni tanlang:</label>
@@ -149,10 +136,9 @@
             <div id="adminAnswerInputs" style="margin-top: 20px;"></div>
         </div>
 
-        <!-- O'quvchilar tab -->
         <div id="tab-oquvchilar" class="tab-content">
             <h3>Ro'yxatdan o'tganlar</h3>
-            <p style="font-size: 13px; color: #666; margin-bottom: 10px;">(Ushbu qurilmadan kirganlar ko'rsatilmoqda)</p>
+            <button class="btn btn-small" onclick="loadDBAndRenderUsers()" style="margin-bottom:10px;">Yangilash</button>
             <div id="usersListDisplay"></div>
         </div>
     </div>
@@ -160,20 +146,29 @@
 </div>
 
 <script>
-    let DB = JSON.parse(localStorage.getItem('attestatsiyaDB')) || {
-        users: {}, 
-        answers: { sinf: {}, uy: {}, test: {} }
-    };
+    // SERVER IP MANZILI
+    const API_URL = 'http://178.105.131.123:3003/api';
 
-    function saveDB() {
-        localStorage.setItem('attestatsiyaDB', JSON.stringify(DB));
-    }
-
+    let DB = { users: {}, answers: { sinf: {}, uy: {}, test: {} } };
     let currentUser = null;
     let currentSection = ''; 
     let currentTopicId = 0;
 
-    window.onload = function() {
+    // Serverdan bazani yuklab olish
+    async function fetchDB() {
+        showLoading(true);
+        try {
+            let res = await fetch(`${API_URL}/data`);
+            DB = await res.json();
+        } catch (error) {
+            console.error("Serverga ulanish xatosi:", error);
+            alert("Serverga ulanishda xatolik yuz berdi!");
+        }
+        showLoading(false);
+    }
+
+    window.onload = async function() {
+        await fetchDB();
         const savedUser = localStorage.getItem('currentUserKey');
         if (savedUser && DB.users[savedUser]) {
             currentUser = DB.users[savedUser];
@@ -182,16 +177,17 @@
         }
     };
 
+    function showLoading(show) {
+        document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none';
+    }
+
     function showScreen(screenId) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.getElementById(screenId).classList.add('active');
-        // Parol maydonini tozalash
-        if(screenId !== 'adminLoginScreen') {
-            document.getElementById('adminPassword').value = '';
-        }
+        if(screenId !== 'adminLoginScreen') document.getElementById('adminPassword').value = '';
     }
 
-    function login() {
+    async function login() {
         const ism = document.getElementById('ism').value.trim();
         const familya = document.getElementById('familya').value.trim();
         const viloyat = document.getElementById('viloyat').value.trim();
@@ -201,14 +197,27 @@
 
         const userKey = `${ism}_${familya}`.toLowerCase();
         
+        // Agar baza ichida foydalanuvchi bo'lmasa, yangi yaratamiz
         if(!DB.users[userKey]) {
             DB.users[userKey] = { ism, familya, viloyat, maktab, progress: { sinf: {}, uy: {}, test: {} } };
-            saveDB();
         }
-
+        
         currentUser = DB.users[userKey];
         localStorage.setItem('currentUserKey', userKey);
         
+        // Serverga jo'natish
+        showLoading(true);
+        try {
+            await fetch(`${API_URL}/save_user`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ key: userKey, data: currentUser })
+            });
+        } catch (e) {
+            alert("Ma'lumotlar serverga saqlanmadi.");
+        }
+        showLoading(false);
+
         document.getElementById('userNameDisplay').innerText = `${currentUser.ism} ${currentUser.familya}`;
         showScreen('menuScreen');
     }
@@ -216,14 +225,13 @@
     function logout() {
         localStorage.removeItem('currentUserKey');
         currentUser = null;
-        document.getElementById('ism').value = '';
-        document.getElementById('familya').value = '';
-        document.getElementById('viloyat').value = '';
-        document.getElementById('maktab').value = '';
+        document.getElementById('ism').value = ''; document.getElementById('familya').value = '';
+        document.getElementById('viloyat').value = ''; document.getElementById('maktab').value = '';
         showScreen('loginScreen');
     }
 
-    function openSection(type) {
+    async function openSection(type) {
+        await fetchDB(); // Har safar kirganda eng so'nggi javoblarni serverdan yuklaydi
         currentSection = type;
         const grid = document.getElementById('topicsGrid');
         grid.innerHTML = '';
@@ -239,7 +247,7 @@
                 btn.classList.add('completed');
                 btn.disabled = true;
                 btn.innerText += ` (${currentUser.progress[type][i].score}%)`;
-            } else if (!DB.answers[type][i]) {
+            } else if (!DB.answers[type] || !DB.answers[type][i]) {
                 btn.disabled = true;
             } else {
                 btn.onclick = () => openQuiz(i);
@@ -262,7 +270,7 @@
         showScreen('quizScreen');
     }
 
-    function submitQuiz() {
+    async function submitQuiz() {
         if (!confirm("Tasdiqlaysizmi? O'zgartirish kiritib bo'lmaydi!")) return;
         let count = (currentSection === 'test') ? 30 : 20;
         let correctAnswers = DB.answers[currentSection][currentTopicId];
@@ -288,19 +296,28 @@
 
         currentUser.progress[currentSection][currentTopicId] = { score, correct: correctCount };
         const userKey = `${currentUser.ism}_${currentUser.familya}`.toLowerCase();
-        DB.users[userKey] = currentUser;
-        saveDB();
+        
+        showLoading(true);
+        try {
+            await fetch(`${API_URL}/save_user`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ key: userKey, data: currentUser })
+            });
+        } catch(e) {
+            alert("Natija saqlanishida xatolik!");
+        }
+        showLoading(false);
 
         showScreen('resultScreen');
     }
 
     // ADMIN TIZIMI
     function verifyAdmin() {
-        // Parol aynan AB2169016 bo'lishi tekshirilmoqda
         if (document.getElementById('adminPassword').value === 'AB2169016') {
             document.getElementById('adminPassword').value = '';
             showScreen('adminPanelScreen');
-            renderAdminUsers();
+            loadDBAndRenderUsers();
         } else {
             alert('Parol xato!');
         }
@@ -321,7 +338,7 @@
         let count = (sec === 'test') ? 30 : 20;
         let html = `<h3>${sec} - ${num} uchun javoblar:</h3>`;
         
-        let existing = DB.answers[sec][num] || [];
+        let existing = (DB.answers[sec] && DB.answers[sec][num]) ? DB.answers[sec][num] : [];
 
         for (let i = 1; i <= count; i++) {
             let val = existing[i-1] || '';
@@ -331,28 +348,39 @@
         document.getElementById('adminAnswerInputs').innerHTML = html;
     }
 
-    function saveAdminAnswers(sec, num, count) {
+    async function saveAdminAnswers(sec, num, count) {
         let answers = [];
         for (let i = 1; i <= count; i++) {
             answers.push(document.getElementById(`admin_ans_${i}`).value.trim());
         }
-        DB.answers[sec][num] = answers;
-        saveDB();
-        alert(`${num}-dars muvaffaqiyatli saqlandi!`);
-        document.getElementById('adminAnswerInputs').innerHTML = '';
-        document.getElementById('adminTopicNum').value = '';
+        
+        showLoading(true);
+        try {
+            await fetch(`${API_URL}/save_answers`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ section: sec, topicId: num, answers: answers })
+            });
+            alert(`${num}-dars muvaffaqiyatli saqlandi va barchaga ochildi!`);
+            document.getElementById('adminAnswerInputs').innerHTML = '';
+            document.getElementById('adminTopicNum').value = '';
+        } catch(e) {
+            alert("Javoblarni saqlashda xatolik!");
+        }
+        showLoading(false);
     }
 
-    function renderAdminUsers() {
+    async function loadDBAndRenderUsers() {
+        await fetchDB();
         let html = '';
         let usersCount = 0;
         
         for (let key in DB.users) {
             usersCount++;
             let u = DB.users[key];
-            let sinfCount = Object.keys(u.progress.sinf).length;
-            let uyCount = Object.keys(u.progress.uy).length;
-            let testCount = Object.keys(u.progress.test).length;
+            let sinfCount = Object.keys(u.progress.sinf || {}).length;
+            let uyCount = Object.keys(u.progress.uy || {}).length;
+            let testCount = Object.keys(u.progress.test || {}).length;
 
             html += `
                 <div class="data-list">
