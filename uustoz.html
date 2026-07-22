@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attestatsiya bo'ylab 80 kun</title>
+    <style>
+        :root {
+            --primary-pink: #ffb6c1;
+            --light-pink: #ffe4e1;
+            --primary-green: #2ecc71;
+            --dark-green: #27ae60;
+            --disabled-bg: #e0e0e0;
+            --text-color: #333;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--light-pink); color: var(--text-color); display: flex; justify-content: center; min-height: 100vh; }
+        .container { width: 100%; max-width: 480px; background-color: #fff; min-height: 100vh; padding: 20px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h1, h2, h3 { text-align: center; color: var(--dark-green); margin-bottom: 20px; }
+        
+        .screen { display: none; animation: fadeIn 0.3s ease; }
+        .screen.active { display: block; }
+
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, select { width: 100%; padding: 12px; border: 2px solid var(--primary-pink); border-radius: 8px; font-size: 16px; outline: none; }
+        input:focus, select:focus { border-color: var(--primary-green); }
+
+        .btn { width: 100%; padding: 15px; background-color: var(--primary-green); color: white; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 10px; transition: 0.3s; }
+        .btn:hover { background-color: var(--dark-green); }
+        .btn-back { background-color: var(--primary-pink); color: #333; margin-bottom: 15px; }
+        .btn-small { padding: 8px; font-size: 14px; margin-top: 5px; }
+        
+        .admin-link { text-align: center; margin-top: 30px; display: block; color: #888; text-decoration: underline; cursor: pointer; }
+
+        /* Admin Tabs */
+        .admin-tabs { display: flex; margin-bottom: 20px; gap: 5px; }
+        .tab-btn { flex: 1; padding: 10px; text-align: center; background-color: var(--disabled-bg); border-radius: 5px; font-weight: bold; cursor: pointer; }
+        .tab-btn.active { background-color: var(--primary-green); color: white; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* Tables & Lists */
+        .data-list { background: var(--light-pink); padding: 10px; border-radius: 8px; margin-bottom: 10px; }
+        .data-list p { margin-bottom: 5px; border-bottom: 1px solid #ffb6c1; padding-bottom: 5px; }
+        
+        .topics-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 20px; }
+        .topic-btn { padding: 15px 0; text-align: center; background-color: var(--primary-green); color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; }
+        .topic-btn:disabled { background-color: var(--disabled-bg); color: #888; }
+        .topic-btn.completed { background-color: var(--primary-pink); color: #fff; }
+
+        .quiz-item { display: flex; align-items: center; margin-bottom: 10px; }
+        .quiz-item span { width: 30px; font-weight: bold; }
+        .correct { color: var(--dark-green); font-weight: bold; }
+        .wrong { color: red; font-weight: bold; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    
+    <!-- LOGIN OYNASI -->
+    <div id="loginScreen" class="screen active">
+        <h1>Attestatsiya - 80 kun</h1>
+        <h2>Tizimga kirish</h2>
+        <div class="form-group"><label>Ismingiz:</label><input type="text" id="ism" placeholder="Ismingizni kiriting"></div>
+        <div class="form-group"><label>Familyangiz:</label><input type="text" id="familya" placeholder="Familyangizni kiriting"></div>
+        <div class="form-group"><label>Viloyatingiz:</label><input type="text" id="viloyat" placeholder="Viloyatingizni kiriting"></div>
+        <div class="form-group"><label>Maktab raqami:</label><input type="number" id="maktab" placeholder="Maktab raqamini kiriting"></div>
+        <button class="btn" onclick="login()">Kirish</button>
+        <span class="admin-link" onclick="showAdminLogin()">Ustozlar uchun (Admin)</span>
+    </div>
+
+    <!-- ASOSIY MENU -->
+    <div id="menuScreen" class="screen">
+        <h2 id="userNameDisplay"></h2>
+        <button class="btn" onclick="openSection('sinf')" style="height: 70px;">Sinf ishi</button>
+        <button class="btn" onclick="openSection('uy')" style="height: 70px;">Uy ishi</button>
+        <button class="btn" onclick="openSection('test')" style="height: 70px;">Test</button>
+        <button class="btn btn-back" style="margin-top: 30px;" onclick="logout()">Chiqish</button>
+    </div>
+
+    <!-- MAVZULAR ROYXATI -->
+    <div id="topicsScreen" class="screen">
+        <button class="btn btn-back" onclick="showScreen('menuScreen')">Orqaga qaytish</button>
+        <h2 id="sectionTitle">Bo'lim</h2>
+        <div class="topics-grid" id="topicsGrid"></div>
+    </div>
+
+    <!-- O'QUVCHI JAVOB KIRITISH OYNASI -->
+    <div id="quizScreen" class="screen">
+        <button class="btn btn-back" onclick="showScreen('topicsScreen')">Bekor qilish</button>
+        <h2 id="quizTitle">Dars</h2>
+        <div id="quizForm"></div>
+        <button class="btn" onclick="submitQuiz()">Tasdiqlash</button>
+    </div>
+
+    <!-- NATIJALAR OYNASI -->
+    <div id="resultScreen" class="screen">
+        <button class="btn btn-back" onclick="showScreen('menuScreen')">Bosh sahifaga qaytish</button>
+        <h2>Natijangiz</h2>
+        <div class="data-list" style="text-align: center;">
+            <h1 id="scorePercentage" style="font-size: 36px; margin-bottom: 10px;"></h1>
+            <p>To'g'ri javoblar: <span id="correctCount" class="correct"></span></p>
+            <p>Xato javoblar: <span id="wrongCount" class="wrong"></span></p>
+        </div>
+        <div id="detailedResults"></div>
+    </div>
+
+    <!-- ADMIN LOGIN -->
+    <div id="adminLoginScreen" class="screen">
+        <button class="btn btn-back" onclick="showScreen('loginScreen')">Orqaga</button>
+        <h2>Admin panelga kirish</h2>
+        <div class="form-group">
+            <label>Maxfiy parol:</label>
+            <input type="password" id="adminPassword" placeholder="Parolni kiriting (admin123)">
+        </div>
+        <button class="btn" onclick="verifyAdmin()">Kirish</button>
+    </div>
+
+    <!-- ADMIN PANEL -->
+    <div id="adminPanelScreen" class="screen">
+        <button class="btn btn-back" onclick="showScreen('loginScreen')">Tizimdan chiqish</button>
+        <h2>Admin Panel</h2>
+        
+        <div class="admin-tabs">
+            <div class="tab-btn active" onclick="switchAdminTab('javoblar')">Javob kiritish</div>
+            <div class="tab-btn" onclick="switchAdminTab('oquvchilar')">O'quvchilar</div>
+        </div>
+
+        <!-- Javoblar kiritish tab -->
+        <div id="tab-javoblar" class="tab-content active">
+            <div class="form-group">
+                <label>Bo'limni tanlang:</label>
+                <select id="adminSectionSelect">
+                    <option value="sinf">Sinf ishi</option>
+                    <option value="uy">Uy ishi</option>
+                    <option value="test">Test</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Mavzu / Test raqami (1 dan 80 gacha):</label>
+                <input type="number" id="adminTopicNum" placeholder="Masalan: 1">
+            </div>
+            <button class="btn" onclick="generateAdminInputs()">Javoblar maydonini ochish</button>
+            <div id="adminAnswerInputs" style="margin-top: 20px;"></div>
+        </div>
+
+        <!-- O'quvchilar va statistika tab -->
+        <div id="tab-oquvchilar" class="tab-content">
+            <h3>Ro'yxatdan o'tganlar</h3>
+            <p style="font-size: 13px; color: #666; margin-bottom: 10px;">(Hozirgi versiyada faqat shu telefondagi foydalanuvchilar ko'rinadi. Barchani ko'rish uchun Bazaga ulanishi kerak)</p>
+            <div id="usersListDisplay"></div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // ==========================================
+    // MA'LUMOTLAR BAZASI (Mock Database)
+    // ==========================================
+    let DB = JSON.parse(localStorage.getItem('attestatsiyaDB')) || {
+        users: {}, 
+        answers: { sinf: {}, uy: {}, test: {} }
+    };
+
+    function saveDB() {
+        localStorage.setItem('attestatsiyaDB', JSON.stringify(DB));
+    }
+
+    let currentUser = null;
+    let currentSection = ''; 
+    let currentTopicId = 0;
+
+    window.onload = function() {
+        const savedUser = localStorage.getItem('currentUserKey');
+        if (savedUser && DB.users[savedUser]) {
+            currentUser = DB.users[savedUser];
+            document.getElementById('userNameDisplay').innerText = `${currentUser.ism} ${currentUser.familya}`;
+            showScreen('menuScreen');
+        }
+    };
+
+    function showScreen(screenId) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(screenId).classList.add('active');
+    }
+
+    // ==========================================
+    // O'QUVCHI FUNKSIYALARI
+    // ==========================================
+    function login() {
+        const ism = document.getElementById('ism').value.trim();
+        const familya = document.getElementById('familya').value.trim();
+        const viloyat = document.getElementById('viloyat').value.trim();
+        const maktab = document.getElementById('maktab').value.trim();
+
+        if (!ism || !familya || !viloyat || !maktab) return alert("Barcha maydonlarni to'ldiring!");
+
+        const userKey = `${ism}_${familya}`.toLowerCase();
+        
+        if(!DB.users[userKey]) {
+            DB.users[userKey] = { ism, familya, viloyat, maktab, progress: { sinf: {}, uy: {}, test: {} } };
+            saveDB();
+        }
+
+        currentUser = DB.users[userKey];
+        localStorage.setItem('currentUserKey', userKey);
+        
+        document.getElementById('userNameDisplay').innerText = `${currentUser.ism} ${currentUser.familya}`;
+        showScreen('menuScreen');
+    }
+
+    function logout() {
+        localStorage.removeItem('currentUserKey');
+        currentUser = null;
+        showScreen('loginScreen');
+    }
+
+    function openSection(type) {
+        currentSection = type;
+        const grid = document.getElementById('topicsGrid');
+        grid.innerHTML = '';
+        document.getElementById('sectionTitle').innerText = type === 'sinf' ? 'Sinf ishi' : type === 'uy' ? 'Uy ishi' : 'Test';
+        let total = (type === 'test') ? 10 : 80;
+
+        for (let i = 1; i <= total; i++) {
+            const btn = document.createElement('button');
+            btn.className = 'topic-btn';
+            btn.innerText = i;
+            
+            if (currentUser.progress[type] && currentUser.progress[type][i]) {
+                btn.classList.add('completed');
+                btn.disabled = true;
+                btn.innerText += ` (${currentUser.progress[type][i].score}%)`;
+            } else if (!DB.answers[type][i]) {
+                btn.disabled = true;
+            } else {
+                btn.onclick = () => openQuiz(i);
+            }
+            grid.appendChild(btn);
+        }
+        showScreen('topicsScreen');
+    }
+
+    function openQuiz(id) {
+        currentTopicId = id;
+        const quizForm = document.getElementById('quizForm');
+        quizForm.innerHTML = '';
+        document.getElementById('quizTitle').innerText = `${currentSection} - ${id}`;
+        
+        let inputsCount = (currentSection === 'test') ? 30 : 20;
+        for (let i = 1; i <= inputsCount; i++) {
+            quizForm.innerHTML += `<div class="quiz-item"><span>${i}.</span><input type="text" id="ans_${i}"></div>`;
+        }
+        showScreen('quizScreen');
+    }
+
+    function submitQuiz() {
+        if (!confirm("Tasdiqlaysizmi?")) return;
+        let count = (currentSection === 'test') ? 30 : 20;
+        let correctAnswers = DB.answers[currentSection][currentTopicId];
+        let correctCount = 0;
+        let html = '';
+
+        for (let i = 1; i <= count; i++) {
+            let uAns = document.getElementById(`ans_${i}`).value.trim().toLowerCase();
+            let rAns = correctAnswers[i-1].trim().toLowerCase();
+            let isOk = (uAns === rAns);
+            if (isOk) correctCount++;
+            html += `<div style="display:flex; justify-content:space-between; margin-bottom:5px; border-bottom:1px solid #eee;">
+                        <span>${i}. ${uAns || '-'}</span>
+                        <span class="${isOk ? 'correct' : 'wrong'}">${isOk ? '✔ To\'g\'ri' : '✖ Xato'}</span>
+                     </div>`;
+        }
+
+        let score = Math.round((correctCount / count) * 100);
+        document.getElementById('scorePercentage').innerText = `${score}%`;
+        document.getElementById('correctCount').innerText = correctCount;
+        document.getElementById('wrongCount').innerText = count - correctCount;
+        document.getElementById('detailedResults').innerHTML = html;
+
+        // Bazani yangilash
+        currentUser.progress[currentSection][currentTopicId] = { score, correct: correctCount };
+        const userKey = `${currentUser.ism}_${currentUser.familya}`.toLowerCase();
+        DB.users[userKey] = currentUser;
+        saveDB();
+
+        showScreen('resultScreen');
+    }
+
+    // ==========================================
+    // ADMIN FUNKSIYALARI
+    // ==========================================
+    function showAdminLogin() { showScreen('adminLoginScreen'); }
+
+    function verifyAdmin() {
+        if (document.getElementById('adminPassword').value === 'admin123') {
+            document.getElementById('adminPassword').value = '';
+            showScreen('adminPanelScreen');
+            renderAdminUsers();
+        } else {
+            alert('Parol xato!');
+        }
+    }
+
+    function switchAdminTab(tabName) {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        event.target.classList.add('active');
+        document.getElementById(`tab-${tabName}`).classList.add('active');
+    }
+
+    // Telefonda javoblarni kiritish maydonini yaratish
+    function generateAdminInputs() {
+        const sec = document.getElementById('adminSectionSelect').value;
+        const num = document.getElementById('adminTopicNum').value;
+        if(!num) return alert("Raqamni kiriting!");
+        
+        let count = (sec === 'test') ? 30 : 20;
+        let html = `<h3>${sec} - ${num} uchun javoblar:</h3>`;
+        
+        // Agar oldin kiritilgan bo'lsa, shuni ko'rsatamiz
+        let existing = DB.answers[sec][num] || [];
+
+        for (let i = 1; i <= count; i++) {
+            let val = existing[i-1] || '';
+            html += `<div class="quiz-item"><span>${i}.</span><input type="text" id="admin_ans_${i}" value="${val}"></div>`;
+        }
+        html += `<button class="btn" onclick="saveAdminAnswers('${sec}', ${num}, ${count})">Javoblarni Saqlash</button>`;
+        document.getElementById('adminAnswerInputs').innerHTML = html;
+    }
+
+    function saveAdminAnswers(sec, num, count) {
+        let answers = [];
+        for (let i = 1; i <= count; i++) {
+            answers.push(document.getElementById(`admin_ans_${i}`).value.trim());
+        }
+        DB.answers[sec][num] = answers;
+        saveDB();
+        alert(`${num}-dars javoblari muvaffaqiyatli saqlandi va o'quvchilar uchun ochildi!`);
+        document.getElementById('adminAnswerInputs').innerHTML = '';
+        document.getElementById('adminTopicNum').value = '';
+    }
+
+    // O'quvchilar ro'yxati va ularning natijalarini chiqarish
+    function renderAdminUsers() {
+        let html = '';
+        let usersCount = 0;
+        
+        for (let key in DB.users) {
+            usersCount++;
+            let u = DB.users[key];
+            
+            // Sinf ishlari qancha ishlanganini hisoblash
+            let sinfCount = Object.keys(u.progress.sinf).length;
+            let uyCount = Object.keys(u.progress.uy).length;
+            let testCount = Object.keys(u.progress.test).length;
+
+            html += `
+                <div class="data-list">
+                    <p><b>${u.ism} ${u.familya}</b> (${u.viloyat}, ${u.maktab}-maktab)</p>
+                    <div style="font-size: 14px; color: #555;">
+                        Ishlaganlari: Sinf(${sinfCount}), Uy(${uyCount}), Test(${testCount})
+                    </div>
+                </div>
+            `;
+        }
+        
+        if (usersCount === 0) html = "<p>Hozircha hech kim ro'yxatdan o'tmadi.</p>";
+        document.getElementById('usersListDisplay').innerHTML = `<b>Jami o'quvchilar: ${usersCount} ta</b><br><br>` + html;
+    }
+</script>
+
+</body>
+</html>
