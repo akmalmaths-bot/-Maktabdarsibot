@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boshlang'ich Ustozlar Uchun Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .screen {
+            display: none;
+        }
+        .screen.active {
+            display: block;
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .animation-fade-in {
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+        /* Custom scrollbar for better aesthetics */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F3F4F6;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #D1D5DB;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #9CA3AF;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800 flex justify-center items-start min-h-screen p-4 md:py-10">
+
+    <div class="bg-white w-full max-w-2xl rounded-2xl shadow-xl overflow-hidden p-6 md:p-8 relative">
+        
+        <!-- 1. LOGIN SCREEN -->
+        <div id="login-screen" class="screen active">
+            <div class="text-center mb-8">
+                <div class="inline-block bg-indigo-100 p-4 rounded-full mb-4">
+                    <svg class="w-10 h-10 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                </div>
+                <h1 class="text-3xl font-bold text-indigo-700 mb-2">Attestatsiya Tayyorlov</h1>
+                <p class="text-gray-600 font-bold text-sm md:text-base border-b-2 border-indigo-100 pb-4 mb-2 uppercase">
+                    1-Mavzu: Natural sonlar qatnashgan matnli va mantiqiy masalalar
+                </p>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <label for="firstName" class="block text-sm font-semibold mb-1 text-gray-700">Ismingiz</label>
+                    <input type="text" id="firstName" placeholder="Masalan: Alisher" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/20 outline-none transition-all duration-300 text-lg" required>
+                </div>
+                <div>
+                    <label for="lastName" class="block text-sm font-semibold mb-1 text-gray-700">Familiyangiz</label>
+                    <input type="text" id="lastName" placeholder="Masalan: Valiyev" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/20 outline-none transition-all duration-300 text-lg" required>
+                </div>
+                <div id="error-msg" class="text-red-500 text-sm font-medium hidden"></div>
+                
+                <button onclick="startTest()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-6 rounded-xl transition-colors duration-300 shadow-lg shadow-indigo-600/30 mt-2 text-lg">
+                    Testni Boshlash
+                </button>
+            </div>
+            <div class="text-center mt-8 font-medium text-gray-400 text-sm">
+                Tuzuvchi: <a href="https://t.me/Akmalmaths" target="_blank" class="text-indigo-500 hover:text-indigo-600 transition-colors">@Akmalmaths</a>
+            </div>
+        </div>
+
+        <!-- 2. TEST SCREEN -->
+        <div id="test-screen" class="screen relative">
+            <div class="sticky top-0 bg-indigo-600 text-white flex justify-between items-center p-4 rounded-xl mb-6 shadow-md z-10">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-white/20 p-2 rounded-lg">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                    </div>
+                    <div id="user-display" class="font-bold text-sm md:text-base"></div>
+                </div>
+                <div class="flex items-center space-x-2 bg-red-500 px-4 py-2 rounded-lg shadow-inner transition-colors duration-300" id="timer-container">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <div class="font-bold text-lg md:text-xl tracking-wider" id="timer-display">90s</div>
+                </div>
+            </div>
+            
+            <div class="mb-4 flex justify-between items-center text-sm font-semibold text-gray-500">
+                <span id="progress-text">Savol 1 / 30</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2.5 mb-6">
+                <div class="bg-indigo-600 h-2.5 rounded-full transition-all duration-300" id="progress-bar" style="width: 3.33%"></div>
+            </div>
+
+            <div id="single-question-container" class="space-y-5 min-h-[250px]">
+                <!-- Savollar JS orqali shu yerga bittadan tushadi -->
+            </div>
+
+            <button id="next-btn" onclick="handleNext()" disabled class="w-full bg-indigo-500 text-white font-bold py-4 px-6 rounded-xl transition-all duration-300 shadow-lg mt-8 text-lg flex justify-center items-center space-x-2 opacity-50 cursor-not-allowed">
+                <span id="next-btn-text">Keyingi savol</span>
+                <svg id="next-btn-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+            </button>
+        </div>
+
+        <!-- 3. RESULT SCREEN -->
+        <div id="result-screen" class="screen">
+            <div id="time-out-msg" class="bg-red-100 text-red-700 p-4 rounded-xl mb-4 hidden text-center font-bold border border-red-200">
+                ⚠️ Ajratilgan vaqt tugadi! Test avtomatik yakunlandi.
+            </div>
+
+            <div id="result-header-bg" class="text-center bg-indigo-600 text-white p-6 md:p-8 rounded-2xl mb-6 shadow-lg transition-colors duration-500">
+                <h2 class="text-2xl font-bold mb-2 opacity-90">Natijangiz</h2>
+                <div id="result-name" class="text-lg font-medium mb-4 opacity-80"></div>
+                <div class="w-32 h-32 mx-auto bg-white/20 rounded-full flex flex-col justify-center items-center border-4 border-white/30 mb-4 backdrop-blur-sm">
+                    <div class="text-3xl font-bold" id="result-score">0 / 30</div>
+                    <div class="text-sm uppercase tracking-wide opacity-80 mt-1">To'g'ri</div>
+                </div>
+                <div id="result-percent" class="text-3xl font-extrabold tracking-tight">0%</div>
+            </div>
+
+            <div class="bg-red-50 border-2 border-dashed border-red-400 p-5 rounded-xl mb-8 text-center shadow-sm">
+                <p class="text-red-600 font-bold text-lg flex flex-col items-center justify-center gap-2">
+                    <span class="text-3xl">📸</span>
+                    Ushbu natijani rasmga olib (Screenshot), zudlik bilan guruhga jo'nating!
+                </p>
+            </div>
+
+            <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <svg class="w-6 h-6 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                Savollar tahlili
+            </h3>
+            
+            <div id="result-details" class="space-y-2 mb-8 bg-gray-50 p-4 rounded-xl border border-gray-100 max-h-96 overflow-y-auto">
+                <!-- Tahlil JS orqali tushadi -->
+            </div>
+
+            <button onclick="location.reload()" class="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-4 px-6 rounded-xl transition-colors duration-300 flex justify-center items-center space-x-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                <span>Qaytadan boshlash</span>
+            </button>
+            <div class="text-center mt-6 font-medium text-gray-400 text-sm">
+                Tuzuvchi: <a href="https://t.me/Akmalmaths" target="_blank" class="text-indigo-500 hover:text-indigo-600 transition-colors">@Akmalmaths</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const rawQuestions = [
+            { q: "Fermer kuniga 150 litr sut sog'adi. U 12 kunda qancha sut sog'adi?", options: ["1600 litr", "1800 litr", "1500 litr", "2000 litr"], correct: "1800 litr" },
+            { q: "Uzunligi 40 sm bo'lgan tasma 5 sm dan kesilsa, necha marta kesish kerak bo'ladi?", options: ["6 marta", "7 marta", "8 marta", "9 marta"], correct: "7 marta" },
+            { q: "Yig'indisi 80, ayirmasi 20 bo'lgan ikkita sonning ko'paytmasini toping.", options: ["1200", "1500", "1600", "1800"], correct: "1500" },
+            { q: "Uchta ishchi 4 kunda 120 ta detal tayyorlasa, 1 ta ishchi 1 kunda nechta detal tayyorlaydi?", options: ["10 ta", "12 ta", "15 ta", "20 ta"], correct: "10 ta" },
+            { q: "Ota 40 yoshda, o'g'il esa 10 yoshda. Necha yil oldin ota o'g'lidan 7 marta katta bo'lgan?", options: ["4 yil", "5 yil", "6 yil", "7 yil"], correct: "5 yil" },
+            { q: "Rulonda 120 m mato bor edi. Avval 35 m, so'ngra qolganining yarmi qirqib olindi. Rulonda qancha mato qoldi?", options: ["40 m", "42.5 m", "45 m", "50 m"], correct: "42.5 m" },
+            { q: "Tezligi 65 km/soat va 85 km/soat bo'lgan 2 ta poyezd 600 km masofadan bir-biriga qarab yo'lga chiqdi. Ular necha soatdan keyin uchrashadi?", options: ["3 soat", "4 soat", "5 soat", "6 soat"], correct: "4 soat" },
+            { q: "Savatdagi 150 ta olmaning 40 tasi sotildi. Qolgan olmalarning yarmi bolalarga tarqatildi. Savatda nechta olma qoldi?", options: ["45 ta", "50 ta", "55 ta", "60 ta"], correct: "55 ta" },
+            { q: "Hovuzga 2 ta quvur ulangan. Birinchisidan soatiga 120 litr, ikkinchisidan esa 80 litr suv kiradi. Agar 5 soatda hovuz to'lsa, uning hajmi qancha?", options: ["800 l", "900 l", "1000 l", "1200 l"], correct: "1000 l" },
+            { q: "15 ta ruchka va 10 ta qalam birgalikda 45 000 so'm turadi. Bitta qalam 1 500 so'm bo'lsa, bitta ruchka necha so'm turadi?", options: ["1500 so'm", "2000 so'm", "2500 so'm", "3000 so'm"], correct: "2000 so'm" },
+            { q: "Kvadrat shaklidagi maydonning perimetri 100 m. Uning atrofiga har 5 metrga bittadan ustun o'rnatib chiqilsa, jami nechta ustun ketadi?", options: ["19 ta", "20 ta", "21 ta", "25 ta"], correct: "20 ta" },
+            { q: "Sinfda 32 nafar o'quvchi bor. Qizlar o'g'il bolalardan 4 nafarga ko'p. Sinfda nechta qiz bola bor?", options: ["14 nafar", "16 nafar", "18 nafar", "20 nafar"], correct: "18 nafar" },
+            { q: "Sayyoh 400 km yo'lning bir qismini avtobusda 65 km/soat tezlik bilan 4 soat, qolgan qismini esa poyezdda 70 km/soat tezlik bilan bosib o'tdi. Sayyoh poyezdda necha soat yurgan?", options: ["1 soat", "2 soat", "3 soat", "4 soat"], correct: "2 soat" },
+            { q: "Ikki sonning yig'indisi 125 ga teng. Katta son kichik sondan 4 marta katta bo'lsa, katta sonni toping.", options: ["100", "80", "25", "120"], correct: "100" },
+            { q: "Birinchi kuni 450 ta detal, ikkinchi kuni undan 50 ta ko'p detal yasaldi. Uchinchi kuni esa ikkala kunda yasalgan jami detallardan 2 marta kam detal yasaldi. Uchinchi kuni nechta detal yasalgan?", options: ["450 ta", "475 ta", "500 ta", "525 ta"], correct: "475 ta" },
+            { q: "Maktab kutubxonasiga 120 ta yangi kitob keltirildi. Ularning yarmi badiiy kitoblar, qolgan qismining uchdan bir qismi darsliklar, qolgani esa ertak kitoblar. Nechta ertak kitob keltirilgan?", options: ["30 ta", "40 ta", "50 ta", "60 ta"], correct: "40 ta" },
+            { q: "Uzunligi 120 metr bo'lgan ko'chaning bir tomoniga har 15 metrda bittadan daraxt ekildi. Jami nechta daraxt ekilgan?", options: ["7 ta", "8 ta", "9 ta", "10 ta"], correct: "9 ta" },
+            { q: "3 ta ruchka va 2 ta daftar 12 000 so'm turadi. 2 ta ruchka va 3 ta daftar 13 000 so'm turadi. Bitta daftar necha so'm turadi?", options: ["2000 so'm", "2500 so'm", "3000 so'm", "3500 so'm"], correct: "3000 so'm" },
+            { q: "Akasi ukasidan 4 yosh katta. 5 yildan so'ng ularning yoshlari yig'indisi 34 ga teng bo'ladi. Akasi hozir necha yoshda?", options: ["10 yosh", "12 yosh", "14 yosh", "16 yosh"], correct: "14 yosh" },
+            { q: "Poyezd uzunligi 400 m bo'lgan tuneldan 20 soniyada, uzunligi 200 m bo'lgan ko'prikdan esa 12 soniyada o'tdi. Poyezdning tezligini toping (m/s).", options: ["20 m/s", "25 m/s", "30 m/s", "35 m/s"], correct: "25 m/s" },
+            { q: "A va B shaharlar orasidagi masofa 240 km. Velosipedchi bu masofani 15 km/soat tezlik bilan, mototsiklchi esa 40 km/soat tezlik bilan bosib o'tadi. Velosipedchi mototsiklchidan necha soat kech yetib boradi?", options: ["8 soat", "10 soat", "12 soat", "15 soat"], correct: "10 soat" },
+            { q: "Paxta terish mashinasi 1 kunda 3 tonna paxta teradi. 4 ta shunday mashina 5 kunda necha tonna paxta teradi?", options: ["40 t", "50 t", "60 t", "70 t"], correct: "60 t" },
+            { q: "Kitobning 120 beti o'qilgach, o'qilmagan qismi o'qilgan qismidan 3 marta ko'p ekanligi ma'lum bo'ldi. Kitob jami necha betdan iborat?", options: ["360 bet", "400 bet", "480 bet", "520 bet"], correct: "480 bet" },
+            { q: "Quti bilan birga olmalarning og'irligi 25 kg. Qutining og'irligi olmalar og'irligining to'rtdan bir qismiga teng. Olmalarning o'zi necha kg?", options: ["18 kg", "20 kg", "22 kg", "24 kg"], correct: "20 kg" },
+            { q: "Fermada tovuqlar va qo'ylar bor. Ularning jami boshlari soni 40 ta, oyoqlari soni esa 100 ta. Fermada nechta qo'y bor?", options: ["10 ta", "15 ta", "20 ta", "30 ta"], correct: "10 ta" },
+            { q: "Ustaga 1 kunda 80 ta detal tayyorlash rejasi berildi. U rejani 20% ga oshirib bajardi. Usta 5 kunda nechta detal tayyorlagan?", options: ["400 ta", "450 ta", "480 ta", "500 ta"], correct: "480 ta" },
+            { q: "Do'konga 500 kg shakar keltirildi. Birinchi kuni shakarning 30% i, ikkinchi kuni qolganining 40% i sotildi. Do'konda necha kg shakar qoldi?", options: ["180 kg", "210 kg", "250 kg", "280 kg"], correct: "210 kg" },
+            { q: "Kema daryo oqimi bo'ylab 80 km masofani 4 soatda bosib o'tdi. Daryo oqimi tezligi 2 km/soat bo'lsa, kema shu masofani oqimga qarshi necha soatda bosib o'tadi?", options: ["4.5 soat", "5 soat", "5.5 soat", "6 soat"], correct: "5 soat" },
+            { q: "Hovlida o'ynayotgan bolalar soni 15 nafar. Ulardan 8 nafari futbol, 10 nafari esa voleybol o'ynashni biladi. Har ikkala o'yinni biladigan bolalar soni kamida nechta?", options: ["1 nafar", "2 nafar", "3 nafar", "4 nafar"], correct: "3 nafar" },
+            { q: "Olxo'ri quritilganda o'z massasining 70% ini yo'qotadi. 120 kg quritilgan olxo'ri olinishi uchun necha kg ho'l olxo'ri kerak bo'ladi?", options: ["300 kg", "360 kg", "400 kg", "450 kg"], correct: "400 kg" }
+        ];
+
+        let userName = "";
+        let userSurname = "";
+        let timerInterval;
+        let activeQuestions = [];
+        let questionTime = 90;
+        let currentQuestionIndex = 0;
+        let userAnswers = [];
+        
+        // Ovoz effekti o'zgaruvchilari (Tone.js)
+        let synth;
+        let polySynth;
+
+        async function initAudio() {
+            if (!synth) {
+                await Tone.start();
+                synth = new Tone.Synth().toDestination();
+                polySynth = new Tone.PolySynth().toDestination();
+                synth.volume.value = -10;
+                polySynth.volume.value = -10;
+            }
+        }
+
+        function playSelectSound() {
+            if(synth) synth.triggerAttackRelease("C5", "32n");
+        }
+
+        function playNextSound() {
+            if(synth) synth.triggerAttackRelease("E5", "16n");
+        }
+
+        function playFinishSound(success) {
+            if(polySynth) {
+                if(success) {
+                    // Muvaffaqiyatli tugatilgandagi ohang
+                    polySynth.triggerAttackRelease(["C4", "E4", "G4", "C5"], "1n");
+                } else {
+                    // Xatolar ko'p bo'lgandagi ohang
+                    polySynth.triggerAttackRelease(["C3", "Eb3", "Gb3"], "1n");
+                }
+            }
+        }
+
+        function formatTime(seconds) {
+            let m = Math.floor(seconds / 60);
+            let s = seconds % 60;
+            return `${m}:${s < 10 ? '0' : ''}${s}`;
+        }
+
+        // Qatorlarni tasodifiy aralashtirish funksiyasi
+        function shuffleArray(array) {
+            let curId = array.length;
+            while (0 !== curId) {
+                let randId = Math.floor(Math.random() * curId);
+                curId -= 1;
+                let tmp = array[curId];
+                array[curId] = array[randId];
+                array[randId] = tmp;
+            }
+            return array;
+        }
+
+        async function startTest() {
+            userName = document.getElementById('firstName').value.trim();
+            userSurname = document.getElementById('lastName').value.trim();
+            const errorMsg = document.getElementById('error-msg');
+
+            if (!userName || !userSurname) {
+                errorMsg.innerText = "Iltimos, ism va familiyangizni to'liq kiriting!";
+                errorMsg.classList.remove('hidden');
+                
+                errorMsg.animate([
+                    { transform: 'translateX(0)' },
+                    { transform: 'translateX(-5px)' },
+                    { transform: 'translateX(5px)' },
+                    { transform: 'translateX(0)' }
+                ], { duration: 300 });
+                return;
+            }
+            errorMsg.classList.add('hidden');
+
+            // Brauzer qoidalari tufayli musiqani foydalanuvchi tugma bosgandagina yoqish mumkin
+            await initAudio();
+            playNextSound();
+
+            document.getElementById('login-screen').classList.remove('active');
+            document.getElementById('test-screen').classList.add('active');
+            document.getElementById('user-display').innerText = `${userName} ${userSurname}`;
+
+            // Savollar va variantlarni aralashtirish
+            activeQuestions = shuffleArray([...rawQuestions]).map(q => ({
+                ...q,
+                options: shuffleArray([...q.options])
+            }));
+
+            // Boshlang'ich holatni sozlash
+            currentQuestionIndex = 0;
+            userAnswers = new Array(activeQuestions.length).fill(null);
+
+            renderCurrentQuestion();
+        }
+
+        function updateTimerUI() {
+            document.getElementById('timer-display').innerText = `${questionTime}s`;
+            const timerContainer = document.getElementById('timer-container');
+            
+            if (questionTime <= 10) {
+                timerContainer.classList.remove('bg-red-500');
+                timerContainer.classList.add('bg-red-700', 'animate-pulse');
+            } else {
+                timerContainer.classList.add('bg-red-500');
+                timerContainer.classList.remove('bg-red-700', 'animate-pulse');
+            }
+        }
+
+        function renderCurrentQuestion() {
+            const container = document.getElementById('single-question-container');
+            const q = activeQuestions[currentQuestionIndex];
+            
+            // Taymerni har bir savol uchun yangidan ishga tushirish
+            clearInterval(timerInterval);
+            questionTime = 90;
+            updateTimerUI();
+            
+            timerInterval = setInterval(() => {
+                questionTime--;
+                updateTimerUI();
+                
+                if (questionTime <= 0) {
+                    clearInterval(timerInterval);
+                    handleNext(true); // Vaqt tugasa avtomatik keyingisiga o'tkazish
+                }
+            }, 1000);
+
+            // Progress bar va matnni yangilash
+            document.getElementById('progress-text').innerText = `Savol ${currentQuestionIndex + 1} / ${activeQuestions.length}`;
+            const progressPercent = ((currentQuestionIndex + 1) / activeQuestions.length) * 100;
+            document.getElementById('progress-bar').style.width = `${progressPercent}%`;
+
+            let optionsHtml = "";
+            q.options.forEach((opt, optIndex) => {
+                optionsHtml += `
+                    <label class="block bg-white border-2 border-gray-100 p-4 rounded-xl mb-3 cursor-pointer hover:border-indigo-300 hover:bg-indigo-50 transition-all duration-200 group flex items-center shadow-sm">
+                        <input type="radio" name="current_q" value="${opt}" onchange="enableNextButton()" class="w-5 h-5 text-indigo-600 border-gray-300 focus:ring-indigo-500 mr-4 cursor-pointer accent-indigo-600">
+                        <span class="text-gray-700 font-medium group-hover:text-indigo-700 transition-colors">${opt}</span>
+                    </label>
+                `;
+            });
+
+            container.innerHTML = `
+                <div class="bg-gray-50 border border-gray-200 rounded-2xl p-6 shadow-sm animation-fade-in">
+                    <div class="flex items-start mb-6">
+                        <span class="flex-shrink-0 bg-indigo-100 text-indigo-700 font-bold w-10 h-10 rounded-full flex items-center justify-center mr-4 shadow-sm">
+                            ${currentQuestionIndex + 1}
+                        </span>
+                        <div class="text-xl font-semibold text-gray-800 leading-snug pt-1">${q.q}</div>
+                    </div>
+                    <div class="options ml-14">${optionsHtml}</div>
+                </div>
+            `;
+
+            // Tugma holatini bloklash (Yangi savol chiqqanda faqat belgilagandan so'ng bosish mumkin)
+            const nextBtn = document.getElementById('next-btn');
+            nextBtn.disabled = true;
+            nextBtn.classList.add('opacity-50', 'cursor-not-allowed', 'bg-indigo-500');
+            nextBtn.classList.remove('hover:bg-indigo-600', 'bg-emerald-500', 'hover:bg-emerald-600');
+            
+            if (currentQuestionIndex === activeQuestions.length - 1) {
+                document.getElementById('next-btn-text').innerText = "Testni Yakunlash";
+                document.getElementById('next-btn-icon').innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>`;
+            } else {
+                document.getElementById('next-btn-text').innerText = "Keyingi savol";
+                document.getElementById('next-btn-icon').innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>`;
+            }
+        }
+
+        function enableNextButton() {
+            playSelectSound();
+            const nextBtn = document.getElementById('next-btn');
+            nextBtn.disabled = false;
+            nextBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            
+            if (currentQuestionIndex === activeQuestions.length - 1) {
+                nextBtn.classList.remove('bg-indigo-500');
+                nextBtn.classList.add('bg-emerald-500', 'hover:bg-emerald-600');
+            } else {
+                nextBtn.classList.add('hover:bg-indigo-600');
+            }
+        }
+
+        function handleNext(isAutoAdvance) {
+            clearInterval(timerInterval);
+            const selectedOption = document.querySelector(`input[name="current_q"]:checked`);
+            if (selectedOption) {
+                userAnswers[currentQuestionIndex] = selectedOption.value;
+            }
+
+            if (currentQuestionIndex < activeQuestions.length - 1) {
+                if (isAutoAdvance !== true) playNextSound();
+                currentQuestionIndex++;
+                renderCurrentQuestion();
+            } else {
+                submitTest();
+            }
+        }
+
+        function submitTest() {
+            clearInterval(timerInterval);
+            
+            let correctCount = 0;
+            let detailsHtml = "";
+
+            activeQuestions.forEach((q, index) => {
+                let userAnswer = userAnswers[index];
+                let isCorrect = userAnswer === q.correct;
+
+                if (isCorrect) {
+                    correctCount++;
+                }
+
+                detailsHtml += `
+                    <div class="flex flex-col p-3 border-b border-gray-200 last:border-0 bg-white rounded-lg shadow-sm mb-2">
+                        <div class="flex justify-between items-center w-full">
+                            <span class="font-semibold text-gray-700">${index + 1}-savol:</span>
+                            <span class="font-bold flex items-center gap-1 ${isCorrect ? 'text-emerald-600' : 'text-red-500'} bg-${isCorrect ? 'emerald' : 'red'}-50 px-3 py-1 rounded-full text-sm">
+                                ${isCorrect ? 
+                                    '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> To\'g\'ri' : 
+                                    '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg> Xato'}
+                            </span>
+                        </div>
+                        ${!isCorrect ? `<div class="mt-2 text-sm text-gray-600 bg-emerald-50/50 p-2 rounded border border-emerald-100 border-l-4 border-l-emerald-500">Sizning javob: <span class="line-through text-red-500">${userAnswer || "Belgilanmagan"}</span><br>To'g'ri javob: <span class="font-bold text-emerald-700">${q.correct}</span></div>` : ''}
+                    </div>
+                `;
+            });
+
+            let percent = Math.round((correctCount / activeQuestions.length) * 100);
+            
+            // Ovoz effektini chalinishi (50% dan yuqori bo'lsa yutuq ovozi, aks holda yutqazish ovozi)
+            playFinishSound(percent >= 50);
+
+            document.getElementById('test-screen').classList.remove('active');
+            document.getElementById('result-screen').classList.add('active');
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            document.getElementById('result-name').innerText = `${userName} ${userSurname}`;
+            document.getElementById('result-score').innerText = `${correctCount} / ${activeQuestions.length}`;
+            document.getElementById('result-percent').innerText = `${percent}%`;
+            document.getElementById('result-details').innerHTML = detailsHtml;
+
+            const resultHeader = document.getElementById('result-header-bg');
+            if (percent >= 80) {
+                resultHeader.classList.replace('bg-indigo-600', 'bg-emerald-500');
+            } else if (percent < 50) {
+                resultHeader.classList.replace('bg-indigo-600', 'bg-red-500');
+            } else {
+                resultHeader.classList.replace('bg-indigo-600', 'bg-amber-500');
+            }
+        }
+    </script>
+</body>
+</html>
