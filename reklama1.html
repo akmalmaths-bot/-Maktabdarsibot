@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>O'quv Markazi Platformasi</title>
+    
+    <!-- Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Icons: FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.3s ease-out',
+                        'slide-up': 'slideUp 0.4s ease-out'
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #f8fafc; /* slate-50 */
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        .hide {
+            display: none !important;
+        }
+
+        /* Glassmorphism utility */
+        .glass-header {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+        }
+    </style>
+</head>
+<body class="text-slate-800 min-h-screen flex flex-col">
+
+    <!-- Navigation Header -->
+    <header class="glass-header sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center gap-3 cursor-pointer" onclick="showMainView()">
+                    <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-md">
+                        <i class="fa-solid fa-graduation-cap text-xl"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight text-slate-900">EduCenter</span>
+                </div>
+                <div class="hidden sm:flex gap-4 text-sm font-medium text-slate-500">
+                    <span class="hover:text-indigo-600 cursor-pointer transition-colors">Biz haqimizda</span>
+                    <span class="hover:text-indigo-600 cursor-pointer transition-colors">Aloqa</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow pb-16">
+        <!-- View 1: Main Subjects List -->
+        <div id="main-view" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 animate-fade-in">
+            <div class="text-center mb-12">
+                <h1 class="text-4xl font-extrabold text-slate-900 tracking-tight mb-4">Yo'nalishni tanlang</h1>
+                <p class="text-lg text-slate-500 max-w-2xl mx-auto">O'zingizga qiziq bo'lgan fan va yo'nalishlarni tanlab, kelajagingiz sari ilk qadamni tashlang.</p>
+            </div>
+            
+            <!-- Grid Container injected by JS -->
+            <div id="subjects-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+                <!-- Cards will be populated here -->
+            </div>
+        </div>
+
+        <!-- View 2: Subject Details & Centers -->
+        <div id="detail-view" class="hide max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 animate-fade-in">
+            <!-- Header actions -->
+            <div class="flex items-center mb-8">
+                <button onclick="showMainView()" class="group flex items-center gap-2 px-4 py-2 bg-white rounded-lg shadow-sm border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50 transition-all">
+                    <i class="fa-solid fa-arrow-left text-slate-400 group-hover:text-indigo-600 transition-colors"></i>
+                    <span class="font-medium text-slate-600 group-hover:text-indigo-700">Orqaga</span>
+                </button>
+            </div>
+
+            <!-- Subject Banner -->
+            <div class="bg-white rounded-3xl p-8 mb-10 shadow-sm border border-slate-100 flex items-center gap-6 animate-slide-up">
+                <div id="detail-icon-container" class="w-20 h-20 rounded-2xl flex items-center justify-center text-4xl shadow-inner">
+                    <i id="detail-icon" class="fa-solid fa-book"></i>
+                </div>
+                <div>
+                    <h2 class="text-sm font-semibold text-indigo-600 uppercase tracking-wider mb-1">Tanlangan fan</h2>
+                    <h1 id="detail-title" class="text-3xl sm:text-4xl font-bold text-slate-900">Fan nomi</h1>
+                </div>
+            </div>
+
+            <div class="text-center mb-8 animate-slide-up" style="animation-delay: 0.1s;">
+                <h3 class="text-2xl font-bold text-slate-800">Qaysi markazga yozilmoqchisiz?</h3>
+                <p class="text-slate-500 mt-2">Iltimos, o'qish joyini tanlang</p>
+            </div>
+
+            <!-- Two Choice Cards -->
+            <div class="grid md:grid-cols-2 gap-6 animate-slide-up" style="animation-delay: 0.2s;">
+                <!-- Card 1: Kelajak Markazi -->
+                <div class="relative overflow-hidden rounded-3xl group cursor-pointer border border-transparent hover:border-blue-200 hover:shadow-2xl transition-all duration-300 bg-gradient-to-br from-blue-600 to-indigo-700">
+                    <div class="absolute top-0 right-0 p-6 opacity-20 transform translate-x-4 -translate-y-4 group-hover:scale-110 transition-transform duration-500">
+                        <i class="fa-solid fa-rocket text-9xl text-white"></i>
+                    </div>
+                    <div class="relative z-10 p-8 sm:p-10 flex flex-col h-full text-white">
+                        <div class="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm mb-6">
+                            <i class="fa-solid fa-rocket text-2xl"></i>
+                        </div>
+                        <h3 class="text-3xl font-bold mb-3">Kelajak markazi</h3>
+                        <p class="text-blue-100 text-lg leading-relaxed mb-8 flex-grow">Zamonaviy kasblar, innovatsion ta'lim yondashuvi va innovatsiyalarga asoslangan markaz.</p>
+                        <div class="flex items-center text-blue-50 font-medium group-hover:translate-x-2 transition-transform">
+                            Tanlash <i class="fa-solid fa-arrow-right ml-2"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2: O'quv Markaz -->
+                <div class="relative overflow-hidden rounded-3xl group cursor-pointer border border-transparent hover:border-emerald-200 hover:shadow-2xl transition-all duration-300 bg-gradient-to-br from-emerald-500 to-teal-600">
+                    <div class="absolute top-0 right-0 p-6 opacity-20 transform translate-x-4 -translate-y-4 group-hover:scale-110 transition-transform duration-500">
+                        <i class="fa-solid fa-school-flag text-9xl text-white"></i>
+                    </div>
+                    <div class="relative z-10 p-8 sm:p-10 flex flex-col h-full text-white">
+                        <div class="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm mb-6">
+                            <i class="fa-solid fa-book-open text-2xl"></i>
+                        </div>
+                        <h3 class="text-3xl font-bold mb-3">O'quv markaz</h3>
+                        <p class="text-emerald-100 text-lg leading-relaxed mb-8 flex-grow">An'anaviy va fundamental bilimlarni mukammal o'zlashtirish uchun maxsus o'quv dasturlari.</p>
+                        <div class="flex items-center text-emerald-50 font-medium group-hover:translate-x-2 transition-transform">
+                            Tanlash <i class="fa-solid fa-arrow-right ml-2"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Data for the subjects
+        const subjects = [
+            { id: 'math', name: 'Matematika', icon: 'fa-calculator', colorClass: 'text-blue-500', bgClass: 'bg-blue-50' },
+            { id: 'eng', name: 'Ingliz tili', icon: 'fa-language', colorClass: 'text-rose-500', bgClass: 'bg-rose-50' },
+            { id: 'kor', name: 'Koreys tili', icon: 'fa-won-sign', colorClass: 'text-pink-500', bgClass: 'bg-pink-50' },
+            { id: 'rus', name: 'Rus tili', icon: 'fa-book-cyrillic', colorClass: 'text-cyan-500', bgClass: 'bg-cyan-50' },
+            { id: 'chi', name: 'Xitoy tili', icon: 'fa-yin-yang', colorClass: 'text-red-500', bgClass: 'bg-red-50' },
+            { id: 'mental', name: 'Mental arifmetika', icon: 'fa-brain', colorClass: 'text-purple-500', bgClass: 'bg-purple-50' },
+            { id: 'poch', name: 'Pochimuchka', icon: 'fa-shapes', colorClass: 'text-yellow-500', bgClass: 'bg-yellow-50' },
+            { id: 'prep', name: 'Prezident maktabiga tayyorlov', icon: 'fa-school', colorClass: 'text-indigo-500', bgClass: 'bg-indigo-50' },
+            { id: 'chess', name: 'Shaxmat', icon: 'fa-chess-knight', colorClass: 'text-slate-700', bgClass: 'bg-slate-100' },
+            { id: 'dance', name: 'Raqs', icon: 'fa-music', colorClass: 'text-fuchsia-500', bgClass: 'bg-fuchsia-50' },
+            { id: 'art', name: 'Rassomchilik', icon: 'fa-palette', colorClass: 'text-orange-500', bgClass: 'bg-orange-50' },
+            { id: 'hist', name: 'Tarix', icon: 'fa-landmark', colorClass: 'text-amber-700', bgClass: 'bg-amber-50' },
+            { id: 'code', name: 'Dasturlash', icon: 'fa-laptop-code', colorClass: 'text-emerald-500', bgClass: 'bg-emerald-50' }
+        ];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const gridContainer = document.getElementById('subjects-grid');
+
+            // Render subjects dynamically
+            subjects.forEach((subject, index) => {
+                // Calculate animation delay for a cascading entrance effect
+                const delay = index * 0.05;
+                
+                const cardHTML = `
+                    <div onclick="showDetailView('${subject.id}')" class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:border-indigo-200 hover:shadow-lg transition-all duration-300 cursor-pointer flex flex-col items-center text-center group transform hover:-translate-y-1 animate-slide-up" style="animation-delay: ${delay}s; animation-fill-mode: both;">
+                        <div class="w-16 h-16 rounded-2xl ${subject.bgClass} ${subject.colorClass} flex items-center justify-center text-3xl mb-4 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
+                            <i class="fa-solid ${subject.icon}"></i>
+                        </div>
+                        <h3 class="font-semibold text-slate-800 group-hover:text-indigo-600 transition-colors leading-tight">${subject.name}</h3>
+                    </div>
+                `;
+                gridContainer.insertAdjacentHTML('beforeend', cardHTML);
+            });
+        });
+
+        // Toggle views
+        function showDetailView(subjectId) {
+            const subject = subjects.find(s => s.id === subjectId);
+            if (!subject) return;
+
+            // Update Detail View content
+            document.getElementById('detail-title').textContent = subject.name;
+            
+            const iconElement = document.getElementById('detail-icon');
+            iconElement.className = `fa-solid ${subject.icon} ${subject.colorClass}`;
+            
+            const iconContainer = document.getElementById('detail-icon-container');
+            iconContainer.className = `w-20 h-20 rounded-2xl flex items-center justify-center text-4xl shadow-inner ${subject.bgClass}`;
+
+            // Switch views with simple display toggle (CSS animations handle the visual transition)
+            document.getElementById('main-view').classList.add('hide');
+            document.getElementById('detail-view').classList.remove('hide');
+            
+            // Scroll to top smoothly
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function showMainView() {
+            document.getElementById('detail-view').classList.add('hide');
+            document.getElementById('main-view').classList.remove('hide');
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
