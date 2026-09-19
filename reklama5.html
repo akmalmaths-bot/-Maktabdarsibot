@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kelajak O'quv Markazi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="text-gray-800 pb-10">
+
+    <nav class="bg-blue-600 text-white p-4 shadow-md sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto flex items-center justify-between">
+            <button id="backBtn" onclick="goBack()" class="hidden bg-blue-700 hover:bg-blue-800 px-4 py-2 rounded-lg transition">
+                <i class="fa-solid fa-arrow-left mr-2"></i> Orqaga
+            </button>
+            <!-- YASHIRIN ADMIN PANEL TUGMASI SHU YERGA QO'YILDI -->
+            <h1 id="pageTitle" onclick="openAdmin()" class="text-xl font-bold flex-1 text-center cursor-pointer" title="Admin">Bo'limni tanlang</h1>
+            <div class="w-10"></div>
+        </div>
+    </nav>
+
+    <div class="max-w-4xl mx-auto p-4 mt-4">
+        
+        <!-- Bo'limlar -->
+        <div id="categoriesView" class="flex flex-col gap-4 fade-in"></div>
+
+        <!-- Fanlar -->
+        <div id="subjectsView" class="hidden grid grid-cols-2 sm:grid-cols-3 gap-4 fade-in"></div>
+
+        <!-- Fan haqida ma'lumot -->
+        <div id="detailView" class="hidden fade-in bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
+            <h2 id="detailTitle" class="text-2xl font-bold text-center text-blue-600 mb-6 border-b pb-4">Fan Nomi</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-blue-50 p-5 rounded-xl">
+                    <h3 class="text-lg font-bold text-blue-800 mb-3"><i class="fa-solid fa-circle-info mr-2"></i> Dars ma'lumotlari</h3>
+                    <ul class="space-y-3" id="courseInfo"></ul>
+                </div>
+
+                <div class="bg-green-50 p-5 rounded-xl">
+                    <h3 class="text-lg font-bold text-green-800 mb-3"><i class="fa-solid fa-chalkboard-user mr-2"></i> Ustoz haqida</h3>
+                    <ul class="space-y-3" id="teacherInfo"></ul>
+                    <div id="certificateImgContainer" class="mt-4 hidden">
+                        <p class="font-bold text-sm text-gray-600 mb-2">Sertifikat/Yutuq:</p>
+                        <img id="certificateImg" src="" alt="Sertifikat" class="w-full rounded-lg shadow-md border">
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="openModal()" class="mt-8 w-full block bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white text-xl font-bold py-4 rounded-xl shadow-lg transform transition hover:scale-[1.02]">
+                <i class="fa-regular fa-pen-to-square mr-2"></i> Ro'yxatdan o'tish
+            </button>
+        </div>
+
+        <!-- ADMIN PANEL -->
+        <div id="adminPanel" class="hidden fade-in">
+            <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 mb-6">
+                <h2 class="text-2xl font-bold text-gray-800 border-b pb-4 mb-4"><i class="fa-solid fa-users text-blue-500 mr-2"></i> Ro'yxatdan o'tganlar</h2>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gray-100 text-gray-700">
+                                <th class="p-3 border-b">Ism</th>
+                                <th class="p-3 border-b">Familiya</th>
+                                <th class="p-3 border-b">Sinf</th>
+                                <th class="p-3 border-b">Telefon</th>
+                                <th class="p-3 border-b">Fan</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentsList" class="divide-y divide-gray-200">
+                            <!-- JS to'ldiradi -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tahrirlash Bo'limi -->
+            <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
+                <h2 class="text-2xl font-bold text-gray-800 border-b pb-4 mb-4"><i class="fa-solid fa-pen-to-square text-orange-500 mr-2"></i> Ma'lumotlarni tahrirlash</h2>
+                
+                <div class="mb-4">
+                    <label class="block text-gray-700 font-bold mb-2">Qaysi fanni tahrirlamoqchisiz?</label>
+                    <select id="editSubjectSelect" onchange="loadSubjectDataForEdit()" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-gray-50">
+                        <option value="">Fanni tanlang...</option>
+                    </select>
+                </div>
+
+                <div id="editFormFields" class="hidden">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div><label class="block font-bold text-sm mb-1">Haftada</label><input type="text" id="ed_haftada" class="w-full p-2 border rounded"></div>
+                        <div><label class="block font-bold text-sm mb-1">Dars davomiyligi</label><input type="text" id="ed_davomiyligi" class="w-full p-2 border rounded"></div>
+                        <div><label class="block font-bold text-sm mb-1">Oylik to'lov</label><input type="text" id="ed_tolov" class="w-full p-2 border rounded"></div>
+                        <div><label class="block font-bold text-sm mb-1">Manzil</label><input type="text" id="ed_manzil" class="w-full p-2 border rounded"></div>
+                        <div><label class="block font-bold text-sm mb-1">Murojaat uchun</label><input type="text" id="ed_murojaat" class="w-full p-2 border rounded"></div>
+                        <div><label class="block font-bold text-sm mb-1">Ustoz Ism-familiyasi</label><input type="text" id="ed_ustoz" class="w-full p-2 border rounded"></div>
+                        <div class="md:col-span-2"><label class="block font-bold text-sm mb-1">Ish tajribasi</label><input type="text" id="ed_tajriba" class="w-full p-2 border rounded"></div>
+                        <div class="md:col-span-2"><label class="block font-bold text-sm mb-1">Yutuqlari (Matn)</label><textarea id="ed_yutuq" class="w-full p-2 border rounded" rows="2"></textarea></div>
+                        <div class="md:col-span-2 border-t pt-4">
+                            <label class="block font-bold text-sm mb-1 text-blue-600">Sertifikat / Yutuq rasmi (Ixtiyoriy)</label>
+                            <input type="file" id="ed_sertifikat" accept="image/*" class="w-full p-2 border rounded" onchange="handleImageUpload(event)">
+                            <img id="ed_imgPreview" src="" class="hidden mt-3 h-32 object-cover rounded border">
+                        </div>
+                    </div>
+                    <button onclick="saveSubjectEdit()" class="mt-6 w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-lg shadow transition">O'zgarishlarni Saqlash</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ro'yxatdan o'tish Modali (Web3Forms ga ulangan) -->
+    <div id="regModal" class="fixed inset-0 bg-black bg-opacity-60 hidden items-center justify-center z-[100] px-4">
+        <div class="bg-white w-full max-w-md p-6 rounded-2xl shadow-2xl relative fade-in">
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-500 hover:text-red-500 text-2xl"><i class="fa-solid fa-xmark"></i></button>
+            <h2 class="text-2xl font-bold text-center mb-6 text-gray-800">Ro'yxatdan o'tish</h2>
+            
+            <form id="regForm" class="space-y-4" onsubmit="submitToEmail(event)">
+                <div>
+                    <label class="block text-gray-700 font-bold mb-1">O'quvchining ismi</label>
+                    <input type="text" id="r_ism" required oninput="checkForm()" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-gray-700 font-bold mb-1">O'quvchining familiyasi</label>
+                    <input type="text" id="r_familiya" required oninput="checkForm()" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-gray-700 font-bold mb-1">O'quvchining sinfi</label>
+                    <input type="text" id="r_sinf" required oninput="checkForm()" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-gray-700 font-bold mb-1">Aloqa uchun nomer</label>
+                    <input type="tel" id="r_nomer" placeholder="+998" required oninput="checkForm()" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+                <button type="submit" id="submitBtn" disabled class="w-full py-4 mt-2 rounded-xl text-lg font-bold text-white bg-gray-400 cursor-not-allowed transition duration-300">
+                    Tayyor
+                </button>
+                <p id="statusMsg" class="text-center font-bold text-sm hidden"></p>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // WEB3FORMS KALITI
+        const WEB3FORMS_KEY = "1c495f1e-04b4-444a-8f33-c2fce224f198";
+
+        const categories = {
+            "Aniq fanlar": ["Matematika", "Kimyo va biologiya", "Ona tili va adabiyot", "Tarix va huquq", "Prezident maktabiga tayyorlov", "Mental arifmetika"],
+            "Xorijiy tillar": ["Ingliz tili", "Rus tili", "Koreys tili", "Xitoy tili", "Nemis tili"],
+            "IT va texnologiyalar": ["Robototexnika"],
+            "Maktabga tayyorlov": ["Maktabga tayyorlov"],
+            "Intellektual va mantiqiy": ["Shaxmat", "Raqs"]
+        };
+
+        const iconMap = {
+            "Matematika": { icon: "fa-solid fa-calculator", color: "text-blue-500", bg: "bg-blue-50" },
+            "Ingliz tili": { icon: "fa-solid fa-language", color: "text-red-500", bg: "bg-red-50" },
+            "Xitoy tili": { icon: "fa-solid fa-yin-yang", color: "text-red-600", bg: "bg-red-50" },
+            "Mental arifmetika": { icon: "fa-solid fa-brain", color: "text-purple-500", bg: "bg-purple-50" },
+            "Shaxmat": { icon: "fa-solid fa-chess-knight", color: "text-gray-800", bg: "bg-gray-100" },
+            "Raqs": { icon: "fa-solid fa-music", color: "text-pink-500", bg: "bg-pink-50" },
+            "Kimyo va biologiya": { icon: "fa-solid fa-flask", color: "text-green-500", bg: "bg-green-50" },
+            "Ona tili va adabiyot": { icon: "fa-solid fa-book-open", color: "text-orange-500", bg: "bg-orange-50" },
+            "Tarix va huquq": { icon: "fa-solid fa-landmark", color: "text-yellow-600", bg: "bg-yellow-50" },
+            "Prezident maktabiga tayyorlov": { icon: "fa-solid fa-graduation-cap", color: "text-indigo-500", bg: "bg-indigo-50" },
+            "Rus tili": { icon: "fa-solid fa-font", color: "text-blue-400", bg: "bg-blue-50" },
+            "Koreys tili": { icon: "fa-solid fa-language", color: "text-red-400", bg: "bg-red-50" },
+            "Nemis tili": { icon: "fa-solid fa-comments", color: "text-yellow-500", bg: "bg-yellow-50" },
+            "Robototexnika": { icon: "fa-solid fa-robot", color: "text-gray-600", bg: "bg-gray-200" },
+            "Maktabga tayyorlov": { icon: "fa-solid fa-school", color: "text-green-600", bg: "bg-green-50" }
+        };
+
+        const defaultSubjectInfo = { haftada: "3 marta", davomiyligi: "2 soatdan", tolov: "600 000 so‘m", manzil: "Uchtepa tumani, 2-mavze", murojaat: "+99897 140 28 86", ustoz: "Kiritilmagan", tajriba: "Kiritilmagan", yutuq: "Kiritilmagan", sertifikat: "" };
+
+        // Ma'lumotlarni saqlash tizimi (Admin panel ishlashi uchun)
+        let db = JSON.parse(localStorage.getItem('kelajak_db')) || { subjectDetails: {}, students: [] };
+        let currentSubject = "";
+        let currentUploadedImageBase64 = "";
+
+        function init() {
+            const catView = document.getElementById('categoriesView');
+            catView.innerHTML = "";
+            for (const cat in categories) {
+                catView.innerHTML += `
+                    <div onclick="showSubjects('${cat}')" class="bg-white border border-gray-200 p-6 rounded-2xl shadow-sm cursor-pointer hover:shadow-md transform hover:-translate-y-1 transition duration-300 flex items-center justify-between">
+                        <span class="text-xl font-bold text-gray-800">${cat}</span>
+                        <div class="bg-gray-100 p-2 rounded-lg text-gray-500"><i class="fa-solid fa-chevron-right"></i></div>
+                    </div>`;
+            }
+
+            // Admin panel Select box ni to'ldirish
+            const select = document.getElementById('editSubjectSelect');
+            select.innerHTML = '<option value="">Fanni tanlang...</option>';
+            for(const cat in categories){
+                categories[cat].forEach(sub => {
+                    select.innerHTML += `<option value="${sub}">${sub}</option>`;
+                });
+            }
+        }
+
+        function showSubjects(categoryName) {
+            hideAllViews();
+            document.getElementById('subjectsView').classList.remove('hidden');
+            document.getElementById('backBtn').classList.remove('hidden');
+            document.getElementById('pageTitle').innerText = categoryName;
+
+            const subView = document.getElementById('subjectsView');
+            subView.innerHTML = "";
+            categories[categoryName].forEach(sub => {
+                let style = iconMap[sub] || { icon: "fa-solid fa-bookmark", color: "text-blue-500", bg: "bg-blue-50" };
+                subView.innerHTML += `
+                    <div onclick="showDetail('${sub}')" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col items-center justify-center cursor-pointer hover:shadow-md transform hover:-translate-y-1 transition duration-300">
+                        <div class="w-16 h-16 ${style.bg} rounded-2xl flex items-center justify-center mb-4">
+                            <i class="${style.icon} ${style.color} text-3xl"></i>
+                        </div>
+                        <span class="font-bold text-gray-800 text-center text-[15px] sm:text-lg">${sub}</span>
+                    </div>`;
+            });
+        }
+
+        function showDetail(subjectName) {
+            currentSubject = subjectName;
+            hideAllViews();
+            document.getElementById('detailView').classList.remove('hidden');
+            document.getElementById('pageTitle').innerText = "Fan haqida";
+            document.getElementById('detailTitle').innerText = subjectName;
+
+            let info = db.subjectDetails[subjectName] || defaultSubjectInfo;
+
+            document.getElementById('courseInfo').innerHTML = `
+                <li><span class="font-bold text-gray-700">Haftada:</span> ${info.haftada}</li>
+                <li><span class="font-bold text-gray-700">Dars davomiyligi:</span> ${info.davomiyligi}</li>
+                <li><span class="font-bold text-gray-700">Oylik to‘lov:</span> <span class="text-red-600 font-bold">${info.tolov}</span></li>
+                <li><span class="font-bold text-gray-700">Manzil:</span> ${info.manzil}</li>
+                <li><span class="font-bold text-gray-700">Murojaat uchun:</span> ${info.murojaat}</li>
+            `;
+            document.getElementById('teacherInfo').innerHTML = `
+                <li><span class="font-bold text-gray-700">Ism-familiya:</span> ${info.ustoz}</li>
+                <li><span class="font-bold text-gray-700">Ish tajribasi:</span> ${info.tajriba}</li>
+                <li><span class="font-bold text-gray-700">Yutuqlari:</span> ${info.yutuq}</li>
+            `;
+
+            let imgCont = document.getElementById('certificateImgContainer');
+            if (info.sertifikat && info.sertifikat !== "") {
+                imgCont.classList.remove('hidden');
+                document.getElementById('certificateImg').src = info.sertifikat;
+            } else {
+                imgCont.classList.add('hidden');
+            }
+        }
+
+        function goBack() {
+            if(!document.getElementById('adminPanel').classList.contains('hidden')){
+                hideAllViews();
+                document.getElementById('categoriesView').classList.remove('hidden');
+                document.getElementById('pageTitle').innerText = "Bo'limni tanlang";
+                document.getElementById('backBtn').classList.add('hidden');
+            }
+            else if(!document.getElementById('detailView').classList.contains('hidden')){
+                hideAllViews();
+                document.getElementById('subjectsView').classList.remove('hidden');
+                document.getElementById('pageTitle').innerText = "Fanlarni tanlang";
+            } else {
+                hideAllViews();
+                document.getElementById('categoriesView').classList.remove('hidden');
+                document.getElementById('pageTitle').innerText = "Bo'limni tanlang";
+                document.getElementById('backBtn').classList.add('hidden');
+            }
+        }
+
+        function hideAllViews() {
+            document.getElementById('categoriesView').classList.add('hidden');
+            document.getElementById('subjectsView').classList.add('hidden');
+            document.getElementById('detailView').classList.add('hidden');
+            document.getElementById('adminPanel').classList.add('hidden');
+        }
+
+        function openModal() { 
+            document.getElementById('regModal').classList.replace('hidden', 'flex'); 
+            document.getElementById('statusMsg').classList.add('hidden');
+        }
+        function closeModal() { document.getElementById('regModal').classList.replace('flex', 'hidden'); }
+
+        function checkForm() {
+            let i = document.getElementById('r_ism').value.trim();
+            let f = document.getElementById('r_familiya').value.trim();
+            let s = document.getElementById('r_sinf').value.trim();
+            let n = document.getElementById('r_nomer').value.trim();
+            let btn = document.getElementById('submitBtn');
+
+            if(i && f && s && n) {
+                btn.disabled = false;
+                btn.classList.remove('bg-gray-400', 'cursor-not-allowed');
+                btn.classList.add('bg-green-500', 'hover:bg-green-600', 'shadow-lg');
+            } else {
+                btn.disabled = true;
+                btn.classList.add('bg-gray-400', 'cursor-not-allowed');
+                btn.classList.remove('bg-green-500', 'hover:bg-green-600', 'shadow-lg');
+            }
+        }
+
+        function submitToEmail(event) {
+            event.preventDefault();
+            
+            let btn = document.getElementById('submitBtn');
+            let statusMsg = document.getElementById('statusMsg');
+            
+            btn.innerText = "Yuborilmoqda...";
+            btn.disabled = true;
+
+            const ism = document.getElementById('r_ism').value;
+            const fam = document.getElementById('r_familiya').value;
+            const sinf = document.getElementById('r_sinf').value;
+            const nomer = document.getElementById('r_nomer').value;
+
+            const formData = new FormData();
+            formData.append("access_key", WEB3FORMS_KEY);
+            formData.append("Fan", currentSubject);
+            formData.append("Ism", ism);
+            formData.append("Familiya", fam);
+            formData.append("Sinf", sinf);
+            formData.append("Telefon", nomer);
+
+            fetch("https://api.web3forms.com/submit", {
+                method: "POST",
+                body: formData
+            })
+            .then(async (response) => {
+                let json = await response.json();
+                if (response.status == 200) {
+                    // Mahalliy bazaga ham saqlab qo'yamiz (Admin panelda ko'rinishi uchun)
+                    db.students.push({ism: ism, fam: fam, sinf: sinf, nomer: nomer, fan: currentSubject});
+                    localStorage.setItem('kelajak_db', JSON.stringify(db));
+
+                    alert("Ajoyib! Ma'lumotlaringiz muvaffaqiyatli yuborildi.");
+                    document.getElementById('regForm').reset();
+                    closeModal();
+                } else {
+                    statusMsg.innerText = "Xatolik: " + json.message;
+                    statusMsg.classList.remove('hidden');
+                    statusMsg.classList.add('text-red-500');
+                }
+            })
+            .catch(error => {
+                statusMsg.innerText = "Internetda muammo bor yoki server ishlamayapti.";
+                statusMsg.classList.remove('hidden');
+                statusMsg.classList.add('text-red-500');
+            })
+            .finally(() => {
+                btn.innerText = "Tayyor";
+                checkForm();
+            });
+        }
+
+        // --- ADMIN PANEL FUNKSIYALARI ---
+        function openAdmin() {
+            let pass = prompt("Admin parolini kiriting:");
+            if (pass === "admin0912") { // PAROL O'ZGARTIRILDI
+                hideAllViews();
+                document.getElementById('adminPanel').classList.remove('hidden');
+                document.getElementById('backBtn').classList.remove('hidden');
+                document.getElementById('pageTitle').innerText = "Admin Panel";
+                
+                let tbody = document.getElementById('studentsList');
+                tbody.innerHTML = "";
+                
+                db.students.slice().reverse().forEach(st => {
+                    tbody.innerHTML += `
+                        <tr class="hover:bg-gray-50 border-b">
+                            <td class="p-3 text-sm">${st.ism}</td>
+                            <td class="p-3 text-sm">${st.fam}</td>
+                            <td class="p-3 text-sm">${st.sinf}</td>
+                            <td class="p-3 text-sm font-bold text-blue-600">${st.nomer}</td>
+                            <td class="p-3 text-sm">${st.fan}</td>
+                        </tr>`;
+                });
+            } else if (pass !== null) { 
+                alert("Noto'g'ri parol!"); 
+            }
+        }
+
+        function loadSubjectDataForEdit() {
+            let subj = document.getElementById('editSubjectSelect').value;
+            let fields = document.getElementById('editFormFields');
+            if(subj) {
+                fields.classList.remove('hidden');
+                let info = db.subjectDetails[subj] || defaultSubjectInfo;
+                
+                document.getElementById('ed_haftada').value = info.haftada;
+                document.getElementById('ed_davomiyligi').value = info.davomiyligi;
+                document.getElementById('ed_tolov').value = info.tolov;
+                document.getElementById('ed_manzil').value = info.manzil;
+                document.getElementById('ed_murojaat').value = info.murojaat;
+                document.getElementById('ed_ustoz').value = info.ustoz;
+                document.getElementById('ed_tajriba').value = info.tajriba;
+                document.getElementById('ed_yutuq').value = info.yutuq;
+                
+                currentUploadedImageBase64 = info.sertifikat || "";
+                let preview = document.getElementById('ed_imgPreview');
+                if(currentUploadedImageBase64) {
+                    preview.src = currentUploadedImageBase64;
+                    preview.classList.remove('hidden');
+                } else {
+                    preview.classList.add('hidden');
+                }
+            } else { fields.classList.add('hidden'); }
+        }
+
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if(file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    currentUploadedImageBase64 = e.target.result;
+                    let preview = document.getElementById('ed_imgPreview');
+                    preview.src = currentUploadedImageBase64;
+                    preview.classList.remove('hidden');
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function saveSubjectEdit() {
+            let subj = document.getElementById('editSubjectSelect').value;
+            if(!subj) return alert("Fanni tanlang!");
+
+            db.subjectDetails[subj] = {
+                haftada: document.getElementById('ed_haftada').value,
+                davomiyligi: document.getElementById('ed_davomiyligi').value,
+                tolov: document.getElementById('ed_tolov').value,
+                manzil: document.getElementById('ed_manzil').value,
+                murojaat: document.getElementById('ed_murojaat').value,
+                ustoz: document.getElementById('ed_ustoz').value,
+                tajriba: document.getElementById('ed_tajriba').value,
+                yutuq: document.getElementById('ed_yutuq').value,
+                sertifikat: currentUploadedImageBase64
+            };
+
+            localStorage.setItem('kelajak_db', JSON.stringify(db));
+            alert("Ma'lumotlar muvaffaqiyatli saqlandi!");
+        }
+
+        init();
+    </script>
+</body>
+</html>
