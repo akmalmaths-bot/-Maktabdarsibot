@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quvnoq Asalari - 2-sinf</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #bae6fd; /* Och moviy osmon */
+            touch-action: manipulation;
+            user-select: none;
+            overflow-x: hidden;
+            overflow-y: auto; /* Mobil telefonlar uchun skrol ruxsat etildi */
+        }
+
+        /* Asosiy animatsiyalar */
+        .pop-animation {
+            animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes pop {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .shake-animation {
+            animation: shake 0.4s ease-in-out;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-10px); }
+            40%, 80% { transform: translateX(10px); }
+        }
+
+        /* Orqa fon: Quyosh va bulutlar */
+        .sun {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 4rem; /* Kichraytirildi */
+            animation: spinSun 20s linear infinite;
+            pointer-events: none;
+        }
+        @keyframes spinSun {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .cloud {
+            position: absolute;
+            font-size: 3rem; /* Kichraytirildi */
+            opacity: 0.8;
+            pointer-events: none;
+            animation: floatCloud linear infinite;
+        }
+        @keyframes floatCloud {
+            from { transform: translateX(-150px); }
+            to { transform: translateX(100vw); }
+        }
+
+        /* Asalarining havoda turishi */
+        .hover-bee {
+            animation: hoverBee 2s ease-in-out infinite alternate;
+        }
+        @keyframes hoverBee {
+            0% { transform: translateY(0px); }
+            100% { transform: translateY(-10px); } /* Tebranish sal kamaytirildi */
+        }
+
+        /* Gullarning silkinishi */
+        .flower-btn {
+            transition: all 0.2s;
+            cursor: pointer;
+            width: 30%; /* Uchta gul yonma-yon sig'ishi uchun qat'iy kenglik */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .flower-btn:active {
+            transform: scale(0.9) translateY(5px);
+        }
+        
+        .flower-bounce {
+            animation: flowerBounce 3s ease-in-out infinite alternate;
+        }
+        @keyframes flowerBounce {
+            0% { transform: rotate(-5deg); }
+            100% { transform: rotate(5deg); }
+        }
+
+        /* Xabar pufakchasi (Speech bubble) */
+        .speech-bubble {
+            position: relative;
+            background: white;
+            border-radius: .4em;
+            border: 4px solid #fde047;
+            padding: 8px 16px; /* Mobilda sig'ishi uchun padni kamaytirdik */
+        }
+        .speech-bubble:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border: 12px solid transparent; /* Kichraytirildi */
+            border-top-color: white;
+            border-bottom: 0;
+            border-left: 0;
+            margin-left: -6px;
+            margin-bottom: -12px;
+            z-index: 10;
+        }
+        .speech-bubble:before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border: 16px solid transparent; /* Kichraytirildi */
+            border-top-color: #fde047;
+            border-bottom: 0;
+            border-left: 0;
+            margin-left: -8px;
+            margin-bottom: -20px;
+        }
+
+        /* Uchrashuv animatsiyasi */
+        #bee-character {
+            transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+            font-size: 4rem; /* Mobilda sal kichraytirdik */
+        }
+        @media (min-width: 768px) {
+            #bee-character { font-size: 6rem; }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-2 relative">
+
+    <!-- Orqa fon dekoratsiyasi -->
+    <div class="sun">☀️</div>
+    <div class="cloud" style="top: 10%; animation-duration: 25s; left: -100px;">☁️</div>
+    <div class="cloud" style="top: 25%; animation-duration: 35s; left: -50px; transform: scale(0.7);">☁️</div>
+
+    <div class="bg-white/95 backdrop-blur-md rounded-[2rem] shadow-2xl p-4 max-w-md w-full text-center border-4 border-yellow-400 relative overflow-hidden z-10 flex flex-col justify-between" id="main-container">
+        
+        <div>
+            <button onclick="toggleSound()" id="sound-btn" class="absolute top-3 right-3 text-lg hover:scale-110 transition-transform bg-yellow-100 p-2 rounded-full shadow-sm z-30 border border-yellow-300">
+                🔊
+            </button>
+
+            <!-- Bosh Ekrani -->
+            <div id="start-screen" class="space-y-4 mt-2 relative z-20">
+                <div class="text-6xl mb-1 hover-bee inline-block">🐝</div>
+                <h1 class="text-3xl md:text-5xl font-black text-amber-500 mb-1 drop-shadow-sm">Quvnoq Asalari</h1>
+                <p class="text-slate-600 text-sm md:text-lg mb-2 font-bold bg-amber-100 inline-block px-3 py-1 rounded-full text-amber-800 border border-amber-300">2-sinflar uchun 40 bosqichli o'yin!</p>
+                
+                <div class="bg-amber-50 rounded-2xl p-3 inline-block mb-2 border border-amber-200 text-left max-w-sm w-full mx-auto shadow-sm">
+                    <h3 class="font-bold text-amber-800 mb-1 text-center text-sm md:text-base">O'yin qoidalari:</h3>
+                    <ul class="text-xs md:text-sm text-slate-700 space-y-1 font-bold">
+                        <li>⏱️ Har bir misol uchun <b>1 minut</b> vaqt bor.</li>
+                        <li>🌸 Asalari o'ylagan misolga to'g'ri gulni bosing.</li>
+                        <li>🍯 Asalari guldan asal yig'ib oladi!</li>
+                        <li>🔢 <b>Qo'shish, Ayirish, Ko'paytirish va Bo'lish</b> kutmoqda!</li>
+                    </ul>
+                </div>
+
+                <div class="text-left max-w-xs mx-auto mb-2 w-full">
+                    <input type="text" id="player-name" placeholder="Ismingizni yozing..." class="w-full p-3 text-lg border-2 border-yellow-400 bg-white rounded-2xl outline-none focus:border-orange-500 transition-colors text-center font-bold text-slate-700 shadow-inner" autocomplete="off">
+                    <p id="name-error" class="text-red-500 text-xs hidden mt-1 text-center font-bold">Faqat harf (3-15 ta) kiritilishi kerak!</p>
+                </div>
+
+                <button onclick="startGame()" class="w-full bg-gradient-to-b from-yellow-300 to-yellow-500 hover:from-yellow-400 hover:to-yellow-600 text-amber-950 font-black py-4 rounded-2xl text-xl transition-all transform hover:scale-105 shadow-[0_5px_15px_rgba(250,204,21,0.5)] border-2 border-amber-400">
+                    O'yinni Boshlash 🚀
+                </button>
+            </div>
+
+            <!-- O'yin Ekrani -->
+            <div id="game-screen" class="hidden flex-col items-center relative z-10 w-full mt-2">
+                
+                <!-- Statistika va Vaqt -->
+                <div class="w-full flex justify-between bg-slate-50 border border-slate-200 p-2 rounded-2xl mb-4 shadow-sm items-center">
+                    <div class="flex flex-col text-center w-1/4">
+                        <span class="text-[9px] md:text-[10px] text-slate-500 font-bold uppercase tracking-wider">Bosqich</span>
+                        <span id="level-display" class="text-sky-600 font-black text-lg md:text-xl">1</span>
+                    </div>
+                    <div class="flex flex-col text-center w-1/4 border-l border-slate-200">
+                        <span class="text-[9px] md:text-[10px] text-slate-500 font-bold uppercase tracking-wider">Vaqt</span>
+                        <span id="timer-display" class="text-blue-600 font-black text-lg md:text-xl">60</span>
+                    </div>
+                    <div class="flex flex-col text-center w-1/4 border-l border-slate-200">
+                        <span class="text-[9px] md:text-[10px] text-slate-500 font-bold uppercase tracking-wider">Asal 🍯</span>
+                        <span id="score-display" class="text-amber-500 font-black text-lg md:text-xl">0</span>
+                    </div>
+                    <div class="flex flex-col text-center w-1/4 border-l border-slate-200">
+                        <span class="text-[9px] md:text-[10px] text-red-500 font-bold uppercase tracking-wider">Jon</span>
+                        <span id="lives-display" class="text-red-500 font-black tracking-widest text-xs mt-1">💖💖💖</span>
+                    </div>
+                </div>
+
+                <!-- O'yin maydoni -->
+                <div class="w-full h-[280px] md:h-[350px] relative bg-sky-100/80 rounded-2xl overflow-hidden border-2 border-sky-200 shadow-inner" id="play-area">
+                    
+                    <!-- Orqa fon maysasi -->
+                    <div class="absolute bottom-0 left-0 w-full h-[60px] bg-green-400 rounded-t-[50%] opacity-50 z-0"></div>
+                    <div class="absolute bottom-0 left-0 w-full h-[30px] bg-green-500 z-0"></div>
+
+                    <!-- Asalari va Misol -->
+                    <div id="bee-container" class="absolute top-[5%] md:top-[10%] left-1/2 transform -translate-x-1/2 flex flex-col items-center z-20 w-full px-2">
+                        <div class="speech-bubble mb-2 shadow-sm">
+                            <h2 id="question" class="text-3xl md:text-4xl font-black text-amber-900 tracking-wider">2 + 3 = ?</h2>
+                        </div>
+                        <div id="bee-character" class="hover-bee drop-shadow-md">🐝</div>
+                    </div>
+
+                    <!-- Gullar (Javoblar) - BIR QATORDA JOYLASHDI -->
+                    <div class="absolute bottom-[5px] left-0 w-full flex flex-row justify-between px-2 md:px-6 z-10 space-x-1">
+                        
+                        <!-- Gul 1 -->
+                        <div class="flower-btn relative flower-bounce" style="animation-delay: 0s;" onclick="checkAnswer(0)">
+                            <div class="text-5xl md:text-7xl drop-shadow-md">🌸</div>
+                            <div class="absolute inset-0 flex items-center justify-center mt-2 md:mt-4">
+                                <span id="flower-val-0" class="text-xl md:text-3xl font-black text-white drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">5</span>
+                            </div>
+                        </div>
+
+                        <!-- Gul 2 -->
+                        <div class="flower-btn relative flower-bounce" style="animation-delay: 0.5s;" onclick="checkAnswer(1)">
+                            <div class="text-5xl md:text-7xl drop-shadow-md">🌻</div>
+                            <div class="absolute inset-0 flex items-center justify-center mt-2 md:mt-4">
+                                <span id="flower-val-1" class="text-xl md:text-3xl font-black text-white drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">7</span>
+                            </div>
+                        </div>
+
+                        <!-- Gul 3 -->
+                        <div class="flower-btn relative flower-bounce" style="animation-delay: 1s;" onclick="checkAnswer(2)">
+                            <div class="text-5xl md:text-7xl drop-shadow-md">🌺</div>
+                            <div class="absolute inset-0 flex items-center justify-center mt-2 md:mt-4">
+                                <span id="flower-val-2" class="text-xl md:text-3xl font-black text-white drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">4</span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+                
+                <!-- Qalqib chiquvchi xabar -->
+                <div id="feedback" class="text-xl md:text-2xl font-black h-6 text-center transition-opacity opacity-0 text-green-500 mt-2">Barakalla!</div>
+            </div>
+
+            <!-- Natija Ekrani -->
+            <div id="end-screen" class="hidden flex-col items-center space-y-4 pop-animation mt-2 w-full relative z-20">
+                <div id="end-emoji" class="text-6xl md:text-7xl mb-1">🍯</div>
+                <h1 id="end-title" class="text-3xl font-black text-amber-500 mb-1">Ajoyib Natija!</h1>
+                
+                <div class="bg-amber-50 rounded-2xl p-4 mb-2 border border-amber-200 text-center w-full shadow-inner">
+                    <p class="text-slate-600 text-lg font-bold mb-1"><span id="final-name" class="text-amber-600">Bolajon</span></p>
+                    <p class="text-slate-500 text-xs font-bold">Yig'ilgan asal miqdori:</p>
+                    <div class="text-5xl md:text-6xl font-black text-amber-500 my-1 drop-shadow-sm flex justify-center items-center gap-2">
+                        <span id="final-score">0</span> 
+                    </div>
+                    <p class="text-slate-600 text-sm font-bold mt-1">Yetib kelgan bosqichingiz: <span id="final-level" class="text-purple-600 text-lg">1</span></p>
+                    
+                    <div class="mt-3 bg-white p-2 rounded-lg border border-slate-200 shadow-sm inline-block w-full">
+                        <p class="text-[10px] text-slate-500 font-bold uppercase">Sizning bahoingiz</p>
+                        <p class="text-xl font-black text-green-500 leading-tight mt-1" id="final-rank">A'lochi</p>
+                    </div>
+                </div>
+                
+                <button onclick="startGame()" class="w-full bg-gradient-to-b from-green-400 to-green-600 hover:from-green-500 hover:to-green-700 text-white font-black py-4 rounded-2xl text-xl transition-all transform hover:scale-105 shadow-[0_5px_15px_rgba(34,197,94,0.4)] border-2 border-green-500 mt-2">
+                    Yana O'ynash 🔄
+                </button>
+            </div>
+        </div>
+
+        <!-- Barcha sahifalarning pastki qismida chiqadigan bot va muallif -->
+        <div class="mt-2 pt-2 border-t-2 border-yellow-200 border-dashed text-center w-full relative z-30">
+            <div class="text-[10px] md:text-xs text-slate-500 font-bold mb-1">
+                Muallif: <span class="text-amber-700">Akmaljon Jo'raqo'ziyev</span> | <a href="tel:+998994620140" class="text-blue-500">+998994620140</a>
+            </div>
+            <a href="https://t.me/Maktabdarsibot" target="_blank" class="text-sky-600 hover:text-sky-700 font-black text-sm md:text-base animate-pulse inline-block transition-colors bg-sky-50 px-3 py-1 rounded-full border border-sky-200">
+                🤖 Boshqa o'yinlar: @Maktabdarsibot
+            </a>
+        </div>
+
+    </div>
+
+    <script>
+        // --- Ovoz va Vibratsiya sozlamalari ---
+        let soundEnabled = true;
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx;
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            document.getElementById('sound-btn').textContent = soundEnabled ? '🔊' : '🔇';
+            if (soundEnabled && !audioCtx) audioCtx = new AudioContext();
+        }
+
+        function playSound(type) {
+            if (!soundEnabled) return;
+            if (!audioCtx) audioCtx = new AudioContext();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            
+            const now = audioCtx.currentTime;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            if (type === 'fly') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(200, now);
+                osc.frequency.linearRampToValueAtTime(150, now + 0.4);
+                gain.gain.setValueAtTime(0.05, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.4);
+                
+                const lfo = audioCtx.createOscillator();
+                lfo.type = 'sine';
+                lfo.frequency.value = 50; 
+                const lfoGain = audioCtx.createGain();
+                lfoGain.gain.value = 30;
+                lfo.connect(lfoGain);
+                lfoGain.connect(osc.frequency);
+                lfo.start(now); lfo.stop(now + 0.4);
+
+                osc.start(now); osc.stop(now + 0.4);
+            } else if (type === 'correct') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(600, now);
+                osc.frequency.setValueAtTime(800, now + 0.1);
+                osc.frequency.setValueAtTime(1200, now + 0.2);
+                gain.gain.setValueAtTime(0.1, now);
+                gain.gain.linearRampToValueAtTime(0, now + 0.4);
+                osc.start(now); osc.stop(now + 0.4);
+            } else if (type === 'wrong') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(300, now);
+                osc.frequency.exponentialRampToValueAtTime(100, now + 0.3);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                osc.start(now); osc.stop(now + 0.3);
+            } else if (type === 'win') {
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(400, now);
+                osc.frequency.setValueAtTime(500, now + 0.15);
+                osc.frequency.setValueAtTime(600, now + 0.3);
+                osc.frequency.setValueAtTime(800, now + 0.45);
+                gain.gain.setValueAtTime(0.1, now);
+                gain.gain.linearRampToValueAtTime(0, now + 0.7);
+                osc.start(now); osc.stop(now + 0.7);
+            }
+        }
+
+        function vibrateDevice(pattern) {
+            if (soundEnabled && navigator.vibrate) {
+                try { navigator.vibrate(pattern); } catch(e) {}
+            }
+        }
+
+        // --- O'yin O'zgaruvchilari ---
+        const MAX_LEVEL = 40; 
+        let level = 1;
+        let score = 0;
+        let lives = 3;
+        let playerName = "";
+        
+        let timeLeft = 60;
+        let timerInterval = null;
+
+        let currentAnswer = 0;
+        let isMoving = false; 
+        let flowerAnswers = []; 
+
+        // UI Elementlar
+        const startScreen = document.getElementById('start-screen');
+        const gameScreen = document.getElementById('game-screen');
+        const endScreen = document.getElementById('end-screen');
+        
+        const levelEl = document.getElementById('level-display');
+        const scoreEl = document.getElementById('score-display');
+        const livesEl = document.getElementById('lives-display');
+        const timerEl = document.getElementById('timer-display');
+        const questionEl = document.getElementById('question');
+        const feedbackEl = document.getElementById('feedback');
+        
+        const playerNameInput = document.getElementById('player-name');
+        const nameErrorEl = document.getElementById('name-error');
+        
+        const beeChar = document.getElementById('bee-character');
+        const mainContainer = document.getElementById('main-container');
+
+        // MATEMATIKA LOGIKASI
+        function generateMathProblem() {
+            let op, num1, num2, answer;
+
+            if (level <= 10) {
+                // 1-10: 100 ichida xonadan o'tmaydigan qo'shish va ayirish
+                let isAdd = Math.random() > 0.5;
+                if (isAdd) {
+                    op = '+';
+                    let tens1 = Math.floor(Math.random() * 8) + 1; // 1-8
+                    let ones1 = Math.floor(Math.random() * 8) + 1; // 1-8
+                    let tens2 = Math.floor(Math.random() * (9 - tens1)) + 1; 
+                    let ones2 = Math.floor(Math.random() * (9 - ones1)) + 1;
+                    num1 = tens1 * 10 + ones1;
+                    num2 = tens2 * 10 + ones2;
+                    answer = num1 + num2;
+                } else {
+                    op = '-';
+                    let tens1 = Math.floor(Math.random() * 8) + 2; // 2-9
+                    let ones1 = Math.floor(Math.random() * 8) + 2; // 2-9
+                    let tens2 = Math.floor(Math.random() * (tens1 - 1)) + 1;
+                    let ones2 = Math.floor(Math.random() * (ones1 - 1)) + 1;
+                    num1 = tens1 * 10 + ones1;
+                    num2 = tens2 * 10 + ones2;
+                    answer = num1 - num2;
+                }
+            } else if (level <= 20) {
+                // 11-20: 100 ichida xonadan o'tadigan qo'shish va ayirish
+                let isAdd = Math.random() > 0.5;
+                if (isAdd) {
+                    op = '+';
+                    let tens1 = Math.floor(Math.random() * 7) + 1; // 1-7
+                    let ones1 = Math.floor(Math.random() * 6) + 4; // 4-9
+                    let tens2 = Math.floor(Math.random() * (8 - tens1)) + 1; 
+                    let minOnes2 = 10 - ones1;
+                    let ones2 = Math.floor(Math.random() * (9 - minOnes2 + 1)) + minOnes2; 
+                    num1 = tens1 * 10 + ones1;
+                    num2 = tens2 * 10 + ones2;
+                    answer = num1 + num2;
+                } else {
+                    op = '-';
+                    let tens1 = Math.floor(Math.random() * 7) + 3; // 3-9
+                    let ones1 = Math.floor(Math.random() * 5); // 0-4
+                    let tens2 = Math.floor(Math.random() * (tens1 - 1)) + 1;
+                    let ones2 = Math.floor(Math.random() * (9 - (ones1 + 1) + 1)) + ones1 + 1; 
+                    num1 = tens1 * 10 + ones1;
+                    num2 = tens2 * 10 + ones2;
+                    answer = num1 - num2;
+                }
+            } else if (level <= 30) {
+                // 21-30: Ko'paytirish (2, 3, 4, 5 karrasi)
+                op = 'x';
+                let tables = [2, 3, 4, 5];
+                num1 = tables[Math.floor(Math.random() * tables.length)];
+                num2 = Math.floor(Math.random() * 9) + 2; // 2-10
+                if (Math.random() > 0.5) {
+                    let temp = num1; num1 = num2; num2 = temp;
+                }
+                answer = num1 * num2;
+            } else {
+                // 31-40: Bo'lish (2, 3, 4, 5 ga bo'lish) va aralash
+                let isDiv = Math.random() > 0.3; // 70% bo'lish
+                if (isDiv) {
+                    op = '÷';
+                    let tables = [2, 3, 4, 5];
+                    num2 = tables[Math.floor(Math.random() * tables.length)]; // bo'luvchi
+                    answer = Math.floor(Math.random() * 9) + 2; // 2-10 (javob)
+                    num1 = num2 * answer; // bo'linuvchi
+                } else {
+                    op = 'x';
+                    let tables = [2, 3, 4, 5, 10];
+                    num1 = tables[Math.floor(Math.random() * tables.length)];
+                    num2 = Math.floor(Math.random() * 9) + 2;
+                    answer = num1 * num2;
+                }
+            }
+            return { q: `${num1} ${op} ${num2} = ?`, a: answer };
+        }
+
+        function startGame() {
+            const nameValue = playerNameInput.value.trim();
+            const nameRegex = /^.{2,20}$/; 
+            
+            if (!nameRegex.test(nameValue)) {
+                nameErrorEl.classList.remove('hidden');
+                playerNameInput.classList.add('border-red-500');
+                return;
+            }
+            nameErrorEl.classList.add('hidden');
+            playerNameInput.classList.remove('border-red-500');
+            playerName = nameValue;
+            document.getElementById('final-name').textContent = playerName;
+
+            if (soundEnabled && !audioCtx) audioCtx = new AudioContext();
+            if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+            playSound('correct'); 
+            
+            startScreen.classList.add('hidden');
+            endScreen.classList.add('hidden');
+            gameScreen.classList.remove('hidden');
+            gameScreen.classList.add('flex', 'pop-animation');
+            
+            score = 0;
+            level = 1;
+            lives = 3;
+            
+            resetBee();
+            setupLevel();
+        }
+
+        function updateUI() {
+            scoreEl.textContent = score;
+            levelEl.textContent = level <= MAX_LEVEL ? level : MAX_LEVEL;
+            timerEl.textContent = timeLeft;
+
+            if (timeLeft <= 10) {
+                timerEl.classList.add('animate-pulse', 'text-red-600');
+                timerEl.classList.remove('text-blue-600');
+            } else {
+                timerEl.classList.remove('animate-pulse', 'text-red-600');
+                timerEl.classList.add('text-blue-600');
+            }
+            
+            let hearts = '';
+            for(let i = 0; i < lives; i++) hearts += '💖';
+            for(let i = lives; i < 3; i++) hearts += '🖤';
+            livesEl.textContent = hearts;
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            timeLeft = 60; // Har bir misol uchun 1 minut
+            updateUI();
+
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateUI();
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    handleTimeOut();
+                }
+            }, 1000);
+        }
+
+        function resetBee() {
+            beeChar.style.transform = 'translate(0, 0)';
+            beeChar.classList.add('hover-bee');
+        }
+
+        function setupLevel() {
+            if(level > MAX_LEVEL) {
+                endGame(true);
+                return;
+            }
+
+            isMoving = false;
+            resetBee();
+
+            let problem = generateMathProblem();
+            currentAnswer = problem.a;
+            questionEl.textContent = problem.q;
+
+            flowerAnswers = [currentAnswer];
+            while (flowerAnswers.length < 3) {
+                let offset;
+                if (level <= 20) {
+                    // Qo'shish/ayirish uchun xato variantlar 
+                    let rand = Math.random();
+                    if(rand < 0.3) offset = 10; // Xonada adashish (masalan 45 o'rniga 55)
+                    else if(rand < 0.6) offset = 1; // 1 taga adashish
+                    else offset = Math.floor(Math.random() * 5) + 2;
+                } else {
+                    // Ko'paytirish/bo'lish uchun xato variantlar
+                    let rand = Math.random();
+                    if(rand < 0.5) offset = 1; 
+                    else offset = Math.floor(Math.random() * 3) + 2; 
+                }
+
+                let fake = Math.random() > 0.5 ? currentAnswer + offset : currentAnswer - offset;
+                
+                if (fake >= 0 && !flowerAnswers.includes(fake)) {
+                    flowerAnswers.push(fake);
+                }
+            }
+            flowerAnswers.sort(() => Math.random() - 0.5);
+
+            for(let i=0; i<3; i++){
+                document.getElementById(`flower-val-${i}`).textContent = flowerAnswers[i];
+            }
+
+            startTimer();
+        }
+
+        function checkAnswer(flowerIndex) {
+            if (isMoving) return;
+            isMoving = true;
+            clearInterval(timerInterval); 
+
+            let selectedAnswer = flowerAnswers[flowerIndex];
+            
+            playSound('fly');
+            beeChar.classList.remove('hover-bee');
+            
+            // Asalarining uchish koordinatalari (Responsive moslandi)
+            let yMove = window.innerWidth < 768 ? 130 : 160; 
+            let xMove = 0;
+            // Chap, O'rta, O'ng
+            if(flowerIndex === 0) xMove = window.innerWidth < 768 ? -100 : -140;
+            else if(flowerIndex === 1) xMove = 0;
+            else if(flowerIndex === 2) xMove = window.innerWidth < 768 ? 100 : 140;
+
+            beeChar.style.transform = `translate(${xMove}px, ${yMove}px)`;
+
+            setTimeout(() => {
+                if (selectedAnswer === currentAnswer) {
+                    handleCorrect();
+                } else {
+                    handleWrong(false);
+                }
+            }, 600); 
+        }
+
+        function handleCorrect() {
+            playSound('correct');
+            vibrateDevice(20);
+            
+            score += 10;
+            updateUI();
+            
+            showFeedback("Barakalla! 🍯", "text-green-500");
+
+            setTimeout(() => {
+                level++;
+                setupLevel();
+            }, 1200);
+        }
+
+        function handleTimeOut() {
+            if (isMoving) return;
+            isMoving = true;
+            handleWrong(true);
+        }
+
+        function handleWrong(isTimeOut = false) {
+            playSound('wrong');
+            vibrateDevice([100, 50, 100]);
+            
+            lives--;
+            updateUI();
+            
+            if (isTimeOut) {
+                showFeedback("Vaqt tugadi! ⏰", "text-red-500");
+            } else {
+                showFeedback("Xato bo'ldi! 😢", "text-red-500");
+            }
+            
+            mainContainer.classList.add('shake-animation');
+
+            setTimeout(() => {
+                mainContainer.classList.remove('shake-animation');
+                
+                if (lives > 0) {
+                    resetBee();
+                    isMoving = false;
+                    startTimer(); 
+                } else {
+                    endGame(false);
+                }
+            }, 1200);
+        }
+
+        function showFeedback(text, colorClass) {
+            feedbackEl.textContent = text;
+            feedbackEl.className = `text-xl md:text-2xl font-black h-6 text-center transition-opacity opacity-100 mt-2 ${colorClass}`;
+            setTimeout(() => {
+                feedbackEl.classList.remove('opacity-100');
+                feedbackEl.classList.add('opacity-0');
+            }, 1000);
+        }
+
+        function endGame(isWin = false) {
+            clearInterval(timerInterval);
+            gameScreen.classList.remove('flex');
+            gameScreen.classList.add('hidden');
+            endScreen.classList.remove('hidden');
+            endScreen.classList.add('flex');
+            
+            document.getElementById('final-score').textContent = score;
+            document.getElementById('final-level').textContent = level <= MAX_LEVEL ? level : MAX_LEVEL;
+
+            const endTitle = document.getElementById('end-title');
+            const rankMsg = document.getElementById('final-rank');
+            const endEmoji = document.getElementById('end-emoji');
+
+            if (isWin) {
+                playSound('win');
+                vibrateDevice([100, 50, 100, 50, 200]);
+                endTitle.textContent = "Ajoyib Natija! 🎉";
+                endTitle.className = "text-3xl font-black text-amber-500 mb-1";
+                endEmoji.textContent = "🏆";
+                
+                rankMsg.textContent = "Haqiqiy A'lochi! Barcha bosqichlardan o'tdingiz! 🥇";
+                rankMsg.className = "text-lg md:text-xl font-black text-green-500 leading-tight mt-1 animate-pulse";
+            } else {
+                playSound('wrong');
+                vibrateDevice([200, 100, 200]);
+                endTitle.textContent = "O'yin Tugadi! 🌸";
+                endTitle.className = "text-3xl font-black text-red-500 mb-1";
+                endEmoji.textContent = "😢";
+                
+                if (score < 100) {
+                    rankMsg.textContent = "Yana harakat qiling! 🌱";
+                    rankMsg.className = "text-lg font-black text-slate-500 mt-1";
+                } else if (score < 300) {
+                    rankMsg.textContent = "Yaxshi natija! 👍";
+                    rankMsg.className = "text-lg font-black text-blue-500 mt-1";
+                } else {
+                    rankMsg.textContent = "Barakalla! 🌟";
+                    rankMsg.className = "text-lg font-black text-orange-500 mt-1";
+                }
+            }
+        }
+
+    </script>
+</body>
+</html>
