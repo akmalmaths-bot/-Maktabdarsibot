@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kelajak O'quv Markazi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="text-gray-800 pb-10">
+
+    <nav class="bg-blue-600 text-white p-4 shadow-md sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto flex items-center justify-between">
+            <button id="backBtn" onclick="goBack()" class="hidden bg-blue-700 hover:bg-blue-800 px-4 py-2 rounded-lg transition">
+                <i class="fa-solid fa-arrow-left mr-2"></i> Orqaga
+            </button>
+            <h1 id="pageTitle" class="text-xl font-bold flex-1 text-center">Bo'limni tanlang</h1>
+            <div class="w-10"></div>
+        </div>
+    </nav>
+
+    <div class="max-w-4xl mx-auto p-4 mt-4">
+        
+        <!-- Bo'limlar -->
+        <div id="categoriesView" class="flex flex-col gap-4 fade-in"></div>
+
+        <!-- Fanlar -->
+        <div id="subjectsView" class="hidden grid grid-cols-2 sm:grid-cols-3 gap-4 fade-in"></div>
+
+        <!-- Fan haqida ma'lumot -->
+        <div id="detailView" class="hidden fade-in bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
+            <h2 id="detailTitle" class="text-2xl font-bold text-center text-blue-600 mb-6 border-b pb-4">Fan Nomi</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-blue-50 p-5 rounded-xl">
+                    <h3 class="text-lg font-bold text-blue-800 mb-3"><i class="fa-solid fa-circle-info mr-2"></i> Dars ma'lumotlari</h3>
+                    <ul class="space-y-3" id="courseInfo"></ul>
+                </div>
+
+                <div class="bg-green-50 p-5 rounded-xl">
+                    <h3 class="text-lg font-bold text-green-800 mb-3"><i class="fa-solid fa-chalkboard-user mr-2"></i> Ustoz haqida</h3>
+                    <ul class="space-y-3" id="teacherInfo"></ul>
+                </div>
+            </div>
+
+            <button onclick="openModal()" class="mt-8 w-full block bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white text-xl font-bold py-4 rounded-xl shadow-lg transform transition hover:scale-[1.02]">
+                <i class="fa-regular fa-pen-to-square mr-2"></i> Ro'yxatdan o'tish
+            </button>
+        </div>
+    </div>
+
+    <!-- Ro'yxatdan o'tish Modali (Web3Forms ga ulangan) -->
+    <div id="regModal" class="fixed inset-0 bg-black bg-opacity-60 hidden items-center justify-center z-[100] px-4">
+        <div class="bg-white w-full max-w-md p-6 rounded-2xl shadow-2xl relative fade-in">
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-500 hover:text-red-500 text-2xl"><i class="fa-solid fa-xmark"></i></button>
+            <h2 class="text-2xl font-bold text-center mb-6 text-gray-800">Ro'yxatdan o'tish</h2>
+            
+            <form id="regForm" class="space-y-4" onsubmit="submitToEmail(event)">
+                <div>
+                    <label class="block text-gray-700 font-bold mb-1">O'quvchining ismi</label>
+                    <input type="text" id="r_ism" required oninput="checkForm()" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-gray-700 font-bold mb-1">O'quvchining familiyasi</label>
+                    <input type="text" id="r_familiya" required oninput="checkForm()" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-gray-700 font-bold mb-1">O'quvchining sinfi</label>
+                    <input type="text" id="r_sinf" required oninput="checkForm()" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-gray-700 font-bold mb-1">Aloqa uchun nomer</label>
+                    <input type="tel" id="r_nomer" placeholder="+998" required oninput="checkForm()" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+                <button type="submit" id="submitBtn" disabled class="w-full py-4 mt-2 rounded-xl text-lg font-bold text-white bg-gray-400 cursor-not-allowed transition duration-300">
+                    Tayyor
+                </button>
+                <p id="statusMsg" class="text-center font-bold text-sm hidden"></p>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // DIQQAT: WEB3FORMS KALITINGIZNI SHU YERGA YOZING
+        const WEB3FORMS_KEY = "1c495f1e-04b4-444a-8f33-c2fce224f198";
+
+        // Fanlar ro'yxati
+        const categories = {
+            "Aniq fanlar": ["Matematika", "Kimyo va biologiya", "Ona tili va adabiyot", "Tarix va huquq", "Prezident maktabiga tayyorlov", "Mental arifmetika"],
+            "Xorijiy tillar": ["Ingliz tili", "Rus tili", "Koreys tili", "Xitoy tili", "Nemis tili"],
+            "IT va texnologiyalar": ["Robototexnika"],
+            "Maktabga tayyorlov": ["Maktabga tayyorlov"],
+            "Intellektual va mantiqiy": ["Shaxmat", "Raqs"]
+        };
+
+        // Ikonkalar va ranglar
+        const iconMap = {
+            "Matematika": { icon: "fa-solid fa-calculator", color: "text-blue-500", bg: "bg-blue-50" },
+            "Ingliz tili": { icon: "fa-solid fa-language", color: "text-red-500", bg: "bg-red-50" },
+            "Xitoy tili": { icon: "fa-solid fa-yin-yang", color: "text-red-600", bg: "bg-red-50" },
+            "Mental arifmetika": { icon: "fa-solid fa-brain", color: "text-purple-500", bg: "bg-purple-50" },
+            "Shaxmat": { icon: "fa-solid fa-chess-knight", color: "text-gray-800", bg: "bg-gray-100" },
+            "Raqs": { icon: "fa-solid fa-music", color: "text-pink-500", bg: "bg-pink-50" },
+            "Kimyo va biologiya": { icon: "fa-solid fa-flask", color: "text-green-500", bg: "bg-green-50" },
+            "Ona tili va adabiyot": { icon: "fa-solid fa-book-open", color: "text-orange-500", bg: "bg-orange-50" },
+            "Tarix va huquq": { icon: "fa-solid fa-landmark", color: "text-yellow-600", bg: "bg-yellow-50" },
+            "Prezident maktabiga tayyorlov": { icon: "fa-solid fa-graduation-cap", color: "text-indigo-500", bg: "bg-indigo-50" },
+            "Rus tili": { icon: "fa-solid fa-font", color: "text-blue-400", bg: "bg-blue-50" },
+            "Koreys tili": { icon: "fa-solid fa-language", color: "text-red-400", bg: "bg-red-50" },
+            "Nemis tili": { icon: "fa-solid fa-comments", color: "text-yellow-500", bg: "bg-yellow-50" },
+            "Robototexnika": { icon: "fa-solid fa-robot", color: "text-gray-600", bg: "bg-gray-200" },
+            "Maktabga tayyorlov": { icon: "fa-solid fa-school", color: "text-green-600", bg: "bg-green-50" }
+        };
+
+        // FANLAR HAQIDA MA'LUMOT (Narx va ustozlarni shu yerdan o'zgartirasiz)
+        const subjectDetails = {
+            "Matematika": { haftada: "3 marta", davomiyligi: "2 soatdan", tolov: "600 000 so‘m", manzil: "Uchtepa tumani, 2-mavze", murojaat: "+99897 140 28 86", ustoz: "Akmaljon", tajriba: "4 yil", yutuq: "Kiritilmagan" },
+            "Ingliz tili": { haftada: "3 marta", davomiyligi: "1.5 soatdan", tolov: "500 000 so‘m", manzil: "Uchtepa tumani, 2-mavze", murojaat: "+99897 140 28 86", ustoz: "Kiritilmagan", tajriba: "Kiritilmagan", yutuq: "Kiritilmagan" },
+            // Boshqa fanlar uchun ma'lumot yozilmasa, avtomatik 'default' olinadi
+            "default": { haftada: "3 marta", davomiyligi: "2 soatdan", tolov: "500 000 so‘m", manzil: "Uchtepa tumani, 2-mavze", murojaat: "+99897 140 28 86", ustoz: "Kiritilmagan", tajriba: "Kiritilmagan", yutuq: "Kiritilmagan" }
+        };
+
+        let currentSubject = "";
+
+        // Dastlabki yuklanish
+        function init() {
+            const catView = document.getElementById('categoriesView');
+            for (const cat in categories) {
+                catView.innerHTML += `
+                    <div onclick="showSubjects('${cat}')" class="bg-white border border-gray-200 p-6 rounded-2xl shadow-sm cursor-pointer hover:shadow-md transform hover:-translate-y-1 transition duration-300 flex items-center justify-between">
+                        <span class="text-xl font-bold text-gray-800">${cat}</span>
+                        <div class="bg-gray-100 p-2 rounded-lg text-gray-500"><i class="fa-solid fa-chevron-right"></i></div>
+                    </div>`;
+            }
+        }
+
+        function showSubjects(categoryName) {
+            hideAllViews();
+            document.getElementById('subjectsView').classList.remove('hidden');
+            document.getElementById('backBtn').classList.remove('hidden');
+            document.getElementById('pageTitle').innerText = categoryName;
+
+            const subView = document.getElementById('subjectsView');
+            subView.innerHTML = "";
+            categories[categoryName].forEach(sub => {
+                let style = iconMap[sub] || { icon: "fa-solid fa-bookmark", color: "text-blue-500", bg: "bg-blue-50" };
+                subView.innerHTML += `
+                    <div onclick="showDetail('${sub}')" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col items-center justify-center cursor-pointer hover:shadow-md transform hover:-translate-y-1 transition duration-300">
+                        <div class="w-16 h-16 ${style.bg} rounded-2xl flex items-center justify-center mb-4">
+                            <i class="${style.icon} ${style.color} text-3xl"></i>
+                        </div>
+                        <span class="font-bold text-gray-800 text-center text-[15px] sm:text-lg">${sub}</span>
+                    </div>`;
+            });
+        }
+
+        function showDetail(subjectName) {
+            currentSubject = subjectName;
+            hideAllViews();
+            document.getElementById('detailView').classList.remove('hidden');
+            document.getElementById('pageTitle').innerText = "Fan haqida";
+            document.getElementById('detailTitle').innerText = subjectName;
+
+            let info = subjectDetails[subjectName] || subjectDetails["default"];
+
+            document.getElementById('courseInfo').innerHTML = `
+                <li><span class="font-bold text-gray-700">Haftada:</span> ${info.haftada}</li>
+                <li><span class="font-bold text-gray-700">Dars davomiyligi:</span> ${info.davomiyligi}</li>
+                <li><span class="font-bold text-gray-700">Oylik to‘lov:</span> <span class="text-red-600 font-bold">${info.tolov}</span></li>
+                <li><span class="font-bold text-gray-700">Manzil:</span> ${info.manzil}</li>
+                <li><span class="font-bold text-gray-700">Murojaat uchun:</span> ${info.murojaat}</li>
+            `;
+            document.getElementById('teacherInfo').innerHTML = `
+                <li><span class="font-bold text-gray-700">Ism-familiya:</span> ${info.ustoz}</li>
+                <li><span class="font-bold text-gray-700">Ish tajribasi:</span> ${info.tajriba}</li>
+                <li><span class="font-bold text-gray-700">Yutuqlari:</span> ${info.yutuq}</li>
+            `;
+        }
+
+        function goBack() {
+            if(!document.getElementById('detailView').classList.contains('hidden')){
+                hideAllViews();
+                document.getElementById('subjectsView').classList.remove('hidden');
+                document.getElementById('pageTitle').innerText = "Fanlarni tanlang";
+            } else {
+                hideAllViews();
+                document.getElementById('categoriesView').classList.remove('hidden');
+                document.getElementById('pageTitle').innerText = "Bo'limni tanlang";
+                document.getElementById('backBtn').classList.add('hidden');
+            }
+        }
+
+        function hideAllViews() {
+            document.getElementById('categoriesView').classList.add('hidden');
+            document.getElementById('subjectsView').classList.add('hidden');
+            document.getElementById('detailView').classList.add('hidden');
+        }
+
+        function openModal() { 
+            document.getElementById('regModal').classList.replace('hidden', 'flex'); 
+            document.getElementById('statusMsg').classList.add('hidden');
+        }
+        function closeModal() { document.getElementById('regModal').classList.replace('flex', 'hidden'); }
+
+        function checkForm() {
+            let i = document.getElementById('r_ism').value.trim();
+            let f = document.getElementById('r_familiya').value.trim();
+            let s = document.getElementById('r_sinf').value.trim();
+            let n = document.getElementById('r_nomer').value.trim();
+            let btn = document.getElementById('submitBtn');
+
+            if(i && f && s && n) {
+                btn.disabled = false;
+                btn.classList.remove('bg-gray-400', 'cursor-not-allowed');
+                btn.classList.add('bg-green-500', 'hover:bg-green-600', 'shadow-lg');
+            } else {
+                btn.disabled = true;
+                btn.classList.add('bg-gray-400', 'cursor-not-allowed');
+                btn.classList.remove('bg-green-500', 'hover:bg-green-600', 'shadow-lg');
+            }
+        }
+
+        // MA'LUMOTNI WEB3FORMS ORQALI POCHTAGA YUBORISH
+        function submitToEmail(event) {
+            event.preventDefault(); // Sahifa yangilanib ketishini to'xtatadi
+            
+            let btn = document.getElementById('submitBtn');
+            let statusMsg = document.getElementById('statusMsg');
+            
+            btn.innerText = "Yuborilmoqda...";
+            btn.disabled = true;
+
+            const formData = new FormData();
+            formData.append("access_key", WEB3FORMS_KEY);
+            formData.append("Fan", currentSubject);
+            formData.append("Ism", document.getElementById('r_ism').value);
+            formData.append("Familiya", document.getElementById('r_familiya').value);
+            formData.append("Sinf", document.getElementById('r_sinf').value);
+            formData.append("Telefon", document.getElementById('r_nomer').value);
+
+            fetch("https://api.web3forms.com/submit", {
+                method: "POST",
+                body: formData
+            })
+            .then(async (response) => {
+                let json = await response.json();
+                if (response.status == 200) {
+                    alert("Ajoyib! Ma'lumotlaringiz muvaffaqiyatli yuborildi.");
+                    document.getElementById('regForm').reset();
+                    closeModal();
+                } else {
+                    statusMsg.innerText = "Xatolik: " + json.message;
+                    statusMsg.classList.remove('hidden');
+                    statusMsg.classList.add('text-red-500');
+                }
+            })
+            .catch(error => {
+                statusMsg.innerText = "Internetda muammo bor yoki server ishlamayapti.";
+                statusMsg.classList.remove('hidden');
+                statusMsg.classList.add('text-red-500');
+            })
+            .finally(() => {
+                btn.innerText = "Tayyor";
+                checkForm();
+            });
+        }
+
+        init();
+    </script>
+</body>
+</html>
