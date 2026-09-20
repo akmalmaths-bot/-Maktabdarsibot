@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matematika Testlari</title>
+    <style>
+        :root {
+            --bg-color: #f0f4f8;
+            --card-bg: #ffffff;
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --purple: #8b5cf6;
+            --success: #10b981;
+            --danger: #ef4444;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: var(--card-bg);
+            width: 100%;
+            max-width: 600px;
+            min-height: 500px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            padding: 30px;
+            box-sizing: border-box;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .screen {
+            display: none;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1, h2, h3 {
+            text-align: center;
+            color: var(--text-main);
+        }
+
+        .grid-menu {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+
+        .btn-purple { background-color: var(--purple); }
+        .btn-purple:hover { background-color: #7c3aed; }
+        
+        .emoji-icon { font-size: 24px; }
+
+        .settings-group {
+            margin-bottom: 20px;
+        }
+
+        .settings-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        select, input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 16px;
+            box-sizing: border-box;
+            outline: none;
+        }
+        select:focus, input[type="text"]:focus {
+            border-color: var(--primary);
+        }
+
+        /* Test Ekran Dizayni */
+        #timer-bar {
+            width: 100%;
+            height: 10px;
+            background-color: #e5e7eb;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        #timer-fill {
+            height: 100%;
+            background-color: var(--primary);
+            width: 100%;
+            transition: width 1s linear;
+        }
+
+        .question-text {
+            font-size: 32px;
+            font-weight: bold;
+            text-align: center;
+            margin: 30px 0;
+            color: var(--purple);
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .option-btn {
+            background-color: #f8fafc;
+            color: var(--text-main);
+            border: 2px solid #e5e7eb;
+            font-size: 20px;
+        }
+
+        .option-btn:hover { background-color: #e2e8f0; }
+        .option-btn.correct { background-color: var(--success); color: white; border-color: var(--success); }
+        .option-btn.wrong { background-color: var(--danger); color: white; border-color: var(--danger); }
+
+        .shake { animation: shake 0.4s; }
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            50% { transform: translateX(8px); }
+            75% { transform: translateX(-8px); }
+            100% { transform: translateX(0); }
+        }
+
+        .info-box {
+            background-color: #f3f4f6;
+            padding: 20px;
+            border-radius: 12px;
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        .back-btn {
+            background-color: #6b7280;
+            margin-top: 20px;
+            width: 100%;
+            flex-direction: row;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    
+    <!-- ASOSIY MENYU -->
+    <div id="screen-main" class="screen active">
+        <h1>Matematika Olamiga Xush Kelibsiz!</h1>
+        <p style="text-align:center; color: var(--text-muted);">O'zingizning sinfingizni tanlang:</p>
+        <div class="grid-menu">
+            <button onclick="selectGrade(1)"><span class="emoji-icon">🎒</span> 1-sinf</button>
+            <button onclick="selectGrade(2)"><span class="emoji-icon">📏</span> 2-sinf</button>
+            <button onclick="selectGrade(3)"><span class="emoji-icon">📐</span> 3-sinf</button>
+            <button onclick="selectGrade(4)"><span class="emoji-icon">📊</span> 4-sinf</button>
+            <button onclick="selectGrade(5)"><span class="emoji-icon">🔬</span> 5-sinf</button>
+            <button onclick="selectGrade(6)"><span class="emoji-icon">🧭</span> 6-sinf</button>
+        </div>
+        <button class="btn-purple" style="width:100%; margin-top:15px; flex-direction:row;" onclick="showScreen('screen-about')">
+            <span class="emoji-icon">👨‍🏫</span> Tizim va Tuzuvchi Haqida
+        </button>
+    </div>
+
+    <!-- SOZLAMALAR EKRANI -->
+    <div id="screen-settings" class="screen">
+        <h2 id="settings-title">Test Sozlamalari</h2>
+        
+        <div class="settings-group">
+            <label>Nechta test ishlaysiz?</label>
+            <select id="select-count">
+                <option value="10">🔟 10 ta savol</option>
+                <option value="20">2️⃣0️⃣ 20 ta savol</option>
+                <option value="30">3️⃣0️⃣ 30 ta savol</option>
+                <option value="40">4️⃣0️⃣ 40 ta savol</option>
+                <option value="50">5️⃣0️⃣ 50 ta savol</option>
+            </select>
+        </div>
+
+        <div class="settings-group">
+            <label>Bitta savolga qancha vaqt? (soniya)</label>
+            <select id="select-time">
+                <option value="30">⏱️ 30 soniya</option>
+                <option value="40">⏱️ 40 soniya</option>
+                <option value="50">⏱️ 50 soniya</option>
+                <option value="60">⏱️ 60 soniya</option>
+                <option value="70">⏱️ 70 soniya</option>
+            </select>
+        </div>
+
+        <div class="settings-group">
+            <label>Qiyinlik darajasi:</label>
+            <select id="select-difficulty">
+                <option value="1">🟢 1-bosqich (Oson)</option>
+                <option value="2">🟡 2-bosqich (O'rta)</option>
+                <option value="3">🔴 3-bosqich (Murakkab)</option>
+            </select>
+        </div>
+
+        <div class="settings-group">
+            <label>Ismingizni kiriting:</label>
+            <input type="text" id="student-name" placeholder="Masalan: Akmal...">
+        </div>
+
+        <button onclick="startTest()" style="width:100%; background-color: var(--success); flex-direction: row;">
+            🚀 Boshlash
+        </button>
+        <button onclick="showScreen('screen-main')" class="back-btn">⬅️ Orqaga</button>
+    </div>
+
+    <!-- TEST EKRANI -->
+    <div id="screen-test" class="screen">
+        <div style="display:flex; justify-content:space-between; font-weight:bold; margin-bottom:10px;">
+            <span id="test-progress">1 / 10</span>
+            <span id="test-timer-text">30s</span>
+        </div>
+        <div id="timer-bar"><div id="timer-fill"></div></div>
+        
+        <div class="question-text" id="question-display">2 + 2 = ?</div>
+        
+        <div class="options-grid" id="options-container">
+            <!-- Variantlar JS orqali qo'shiladi -->
+        </div>
+    </div>
+
+    <!-- NATIJALAR EKRANI -->
+    <div id="screen-results" class="screen">
+        <h2>🎉 Test Yakunlandi!</h2>
+        <div class="info-box" style="text-align:center; font-size: 24px; font-weight:bold; margin-bottom: 20px;">
+            <span id="final-score" style="color:var(--primary);">0</span> / <span id="total-questions">0</span>
+        </div>
+        <div class="info-box" id="ai-feedback" style="margin-bottom: 20px; border-left: 5px solid var(--purple);">
+            <!-- Tahlil matni -->
+        </div>
+        <button onclick="showScreen('screen-main')" style="width:100%; flex-direction: row;">🏠 Asosiy Menyuga Qaytish</button>
+    </div>
+
+    <!-- TIZIM HAQIDA -->
+    <div id="screen-about" class="screen">
+        <h2>👨‍🏫 Tizim Tuzuvchisi Haqida</h2>
+        <div class="info-box">
+            <p><strong>Akmaljon Jo'raqo'ziyev</strong> (1999-yilda tug'ilgan) — Amaliy matematika yo'nalishi talabasi va boshlang'ich/o'rta sinflar uchun matematika o'qituvchisi. 2021-yildan buyon ta'lim sohasida faoliyat yuritadi.</p>
+            <p>Darslarida Singapur (Bar Modeling, CPA), Yaponiya va Germaniyaning eng ilg'or ta'lim metodikalarini qo'llaydi. 2024-yildan beri YouTube va Telegram orqali ham masofaviy ta'lim berib kelmoqda.</p>
+            <p>Ushbu tizim o'quvchilarning matematik qobiliyatlarini rivojlantirish uchun HTML, CSS, JavaScript va turli xil zamonaviy web-texnologiyalar hamda AI platformalaridan foydalanib yaratilgan. Shuningdek, u turli qiziqarli Telegram botlar (masalan, <strong>@Maktabdarsibot</strong>) va dasturlar muallifi hamdir.</p>
+            <br>
+            <hr style="border: 0.5px solid #ccc;">
+            <p><strong>Bog'lanish uchun:</strong></p>
+            <p>Telegram kanal: <i>[O'zingizning kanalingizni yozing]</i></p>
+            <p>YouTube: <i>[O'zingizning manzilingizni yozing]</i></p>
+        </div>
+        <button onclick="showScreen('screen-main')" class="back-btn">⬅️ Orqaga</button>
+    </div>
+
+</div>
+
+<script>
+    // Audio tizimi (Web Audio API orqali faylsiz ovozlar)
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    const audioCtx = new AudioContext();
+
+    function playSound(type) {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+        
+        osc.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        
+        if (type === 'click') {
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.1);
+            gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+        } else if (type === 'correct') {
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(440, audioCtx.currentTime);
+            osc.frequency.setValueAtTime(554.37, audioCtx.currentTime + 0.1);
+            osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.2);
+            gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.4);
+        } else if (type === 'wrong') {
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(200, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.3);
+            gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.3);
+        }
+    }
+
+    // Holat o'zgaruvchilari
+    let state = {
+        grade: 1,
+        count: 10,
+        timePerQuestion: 30,
+        difficulty: 1,
+        name: "",
+        questions: [],
+        currentIndex: 0,
+        score: 0,
+        timerInterval: null,
+        timeRemaining: 0,
+        isAnswered: false
+    };
+
+    // Sahifa yuklanganda ismni xotiradan olish
+    window.onload = () => {
+        const savedName = localStorage.getItem('mathStudentName');
+        if (savedName) document.getElementById('student-name').value = savedName;
+    };
+
+    // Ekranlarni almashtirish
+    function showScreen(screenId) {
+        playSound('click');
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(screenId).classList.add('active');
+    }
+
+    function selectGrade(grade) {
+        state.grade = grade;
+        document.getElementById('settings-title').innerText = `${grade}-sinf Matematika Testlari`;
+        showScreen('screen-settings');
+    }
+
+    // Savollarni avtomatik tuzish (Minglab savollarga ehtiyoj yo'q)
+    function generateQuestion() {
+        let maxLimit = state.grade * 10 * state.difficulty;
+        if(state.grade === 1) maxLimit = state.difficulty === 1 ? 10 : (state.difficulty === 2 ? 20 : 50);
+        
+        let ops = ['+', '-'];
+        if (state.grade >= 3 || (state.grade === 2 && state.difficulty === 3)) ops.push('*');
+        if (state.grade >= 4 && state.difficulty >= 2) ops.push('/');
+
+        let op = ops[Math.floor(Math.random() * ops.length)];
+        let a, b, correctAns;
+
+        if (op === '+') {
+            a = Math.floor(Math.random() * maxLimit) + 1;
+            b = Math.floor(Math.random() * maxLimit) + 1;
+            correctAns = a + b;
+        } else if (op === '-') {
+            a = Math.floor(Math.random() * maxLimit) + 5;
+            b = Math.floor(Math.random() * a); 
+            correctAns = a - b;
+        } else if (op === '*') {
+            let multLimit = state.grade * 2 * state.difficulty;
+            a = Math.floor(Math.random() * multLimit) + 1;
+            b = Math.floor(Math.random() * multLimit) + 1;
+            correctAns = a * b;
+        } else if (op === '/') {
+            b = Math.floor(Math.random() * (state.grade * 3)) + 1;
+            correctAns = Math.floor(Math.random() * (maxLimit/2)) + 1;
+            a = b * correctAns;
+        }
+
+        let options = new Set([correctAns]);
+        while(options.size < 4) {
+            let offset = Math.floor(Math.random() * 11) - 5;
+            if(offset === 0) offset = 1;
+            let wrongAns = correctAns + offset;
+            if(wrongAns >= 0) options.add(wrongAns);
+        }
+
+        let optionsArr = Array.from(options).sort(() => Math.random() - 0.5);
+        return { text: `${a} ${op} ${b} = ?`, correct: correctAns, options: optionsArr };
+    }
+
+    function startTest() {
+        const nameInput = document.getElementById('student-name').value.trim();
+        if(!nameInput) { alert("Iltimos, ismingizni kiriting!"); return; }
+        
+        localStorage.setItem('mathStudentName', nameInput);
+        state.name = nameInput;
+        state.count = parseInt(document.getElementById('select-count').value);
+        state.timePerQuestion = parseInt(document.getElementById('select-time').value);
+        state.difficulty = parseInt(document.getElementById('select-difficulty').value);
+        
+        state.questions = Array.from({length: state.count}, generateQuestion);
+        state.currentIndex = 0;
+        state.score = 0;
+
+        showScreen('screen-test');
+        loadQuestion();
+    }
+
+    function loadQuestion() {
+        state.isAnswered = false;
+        clearInterval(state.timerInterval);
+        
+        const q = state.questions[state.currentIndex];
+        document.getElementById('test-progress').innerText = `${state.currentIndex + 1} / ${state.count}`;
+        document.getElementById('question-display').innerText = q.text;
+        document.getElementById('question-display').classList.remove('shake');
+        document.body.style.backgroundColor = var(--bg-color);
+        
+        const container = document.getElementById('options-container');
+        container.innerHTML = '';
+        
+        q.options.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = opt;
+            btn.onclick = () => checkAnswer(opt, btn);
+            container.appendChild(btn);
+        });
+
+        startTimer();
+    }
+
+    function startTimer() {
+        state.timeRemaining = state.timePerQuestion;
+        const fill = document.getElementById('timer-fill');
+        const text = document.getElementById('test-timer-text');
+        
+        fill.style.width = '100%';
+        fill.style.transition = 'none';
+        setTimeout(() => fill.style.transition = 'width 1s linear', 50);
+
+        state.timerInterval = setInterval(() => {
+            state.timeRemaining--;
+            text.innerText = `${state.timeRemaining}s`;
+            fill.style.width = `${(state.timeRemaining / state.timePerQuestion) * 100}%`;
+            
+            if (state.timeRemaining <= 0) {
+                clearInterval(state.timerInterval);
+                checkAnswer(null, null); // Vaqt tugadi, xato hisoblanadi
+            }
+        }, 1000);
+    }
+
+    function checkAnswer(selectedOpt, btnElement) {
+        if (state.isAnswered) return;
+        state.isAnswered = true;
+        clearInterval(state.timerInterval);
+
+        const correctAns = state.questions[state.currentIndex].correct;
+        const btns = document.querySelectorAll('.option-btn');
+        
+        let isCorrect = (selectedOpt === correctAns);
+
+        btns.forEach(b => {
+            if(parseInt(b.innerText) === correctAns) b.classList.add('correct');
+            else if (b === btnElement) b.classList.add('wrong');
+            b.style.pointerEvents = 'none'; // Boshqa bosilmasin
+        });
+
+        if (isCorrect) {
+            playSound('correct');
+            state.score++;
+        } else {
+            playSound('wrong');
+            document.getElementById('question-display').classList.add('shake');
+            document.body.style.backgroundColor = '#fecaca'; // qizil fon vibratsiyasi
+            setTimeout(() => document.body.style.backgroundColor = 'var(--bg-color)', 400);
+        }
+
+        // Hech qanday tugmasiz o'zi 2.5 sekund kutib keyingisiga o'tadi
+        setTimeout(() => {
+            state.currentIndex++;
+            if (state.currentIndex < state.count) loadQuestion();
+            else finishTest();
+        }, 2500);
+    }
+
+    function finishTest() {
+        showScreen('screen-results');
+        document.getElementById('final-score').innerText = state.score;
+        document.getElementById('total-questions').innerText = state.count;
+        
+        analyzeResults();
+    }
+
+    function analyzeResults() {
+        let history = JSON.parse(localStorage.getItem('mathTestHistory')) || [];
+        let percentage = state.score / state.count;
+        let message = `Barakalla, ${state.name}! `;
+        
+        if (history.length > 0) {
+            let lastTest = history[history.length - 1];
+            let lastPercentage = lastTest.score / lastTest.total;
+            
+            if (percentage > lastPercentage) {
+                message += `Siz o'tgan safargidan ko'ra yaxshiroq natija ko'rsatdingiz! O'sish bor, harakatdan to'xtamang! 📈`;
+            } else if (percentage < lastPercentage) {
+                message += `Bugun ozroq xatolar bo'ldi. Aslo taslim bo'lmang, keyingi safar albatta 100% ishlaysiz! 💪`;
+            } else {
+                message += `Natijangiz barqaror. Bilimingizni yanada oshirishda davom eting! 🎯`;
+            }
+        } else {
+            if (percentage >= 0.8) message += `Ajoyib boshlanish! Xuddi shunday davom eting. 🌟`;
+            else message += `Yaxshi natija, ozgina mashq qilsangiz, bundanda zo'r bo'ladi! 📚`;
+        }
+        
+        document.getElementById('ai-feedback').innerText = message;
+        
+        history.push({ 
+            score: state.score, 
+            total: state.count, 
+            date: new Date().toISOString() 
+        });
+        localStorage.setItem('mathTestHistory', JSON.stringify(history));
+    }
+</script>
+
+</body>
+</html>
