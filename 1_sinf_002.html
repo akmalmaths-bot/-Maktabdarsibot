@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>MATEMATIKA 1-SINF TESTLARI</title>
-    <!-- Tailwind CSS for styling -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts for Kids/Gamified Look -->
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body {
@@ -17,47 +15,55 @@
             min-height: 100vh;
         }
         .btn-bounce {
-            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.2s;
         }
         .btn-bounce:active:not(:disabled) {
-            transform: scale(0.9);
+            transform: scale(0.95);
         }
         canvas {
             width: 100%;
             max-width: 800px;
             height: auto;
             border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
         }
         .bg-glass {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(12px);
         }
-        /* Hide scrollbar for cleaner look */
-        ::-webkit-scrollbar {
-            width: 8px;
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        /* Floating Button Animation */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+            100% { transform: translateY(0px); }
         }
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1; 
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #cbd5e1; 
-            border-radius: 10px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8; 
+        .floating-btn {
+            animation: float 4s ease-in-out infinite;
         }
     </style>
 </head>
-<body class="flex flex-col relative overflow-x-hidden">
+<body class="flex flex-col relative overflow-x-hidden pb-20">
+
+    <!-- Floating Telegram Button (Always Visible) -->
+    <a href="https://t.me/Maktabdarsibot" target="_blank" class="floating-btn fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 bg-blue-500 text-white px-4 sm:px-5 py-3 rounded-full shadow-2xl border-4 border-white flex items-center gap-2 hover:bg-blue-600 transition-colors">
+        <svg class="w-7 h-7 sm:w-8 sm:h-8" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.295-.6.295-.002 0-.003 0-.005 0l.213-3.054 5.56-5.022c.24-.213-.054-.334-.373-.121l-6.869 4.326-2.96-.924c-.64-.203-.658-.64.135-.954l11.566-4.458c.538-.196 1.006.128.832.94z"/>
+        </svg>
+        <span class="font-bold text-lg sm:text-xl tracking-wide">@Maktabdarsibot</span>
+    </a>
 
     <main class="flex-grow flex flex-col items-center justify-center p-4 min-h-screen">
         
         <!-- START SCREEN -->
-        <div id="screen-start" class="bg-glass w-full max-w-lg rounded-3xl p-8 md:p-10 shadow-2xl border-4 border-white text-center flex flex-col items-center transition-opacity duration-500">
-            
-            <div class="text-6xl mb-4 animate-bounce">🎒</div>
-            <h1 class="text-4xl md:text-5xl font-bold text-blue-600 mb-8 uppercase drop-shadow-sm leading-tight">
+        <div id="screen-start" class="bg-glass w-full max-w-lg rounded-3xl p-8 shadow-2xl border-4 border-white text-center flex flex-col items-center transition-opacity duration-500">
+            <div class="text-7xl mb-4 animate-bounce">🎒</div>
+            <h1 class="text-4xl md:text-5xl font-black text-blue-600 mb-8 uppercase drop-shadow-sm leading-tight tracking-wide">
                 MATEMATIKA <br> <span class="text-pink-500 text-3xl md:text-4xl">1-SINF TESTLARI</span>
             </h1>
 
@@ -70,84 +76,82 @@
                 Boshlash 🚀
             </button>
 
-            <div class="text-slate-500 font-medium bg-white/60 px-4 py-2 rounded-xl mt-4 border border-white/50">
-                <p>Test tuzuvchi:</p>
-                <p class="font-bold text-slate-700">Akmaljon Jo'raqo'ziyev</p>
+            <div class="text-slate-500 font-medium bg-white/60 px-5 py-3 rounded-xl border border-white/50 shadow-sm">
+                <p class="text-sm">Test tuzuvchi:</p>
+                <p class="font-bold text-slate-800 text-lg">Akmaljon Jo'raqo'ziyev</p>
             </div>
         </div>
 
         <!-- QUIZ SCREEN -->
         <div id="screen-quiz" class="hidden w-full max-w-2xl flex flex-col items-center">
             
-            <!-- Header Stats -->
             <div class="bg-glass rounded-2xl w-full p-4 mb-4 flex justify-between items-center shadow-lg border-2 border-white">
-                <div class="flex items-center gap-1 md:gap-2 bg-yellow-100 text-yellow-700 px-3 md:px-4 py-2 rounded-full font-bold border-2 border-yellow-300 shadow-inner">
+                <div class="flex items-center gap-1 md:gap-2 bg-yellow-100 text-yellow-700 px-4 py-2 rounded-full font-bold border-2 border-yellow-300 shadow-inner text-lg">
                     ⭐ <span id="score">0</span>
                 </div>
-                <div class="flex items-center gap-1 md:gap-2 bg-red-100 text-red-600 px-3 md:px-4 py-2 rounded-full font-bold border-2 border-red-300 shadow-inner text-base md:text-lg">
+                <div class="flex items-center gap-1 md:gap-2 bg-red-100 text-red-600 px-4 py-2 rounded-full font-bold border-2 border-red-300 shadow-inner text-lg">
                     ⏳ <span id="timer">60</span>s
                 </div>
-                <div class="flex items-center gap-1 md:gap-2 bg-blue-100 text-blue-700 px-3 md:px-4 py-2 rounded-full font-bold border-2 border-blue-300 shadow-inner">
-                    📝 <span id="progress">1/20</span>
+                <div class="flex items-center gap-1 md:gap-2 bg-blue-100 text-blue-700 px-4 py-2 rounded-full font-bold border-2 border-blue-300 shadow-inner text-lg">
+                    📝 <span id="progress">1/25</span>
                 </div>
             </div>
 
-            <!-- Question Area -->
-            <div class="bg-glass w-full rounded-3xl p-6 md:p-10 shadow-2xl border-4 border-white text-center relative overflow-hidden flex flex-col items-center">
-                <h2 id="question-text" class="text-2xl md:text-4xl font-bold text-slate-800 mb-8 leading-tight">Savol yuklanmoqda...</h2>
+            <div class="bg-glass w-full rounded-3xl p-6 md:p-10 shadow-2xl border-4 border-white text-center relative overflow-hidden flex flex-col items-center min-h-[400px] justify-center">
+                <h2 id="question-text" class="text-2xl md:text-3xl font-bold text-slate-800 mb-8 leading-tight">Yuklanmoqda...</h2>
                 
                 <div id="options-grid" class="flex flex-col gap-4 w-full">
-                    <!-- Options injected via JS -->
+                    <!-- Options -->
                 </div>
 
                 <!-- 3 Second Feedback Overlay -->
-                <div id="feedback-overlay" class="hidden absolute inset-0 bg-white/95 backdrop-blur-sm flex flex-col items-center justify-center z-10 transition-opacity duration-300">
-                    <div id="feedback-icon" class="text-7xl md:text-8xl mb-4 animate-bounce">✅</div>
-                    <h3 id="feedback-text" class="text-3xl md:text-4xl font-bold text-slate-800 mb-6 drop-shadow-sm">To'g'ri!</h3>
+                <div id="feedback-overlay" class="hidden absolute inset-0 bg-white/95 backdrop-blur-md flex flex-col items-center justify-center z-10 transition-opacity duration-300">
+                    <div id="feedback-icon" class="text-8xl mb-4 animate-bounce">✅</div>
+                    <h3 id="feedback-text" class="text-4xl font-bold text-slate-800 mb-8 drop-shadow-sm">To'g'ri!</h3>
                     
                     <div class="w-64 bg-gray-200 rounded-full h-4 mb-4 border-2 border-gray-300 overflow-hidden shadow-inner">
-                        <div id="progress-bar-3s" class="bg-gradient-to-r from-blue-400 to-purple-500 h-4 rounded-full" style="width: 0%"></div>
+                        <div id="progress-bar-3s" class="bg-gradient-to-r from-blue-400 to-purple-500 h-full rounded-full" style="width: 0%"></div>
                     </div>
-                    <p class="text-slate-500 font-bold text-lg md:text-xl">Keyingi savolga o'tilmoqda...</p>
+                    <p class="text-slate-500 font-bold text-xl">Keyingi savolga o'tilmoqda...</p>
                 </div>
             </div>
         </div>
 
         <!-- END SCREEN -->
-        <div id="screen-end" class="hidden bg-glass w-full max-w-3xl rounded-3xl p-6 md:p-10 shadow-2xl border-4 border-white text-center flex flex-col items-center">
+        <div id="screen-end" class="hidden bg-glass w-full max-w-3xl rounded-3xl p-8 md:p-10 shadow-2xl border-4 border-white text-center flex flex-col items-center">
             
-            <div id="end-emoji" class="text-7xl md:text-8xl mb-4 animate-bounce">🎉</div>
-            <h2 id="end-title" class="text-3xl md:text-5xl font-bold text-slate-800 mb-2 drop-shadow-sm">Test Yakunlandi!</h2>
-            <p id="end-name" class="text-2xl md:text-3xl text-blue-600 font-bold mb-8"></p>
+            <div id="end-emoji" class="text-8xl mb-4 animate-bounce">🎉</div>
+            <h2 id="end-title" class="text-4xl md:text-5xl font-black text-slate-800 mb-2 drop-shadow-sm">Test Yakunlandi!</h2>
+            <p id="end-name" class="text-3xl text-blue-600 font-bold mb-8 uppercase tracking-wider"></p>
 
-            <div class="bg-white/80 backdrop-blur-sm rounded-3xl p-6 md:p-8 w-full max-w-md mb-8 shadow-inner border-4 border-slate-100 flex flex-col items-center">
+            <div class="bg-white/90 rounded-3xl p-8 w-full max-w-md mb-8 shadow-inner border-4 border-slate-100 flex flex-col items-center">
                 <p class="text-slate-500 font-bold text-xl mb-2">Sizning natijangiz:</p>
-                <div class="text-6xl md:text-7xl font-black text-yellow-500 drop-shadow-md mb-2" id="final-score">20/20</div>
+                <div class="text-7xl font-black text-yellow-500 drop-shadow-md mb-2" id="final-score">25/25</div>
                 <p class="text-slate-400 font-medium text-lg mt-2">To'plangan ballar</p>
             </div>
 
             <!-- Certificate Section (Only shows if 100%) -->
             <div id="cert-container" class="hidden w-full flex flex-col items-center mb-10">
-                <p class="text-green-600 font-bold text-xl md:text-2xl mb-4">Maksimal natija uchun sizga maxsus sertifikat taqdim etiladi!</p>
-                <canvas id="cert-canvas" class="mb-6 w-full max-w-full"></canvas>
-                <button id="btn-download-cert" class="btn-bounce bg-gradient-to-r from-green-400 to-green-600 text-white font-bold text-xl md:text-2xl px-8 py-4 rounded-full shadow-lg border-4 border-white flex items-center justify-center gap-3 w-full max-w-sm hover:from-green-500 hover:to-green-700">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                    Yuklab olish
+                <p class="text-green-600 font-bold text-2xl mb-6">Maksimal natija uchun sizga maxsus sertifikat taqdim etiladi!</p>
+                <canvas id="cert-canvas" class="mb-6 w-full max-w-full bg-white"></canvas>
+                <button id="btn-download-cert" class="btn-bounce bg-gradient-to-r from-green-400 to-green-600 text-white font-bold text-2xl px-8 py-4 rounded-full shadow-lg border-4 border-white flex items-center justify-center gap-3 w-full max-w-md hover:from-green-500 hover:to-green-700">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                    Sertifikatni Yuklab Olish
                 </button>
             </div>
 
-            <!-- Telegram CTA Section -->
-            <div class="w-full flex flex-col items-center mt-4 border-t-2 border-white/50 pt-8">
-                <p class="text-xl md:text-2xl font-bold text-slate-700 mb-6 drop-shadow-sm text-center">
+            <div class="w-full flex flex-col items-center mt-6 pt-8 border-t-4 border-white/60">
+                <p class="text-2xl font-bold text-slate-700 mb-6 drop-shadow-sm text-center">
                     Yana shunday test ishlash uchun quyidagi botga o'ting.
                 </p>
-                <a href="https://t.me/Maktabdarsibot" target="_blank" class="btn-bounce bg-blue-500 text-white font-bold text-2xl md:text-3xl px-8 py-5 rounded-3xl shadow-xl border-4 border-white flex items-center justify-center gap-3 w-full max-w-md hover:bg-blue-600 transition-colors">
+                <!-- Centered Bot Button -->
+                <a href="https://t.me/Maktabdarsibot" target="_blank" class="btn-bounce bg-blue-500 text-white font-black text-2xl md:text-3xl px-8 py-5 rounded-full shadow-2xl border-4 border-white flex items-center justify-center gap-3 w-full max-w-lg hover:bg-blue-600 transition-colors">
                     <svg class="w-8 h-8 md:w-10 md:h-10" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.295-.6.295-.002 0-.003 0-.005 0l.213-3.054 5.56-5.022c.24-.213-.054-.334-.373-.121l-6.869 4.326-2.96-.924c-.64-.203-.658-.64.135-.954l11.566-4.458c.538-.196 1.006.128.832.94z"/></svg>
-                    @Maktabdarsibot
+                    ### @Maktabdarsibot ###
                 </a>
             </div>
 
-            <button id="btn-restart" class="btn-bounce text-slate-500 font-bold underline hover:text-slate-800 p-4 mt-8">
+            <button id="btn-restart" class="btn-bounce text-slate-500 font-bold underline hover:text-slate-800 p-4 mt-8 text-lg">
                 Bosh sahifaga qaytish
             </button>
         </div>
@@ -155,28 +159,35 @@
     </main>
 
     <script>
-        // Word problems (Masalalar) - 20 savol, har birida 3 ta variant.
+        // 25 Questions: 20 Standard Math + 5 Logical Life-based
         const quizData = [
-            { q: "Anvarning 5 ta olmasi bor edi. U 2 tasini ukasiga berdi. Anvarda nechta olma qoldi?", options: ["3", "2", "4"], ans: 0 },
-            { q: "Bog'da 4 ta qizil va 3 ta sariq atirgul gulladi. Bog'da jami nechta atirgul gulladi?", options: ["7", "6", "8"], ans: 0 },
-            { q: "Tarelka ustida 6 ta konfet bor edi. Akmal yana 3 ta konfet qo'ydi. Tarelka ustida jami nechta konfet bo'ldi?", options: ["9", "8", "10"], ans: 0 },
-            { q: "Daraxt shoxida 8 ta qush o'tirgan edi. Ulardan 4 tasi uchib ketdi. Shoxda nechta qush qoldi?", options: ["4", "3", "5"], ans: 0 },
-            { q: "Malikaning 10 ta qalami bor. Shundan 3 tasi yo'qolib qoldi. Malikada nechta qalam qoldi?", options: ["7", "6", "8"], ans: 0 },
-            { q: "Avtobusda 5 ta yo'lovchi bor edi. Bekatda yana 4 ta yo'lovchi chiqdi. Avtobusda nechta yo'lovchi bo'ldi?", options: ["9", "8", "10"], ans: 0 },
-            { q: "Sinfda 7 ta o'g'il bola va 3 ta qiz bola bor. Sinfda jami nechta o'quvchi bor?", options: ["10", "9", "11"], ans: 0 },
-            { q: "Javonda 9 ta kitob bor edi. Sardor o'qish uchun 2 ta kitob oldi. Javonda nechta kitob qoldi?", options: ["7", "8", "6"], ans: 0 },
-            { q: "Asalning 4 ta qo'g'irchog'i bor edi. Tug'ilgan kunida unga yana 2 ta qo'g'irchoq sovg'a qilishdi. Asalda nechta qo'g'irchoq bo'ldi?", options: ["6", "5", "7"], ans: 0 },
-            { q: "Savatda 8 ta nok bor edi. Bobom yana 2 ta nok olib keldi. Savatda nechta nok bo'ldi?", options: ["10", "9", "11"], ans: 0 },
-            { q: "Qutida 6 ta shokolad bor edi. Ularning 4 tasini yedik. Qutida nechta shokolad qoldi?", options: ["2", "3", "1"], ans: 0 },
-            { q: "Ko'chada 3 ta kuchuk bolasi o'ynayotgan edi. Ularga yana 4 ta kuchukchalar qo'shildi. Jami nechta kuchukcha bo'ldi?", options: ["7", "6", "8"], ans: 0 },
-            { q: "Do'konda 10 ta shar bor edi. Shundan 5 tasi sotildi. Do'konda nechta shar qoldi?", options: ["5", "4", "6"], ans: 0 },
-            { q: "Akvariumda 4 ta katta va 5 ta kichkina baliq suzib yuribdi. Akvariumda jami nechta baliq bor?", options: ["9", "8", "10"], ans: 0 },
-            { q: "Dildoraning 8 ta daftari bor edi. U 3 ta daftarini yozib tugatdi. Unda nechta yangi daftar qoldi?", options: ["5", "6", "4"], ans: 0 },
-            { q: "Mashinalar turargohida 7 ta mashina bor edi. Kechqurun yana 2 ta mashina keldi. Turargohda nechta mashina bo'ldi?", options: ["9", "8", "10"], ans: 0 },
-            { q: "Onam 5 ta tuxum qovurdi, otam esa 3 ta tuxum qovurdi. Jami nechta tuxum qovurildi?", options: ["8", "7", "9"], ans: 0 },
-            { q: "Bolalar 9 ta qor odam yasashdi. Ulardan 4 tasi erib ketdi. Nechta qor odam qoldi?", options: ["5", "4", "6"], ans: 0 },
-            { q: "Sitoraning 2 ta mushugi bor edi. Qo'shnisi unga yana 1 ta mushukcha sovg'a qildi. Sitorada jami nechta mushuk bo'ldi?", options: ["3", "4", "2"], ans: 0 },
-            { q: "Stol ustida 10 ta pechenye bor edi. Bolalar 6 tasini yeb qo'yishdi. Stol ustida nechta pechenye qoldi?", options: ["4", "3", "5"], ans: 0 }
+            // Standard Word Problems (20)
+            { q: "Anvarning 5 ta olmasi bor edi. U 2 tasini ukasiga berdi. Anvarda nechta olma qoldi?", options: ["3 ta", "2 ta", "4 ta"], ans: 0 },
+            { q: "Bog'da 4 ta qizil va 3 ta sariq atirgul gulladi. Bog'da jami nechta atirgul gulladi?", options: ["7 ta", "6 ta", "8 ta"], ans: 0 },
+            { q: "Tarelka ustida 6 ta konfet bor edi. Akmal yana 3 ta konfet qo'ydi. Tarelka ustida jami nechta konfet bo'ldi?", options: ["9 ta", "8 ta", "10 ta"], ans: 0 },
+            { q: "Daraxt shoxida 8 ta qush o'tirgan edi. Ulardan 4 tasi uchib ketdi. Shoxda nechta qush qoldi?", options: ["4 ta", "3 ta", "5 ta"], ans: 0 },
+            { q: "Malikaning 10 ta qalami bor. Shundan 3 tasi yo'qolib qoldi. Malikada nechta qalam qoldi?", options: ["7 ta", "6 ta", "8 ta"], ans: 0 },
+            { q: "Avtobusda 5 ta yo'lovchi bor edi. Bekatda yana 4 ta yo'lovchi chiqdi. Avtobusda nechta yo'lovchi bo'ldi?", options: ["9 ta", "8 ta", "10 ta"], ans: 0 },
+            { q: "Sinfda 7 ta o'g'il bola va 3 ta qiz bola bor. Sinfda jami nechta o'quvchi bor?", options: ["10 ta", "9 ta", "11 ta"], ans: 0 },
+            { q: "Javonda 9 ta kitob bor edi. Sardor o'qish uchun 2 ta kitob oldi. Javonda nechta kitob qoldi?", options: ["7 ta", "8 ta", "6 ta"], ans: 0 },
+            { q: "Asalning 4 ta qo'g'irchog'i bor edi. Tug'ilgan kunida unga yana 2 ta qo'g'irchoq sovg'a qilishdi. Asalda nechta qo'g'irchoq bo'ldi?", options: ["6 ta", "5 ta", "7 ta"], ans: 0 },
+            { q: "Savatda 8 ta nok bor edi. Bobom yana 2 ta nok olib keldi. Savatda nechta nok bo'ldi?", options: ["10 ta", "9 ta", "11 ta"], ans: 0 },
+            { q: "Qutida 6 ta shokolad bor edi. Ularning 4 tasini yedik. Qutida nechta shokolad qoldi?", options: ["2 ta", "3 ta", "1 ta"], ans: 0 },
+            { q: "Ko'chada 3 ta kuchuk bolasi o'ynayotgan edi. Ularga yana 4 ta kuchukchalar qo'shildi. Jami nechta kuchukcha bo'ldi?", options: ["7 ta", "6 ta", "8 ta"], ans: 0 },
+            { q: "Do'konda 10 ta shar bor edi. Shundan 5 tasi sotildi. Do'konda nechta shar qoldi?", options: ["5 ta", "4 ta", "6 ta"], ans: 0 },
+            { q: "Akvariumda 4 ta katta va 5 ta kichkina baliq suzib yuribdi. Akvariumda jami nechta baliq bor?", options: ["9 ta", "8 ta", "10 ta"], ans: 0 },
+            { q: "Dildoraning 8 ta daftari bor edi. U 3 ta daftarini yozib tugatdi. Unda nechta yangi daftar qoldi?", options: ["5 ta", "6 ta", "4 ta"], ans: 0 },
+            { q: "Mashinalar turargohida 7 ta mashina bor edi. Kechqurun yana 2 ta mashina keldi. Turargohda nechta mashina bo'ldi?", options: ["9 ta", "8 ta", "10 ta"], ans: 0 },
+            { q: "Onam 5 ta tuxum qovurdi, otam esa 3 ta tuxum qovurdi. Jami nechta tuxum qovurildi?", options: ["8 ta", "7 ta", "9 ta"], ans: 0 },
+            { q: "Bolalar 9 ta qor odam yasashdi. Ulardan 4 tasi erib ketdi. Nechta qor odam qoldi?", options: ["5 ta", "4 ta", "6 ta"], ans: 0 },
+            { q: "Sitoraning 2 ta mushugi bor edi. Qo'shnisi unga yana 1 ta mushukcha sovg'a qildi. Sitorada jami nechta mushuk bo'ldi?", options: ["3 ta", "4 ta", "2 ta"], ans: 0 },
+            { q: "Stol ustida 10 ta pechenye bor edi. Bolalar 6 tasini yeb qo'yishdi. Stol ustida nechta pechenye qoldi?", options: ["4 ta", "3 ta", "5 ta"], ans: 0 },
+            // Logical Life-based Problems (5)
+            { q: "Stolning 4 ta burchagi bor. Bir burchagini arralab tashlasak, stolning nechta burchagi bo'ladi?", options: ["5 ta", "3 ta", "4 ta"], ans: 0 },
+            { q: "Daraxtda 5 ta qarg'a o'tiribdi. Ovchi miltiqdan o'q uzdi. Daraxtda nechta qarg'a qoldi?", options: ["0 ta (uchib ketadi)", "4 ta", "5 ta"], ans: 0 },
+            { q: "Qutida 3 juft paypoq bor. Qutida jami nechta paypoq bor?", options: ["6 ta", "3 ta", "5 ta"], ans: 0 },
+            { q: "3 ta aka-ukaning bittadan singlisi bor. Oila jami nechta farzanddan iborat?", options: ["4 ta", "6 ta", "5 ta"], ans: 0 },
+            { q: "Qaysi biri og'ir: 1 kilogramm paxtami yoki 1 kilogramm temirmi?", options: ["Ikkalasi bir xil", "Paxta og'ir", "Temir og'ir"], ans: 0 }
         ];
 
         let userName = "";
@@ -186,12 +197,12 @@
         let timerInterval;
         let isWaiting = false; 
         let activeQuestions = [];
+        const TOTAL_Q = 25;
 
-        // Elements
         const elStartScreen = document.getElementById('screen-start');
         const elQuizScreen = document.getElementById('screen-quiz');
         const elEndScreen = document.getElementById('screen-end');
-        
+
         let audioCtx;
         function initAudio() {
             if (!audioCtx) {
@@ -200,7 +211,6 @@
             if (audioCtx.state === 'suspended') audioCtx.resume();
         }
 
-        // Synthesize nice sounds
         function playSound(type) {
             if (!audioCtx) return;
             const osc = audioCtx.createOscillator();
@@ -212,7 +222,6 @@
             
             if (type === 'correct') {
                 osc.type = 'triangle';
-                // A nice pleasant chime for correct answers
                 osc.frequency.setValueAtTime(523.25, now); // C5
                 osc.frequency.setValueAtTime(659.25, now + 0.1); // E5
                 osc.frequency.setValueAtTime(783.99, now + 0.2); // G5
@@ -224,7 +233,6 @@
                 osc.stop(now + 0.5);
             } else {
                 osc.type = 'sawtooth';
-                // A low buzz for wrong answers
                 osc.frequency.setValueAtTime(150, now);
                 osc.frequency.exponentialRampToValueAtTime(80, now + 0.4);
                 
@@ -242,7 +250,10 @@
         document.getElementById('btn-start').addEventListener('click', () => {
             const input = document.getElementById('input-name');
             const val = input.value.trim();
-            if (val.length < 3) {
+            // Allow only letters and spaces, at least 3 chars
+            const lettersOnly = /^[a-zA-Zа-яА-ЯўЎқҚғҒҳҲ'’\s]+$/.test(val);
+
+            if (val.length < 3 || !lettersOnly) {
                 document.getElementById('error-msg').classList.remove('hidden');
                 input.classList.add('border-red-500');
                 input.focus();
@@ -251,7 +262,7 @@
             document.getElementById('error-msg').classList.add('hidden');
             input.classList.remove('border-red-500');
             userName = val;
-            initAudio(); // Initialize audio on first user gesture
+            initAudio(); 
             startGame();
         });
 
@@ -264,10 +275,10 @@
             currentQuestion = 0;
             document.getElementById('score').innerText = score;
             
-            // Prepare shuffled questions and their options
+            // Prepare shuffled questions
             activeQuestions = shuffle([...quizData]).map(q => {
                 const correctAnswerText = q.options[q.ans];
-                const shuffledOptions = shuffle([...q.options]); // Shuffles the 3 options
+                const shuffledOptions = shuffle([...q.options]); 
                 return {
                     q: q.q,
                     options: shuffledOptions,
@@ -283,13 +294,12 @@
             document.getElementById('feedback-overlay').classList.add('hidden');
             
             const q = activeQuestions[currentQuestion];
-            document.getElementById('question-text').innerText = q.q;
-            document.getElementById('progress').innerText = `${currentQuestion + 1}/${activeQuestions.length}`;
+            document.getElementById('question-text').innerText = `${currentQuestion + 1}. ${q.q}`;
+            document.getElementById('progress').innerText = `${currentQuestion + 1}/${TOTAL_Q}`;
             
             const optionsGrid = document.getElementById('options-grid');
             optionsGrid.innerHTML = '';
             
-            // Generate EXACTLY 3 buttons
             q.options.forEach(opt => {
                 const btn = document.createElement('button');
                 btn.className = 'btn-bounce w-full bg-white text-slate-700 font-bold text-2xl py-6 px-6 rounded-2xl shadow-md border-4 border-slate-200 hover:border-blue-400 hover:bg-blue-50 transition-colors text-center';
@@ -298,7 +308,6 @@
                 optionsGrid.appendChild(btn);
             });
 
-            // Start 60s timer
             timeLeft = 60;
             document.getElementById('timer').innerText = timeLeft;
             clearInterval(timerInterval);
@@ -307,7 +316,7 @@
                 document.getElementById('timer').innerText = timeLeft;
                 if (timeLeft <= 0) {
                     clearInterval(timerInterval);
-                    handleAnswer(null, null); // Time's up
+                    handleAnswer(null, null); 
                 }
             }, 1000);
         }
@@ -320,17 +329,16 @@
             const q = activeQuestions[currentQuestion];
             const isCorrect = selectedOpt === q.ansText;
 
-            // Highlight all buttons to show correct/wrong
             const buttons = document.getElementById('options-grid').children;
             for (let b of buttons) {
-                b.disabled = true; // disable further clicking
-                b.classList.remove('hover:border-blue-400', 'hover:bg-blue-50');
+                b.disabled = true; 
+                b.classList.remove('hover:border-blue-400', 'hover:bg-blue-50', 'active:scale-95');
                 if (b.innerText === q.ansText) {
                     b.classList.add('border-green-500', 'bg-green-100', 'text-green-800');
                 } else if (b === btnElement) {
                     b.classList.add('border-red-500', 'bg-red-100', 'text-red-800');
                 } else {
-                    b.classList.add('opacity-40'); // Dim others
+                    b.classList.add('opacity-40'); 
                 }
             }
 
@@ -344,12 +352,10 @@
                 showFeedback(false);
             }
 
-            // EXACTLY 3 Second strict wait logic with visual progress bar
             const bar = document.getElementById('progress-bar-3s');
             bar.style.transition = "none";
             bar.style.width = "0%";
             
-            // Allow DOM to paint width 0 before starting transition
             requestAnimationFrame(() => {
                 requestAnimationFrame(() => {
                     bar.style.transition = "width 3s linear";
@@ -364,7 +370,7 @@
                 } else {
                     endGame();
                 }
-            }, 3000); // Wait exactly 3 seconds
+            }, 3000); 
         }
 
         function showFeedback(isCorrect) {
@@ -376,11 +382,11 @@
             if (isCorrect) {
                 icon.innerText = '🌟';
                 text.innerText = "Barakalla! To'g'ri!";
-                text.className = "text-3xl md:text-4xl font-bold text-green-600 mb-6 drop-shadow-sm";
+                text.className = "text-4xl md:text-5xl font-black text-green-600 mb-6 drop-shadow-sm";
             } else {
                 icon.innerText = '❌';
                 text.innerText = "Afsuski, noto'g'ri!";
-                text.className = "text-3xl md:text-4xl font-bold text-red-500 mb-6 drop-shadow-sm";
+                text.className = "text-4xl md:text-5xl font-black text-red-500 mb-6 drop-shadow-sm";
             }
         }
 
@@ -388,27 +394,26 @@
             elQuizScreen.classList.add('hidden');
             elEndScreen.classList.remove('hidden');
             
-            document.getElementById('end-name').innerText = userName + ",";
-            document.getElementById('final-score').innerText = `${score}/20`;
+            document.getElementById('end-name').innerText = userName;
+            document.getElementById('final-score').innerText = `${score}/${TOTAL_Q}`;
             
             const emoji = document.getElementById('end-emoji');
             const title = document.getElementById('end-title');
             const certContainer = document.getElementById('cert-container');
             
-            if (score === 20) {
+            if (score === TOTAL_Q) {
                 emoji.innerText = '🏆';
                 title.innerText = "Ajoyib! Mutlaq G'alaba!";
                 title.classList.add('text-green-600');
                 certContainer.classList.remove('hidden');
                 
-                // Draw certificate immediately if 100%
                 document.fonts.ready.then(() => {
                     drawCertificate(userName);
                 });
             } else {
-                emoji.innerText = score >= 15 ? '👍' : '📚';
-                title.innerText = score >= 15 ? "Yaxshi Natija!" : "Ko'proq o'qish kerak";
-                title.className = score >= 15 ? "text-3xl md:text-5xl font-bold text-blue-600 mb-2 drop-shadow-sm" : "text-3xl md:text-5xl font-bold text-orange-500 mb-2 drop-shadow-sm";
+                emoji.innerText = score >= 18 ? '👍' : '📚';
+                title.innerText = score >= 18 ? "Yaxshi Natija!" : "Ko'proq o'qish kerak";
+                title.className = score >= 18 ? "text-4xl md:text-5xl font-black text-blue-600 mb-2 drop-shadow-sm" : "text-4xl md:text-5xl font-black text-orange-500 mb-2 drop-shadow-sm";
                 certContainer.classList.add('hidden');
             }
             
@@ -418,31 +423,25 @@
         function drawCertificate(name) {
             const canvas = document.getElementById('cert-canvas');
             const ctx = canvas.getContext('2d');
-            // High resolution output
             canvas.width = 1200;
             canvas.height = 850;
 
-            // Background color
             ctx.fillStyle = '#FFFAF0'; 
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Elegant Gold Gradient for borders
             const gold = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
             gold.addColorStop(0, '#BF953F');
             gold.addColorStop(0.5, '#FCF6BA');
             gold.addColorStop(1, '#B38728');
 
-            // Outer thick border
             ctx.lineWidth = 25;
             ctx.strokeStyle = gold;
             ctx.strokeRect(35, 35, canvas.width - 70, canvas.height - 70);
 
-            // Inner thin border
             ctx.lineWidth = 4;
             ctx.strokeStyle = '#D4AF37';
             ctx.strokeRect(75, 75, canvas.width - 150, canvas.height - 150);
 
-            // Decorative Corner Circles
             const drawCorner = (x, y) => {
                 ctx.fillStyle = gold;
                 ctx.beginPath();
@@ -454,7 +453,6 @@
             drawCorner(75, canvas.height-75);
             drawCorner(canvas.width-75, canvas.height-75);
 
-            // Red Ribbon Graphic (top center)
             ctx.fillStyle = '#E53E3E'; 
             ctx.beginPath();
             ctx.moveTo(canvas.width/2 - 60, 75);
@@ -464,7 +462,6 @@
             ctx.lineTo(canvas.width/2 - 60, 220);
             ctx.fill();
 
-            // Gold Badge on Ribbon
             ctx.beginPath();
             ctx.arc(canvas.width/2, 120, 50, 0, Math.PI * 2);
             ctx.fillStyle = gold;
@@ -473,39 +470,33 @@
             ctx.arc(canvas.width/2, 120, 40, 0, Math.PI * 2);
             ctx.fillStyle = '#E53E3E';
             ctx.fill();
-            // Star in Badge
+            
             ctx.fillStyle = 'white';
             ctx.font = '35px Arial';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillText('⭐', canvas.width/2, 123);
 
-            // Text Setup
             ctx.textBaseline = 'alphabetic';
             ctx.textAlign = 'center';
             
-            // MAIN TITLE: SERTIFIKAT
-            ctx.font = 'bold 85px "Fredoka", sans-serif';
+            ctx.font = 'bold 100px "Fredoka", sans-serif';
             ctx.fillStyle = '#1A365D';
             ctx.fillText('SERTIFIKAT', canvas.width/2, 340);
 
-            // Subtitle
             ctx.font = '35px "Fredoka", sans-serif';
             ctx.fillStyle = '#4A5568';
             ctx.fillText('Ushbu sertifikat topshiriladi:', canvas.width/2, 430);
 
-            // Student Name (Dynamic)
             ctx.font = 'bold 95px "Fredoka", sans-serif';
             ctx.fillStyle = '#E53E3E';
             ctx.fillText(name.toUpperCase(), canvas.width/2, 540);
 
-            // Reason
             ctx.font = '35px "Fredoka", sans-serif';
             ctx.fillStyle = '#2D3748';
             ctx.fillText('Matematika 1-sinf testlari bo\'yicha', canvas.width/2, 640);
             ctx.fillText('a\'lo natija ko\'rsatgani uchun.', canvas.width/2, 690);
 
-            // Footer Texts
             const dateStr = new Date().toLocaleDateString('uz-UZ');
             ctx.font = '30px "Fredoka", sans-serif';
             ctx.fillStyle = '#4A5568';
@@ -513,7 +504,6 @@
             ctx.fillText(`Sana: ${dateStr}`, 270, 780);
             ctx.fillText(`Test tuzuvchi: Akmaljon Jo'raqo'ziyev`, canvas.width - 320, 780);
 
-            // Signature lines
             ctx.lineWidth = 2;
             ctx.strokeStyle = '#A0AEC0';
             ctx.beginPath();
@@ -524,7 +514,6 @@
             ctx.stroke();
         }
 
-        // Download logic
         document.getElementById('btn-download-cert').addEventListener('click', () => {
             const canvas = document.getElementById('cert-canvas');
             const link = document.createElement('a');
@@ -533,7 +522,6 @@
             link.click();
         });
 
-        // Restart logic
         document.getElementById('btn-restart').addEventListener('click', () => {
             elEndScreen.classList.add('hidden');
             elStartScreen.classList.remove('hidden');
