@@ -3,598 +3,549 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Matematika 3-sinf testi (2-qism)</title>
+    <title>MATEMATIKA 3-SINF TESTLARI</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f8fafc;
+            font-family: 'Fredoka', sans-serif;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
             color: #1e293b;
+            -webkit-tap-highlight-color: transparent;
+            min-height: 100vh;
         }
-        /* Kichik ekranlar uchun tugma bosilish effekti */
-        button {
-            touch-action: manipulation;
+        .btn-bounce {
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s;
         }
-        /* JSBin "Edit in JS Bin" tugmasini yashirish */
-        #edit-with-js-bin {
-            display: none !important;
+        .btn-bounce:active:not(:disabled) {
+            transform: scale(0.95);
+        }
+        canvas {
+            width: 100%;
+            max-width: 800px;
+            height: auto;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+        .bg-glass {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #94a3b8; 
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b; 
+        }
+        .text-gradient {
+            background: linear-gradient(to right, #0284c7, #4f46e5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        /* Floating Telegram Button Animations */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+            100% { transform: translateY(0px); }
+        }
+        .floating-btn {
+            animation: float 3s ease-in-out infinite;
         }
     </style>
 </head>
-<body class="antialiased min-h-screen flex flex-col overflow-x-hidden">
+<body class="flex flex-col relative overflow-x-hidden pb-24">
 
-    <!-- Header -->
-    <header class="bg-blue-600 text-white py-4 md:py-5 px-3 sm:px-4 shadow-md">
-        <div class="max-w-3xl mx-auto flex items-center justify-between gap-2">
-            <div class="flex items-center gap-2 sm:gap-3 flex-1">
-                <div class="text-2xl sm:text-3xl">📚</div>
-                <!-- Sarlavha ID orqali boshqariladi -->
-                <h1 id="main-title" class="text-base sm:text-xl md:text-2xl font-bold leading-tight">
-                    Matematika 3-sinf testi (2-qism)
-                </h1>
-            </div>
-            <div class="flex flex-col items-end shrink-0">
-                <!-- Ism to'liq va kattaroq sig'ishi uchun -->
-                <div id="user-display" class="hidden text-sm sm:text-base font-medium bg-blue-700 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl shadow-inner max-w-[160px] sm:max-w-[300px] break-words text-right leading-tight">
-                    <!-- Ism shu yerda chiqadi -->
-                </div>
-            </div>
-        </div>
-    </header>
+    <!-- FLOATING TELEGRAM BUTTON (VISIBLE AT ALL TIMES IN BOTTOM RIGHT) -->
+    <a href="https://t.me/Maktabdarsibot" target="_blank" class="floating-btn fixed bottom-4 right-4 z-50 bg-[#0088cc] hover:bg-[#0077b5] text-white font-bold py-2 px-4 rounded-full shadow-lg flex items-center justify-center gap-2 border-2 border-white transition-all hover:scale-105 active:scale-95 shadow-[#0088cc]/40">
+        <svg class="fill-current w-5 h-5" viewBox="0 0 24 24">
+            <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.295-.6.295-.002 0-.003 0-.005 0l.213-3.054 5.56-5.022c.24-.213-.054-.334-.373-.121l-6.869 4.326-2.96-.924c-.64-.203-.658-.64.135-.954l11.566-4.458c.538-.196 1.006.128.832.94z"/>
+        </svg>
+        <span class="text-sm font-medium">@Maktabdarsibot</span>
+    </a>
 
-    <main class="flex-grow max-w-3xl mx-auto w-full p-4 md:p-6 lg:py-10 flex flex-col justify-center">
+    <main class="flex-grow flex flex-col items-center justify-center p-4 min-h-screen">
         
-        <!-- Boshlash Oynasi (Ism so'rash) -->
-        <div id="screen-start" class="bg-white p-6 md:p-10 rounded-2xl shadow-sm border border-slate-200 text-center">
-            <h2 class="text-2xl md:text-3xl font-bold text-slate-800 mb-4">Matematika testiga xush kelibsiz!</h2>
-            <p class="text-slate-600 mb-8 leading-relaxed text-lg">
-                20 ta savol. Har biriga <b>90 soniya</b>. Tez va to'g'ri javob berib, ⭐ yig'ing! Boshlash uchun ismingizni kiriting.
-            </p>
-            <form id="form-start" class="max-w-sm mx-auto space-y-5">
-                <div>
-                    <input type="text" id="input-name" required minlength="3" maxlength="15" placeholder="Ismingizni yozing..." 
-                           class="w-full px-5 py-4 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-lg transition-all">
-                    <!-- Xatolik xabari -->
-                    <p id="name-error" class="hidden text-red-500 text-sm mt-2 text-left font-medium">Iltimos, faqat harf kiriting (3 dan 15 tagacha).</p>
-                </div>
-                <button type="submit" class="w-full bg-blue-600 text-white font-bold text-lg py-4 rounded-xl hover:bg-blue-700 active:scale-95 transition-all shadow-md">
-                    Testni Boshlash
-                </button>
-            </form>
+        <!-- START SCREEN -->
+        <div id="screen-start" class="bg-glass w-full max-w-lg rounded-3xl p-8 md:p-10 shadow-xl border-4 border-white text-center flex flex-col items-center transition-opacity duration-500">
+            <div class="text-6xl mb-4 animate-bounce">🎓</div>
+            <h1 class="text-4xl md:text-5xl font-extrabold mb-8 uppercase drop-shadow-sm leading-tight text-gradient">
+                MATEMATIKA <br> 3-SINF TESTLARI
+            </h1>
 
-            <div class="mt-10 pt-6 border-t border-slate-100 text-sm md:text-base text-slate-500">
-                <p><strong>Test tuzuvchi:</strong> Akmaljon Jo'raqo'ziyev</p>
-                <p><strong>Telegram:</strong> <a href="https://t.me/akmalmaths" class="text-blue-600 hover:underline" target="_blank">@akmalmaths</a></p>
-            </div>
-        </div>
-
-        <!-- Savollar Oynasi -->
-        <div id="screen-quiz" class="hidden bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col w-full overflow-hidden">
-            <div class="bg-slate-50 border-b border-slate-200 p-4 flex justify-between items-center flex-wrap gap-3">
-                <h3 class="text-base md:text-lg font-semibold text-slate-800">Savollar</h3>
-                <div class="flex gap-2 md:gap-3 flex-wrap">
-                    <span id="score-indicator" class="px-3 md:px-4 py-1.5 bg-yellow-100 text-yellow-800 rounded-full text-xs md:text-sm font-bold flex items-center gap-1 shadow-sm border border-yellow-200">
-                        ⭐ <span id="current-score">0</span>
-                    </span>
-                    <span id="timer-indicator" class="px-3 md:px-4 py-1.5 bg-orange-100 text-orange-800 rounded-full text-xs md:text-sm font-bold flex items-center gap-1 shadow-sm border border-orange-200">
-                        ⏱ <span id="time-left">90</span>s
-                    </span>
-                    <span id="progress-indicator" class="px-3 md:px-4 py-1.5 bg-blue-100 text-blue-800 rounded-full text-xs md:text-sm font-bold shadow-sm border border-blue-200">
-                        1 / 20
-                    </span>
-                </div>
+            <div class="space-y-4 mb-8 w-full">
+                <input type="text" id="input-name" placeholder="Ismingizni yozing..." minlength="3" class="w-full px-6 py-4 text-xl md:text-2xl rounded-2xl border-4 border-blue-200 focus:border-blue-500 focus:outline-none text-center font-bold text-slate-700 shadow-inner bg-white transition-colors">
+                <p id="error-msg" class="text-red-500 font-bold hidden text-sm md:text-base">Ismingizni to'liq kiriting (kamida 3 ta harf)!</p>
             </div>
             
-            <div class="p-5 md:p-8 w-full">
-                <div id="question-container" class="w-full">
-                    <h4 id="question-text" class="text-lg md:text-2xl font-medium text-slate-800 mb-6 md:mb-8 leading-relaxed break-words">
-                        Yuklanmoqda...
-                    </h4>
-                    
-                    <div id="options-container" class="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 w-full">
-                        <!-- Variantlar shu yerga tushadi -->
-                    </div>
-                </div>
-
-                <div id="feedback-container" class="mt-6 p-4 rounded-xl hidden text-center font-medium text-base md:text-lg w-full">
-                </div>
-            </div>
-
-            <div class="bg-slate-50 border-t border-slate-200 p-3 sm:p-4 flex justify-between items-center mt-auto gap-2">
-                <button id="btn-prev" class="px-3 sm:px-5 py-2 sm:py-2.5 bg-slate-200 text-slate-700 rounded-xl text-xs sm:text-base font-bold hover:bg-slate-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shrink-0">
-                    &#8592; Oldingi
-                </button>
-                
-                <!-- Watermark o'rtaga, tugmalar orasiga tushirildi -->
-                <div id="watermark" class="hidden text-[11px] sm:text-sm text-slate-400 font-bold tracking-wide text-center px-1">
-                    <a href="https://t.me/maktabdarsibot" target="_blank" class="hover:text-blue-500 transition-colors">@maktabdarsibot</a>
-                </div>
-
-                <div class="shrink-0">
-                    <button id="btn-next" class="px-3 sm:px-5 py-2 sm:py-2.5 bg-blue-600 text-white rounded-xl text-xs sm:text-base font-bold hover:bg-blue-700 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
-                        Keyingi &#8594;
-                    </button>
-                    <button id="btn-finish" class="hidden px-3 sm:px-5 py-2 sm:py-2.5 bg-green-600 text-white rounded-xl text-xs sm:text-base font-bold hover:bg-green-700 transition-colors shadow-sm">
-                        Yakunlash &#10004;
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Natija Oynasi -->
-        <div id="screen-result" class="hidden bg-white p-6 md:p-10 rounded-2xl shadow-sm border border-slate-200 text-center">
-            <div id="result-emoji" class="text-7xl mb-4">🏆</div>
-            <h2 id="result-title" class="text-3xl font-bold text-slate-800 mb-2">Test Yakunlandi!</h2>
-            <p id="result-name" class="text-lg text-slate-600 mb-6 font-medium truncate"></p>
-            
-            <div class="bg-slate-50 rounded-2xl p-6 md:p-8 border border-slate-100 max-w-sm mx-auto mb-8 shadow-inner">
-                <p class="text-slate-500 mb-1 font-medium text-lg">To'plangan yulduzchalar:</p>
-                <p id="result-stars" class="text-5xl font-black text-yellow-500 mb-6 drop-shadow-sm">0 ⭐</p>
-
-                <p class="text-slate-500 mb-2 font-medium text-base">To'g'ri javoblar:</p>
-                <p id="result-score" class="text-3xl font-bold text-blue-600 mb-3">0 / 20</p>
-                <div class="w-full bg-slate-200 rounded-full h-3 mb-3">
-                    <div id="result-bar" class="bg-blue-600 h-3 rounded-full transition-all duration-1000" style="width: 0%"></div>
-                </div>
-                <p id="result-percent" class="text-lg font-bold text-slate-700">0%</p>
-            </div>
-
-            <button id="btn-restart" class="bg-blue-600 text-white font-bold text-lg py-4 px-8 rounded-xl hover:bg-blue-700 active:scale-95 transition-all shadow-md">
-                Qaytadan ishlash ↻
+            <button id="btn-start" class="btn-bounce w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-bold text-2xl py-4 rounded-full shadow-lg border-4 border-white mb-6">
+                Boshlash 🚀
             </button>
         </div>
 
+        <!-- QUIZ SCREEN -->
+        <div id="screen-quiz" class="hidden w-full max-w-2xl flex flex-col items-center">
+            
+            <div class="bg-glass rounded-2xl w-full p-4 mb-4 flex justify-between items-center shadow-md border-2 border-white">
+                <div class="flex items-center gap-1 md:gap-2 bg-yellow-100 text-yellow-700 px-3 md:px-4 py-2 rounded-full font-bold border-2 border-yellow-300 shadow-inner">
+                    ⭐ <span id="score">0</span>
+                </div>
+                <div class="flex items-center gap-1 md:gap-2 bg-red-100 text-red-600 px-3 md:px-4 py-2 rounded-full font-bold border-2 border-red-300 shadow-inner text-base md:text-lg">
+                    ⏳ <span id="timer">60</span>s
+                </div>
+                <div class="flex items-center gap-1 md:gap-2 bg-blue-100 text-blue-700 px-3 md:px-4 py-2 rounded-full font-bold border-2 border-blue-300 shadow-inner">
+                    📝 <span id="progress">1/20</span>
+                </div>
+            </div>
+
+            <div class="bg-glass w-full rounded-3xl p-6 md:p-10 shadow-xl border-4 border-white text-center relative overflow-hidden flex flex-col items-center">
+                <h2 id="question-text" class="text-2xl md:text-3xl font-bold text-slate-800 mb-8 leading-relaxed">Savol yuklanmoqda...</h2>
+                
+                <div id="options-grid" class="flex flex-col gap-4 w-full">
+                    <!-- Options injected via JS -->
+                </div>
+
+                <!-- FEEDBACK OVERLAY -->
+                <div id="feedback-overlay" class="hidden absolute inset-0 bg-white/95 backdrop-blur-sm flex flex-col items-center justify-center z-10 transition-opacity duration-300">
+                    <div id="feedback-icon" class="text-7xl md:text-8xl mb-4 animate-bounce">✅</div>
+                    <h3 id="feedback-text" class="text-3xl md:text-4xl font-bold text-slate-800 mb-6 drop-shadow-sm">To'g'ri!</h3>
+                    
+                    <div class="w-64 bg-gray-200 rounded-full h-4 mb-4 border-2 border-gray-300 overflow-hidden shadow-inner">
+                        <div id="progress-bar-3s" class="bg-gradient-to-r from-blue-400 to-indigo-500 h-4 rounded-full" style="width: 0%"></div>
+                    </div>
+                    <p class="text-slate-500 font-bold text-lg md:text-xl">Keyingi savolga o'tilmoqda...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- END SCREEN -->
+        <div id="screen-end" class="hidden bg-glass w-full max-w-3xl rounded-3xl p-6 md:p-10 shadow-xl border-4 border-white text-center flex flex-col items-center">
+            
+            <div id="end-emoji" class="text-7xl md:text-8xl mb-4 animate-bounce">🎉</div>
+            <h2 id="end-title" class="text-3xl md:text-5xl font-bold text-slate-800 mb-2 drop-shadow-sm">Test Yakunlandi!</h2>
+            <p id="end-name" class="text-2xl md:text-3xl text-blue-600 font-bold mb-8"></p>
+
+            <div class="bg-white/80 backdrop-blur-sm rounded-3xl p-6 md:p-8 w-full max-w-md mb-8 shadow-inner border-4 border-slate-100 flex flex-col items-center">
+                <p class="text-slate-500 font-bold text-xl mb-2">Sizning natijangiz:</p>
+                <div class="text-6xl md:text-7xl font-black text-yellow-500 drop-shadow-md mb-2" id="final-score">20/20</div>
+                <p class="text-slate-400 font-medium text-lg mt-2">To'g'ri javoblar</p>
+            </div>
+
+            <!-- Certificate Section (100% Score) -->
+            <div id="cert-container" class="hidden w-full flex flex-col items-center mb-10">
+                <p class="text-green-600 font-bold text-xl md:text-2xl mb-4">Maksimal natija uchun sizga maxsus sertifikat taqdim etiladi!</p>
+                <canvas id="cert-canvas" class="mb-6 w-full max-w-full bg-white"></canvas>
+                <button id="btn-download-cert" class="btn-bounce bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold text-xl md:text-2xl px-8 py-4 rounded-full shadow-lg border-4 border-white flex items-center justify-center gap-3 w-full max-w-sm hover:from-green-600 hover:to-emerald-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                    Yuklab olish
+                </button>
+            </div>
+
+            <!-- End Screen CTA -->
+            <div class="w-full flex flex-col items-center mt-4 border-t-2 border-slate-200 pt-8 pb-4">
+                <p class="text-xl md:text-2xl font-bold text-slate-700 mb-6 drop-shadow-sm text-center">
+                    Yana shunday test ishlash uchun quyidagi botga o'ting.
+                </p>
+                <a href="https://t.me/Maktabdarsibot" target="_blank" class="btn-bounce bg-[#0088cc] text-white font-extrabold text-2xl md:text-4xl px-8 py-6 rounded-3xl shadow-2xl border-4 border-white flex items-center justify-center gap-4 w-full max-w-lg hover:bg-[#0077b5] transition-colors">
+                    <svg class="fill-current w-10 h-10 md:w-12 md:h-12" viewBox="0 0 24 24">
+                        <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.295-.6.295-.002 0-.003 0-.005 0l.213-3.054 5.56-5.022c.24-.213-.054-.334-.373-.121l-6.869 4.326-2.96-.924c-.64-.203-.658-.64.135-.954l11.566-4.458c.538-.196 1.006.128.832.94z"/>
+                    </svg>
+                    ### @Maktabdarsibot ###
+                </a>
+            </div>
+
+            <button id="btn-restart" class="btn-bounce text-slate-500 font-bold underline hover:text-slate-800 p-4 mt-8">
+                Bosh sahifaga qaytish
+            </button>
+        </div>
     </main>
 
     <script>
-        // 3-sinf savollari 
-        const originalQuizData = [
-            {
-                question: "120 va 340 sonlarining yig'indisi nechaga teng?",
-                options: ["460", "450", "440", "560"],
-                correctIndex: 0
-            },
-            {
-                question: "5 ni 8 ga ko'paytirsak, natija necha bo'ladi?",
-                options: ["40", "35", "45", "30"],
-                correctIndex: 0
-            },
-            {
-                question: "36 ta daftarni 4 nafar o'quvchiga teng bo'lib bersak, har biriga nechtadan tushadi?",
-                options: ["9 ta", "8 ta", "7 ta", "6 ta"],
-                correctIndex: 0
-            },
-            {
-                question: "Kvadratning bir tomoni 5 sm. Uning perimetri qancha?",
-                options: ["20 sm", "15 sm", "25 sm", "10 sm"],
-                correctIndex: 0
-            },
-            {
-                question: "3 ta qalam 1500 so'm turadi. 1 ta qalam necha pul?",
-                options: ["500 so'm", "600 so'm", "400 so'm", "300 so'm"],
-                correctIndex: 0
-            },
-            {
-                question: "1 soat 20 minut jami necha minutga teng?",
-                options: ["80 minut", "70 minut", "90 minut", "60 minut"],
-                correctIndex: 0
-            },
-            {
-                question: "1 metr lentadan 30 sm qirqib olindi. Qancha qismi qoldi?",
-                options: ["70 sm", "60 sm", "80 sm", "50 sm"],
-                correctIndex: 0
-            },
-            {
-                question: "X + 25 = 60. X ni toping.",
-                options: ["35", "45", "25", "15"],
-                correctIndex: 0
-            },
-            {
-                question: "Nodir har kuni 4 bet kitob o'qiydi. U bir haftada necha bet o'qiydi?",
-                options: ["28 bet", "24 bet", "30 bet", "32 bet"],
-                correctIndex: 0
-            },
-            {
-                question: "Qaysi son ham 7 ga, ham 4 ga qoldiqsiz bo'linadi?",
-                options: ["28", "21", "24", "14"],
-                correctIndex: 0
-            },
-            {
-                question: "3 ta yuzlik, 4 ta o'nlik va 5 ta birlikdan iborat sonni toping.",
-                options: ["345", "543", "435", "354"],
-                correctIndex: 0
-            },
-            {
-                question: "500 dan 230 ni ayirsak nechaga teng bo'ladi?",
-                options: ["270", "370", "230", "250"],
-                correctIndex: 0
-            },
-            {
-                question: "Tarvuzning og'irligi 8 kg, qovun esa undan 4 marta yengil. Qovunning og'irligi necha kg?",
-                options: ["2 kg", "4 kg", "3 kg", "5 kg"],
-                correctIndex: 0
-            },
-            {
-                question: "Qatorni mantiqan davom ettiring: 4, 8, 12, 16, ?",
-                options: ["20", "18", "22", "24"],
-                correctIndex: 0
-            },
-            {
-                question: "1 kilogramm necha grammga teng?",
-                options: ["1000 gramm", "100 gramm", "10000 gramm", "10 gramm"],
-                correctIndex: 0
-            },
-            {
-                question: "Kitob 120 betlik. Malika uning yarmini o'qidi. U necha bet o'qigan?",
-                options: ["60 bet", "50 bet", "70 bet", "40 bet"],
-                correctIndex: 0
-            },
-            {
-                question: "9 marta 6 necha bo'ladi?",
-                options: ["54", "45", "63", "48"],
-                correctIndex: 0
-            },
-            {
-                question: "Qutida 48 ta koptok bor. Ularni 6 ta guruhga teng bo'lsak, har bir guruhda nechtadan bo'ladi?",
-                options: ["8 ta", "7 ta", "9 ta", "6 ta"],
-                correctIndex: 0
-            },
-            {
-                question: "To'g'ri to'rtburchakning bo'yi 8 sm, eni 3 sm. Uning perimetrini toping.",
-                options: ["22 sm", "24 sm", "11 sm", "16 sm"],
-                correctIndex: 0
-            },
-            {
-                question: "3 kishilik oila restoranda har biri 15000 so'mdan taomlandi. Jami qancha to'lashgan?",
-                options: ["45000 so'm", "30000 so'm", "50000 so'm", "60000 so'm"],
-                correctIndex: 0
-            }
+        // 20 Questions (10 Math word problems, 8 Logical, 2 Calculation)
+        const rawQuizData = [
+            // Math Word Problems
+            { q: "Kelajak markazida 45 ta o'quvchi 5 ta guruhga teng bo'lindi. Har bir guruhda nechtadan o'quvchi bor?", options: ["9 ta", "8 ta", "10 ta"], ans: "9 ta" },
+            { q: "Akmaljon ustoz doskada masalani 'bar model' chizmasi yordamida tushuntirdi. Uzunligi 40 ga teng to'rtburchak 4 ta teng qismga bo'lingan bo'lsa, bitta qism nechaga teng?", options: ["10", "8", "12"], ans: "10" },
+            { q: "Sinfga har birida 12 tadan daftar bo'lgan 3 ta quti olib kelindi. Jami nechta daftar bor?", options: ["36 ta", "30 ta", "40 ta"], ans: "36 ta" },
+            { q: "Kitob do'konida 120 ta kitob bor edi. Tushgacha 40 ta kitob sotildi. Nechta kitob qoldi?", options: ["80 ta", "70 ta", "90 ta"], ans: "80 ta" },
+            { q: "Bitta qalam 2000 so'm turadi. 4 ta qalam qancha bo'ladi?", options: ["8000 so'm", "6000 so'm", "10000 so'm"], ans: "8000 so'm" },
+            { q: "Avtomobil 3 kunda 150 km yo'l yurdi. Har kuni bir xil yurgan bo'lsa, bir kunda necha km yo'l yurgan?", options: ["50 km", "40 km", "60 km"], ans: "50 km" },
+            { q: "6 ta yashikda 10 kg dan olma bor. Jami necha kg olma bor?", options: ["60 kg", "50 kg", "70 kg"], ans: "60 kg" },
+            { q: "48 ta qalamni 6 ta qutiga teng joylashtirildi. Bitta qutida nechta qalam bor?", options: ["8 ta", "7 ta", "9 ta"], ans: "8 ta" },
+            { q: "Avtobusda 35 yo'lovchi bor edi. 12 kishi tushdi, 8 kishi chiqdi. Hozir avtobusda nechta yo'lovchi bor?", options: ["31 ta", "30 ta", "35 ta"], ans: "31 ta" },
+            { q: "Kitobning birinchi qismi 85 bet, ikkinchi qismi undan 15 betga ko'p. Ikkinchi qism necha bet?", options: ["100 bet", "90 bet", "110 bet"], ans: "100 bet" },
+            
+            // Logical Problems
+            { q: "Tovuq bir oyog'ida 2 kg tosh bossa, ikki oyog'ida turganda qancha tosh bosadi?", options: ["2 kg", "4 kg", "1 kg"], ans: "2 kg" },
+            { q: "Uchta aka-ukaning bittadan singlisi bor. Oila jami nechta farzanddan iborat?", options: ["4 ta", "6 ta", "3 ta"], ans: "4 ta" },
+            { q: "Daraxtda 5 ta qarg'a bor edi. Ovchi bittasini urib tushirdi. Daraxtda nechta qarg'a qoldi?", options: ["0 ta", "4 ta", "5 ta"], ans: "0 ta" },
+            { q: "Beshta tuxum 5 daqiqada qaynaydi. Bitta tuxum necha daqiqada qaynaydi?", options: ["5 daqiqada", "1 daqiqada", "25 daqiqada"], ans: "5 daqiqada" },
+            { q: "Stol ustida 4 ta olma bor. Bittasini olsangiz, sizda nechta olma bo'ladi?", options: ["1 ta", "3 ta", "4 ta"], ans: "1 ta" },
+            { q: "Qaysi oyda 28 kun bor?", options: ["Hamma oyda", "Fevral oyida", "Yanvarda"], ans: "Hamma oyda" },
+            { q: "Soat 8:00. O'quvchi maktabga 20 daqiqada yetib boradi. Maktabda qachon bo'ladi?", options: ["8:20", "8:40", "9:00"], ans: "8:20" },
+            { q: "Arqonni 3 marta kessak, u nechta bo'lakka bo'linadi?", options: ["4 ta", "3 ta", "5 ta"], ans: "4 ta" },
+            
+            // Calculation Problems
+            { q: "450 + 230 = ?", options: ["680", "670", "780"], ans: "680" },
+            { q: "800 - 320 = ?", options: ["480", "520", "460"], ans: "480" }
         ];
 
-        let quizData = [];
-        let currentIndex = 0;
-        let userAnswers = [];
-        let questionScores = [];
-        let questionTimes = []; // Har bir savolning vaqti saqlanadi
-        let totalScore = 0;
         let userName = "";
-
-        // Taymer o'zgaruvchilari
+        let currentQuestion = 0;
+        let score = 0;
+        let timeLeft = 60;
         let timerInterval;
-        let timeLeft = 90;
-        let autoNextTimeout;
+        let isWaiting = false; 
+        let activeQuestions = [];
 
-        // DOM Elements
-        const screenStart = document.getElementById('screen-start');
-        const screenQuiz = document.getElementById('screen-quiz');
-        const screenResult = document.getElementById('screen-result');
-        const formStart = document.getElementById('form-start');
-        const inputName = document.getElementById('input-name');
-        const nameError = document.getElementById('name-error');
-        const userDisplay = document.getElementById('user-display');
-        const watermark = document.getElementById('watermark');
-        const currentScoreDisplay = document.getElementById('current-score');
-        const mainTitle = document.getElementById('main-title');
+        const elStartScreen = document.getElementById('screen-start');
+        const elQuizScreen = document.getElementById('screen-quiz');
+        const elEndScreen = document.getElementById('screen-end');
         
-        const elQuestionText = document.getElementById('question-text');
-        const elOptionsContainer = document.getElementById('options-container');
-        const elProgress = document.getElementById('progress-indicator');
-        const elTimeLeft = document.getElementById('time-left');
-        const btnPrev = document.getElementById('btn-prev');
-        const btnNext = document.getElementById('btn-next');
-        const btnFinish = document.getElementById('btn-finish');
-        const elFeedback = document.getElementById('feedback-container');
-
-        // Tasodifiy aralashtirish funksiyasi
-        function shuffleArray(array) {
-            let newArray = JSON.parse(JSON.stringify(array)); 
-            for (let i = newArray.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+        let audioCtx;
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             }
-            return newArray;
+            if (audioCtx.state === 'suspended') audioCtx.resume();
         }
 
-        // Savollar va variantlarni birgalikda aralashtirib tayyorlash
-        function prepareQuizData(data) {
-            let shuffledQuestions = shuffleArray(data);
-            shuffledQuestions.forEach(q => {
-                let correctText = q.options[q.correctIndex]; // Asl to'g'ri javob matnini saqlab olamiz
-                q.options = shuffleArray(q.options); // Variantlarni aralashtiramiz
-                q.correctIndex = q.options.indexOf(correctText); // Yangi to'g'ri indeksni topamiz
-            });
-            return shuffledQuestions;
-        }
-
-        function initApp() {
-            // Harf kiritilayotganda raqam va belgilarni avtomatik tozalash
-            inputName.addEventListener('input', function() {
-                this.value = this.value.replace(/[^a-zA-Zа-яА-ЯўЎқҚғҒҳҲ'’\s\-]/g, '');
-                if (this.value.trim().length >= 3) {
-                    nameError.classList.add('hidden');
-                    inputName.classList.remove('border-red-500');
-                }
-            });
-
-            formStart.addEventListener('submit', (e) => {
-                e.preventDefault();
-                userName = inputName.value.trim();
-                
-                // Uzunlikni va faqat harflarni tekshirish
-                if (userName.length < 3 || userName.length > 15) {
-                    nameError.classList.remove('hidden');
-                    inputName.classList.add('border-red-500');
-                    return;
-                }
-
-                if (userName) {
-                    startQuiz();
-                }
-            });
-
-            btnPrev.addEventListener('click', () => {
-                if (currentIndex > 0) {
-                    currentIndex--;
-                    renderQuestion();
-                }
-            });
-
-            btnNext.addEventListener('click', () => {
-                if (currentIndex < quizData.length - 1) {
-                    currentIndex++;
-                    renderQuestion();
-                }
-            });
-
-            btnFinish.addEventListener('click', showResult);
-            document.getElementById('btn-restart').addEventListener('click', restartQuiz);
-        }
-
-        function startQuiz() {
-            screenStart.classList.add('hidden');
-            screenQuiz.classList.remove('hidden');
+        function playSound(type) {
+            if (!audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
             
-            // Sarlavhani bir qatorli yozuvga o'zgartirish
-            mainTitle.innerHTML = 'Matematika 3-sinf testi (2-qism)';
-
-            userDisplay.textContent = `Ishtirokchi: ${userName}`;
-            userDisplay.classList.remove('hidden');
-            watermark.classList.remove('hidden');
-
-            quizData = prepareQuizData(originalQuizData);
-            userAnswers = new Array(quizData.length).fill(null);
-            questionScores = new Array(quizData.length).fill(0);
-            questionTimes = new Array(quizData.length).fill(90); // Har biri uchun 90 soniya
+            const now = audioCtx.currentTime;
             
-            totalScore = 0;
-            currentScoreDisplay.textContent = '0';
-            currentIndex = 0;
-
-            renderQuestion();
-            window.scrollTo(0, 0);
+            if (type === 'correct') {
+                // Pleasant chime
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523.25, now); // C5
+                osc.frequency.setValueAtTime(659.25, now + 0.1); // E5
+                osc.frequency.setValueAtTime(783.99, now + 0.2); // G5
+                osc.frequency.setValueAtTime(1046.50, now + 0.3); // C6
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+                osc.start(now);
+                osc.stop(now + 0.5);
+            } else {
+                // Buzz
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(150, now);
+                osc.frequency.exponentialRampToValueAtTime(80, now + 0.4);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+                osc.start(now);
+                osc.stop(now + 0.4);
+            }
         }
 
-        function startTimer() {
+        function shuffle(array) {
+            return array.sort(() => Math.random() - 0.5);
+        }
+
+        document.getElementById('btn-start').addEventListener('click', () => {
+            const input = document.getElementById('input-name');
+            const val = input.value.trim();
+            if (val.length < 3) {
+                document.getElementById('error-msg').classList.remove('hidden');
+                input.classList.add('border-red-500');
+                input.focus();
+                return;
+            }
+            document.getElementById('error-msg').classList.add('hidden');
+            input.classList.remove('border-red-500');
+            userName = val;
+            initAudio();
+            startGame();
+        });
+
+        function startGame() {
+            elStartScreen.classList.add('hidden');
+            elEndScreen.classList.add('hidden');
+            elQuizScreen.classList.remove('hidden');
+            
+            score = 0;
+            currentQuestion = 0;
+            document.getElementById('score').innerText = score;
+            
+            // Shuffle questions and options dynamically
+            activeQuestions = shuffle([...rawQuizData]).map(q => {
+                return {
+                    q: q.q,
+                    options: shuffle([...q.options]),
+                    ansText: q.ans
+                };
+            });
+
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            isWaiting = false;
+            document.getElementById('feedback-overlay').classList.add('hidden');
+            
+            const q = activeQuestions[currentQuestion];
+            document.getElementById('question-text').innerText = q.q;
+            document.getElementById('progress').innerText = `${currentQuestion + 1}/${activeQuestions.length}`;
+            
+            const optionsGrid = document.getElementById('options-grid');
+            optionsGrid.innerHTML = '';
+            
+            q.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'btn-bounce w-full bg-white text-slate-700 font-bold text-xl md:text-2xl py-6 px-6 rounded-2xl shadow-sm border-4 border-slate-200 hover:border-blue-400 hover:bg-blue-50 transition-colors text-center';
+                btn.innerText = opt;
+                btn.onclick = () => handleAnswer(opt, btn);
+                optionsGrid.appendChild(btn);
+            });
+
+            timeLeft = 60;
+            document.getElementById('timer').innerText = timeLeft;
             clearInterval(timerInterval);
-            timeLeft = questionTimes[currentIndex]; // Qolgan vaqtdan davom etadi
-            elTimeLeft.textContent = timeLeft;
-            
             timerInterval = setInterval(() => {
                 timeLeft--;
-                questionTimes[currentIndex] = timeLeft; // Vaqtni xotiraga yozib boramiz
-                elTimeLeft.textContent = timeLeft;
-                
+                document.getElementById('timer').innerText = timeLeft;
                 if (timeLeft <= 0) {
                     clearInterval(timerInterval);
-                    handleAnswer(-1); // -1 vaqt tugaganini bildiradi
+                    handleAnswer(null, null); // Timeout
                 }
             }, 1000);
         }
 
-        function renderQuestion() {
-            const data = quizData[currentIndex];
-            elQuestionText.textContent = `${currentIndex + 1}. ${data.question}`;
-            elProgress.textContent = `${currentIndex + 1} / ${quizData.length}`;
-            
-            clearTimeout(autoNextTimeout);
+        function handleAnswer(selectedOpt, btnElement) {
+            if (isWaiting) return;
+            isWaiting = true;
+            clearInterval(timerInterval);
 
-            // Agar savolga hali javob berilmagan bo'lsa, taymerni ishga tushiramiz
-            if (userAnswers[currentIndex] === null) {
-                startTimer();
-            } else {
-                clearInterval(timerInterval);
-                elTimeLeft.textContent = "--";
-            }
-            
-            elOptionsContainer.innerHTML = '';
-            elFeedback.className = 'mt-6 p-4 rounded-xl hidden text-center font-medium text-base md:text-lg w-full';
-            elFeedback.innerHTML = '';
+            const q = activeQuestions[currentQuestion];
+            const isCorrect = selectedOpt === q.ansText;
 
-            data.options.forEach((optionText, index) => {
-                const btn = document.createElement('button');
-                btn.className = 'w-full text-left p-4 rounded-xl border-2 border-slate-200 bg-white hover:border-blue-400 hover:bg-blue-50 transition-all font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 break-words';
-                
-                const letter = String.fromCharCode(65 + index); 
-                
-                let iconContent = `<span class="flex-shrink-0 inline-block w-8 h-8 text-center leading-8 bg-slate-100 text-slate-500 rounded-lg mr-3 font-bold">${letter}</span>`;
-                let btnClasses = '';
-
-                if (userAnswers[currentIndex] !== null) {
-                    btn.disabled = true;
-                    btn.classList.remove('hover:border-blue-400', 'hover:bg-blue-50', 'cursor-pointer');
-                    
-                    if (index === data.correctIndex) {
-                        btnClasses = 'border-green-500 bg-green-50 text-green-800';
-                        iconContent = `<span class="flex-shrink-0 inline-block w-8 h-8 text-center leading-8 bg-green-200 text-green-800 rounded-lg mr-3 font-bold">&#10003;</span>`;
-                    } else if (index === userAnswers[currentIndex]) {
-                        btnClasses = 'border-red-500 bg-red-50 text-red-800';
-                        iconContent = `<span class="flex-shrink-0 inline-block w-8 h-8 text-center leading-8 bg-red-200 text-red-800 rounded-lg mr-3 font-bold">&#10007;</span>`;
-                    } else {
-                        btnClasses = 'opacity-50';
-                    }
+            // Highlight chosen answer and disable buttons
+            const buttons = document.getElementById('options-grid').children;
+            for (let b of buttons) {
+                b.disabled = true; 
+                b.classList.remove('hover:border-blue-400', 'hover:bg-blue-50');
+                if (b.innerText === q.ansText) {
+                    b.classList.add('border-green-500', 'bg-green-100', 'text-green-800');
+                } else if (b === btnElement) {
+                    b.classList.add('border-red-500', 'bg-red-100', 'text-red-800');
                 } else {
-                    btn.addEventListener('click', () => handleAnswer(index));
+                    b.classList.add('opacity-40'); 
                 }
+            }
 
-                if(btnClasses) {
-                    const classArray = btnClasses.split(' ');
-                    classArray.forEach(cls => btn.classList.add(cls));
-                }
+            if (isCorrect) {
+                playSound('correct');
+                score++;
+                document.getElementById('score').innerText = score;
+                showFeedback(true);
+            } else {
+                playSound('wrong');
+                showFeedback(false);
+            }
 
-                btn.innerHTML = `
-                    <div class="flex items-center w-full">
-                        ${iconContent}
-                        <span class="flex-1">${optionText}</span>
-                    </div>
-                `;
-
-                elOptionsContainer.appendChild(btn);
+            // Start 3-second progress bar animation
+            const bar = document.getElementById('progress-bar-3s');
+            bar.style.transition = "none";
+            bar.style.width = "0%";
+            
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    bar.style.transition = "width 3s linear";
+                    bar.style.width = "100%";
+                });
             });
 
-            if (userAnswers[currentIndex] !== null) {
-                const isCorrect = userAnswers[currentIndex] === data.correctIndex;
-                showFeedback(isCorrect, userAnswers[currentIndex]);
-            }
-
-            updateControls();
-        }
-
-        function handleAnswer(selectedIndex) {
-            clearInterval(timerInterval); // Javob belgilangach taymer to'xtaydi
-            const data = quizData[currentIndex];
-            const isCorrect = selectedIndex === data.correctIndex;
-
-            // Agar savolga birinchi marta javob berilayotgan bo'lsa
-            if (userAnswers[currentIndex] === null) {
-                userAnswers[currentIndex] = selectedIndex;
-                
-                if (selectedIndex === -1) {
-                    // Vaqt tugaganda 0 ball
-                    questionScores[currentIndex] = 0;
-                } else if (isCorrect) {
-                    // Vaqtga qarab 1 dan 5 gacha yulduzcha hisoblash (90 soniyaga asoslangan)
-                    let points = Math.ceil((timeLeft / 90) * 5);
-                    if (points < 1) points = 1;
-                    if (points > 5) points = 5;
-                    questionScores[currentIndex] = points;
-                    totalScore += points;
-                    currentScoreDisplay.textContent = totalScore;
-                } else {
-                    questionScores[currentIndex] = 0;
-                }
-            }
-            
-            renderQuestion(); 
-
-            // Agar to'g'ri topsa avtomatik o'tkazish
-            if (isCorrect && selectedIndex !== -1) {
-                autoNextTimeout = setTimeout(() => {
-                    if (currentIndex < quizData.length - 1) {
-                        currentIndex++;
-                        renderQuestion();
-                    } else {
-                        showResult();
-                    }
-                }, 1500); // 1.5 soniya kutadi
-            }
-        }
-
-        function showFeedback(isCorrect, selectedIndex) {
-            elFeedback.classList.remove('hidden', 'bg-green-100', 'text-green-800', 'bg-red-100', 'text-red-800', 'bg-orange-100', 'text-orange-800');
-            
-            if (selectedIndex === -1) {
-                elFeedback.classList.add('bg-orange-100', 'text-orange-800');
-                elFeedback.innerHTML = '⏱ Vaqt tugadi! Keyingi savolga o\'ting.';
-            } else if (isCorrect) {
-                elFeedback.classList.add('bg-green-100', 'text-green-800');
-                let earnedPoints = questionScores[currentIndex];
-                elFeedback.innerHTML = `&#10004; Barakalla! To'g'ri javobni topdingiz. (+${earnedPoints} ⭐)`;
-            } else {
-                elFeedback.classList.add('bg-red-100', 'text-red-800');
-                elFeedback.innerHTML = '&#10008; Afsuski, noto\'g\'ri. O\'zingiz keyingisiga o\'tkazing.';
-            }
-        }
-
-        function updateControls() {
-            btnPrev.disabled = currentIndex === 0;
-            
-            if (currentIndex === quizData.length - 1) {
-                btnNext.classList.add('hidden');
-                btnFinish.classList.remove('hidden');
-                
-                btnFinish.disabled = userAnswers[currentIndex] === null;
-            } else {
-                btnNext.classList.remove('hidden');
-                btnFinish.classList.add('hidden');
-                btnNext.disabled = userAnswers[currentIndex] === null;
-            }
-        }
-
-        function showResult() {
-            let correctCount = 0;
-            userAnswers.forEach((ans, idx) => {
-                if (ans === quizData[idx].correctIndex) {
-                    correctCount++;
-                }
-            });
-
-            const percentage = Math.round((correctCount / quizData.length) * 100);
-
-            screenQuiz.classList.add('hidden');
-            screenResult.classList.remove('hidden');
-            
-            document.getElementById('result-name').textContent = userName;
-            document.getElementById('result-stars').textContent = `${totalScore} ⭐`;
-            document.getElementById('result-score').textContent = `${correctCount} / ${quizData.length}`;
-            document.getElementById('result-percent').textContent = `${percentage}%`;
-            
+            // Wait exactly 3000ms
             setTimeout(() => {
-                document.getElementById('result-bar').style.width = `${percentage}%`;
-            }, 100);
+                currentQuestion++;
+                if (currentQuestion < activeQuestions.length) {
+                    loadQuestion();
+                } else {
+                    endGame();
+                }
+            }, 3000); 
+        }
 
-            const resultTitle = document.getElementById('result-title');
-            const resultEmoji = document.getElementById('result-emoji');
+        function showFeedback(isCorrect) {
+            const overlay = document.getElementById('feedback-overlay');
+            const icon = document.getElementById('feedback-icon');
+            const text = document.getElementById('feedback-text');
             
-            if (percentage >= 80) {
-                resultEmoji.textContent = '🌟';
-                resultTitle.textContent = "A'lo Natija!";
-                resultTitle.className = "text-3xl font-bold text-green-600 mb-2";
-                document.getElementById('result-score').classList.replace('text-blue-600', 'text-green-600');
-                document.getElementById('result-bar').classList.replace('bg-blue-600', 'bg-green-600');
-            } else if (percentage >= 60) {
-                resultEmoji.textContent = '👍';
-                resultTitle.textContent = "Yaxshi Natija!";
+            overlay.classList.remove('hidden');
+            if (isCorrect) {
+                icon.innerText = '🌟';
+                text.innerText = "Barakalla! To'g'ri!";
+                text.className = "text-3xl md:text-4xl font-bold text-green-600 mb-6 drop-shadow-sm";
             } else {
-                resultEmoji.textContent = '📚';
-                resultTitle.textContent = "Ko'proq o'qish kerak";
-                resultTitle.className = "text-3xl font-bold text-orange-500 mb-2";
-                document.getElementById('result-score').classList.replace('text-blue-600', 'text-orange-500');
-                document.getElementById('result-bar').classList.replace('bg-blue-600', 'bg-orange-500');
+                icon.innerText = '❌';
+                text.innerText = "Afsuski, noto'g'ri!";
+                text.className = "text-3xl md:text-4xl font-bold text-red-500 mb-6 drop-shadow-sm";
+            }
+        }
+
+        function endGame() {
+            elQuizScreen.classList.add('hidden');
+            elEndScreen.classList.remove('hidden');
+            
+            document.getElementById('end-name').innerText = userName + ",";
+            document.getElementById('final-score').innerText = `${score}/20`;
+            
+            const emoji = document.getElementById('end-emoji');
+            const title = document.getElementById('end-title');
+            const certContainer = document.getElementById('cert-container');
+            
+            if (score === 20) {
+                emoji.innerText = '🏆';
+                title.innerText = "Ajoyib! Mutlaq G'alaba!";
+                title.classList.add('text-green-600');
+                certContainer.classList.remove('hidden');
+                
+                // Draw certificate after fonts load
+                document.fonts.ready.then(() => {
+                    drawCertificate(userName);
+                });
+            } else {
+                emoji.innerText = score >= 15 ? '👍' : '📚';
+                title.innerText = score >= 15 ? "Yaxshi Natija!" : "Ko'proq o'qish kerak";
+                title.className = score >= 15 ? "text-3xl md:text-5xl font-bold text-blue-600 mb-2 drop-shadow-sm" : "text-3xl md:text-5xl font-bold text-orange-500 mb-2 drop-shadow-sm";
+                certContainer.classList.add('hidden');
             }
             
             window.scrollTo(0, 0);
         }
 
-        function restartQuiz() {
-            screenResult.classList.add('hidden');
-            screenStart.classList.remove('hidden');
-            
-            // Sarlavhani yana asl holatiga qaytarish
-            mainTitle.innerHTML = 'Matematika 3-sinf testi (2-qism)';
-            
-            userDisplay.classList.add('hidden');
-            watermark.classList.add('hidden');
-            inputName.value = '';
-            
-            document.getElementById('result-bar').style.width = '0%';
-            document.getElementById('result-score').className = "text-3xl font-bold text-blue-600 mb-3";
-            document.getElementById('result-bar').className = "bg-blue-600 h-3 rounded-full transition-all duration-1000";
-            document.getElementById('result-title').className = "text-3xl font-bold text-slate-800 mb-2";
+        function drawCertificate(name) {
+            const canvas = document.getElementById('cert-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = 1200;
+            canvas.height = 850;
 
-            window.scrollTo(0, 0);
+            // Background
+            ctx.fillStyle = '#FFFAF0'; 
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Borders
+            const gold = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+            gold.addColorStop(0, '#BF953F');
+            gold.addColorStop(0.5, '#FCF6BA');
+            gold.addColorStop(1, '#B38728');
+
+            ctx.lineWidth = 25;
+            ctx.strokeStyle = gold;
+            ctx.strokeRect(35, 35, canvas.width - 70, canvas.height - 70);
+
+            ctx.lineWidth = 4;
+            ctx.strokeStyle = '#D4AF37';
+            ctx.strokeRect(75, 75, canvas.width - 150, canvas.height - 150);
+
+            // Corner decorations
+            const drawCorner = (x, y) => {
+                ctx.fillStyle = gold;
+                ctx.beginPath();
+                ctx.arc(x, y, 20, 0, Math.PI*2);
+                ctx.fill();
+            };
+            drawCorner(75, 75);
+            drawCorner(canvas.width-75, 75);
+            drawCorner(75, canvas.height-75);
+            drawCorner(canvas.width-75, canvas.height-75);
+
+            // Top Ribbon
+            ctx.fillStyle = '#E53E3E'; 
+            ctx.beginPath();
+            ctx.moveTo(canvas.width/2 - 60, 75);
+            ctx.lineTo(canvas.width/2 + 60, 75);
+            ctx.lineTo(canvas.width/2 + 60, 220);
+            ctx.lineTo(canvas.width/2, 170);
+            ctx.lineTo(canvas.width/2 - 60, 220);
+            ctx.fill();
+
+            // Ribbon Seal
+            ctx.beginPath();
+            ctx.arc(canvas.width/2, 120, 50, 0, Math.PI * 2);
+            ctx.fillStyle = gold;
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(canvas.width/2, 120, 40, 0, Math.PI * 2);
+            ctx.fillStyle = '#E53E3E';
+            ctx.fill();
+            
+            ctx.fillStyle = 'white';
+            ctx.font = '35px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('⭐', canvas.width/2, 123);
+
+            // Texts
+            ctx.textBaseline = 'alphabetic';
+            ctx.textAlign = 'center';
+            
+            ctx.font = 'bold 85px "Fredoka", sans-serif';
+            ctx.fillStyle = '#1A365D';
+            ctx.fillText('SERTIFIKAT', canvas.width/2, 340);
+
+            ctx.font = '35px "Fredoka", sans-serif';
+            ctx.fillStyle = '#4A5568';
+            ctx.fillText('Ushbu sertifikat topshiriladi:', canvas.width/2, 430);
+
+            ctx.font = 'bold 95px "Fredoka", sans-serif';
+            ctx.fillStyle = '#E53E3E';
+            ctx.fillText(name.toUpperCase(), canvas.width/2, 540);
+
+            ctx.font = '35px "Fredoka", sans-serif';
+            ctx.fillStyle = '#2D3748';
+            ctx.fillText('MATEMATIKA 3-SINF TESTLARI', canvas.width/2, 640);
+            
+            ctx.font = 'bold 40px "Fredoka", sans-serif';
+            ctx.fillStyle = '#059669'; // Emerald-600
+            ctx.fillText('100% Natija', canvas.width/2, 690);
+
+            // Signatures and Date
+            const dateStr = new Date().toLocaleDateString('uz-UZ');
+            ctx.font = '28px "Fredoka", sans-serif';
+            ctx.fillStyle = '#4A5568';
+            
+            ctx.fillText(`Sana: ${dateStr}`, 270, 780);
+            ctx.fillText(`Test tuzuvchi: Akmaljon Jo'raqo'ziyev (Kelajak markazi)`, canvas.width - 380, 780);
+
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = '#A0AEC0';
+            ctx.beginPath();
+            ctx.moveTo(170, 790);
+            ctx.lineTo(370, 790);
+            ctx.moveTo(canvas.width - 730, 790);
+            ctx.lineTo(canvas.width - 30, 790);
+            ctx.stroke();
         }
 
-        document.addEventListener('DOMContentLoaded', initApp);
+        document.getElementById('btn-download-cert').addEventListener('click', () => {
+            const canvas = document.getElementById('cert-canvas');
+            const link = document.createElement('a');
+            link.download = `Sertifikat_${userName}_3_sinf.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        });
+
+        document.getElementById('btn-restart').addEventListener('click', () => {
+            elEndScreen.classList.add('hidden');
+            elStartScreen.classList.remove('hidden');
+            const nameInput = document.getElementById('input-name');
+            nameInput.value = '';
+            document.getElementById('error-msg').classList.add('hidden');
+            window.scrollTo(0, 0);
+        });
 
     </script>
 </body>
