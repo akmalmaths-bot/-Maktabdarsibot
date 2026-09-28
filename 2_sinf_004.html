@@ -3,613 +3,546 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Matematika 2-sinf testi (4-qism)</title>
+    <title>MATEMATIKA 2-SINF TESTLARI</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.5);
+            --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f8fafc;
-            color: #1e293b;
+            font-family: 'Quicksand', sans-serif;
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100dvh;
+            overflow: hidden;
+            background: linear-gradient(-45deg, #ff9a9e, #fecfef, #a1c4fd, #c2e9fb);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            display: flex;
+            flex-direction: column;
         }
-        /* Kichik ekranlar uchun tugma bosilish effekti */
-        button {
-            touch-action: manipulation;
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
-        /* JSBin "Edit in JS Bin" tugmasini yashirish */
-        #edit-with-js-bin {
-            display: none !important;
+
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 2px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+            border-radius: 24px;
         }
+
+        .screen {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 10;
+        }
+
+        .hidden-screen {
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(0.95);
+            z-index: -1;
+        }
+
+        .btn-bounce {
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        .btn-bounce:active:not(:disabled) {
+            transform: scale(0.92);
+        }
+
+        .bouncy-title {
+            animation: bounceIn 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0); opacity: 0; }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-8px) rotate(3deg); }
+        }
+
+        .floating-icon {
+            animation: float 4s ease-in-out infinite;
+        }
+
+        #cert-canvas {
+            width: 100%;
+            max-width: 500px;
+            max-height: 25vh;
+            object-fit: contain;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            border: 4px solid white;
+        }
+
+        .progress-wait {
+            height: 6px;
+            background: #cbd5e1;
+            border-radius: 6px;
+            overflow: hidden;
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        .progress-wait-fill {
+            height: 100%;
+            background: #3b82f6;
+            width: 0%;
+        }
+
+        /* Persistent Floating Button */
+        .persistent-bot {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 999;
+            background: #0088cc;
+            color: white;
+            padding: 10px 16px;
+            border-radius: 50px;
+            font-weight: 800;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.4);
+            border: 2px solid rgba(255,255,255,0.4);
+            text-decoration: none;
+            transition: transform 0.2s;
+        }
+        .persistent-bot:active { transform: scale(0.9); }
+        .persistent-bot svg { width: 18px; height: 18px; fill: currentColor; }
+
     </style>
 </head>
-<body class="antialiased min-h-screen flex flex-col overflow-x-hidden">
+<body>
 
-    <!-- Header -->
-    <header class="bg-blue-600 text-white py-4 md:py-5 px-3 sm:px-4 shadow-md">
-        <div class="max-w-3xl mx-auto flex items-center justify-between gap-2">
-            <div class="flex items-center gap-2 sm:gap-3 flex-1">
-                <div id="header-icon" class="text-2xl sm:text-3xl">📚</div>
-                <!-- Sarlavha ID orqali boshqariladi -->
-                <h1 id="main-title" class="text-base sm:text-xl md:text-2xl font-bold leading-tight">
-                    Matematika 2-sinf testi (4-qism)
-                </h1>
-            </div>
-            <div class="flex flex-col items-end shrink-0">
-                <!-- Ism to'liq va kattaroq sig'ishi uchun -->
-                <div id="user-display" class="hidden text-sm sm:text-base font-medium bg-blue-700 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl shadow-inner max-w-[160px] sm:max-w-[300px] break-words text-right leading-tight">
-                    <!-- Ism shu yerda chiqadi -->
-                </div>
+    <a href="https://t.me/Maktabdarsibot" target="_blank" class="persistent-bot floating-icon">
+        <svg viewBox="0 0 24 24">
+            <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.295-.6.295-.002 0-.003 0-.005 0l.213-3.054 5.56-5.022c.24-.213-.054-.334-.373-.121l-6.869 4.326-2.96-.924c-.64-.203-.658-.64.135-.954l11.566-4.458c.538-.196 1.006.128.832.94z"/>
+        </svg>
+        @Maktabdarsibot
+    </a>
+
+    <div id="screen-start" class="screen">
+        <div class="flex-1 flex flex-col items-center justify-center w-full max-w-md">
+            <div class="text-6xl mb-4 floating-icon">🎮</div>
+            <h1 class="text-3xl sm:text-4xl font-extrabold text-center text-indigo-900 mb-8 bouncy-title" style="line-height: 1.2;">
+                MATEMATIKA <br> <span class="text-pink-600">2-SINF TESTLARI</span>
+            </h1>
+            
+            <div class="glass-panel w-full p-6 flex flex-col gap-4">
+                <input type="text" id="input-name" placeholder="Ismingizni yozing..." minlength="2" 
+                       class="w-full px-4 py-3 text-lg font-bold text-center bg-white/80 border-2 border-indigo-200 rounded-xl focus:outline-none focus:border-pink-400 focus:ring-4 focus:ring-pink-100 transition-all text-indigo-900 placeholder-indigo-300">
+                <p id="error-msg" class="text-pink-600 font-bold hidden text-sm text-center">Iltimos, ismingizni kiriting!</p>
+                <button id="btn-start" class="btn-bounce w-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-extrabold text-xl py-3 rounded-xl shadow-lg border border-indigo-400">
+                    BOSHLASH 🚀
+                </button>
             </div>
         </div>
-    </header>
 
-    <main class="flex-grow max-w-3xl mx-auto w-full p-4 md:p-6 lg:py-10 flex flex-col justify-center">
-        
-        <!-- Boshlash Oynasi (Ism so'rash) -->
-        <div id="screen-start" class="bg-white p-6 md:p-10 rounded-2xl shadow-sm border border-slate-200 text-center">
-            <h2 class="text-2xl md:text-3xl font-bold text-slate-800 mb-4">Matematika testiga xush kelibsiz!</h2>
-            <p class="text-slate-600 mb-8 leading-relaxed text-lg">
-                20 ta savol. Har biriga <b>90 soniya</b>. Tez va to'g'ri javob berib, ⭐ yig'ing! Boshlash uchun ismingizni kiriting.
+        <div class="w-full text-center pb-2 pt-4 shrink-0">
+            <p class="text-xs sm:text-sm font-bold text-indigo-900/70 bg-white/40 inline-block px-4 py-2 rounded-full">
+                Test tuzuvchi: Akmaljon Jo'raqo'ziyev telegram: @Akmalmaths va @Maktabdarsibot
             </p>
-            <form id="form-start" class="max-w-sm mx-auto space-y-5">
-                <div>
-                    <input type="text" id="input-name" required minlength="3" maxlength="15" placeholder="Ismingizni yozing..." 
-                           class="w-full px-5 py-4 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-lg transition-all">
-                    <!-- Xatolik xabari -->
-                    <p id="name-error" class="hidden text-red-500 text-sm mt-2 text-left font-medium">Iltimos, faqat harf kiriting (3 dan 15 tagacha).</p>
-                </div>
-                <button type="submit" class="w-full bg-blue-600 text-white font-bold text-lg py-4 rounded-xl hover:bg-blue-700 active:scale-95 transition-all shadow-md">
-                    Testni Boshlash
-                </button>
-            </form>
-
-            <div class="mt-10 pt-6 border-t border-slate-100 text-sm md:text-base text-slate-500">
-                <p><strong>Test tuzuvchi:</strong> Akmaljon Jo'raqo'ziyev</p>
-                <p><strong>Telegram:</strong> <a href="https://t.me/akmalmaths" class="text-blue-600 hover:underline" target="_blank">@akmalmaths</a></p>
-            </div>
         </div>
+    </div>
 
-        <!-- Savollar Oynasi -->
-        <div id="screen-quiz" class="hidden bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col w-full overflow-hidden">
-            <div class="bg-slate-50 border-b border-slate-200 p-4 flex justify-between items-center flex-wrap gap-3">
-                <h3 class="text-base md:text-lg font-semibold text-slate-800">Savollar</h3>
-                <div class="flex gap-2 md:gap-3 flex-wrap">
-                    <span id="score-indicator" class="px-3 md:px-4 py-1.5 bg-yellow-100 text-yellow-800 rounded-full text-xs md:text-sm font-bold flex items-center gap-1 shadow-sm border border-yellow-200">
-                        ⭐ <span id="current-score">0</span>
-                    </span>
-                    <span id="timer-indicator" class="px-3 md:px-4 py-1.5 bg-orange-100 text-orange-800 rounded-full text-xs md:text-sm font-bold flex items-center gap-1 shadow-sm border border-orange-200">
-                        ⏱ <span id="time-left">90</span>s
-                    </span>
-                    <span id="progress-indicator" class="px-3 md:px-4 py-1.5 bg-blue-100 text-blue-800 rounded-full text-xs md:text-sm font-bold shadow-sm border border-blue-200">
-                        1 / 20
-                    </span>
+    <div id="screen-quiz" class="screen hidden-screen">
+        <div class="glass-panel w-full max-w-md h-[95%] flex flex-col relative overflow-hidden p-2 sm:p-4 gap-2">
+            
+            <!-- Header -->
+            <div class="flex justify-between items-center bg-white/60 p-2 sm:p-3 rounded-xl shrink-0">
+                <div class="flex items-center gap-1 bg-yellow-300 text-yellow-900 px-3 py-1.5 rounded-lg text-sm font-black shadow-sm">
+                    ⭐ <span id="score">0</span>
                 </div>
+                <div class="flex items-center gap-1 bg-rose-400 text-white px-3 py-1.5 rounded-lg text-sm font-black shadow-sm">
+                    ⏰ <span id="timer">60</span>s
+                </div>
+                <div class="flex items-center gap-1 bg-indigo-500 text-white px-3 py-1.5 rounded-lg text-sm font-black shadow-sm">
+                    🎯 <span id="progress">1/20</span>
+                </div>
+            </div>
+
+            <!-- Question Area -->
+            <div class="flex-1 bg-white/50 rounded-xl flex items-center justify-center p-4 shadow-inner min-h-0 overflow-y-auto">
+                <h2 id="question-text" class="text-lg sm:text-xl font-bold text-indigo-950 text-center leading-tight">
+                    Yuklanmoqda...
+                </h2>
             </div>
             
-            <div class="p-5 md:p-8 w-full">
-                <div id="question-container" class="w-full">
-                    <h4 id="question-text" class="text-lg md:text-2xl font-medium text-slate-800 mb-6 md:mb-8 leading-relaxed break-words">
-                        Yuklanmoqda...
-                    </h4>
-                    
-                    <div id="options-container" class="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 w-full">
-                        <!-- Variantlar shu yerga tushadi -->
-                    </div>
-                </div>
-
-                <div id="feedback-container" class="mt-6 p-4 rounded-xl hidden text-center font-medium text-base md:text-lg w-full">
-                </div>
+            <!-- Options Area -->
+            <div id="options-grid" class="flex flex-col gap-3 w-full shrink-0 mt-2">
+                <!-- Options injected via JS -->
             </div>
 
-            <div class="bg-slate-50 border-t border-slate-200 p-3 sm:p-4 flex justify-between items-center mt-auto gap-2">
-                <button id="btn-prev" class="px-3 sm:px-5 py-2 sm:py-2.5 bg-slate-200 text-slate-700 rounded-xl text-xs sm:text-base font-bold hover:bg-slate-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shrink-0">
-                    &#8592; Oldingi
-                </button>
-                
-                <!-- Watermark o'rtaga, tugmalar orasiga tushirildi -->
-                <div id="watermark" class="hidden text-[11px] sm:text-sm text-slate-400 font-bold tracking-wide text-center px-1">
-                    <a href="https://t.me/maktabdarsibot" target="_blank" class="hover:text-blue-500 transition-colors">@maktabdarsibot</a>
-                </div>
-
-                <div class="shrink-0">
-                    <button id="btn-next" class="px-3 sm:px-5 py-2 sm:py-2.5 bg-blue-600 text-white rounded-xl text-xs sm:text-base font-bold hover:bg-blue-700 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
-                        Keyingi &#8594;
-                    </button>
-                    <button id="btn-finish" class="hidden px-3 sm:px-5 py-2 sm:py-2.5 bg-green-600 text-white rounded-xl text-xs sm:text-base font-bold hover:bg-green-700 transition-colors shadow-sm">
-                        Yakunlash &#10004;
-                    </button>
+            <!-- Feedback Overlay -->
+            <div id="feedback-overlay" class="absolute inset-0 bg-white/90 backdrop-blur-sm z-20 flex flex-col items-center justify-center rounded-2xl hidden p-4">
+                <div id="feedback-icon" class="text-7xl mb-4 bouncy-title">✅</div>
+                <h3 id="feedback-text" class="text-3xl font-extrabold mb-4 text-center">To'g'ri!</h3>
+                <div class="w-full max-w-[200px] progress-wait">
+                    <div id="progress-bar-3s" class="progress-wait-fill"></div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Natija Oynasi -->
-        <div id="screen-result" class="hidden bg-white p-6 md:p-10 rounded-2xl shadow-sm border border-slate-200 text-center">
-            <div id="result-emoji" class="text-7xl mb-4">🏆</div>
-            <h2 id="result-title" class="text-3xl font-bold text-slate-800 mb-2">Test Yakunlandi!</h2>
-            <p id="result-name" class="text-lg text-slate-600 mb-6 font-medium truncate"></p>
+    <div id="screen-end" class="screen hidden-screen">
+        <div class="glass-panel w-full max-w-md h-[95%] flex flex-col items-center justify-center p-4 relative overflow-y-auto">
             
-            <div class="bg-slate-50 rounded-2xl p-6 md:p-8 border border-slate-100 max-w-sm mx-auto mb-8 shadow-inner">
-                <p class="text-slate-500 mb-1 font-medium text-lg">To'plangan yulduzchalar:</p>
-                <p id="result-stars" class="text-5xl font-black text-yellow-500 mb-6 drop-shadow-sm">0 ⭐</p>
+            <div id="end-emoji" class="text-6xl mb-2 floating-icon">🎉</div>
+            <h2 id="end-title" class="text-3xl font-extrabold text-indigo-900 mb-1 text-center">Ajoyib!</h2>
+            <p id="end-name" class="text-xl text-pink-600 font-black mb-4 text-center"></p>
 
-                <p class="text-slate-500 mb-2 font-medium text-base">To'g'ri javoblar:</p>
-                <p id="result-score" class="text-3xl font-bold text-blue-600 mb-3">0 / 20</p>
-                <div class="w-full bg-slate-200 rounded-full h-3 mb-3">
-                    <div id="result-bar" class="bg-blue-600 h-3 rounded-full transition-all duration-1000" style="width: 0%"></div>
+            <!-- Score Display -->
+            <div class="bg-white/70 rounded-2xl p-4 w-full flex flex-col items-center mb-6 shadow-sm">
+                <p class="text-indigo-800 font-bold text-sm mb-1 uppercase tracking-widest">Natijangiz</p>
+                <div class="flex items-baseline gap-2">
+                    <span class="text-5xl font-black text-indigo-600" id="final-score">0/20</span>
                 </div>
-                <p id="result-percent" class="text-lg font-bold text-slate-700">0%</p>
             </div>
 
-            <button id="btn-restart" class="bg-blue-600 text-white font-bold text-lg py-4 px-8 rounded-xl hover:bg-blue-700 active:scale-95 transition-all shadow-md">
-                Qaytadan ishlash ↻
-            </button>
-        </div>
+            <!-- Certificate Container -->
+            <div id="cert-container" class="hidden w-full flex-col items-center mb-6 bouncy-title">
+                <canvas id="cert-canvas"></canvas>
+            </div>
 
-    </main>
+            <!-- Massive Telegram Button Container -->
+            <div class="w-full flex flex-col items-center mt-auto pb-4">
+                <p class="text-sm font-bold text-indigo-900 mb-3 text-center px-2">
+                    Yana shunday test ishlash uchun quyidagi botga o'ting.
+                </p>
+                <a href="https://t.me/Maktabdarsibot" target="_blank" class="btn-bounce w-full max-w-[300px] bg-[#0088cc] text-white font-black text-2xl py-4 rounded-2xl shadow-xl border-4 border-white flex items-center justify-center gap-3">
+                    <svg class="fill-current w-8 h-8" viewBox="0 0 24 24">
+                        <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.295-.6.295-.002 0-.003 0-.005 0l.213-3.054 5.56-5.022c.24-.213-.054-.334-.373-.121l-6.869 4.326-2.96-.924c-.64-.203-.658-.64.135-.954l11.566-4.458c.538-.196 1.006.128.832.94z"/>
+                    </svg>
+                    ### @Maktabdarsibot ###
+                </a>
+            </div>
+        </div>
+    </div>
 
     <script>
-        // 2-sinf savollari (4-qism)
-        const originalQuizData = [
-            {
-                question: "65 va 18 sonlarining yig'indisi nechaga teng?",
-                options: ["73", "83", "93", "82"],
-                correctIndex: 1
-            },
-            {
-                question: "90 dan 37 ni ayiring.",
-                options: ["43", "53", "63", "47"],
-                correctIndex: 1
-            },
-            {
-                question: "4 marta 6 necha bo'ladi?",
-                options: ["20", "24", "18", "30"],
-                correctIndex: 1
-            },
-            {
-                question: "35 ta olmani 5 ta bolaga teng bo'lib bersak, har biriga nechta olma tegadi?",
-                options: ["6 ta", "8 ta", "7 ta", "9 ta"],
-                correctIndex: 2
-            },
-            {
-                question: "1 soatda necha minut bor?",
-                options: ["50 minut", "100 minut", "60 minut", "30 minut"],
-                correctIndex: 2
-            },
-            {
-                question: "1 metr va 20 santimetr jami necha santimetr bo'ladi?",
-                options: ["120 sm", "102 sm", "1200 sm", "30 sm"],
-                correctIndex: 0
-            },
-            {
-                question: "Kvadratning tomoni 8 sm. Uning perimetrini toping.",
-                options: ["24 sm", "32 sm", "16 sm", "64 sm"],
-                correctIndex: 1
-            },
-            {
-                question: "O'rtog'imda 45 ta yong'oq bor edi. Menga 15 tasini berdi. Unda nechta yong'oq qoldi?",
-                options: ["25 ta", "30 ta", "35 ta", "20 ta"],
-                correctIndex: 1
-            },
-            {
-                question: "Qatorni mantiqan davom ettiring: 12, 16, 20, 24, ?",
-                options: ["26", "30", "28", "32"],
-                correctIndex: 2
-            },
-            {
-                question: "Qaysi son 4 ta o'nlik va 7 ta birlikdan iborat?",
-                options: ["74", "47", "40", "70"],
-                correctIndex: 1
-            },
-            {
-                question: "3 ta sigirning jami nechta oyog'i bor?",
-                options: ["10 ta", "8 ta", "14 ta", "12 ta"],
-                correctIndex: 3
-            },
-            {
-                question: "42 sonini hosil qilish uchun 30 ga qaysi sonni qo'shish kerak?",
-                options: ["10", "12", "14", "22"],
-                correctIndex: 1
-            },
-            {
-                question: "Eng katta ikki xonali juft son qaysi?",
-                options: ["99", "100", "98", "90"],
-                correctIndex: 2
-            },
-            {
-                question: "8 ni 4 ga ko'paytirsak natija necha chiqadi?",
-                options: ["24", "28", "36", "32"],
-                correctIndex: 3
-            },
-            {
-                question: "5 ta qutining har birida 10 tadan qalam bor. Jami qalamlar nechta?",
-                options: ["15 ta", "50 ta", "45 ta", "60 ta"],
-                correctIndex: 1
-            },
-            {
-                question: "1 kilogramm necha grammga teng?",
-                options: ["100 g", "10 g", "1000 g", "500 g"],
-                correctIndex: 2
-            },
-            {
-                question: "100 so'm puldan 45 so'miga daftar oldim. Qancha pulim qoldi?",
-                options: ["55 so'm", "65 so'm", "45 so'm", "50 so'm"],
-                correctIndex: 0
-            },
-            {
-                question: "Tenglamani yeching: X - 25 = 35.",
-                options: ["50", "65", "60", "70"],
-                correctIndex: 2
-            },
-            {
-                question: "Bir yilda necha oy bor?",
-                options: ["10", "11", "12", "14"],
-                correctIndex: 2
-            },
-            {
-                question: "27 ta daftarni 3 ta qutiga teng soldik. Bitta qutida nechta daftar bor?",
-                options: ["8 ta", "7 ta", "10 ta", "9 ta"],
-                correctIndex: 3
-            }
+        const rawQuizData = [
+            { q: "Kelajak markazida 25 ta o'quvchi bor. Yana 14 ta o'quvchi keldi. Jami nechta o'quvchi bo'ldi?", options: ["39", "40", "38"], ans: "39" },
+            { q: "Akmaljon ustozda 45 ta yulduzcha bor edi. U 20 tasini tarqatdi. Nechta yulduzcha qoldi?", options: ["25", "20", "30"], ans: "25" },
+            { q: "Singapur usuli: Lentaning bir qismi 30, ikkinchi qismi 15. Lenta jami qancha?", options: ["45", "40", "50"], ans: "45" },
+            { q: "Prezident maktabiga tayyorlanayotgan guruhda 12 qiz va 15 o'g'il bola bor. Jami o'quvchilar nechta?", options: ["27", "26", "28"], ans: "27" },
+            { q: "Do'konda 50 ta qalam bor edi. 18 tasi sotildi. Nechta qalam qoldi?", options: ["32", "42", "22"], ans: "32" },
+            { q: "Daraxtdan avval 6 ta, keyin 4 ta qush uchib ketdi. Jami nechta qush uchib ketdi?", options: ["10", "12", "14"], ans: "10" },
+            { q: "60 betli kitobning 20 beti o'qildi. Necha bet qoldi?", options: ["40", "30", "50"], ans: "40" },
+            { q: "Birinchi qutida 35 ta olma, ikkinchisida esa 10 ta ko'p. Ikkinchi qutida nechta olma bor?", options: ["45", "25", "55"], ans: "45" },
+            { q: "Mashinaga 15 litr ustiga 20 litr benzin quyildi. Jami qancha bo'ldi?", options: ["35", "40", "30"], ans: "35" },
+            { q: "4 ta xaltada 10 tadan yong'oq bor. Jami nechta yong'oq?", options: ["40", "30", "50"], ans: "40" },
+            { q: "Stolning 4 ta burchagi bor. Bir burchagi kesib tashlansa nechta burchak qoladi?", options: ["5 ta", "3 ta", "4 ta"], ans: "5 ta" },
+            { q: "Tunda yomg'ir yog'yapti. 48 soatdan keyin quyosh charaqlab chiqishi mumkinmi?", options: ["Yo'q tunda quyosh chiqmaydi", "Ha chiqadi", "Bilmayman"], ans: "Yo'q tunda quyosh chiqmaydi" },
+            { q: "1 kilogramm tosh og'irmi, yoki 1 kilogramm paxta?", options: ["Ikkalasi bir xil", "Tosh", "Paxta"], ans: "Ikkalasi bir xil" },
+            { q: "Daraxtdagi 3 ta chumchuqdan birini ovchi otdi. Daraxtda nechta chumchuq qoldi?", options: ["0 ta", "2 ta", "1 ta"], ans: "0 ta" },
+            { q: "Akamning bitta ukasi bor, lekin u menga uka emas. U kim?", options: ["O'zim", "Amakim", "Jiyanim"], ans: "O'zim" },
+            { q: "Qaysi idishga suv solib bo'lmaydi?", options: ["Teshik idishga", "Katta idishga", "Shisha idishga"], ans: "Teshik idishga" },
+            { q: "Qaysi qo'lda choyni aralashtirish qulayroq?", options: ["Qoshiq ushlagan qo'lda", "O'ng qo'lda", "Chap qo'lda"], ans: "Qoshiq ushlagan qo'lda" },
+            { q: "Qorong'i xonada sham va chiroq bor. Birinchi bo'lib nimani yoqasiz?", options: ["Gugurtni", "Shamni", "Chiroqni"], ans: "Gugurtni" },
+            { q: "78 - 43 = ?", options: ["35", "45", "25"], ans: "35" },
+            { q: "25 + 35 = ?", options: ["60", "50", "70"], ans: "60" }
         ];
 
-        let quizData = [];
-        let currentIndex = 0;
-        let userAnswers = [];
-        let questionScores = [];
-        let questionTimes = []; // Har bir savolning vaqti saqlanadi
-        let totalScore = 0;
         let userName = "";
-
-        // Taymer o'zgaruvchilari (2-sinf uchun 90 soniya)
+        let currentQuestion = 0;
+        let score = 0;
+        let timeLeft = 60;
         let timerInterval;
-        let timeLeft = 90;
-        let autoNextTimeout;
+        let isWaiting = false;
+        let activeQuestions = [];
+        let audioCtx;
 
-        // DOM Elements
-        const screenStart = document.getElementById('screen-start');
-        const screenQuiz = document.getElementById('screen-quiz');
-        const screenResult = document.getElementById('screen-result');
-        const formStart = document.getElementById('form-start');
-        const inputName = document.getElementById('input-name');
-        const nameError = document.getElementById('name-error');
-        const userDisplay = document.getElementById('user-display');
-        const watermark = document.getElementById('watermark');
-        const currentScoreDisplay = document.getElementById('current-score');
-        const mainTitle = document.getElementById('main-title');
-        const headerIcon = document.getElementById('header-icon');
-        
-        const elQuestionText = document.getElementById('question-text');
-        const elOptionsContainer = document.getElementById('options-container');
-        const elProgress = document.getElementById('progress-indicator');
-        const elTimeLeft = document.getElementById('time-left');
-        const btnPrev = document.getElementById('btn-prev');
-        const btnNext = document.getElementById('btn-next');
-        const btnFinish = document.getElementById('btn-finish');
-        const elFeedback = document.getElementById('feedback-container');
-
-        // Tasodifiy aralashtirish funksiyasi
-        function shuffleArray(array) {
-            let newArray = JSON.parse(JSON.stringify(array)); 
-            for (let i = newArray.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+        // Initialize Audio context on first user interaction
+        function initAudio() {
+            if (!audioCtx) {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                audioCtx = new AudioContext();
             }
-            return newArray;
+            if (audioCtx.state === 'suspended') audioCtx.resume();
         }
 
-        // Savollar va variantlarni birgalikda aralashtirib tayyorlash
-        function prepareQuizData(data) {
-            let shuffledQuestions = shuffleArray(data);
-            shuffledQuestions.forEach(q => {
-                let correctText = q.options[q.correctIndex]; // Asl to'g'ri javob matnini saqlab olamiz
-                q.options = shuffleArray(q.options); // Variantlarni aralashtiramiz
-                q.correctIndex = q.options.indexOf(correctText); // Yangi to'g'ri indeksni topamiz
-            });
-            return shuffledQuestions;
-        }
-
-        function initApp() {
-            // Harf kiritilayotganda raqam va belgilarni avtomatik tozalash
-            inputName.addEventListener('input', function() {
-                this.value = this.value.replace(/[^a-zA-Zа-яА-ЯўЎқҚғҒҳҲ'’\s\-]/g, '');
-                if (this.value.trim().length >= 3) {
-                    nameError.classList.add('hidden');
-                    inputName.classList.remove('border-red-500');
-                }
-            });
-
-            formStart.addEventListener('submit', (e) => {
-                e.preventDefault();
-                userName = inputName.value.trim();
-                
-                // Uzunlikni va faqat harflarni tekshirish
-                if (userName.length < 3 || userName.length > 15) {
-                    nameError.classList.remove('hidden');
-                    inputName.classList.add('border-red-500');
-                    return;
-                }
-
-                if (userName) {
-                    startQuiz();
-                }
-            });
-
-            btnPrev.addEventListener('click', () => {
-                if (currentIndex > 0) {
-                    currentIndex--;
-                    renderQuestion();
-                }
-            });
-
-            btnNext.addEventListener('click', () => {
-                if (currentIndex < quizData.length - 1) {
-                    currentIndex++;
-                    renderQuestion();
-                }
-            });
-
-            btnFinish.addEventListener('click', showResult);
-            document.getElementById('btn-restart').addEventListener('click', restartQuiz);
-        }
-
-        function startQuiz() {
-            screenStart.classList.add('hidden');
-            screenQuiz.classList.remove('hidden');
+        // Web Audio API Sound generator
+        function playSound(type) {
+            if (!audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
             
-            // Kitob belgisini yashirish
-            headerIcon.classList.add('hidden');
-
-            // Sarlavhani yangilash: Telegram logotipi va @Akmalmaths
-            mainTitle.innerHTML = `
-                <a href="https://t.me/akmalmaths" target="_blank" class="flex items-center gap-2 hover:opacity-80 transition-opacity">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 sm:w-8 sm:h-8">
-                        <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.32.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.415-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
-                    </svg>
-                    <span class="text-lg sm:text-xl md:text-2xl font-bold tracking-wide">@Akmalmaths</span>
-                </a>
-            `;
-
-            userDisplay.textContent = `Ishtirokchi: ${userName}`;
-            userDisplay.classList.remove('hidden');
-            watermark.classList.remove('hidden');
-
-            quizData = prepareQuizData(originalQuizData);
-            userAnswers = new Array(quizData.length).fill(null);
-            questionScores = new Array(quizData.length).fill(0);
-            questionTimes = new Array(quizData.length).fill(90); // 2-sinf uchun 90 soniya
-            
-            totalScore = 0;
-            currentScoreDisplay.textContent = '0';
-            currentIndex = 0;
-
-            renderQuestion();
-            window.scrollTo(0, 0);
+            const now = audioCtx.currentTime;
+            if (type === 'correct') {
+                // Cheerful 'ding'
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(600, now);
+                osc.frequency.exponentialRampToValueAtTime(1200, now + 0.1);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+                osc.start(now); osc.stop(now + 0.5);
+            } else {
+                // Low 'buzz'
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(150, now);
+                osc.frequency.setValueAtTime(100, now + 0.2);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+                osc.start(now); osc.stop(now + 0.4);
+            }
         }
 
-        function startTimer() {
+        function shuffle(array) {
+            return array.sort(() => Math.random() - 0.5);
+        }
+
+        document.getElementById('btn-start').addEventListener('click', () => {
+            const input = document.getElementById('input-name');
+            const val = input.value.trim();
+            if (val.length < 2) {
+                document.getElementById('error-msg').classList.remove('hidden');
+                input.classList.add('border-pink-500');
+                input.focus();
+                return;
+            }
+            userName = val;
+            initAudio();
+            startGame();
+        });
+
+        function startGame() {
+            document.getElementById('screen-start').classList.add('hidden-screen');
+            document.getElementById('screen-end').classList.add('hidden-screen');
+            document.getElementById('screen-quiz').classList.remove('hidden-screen');
+            
+            score = 0; currentQuestion = 0;
+            document.getElementById('score').innerText = score;
+            
+            activeQuestions = shuffle([...rawQuizData]).map(q => {
+                return { q: q.q, options: shuffle([...q.options]), ansText: q.ans };
+            });
+
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            isWaiting = false;
+            document.getElementById('feedback-overlay').classList.add('hidden');
+            
+            const q = activeQuestions[currentQuestion];
+            document.getElementById('question-text').innerText = q.q;
+            document.getElementById('progress').innerText = `${currentQuestion + 1}/${activeQuestions.length}`;
+            
+            const optionsGrid = document.getElementById('options-grid');
+            optionsGrid.innerHTML = '';
+            
+            q.options.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'btn-bounce w-full bg-white text-indigo-900 font-bold text-base sm:text-lg py-3 sm:py-4 px-4 rounded-xl border-b-4 border-indigo-200 shadow-sm text-center leading-tight hover:bg-indigo-50';
+                btn.innerText = opt;
+                btn.onclick = () => handleAnswer(opt, btn);
+                optionsGrid.appendChild(btn);
+            });
+
+            timeLeft = 60;
+            document.getElementById('timer').innerText = timeLeft;
             clearInterval(timerInterval);
-            timeLeft = questionTimes[currentIndex]; // Qolgan vaqtdan davom etadi
-            elTimeLeft.textContent = timeLeft;
-            
             timerInterval = setInterval(() => {
                 timeLeft--;
-                questionTimes[currentIndex] = timeLeft; // Vaqtni xotiraga yozib boramiz
-                elTimeLeft.textContent = timeLeft;
-                
+                document.getElementById('timer').innerText = timeLeft;
                 if (timeLeft <= 0) {
                     clearInterval(timerInterval);
-                    handleAnswer(-1); // -1 vaqt tugaganini bildiradi
+                    handleAnswer(null, null); // Time's up
                 }
             }, 1000);
         }
 
-        function renderQuestion() {
-            const data = quizData[currentIndex];
-            elQuestionText.textContent = `${currentIndex + 1}. ${data.question}`;
-            elProgress.textContent = `${currentIndex + 1} / ${quizData.length}`;
-            
-            clearTimeout(autoNextTimeout);
+        function handleAnswer(selectedOpt, btnElement) {
+            if (isWaiting) return;
+            isWaiting = true;
+            clearInterval(timerInterval);
 
-            // Agar savolga hali javob berilmagan bo'lsa, taymerni ishga tushiramiz
-            if (userAnswers[currentIndex] === null) {
-                startTimer();
-            } else {
-                clearInterval(timerInterval);
-                elTimeLeft.textContent = "--";
-            }
-            
-            elOptionsContainer.innerHTML = '';
-            elFeedback.className = 'mt-6 p-4 rounded-xl hidden text-center font-medium text-base md:text-lg w-full';
-            elFeedback.innerHTML = '';
+            const q = activeQuestions[currentQuestion];
+            const isCorrect = selectedOpt === q.ansText;
 
-            data.options.forEach((optionText, index) => {
-                const btn = document.createElement('button');
-                btn.className = 'w-full text-left p-4 rounded-xl border-2 border-slate-200 bg-white hover:border-blue-400 hover:bg-blue-50 transition-all font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 break-words';
-                
-                const letter = String.fromCharCode(65 + index); 
-                
-                let iconContent = `<span class="flex-shrink-0 inline-block w-8 h-8 text-center leading-8 bg-slate-100 text-slate-500 rounded-lg mr-3 font-bold">${letter}</span>`;
-                let btnClasses = '';
-
-                if (userAnswers[currentIndex] !== null) {
-                    btn.disabled = true;
-                    btn.classList.remove('hover:border-blue-400', 'hover:bg-blue-50', 'cursor-pointer');
-                    
-                    if (index === data.correctIndex) {
-                        btnClasses = 'border-green-500 bg-green-50 text-green-800';
-                        iconContent = `<span class="flex-shrink-0 inline-block w-8 h-8 text-center leading-8 bg-green-200 text-green-800 rounded-lg mr-3 font-bold">&#10003;</span>`;
-                    } else if (index === userAnswers[currentIndex]) {
-                        btnClasses = 'border-red-500 bg-red-50 text-red-800';
-                        iconContent = `<span class="flex-shrink-0 inline-block w-8 h-8 text-center leading-8 bg-red-200 text-red-800 rounded-lg mr-3 font-bold">&#10007;</span>`;
-                    } else {
-                        btnClasses = 'opacity-50';
-                    }
+            const buttons = document.getElementById('options-grid').children;
+            for (let b of buttons) {
+                b.disabled = true; 
+                if (b.innerText === q.ansText) {
+                    b.classList.add('bg-green-400', 'text-white', 'border-green-600');
+                    b.classList.remove('bg-white', 'border-indigo-200', 'text-indigo-900');
+                } else if (b === btnElement) {
+                    b.classList.add('bg-red-400', 'text-white', 'border-red-600');
+                    b.classList.remove('bg-white', 'border-indigo-200', 'text-indigo-900');
                 } else {
-                    btn.addEventListener('click', () => handleAnswer(index));
-                }
-
-                if(btnClasses) {
-                    const classArray = btnClasses.split(' ');
-                    classArray.forEach(cls => btn.classList.add(cls));
-                }
-
-                btn.innerHTML = `
-                    <div class="flex items-center w-full">
-                        ${iconContent}
-                        <span class="flex-1">${optionText}</span>
-                    </div>
-                `;
-
-                elOptionsContainer.appendChild(btn);
-            });
-
-            if (userAnswers[currentIndex] !== null) {
-                const isCorrect = userAnswers[currentIndex] === data.correctIndex;
-                showFeedback(isCorrect, userAnswers[currentIndex]);
-            }
-
-            updateControls();
-        }
-
-        function handleAnswer(selectedIndex) {
-            clearInterval(timerInterval); // Javob belgilangach taymer to'xtaydi
-            const data = quizData[currentIndex];
-            const isCorrect = selectedIndex === data.correctIndex;
-
-            // Agar savolga birinchi marta javob berilayotgan bo'lsa
-            if (userAnswers[currentIndex] === null) {
-                userAnswers[currentIndex] = selectedIndex;
-                
-                if (selectedIndex === -1) {
-                    // Vaqt tugaganda 0 ball
-                    questionScores[currentIndex] = 0;
-                } else if (isCorrect) {
-                    // Vaqtga qarab 1 dan 5 gacha yulduzcha hisoblash (90 soniyaga asoslangan)
-                    let points = Math.ceil((timeLeft / 90) * 5);
-                    if (points < 1) points = 1;
-                    if (points > 5) points = 5;
-                    questionScores[currentIndex] = points;
-                    totalScore += points;
-                    currentScoreDisplay.textContent = totalScore;
-                } else {
-                    questionScores[currentIndex] = 0;
+                    b.classList.add('opacity-40'); 
                 }
             }
-            
-            renderQuestion(); 
 
-            // Agar to'g'ri topsa avtomatik o'tkazish
-            if (isCorrect && selectedIndex !== -1) {
-                autoNextTimeout = setTimeout(() => {
-                    if (currentIndex < quizData.length - 1) {
-                        currentIndex++;
-                        renderQuestion();
-                    } else {
-                        showResult();
-                    }
-                }, 1500); // 1.5 soniya kutadi
-            }
-        }
-
-        function showFeedback(isCorrect, selectedIndex) {
-            elFeedback.classList.remove('hidden', 'bg-green-100', 'text-green-800', 'bg-red-100', 'text-red-800', 'bg-orange-100', 'text-orange-800');
-            
-            if (selectedIndex === -1) {
-                elFeedback.classList.add('bg-orange-100', 'text-orange-800');
-                elFeedback.innerHTML = '⏱ Vaqt tugadi! Keyingi savolga o\'ting.';
-            } else if (isCorrect) {
-                elFeedback.classList.add('bg-green-100', 'text-green-800');
-                let earnedPoints = questionScores[currentIndex];
-                elFeedback.innerHTML = `&#10004; Barakalla! To'g'ri javobni topdingiz. (+${earnedPoints} ⭐)`;
+            if (isCorrect) {
+                playSound('correct');
+                score++;
+                document.getElementById('score').innerText = score;
+                showFeedback(true);
             } else {
-                elFeedback.classList.add('bg-red-100', 'text-red-800');
-                elFeedback.innerHTML = '&#10008; Afsuski, noto\'g\'ri. O\'zingiz keyingisiga o\'tkazing.';
+                playSound('wrong');
+                showFeedback(false);
             }
-        }
 
-        function updateControls() {
-            btnPrev.disabled = currentIndex === 0;
+            // Exactly 3000ms delay mechanics with visual progress bar
+            const bar = document.getElementById('progress-bar-3s');
+            bar.style.transition = "none"; 
+            bar.style.width = "0%";
             
-            if (currentIndex === quizData.length - 1) {
-                btnNext.classList.add('hidden');
-                btnFinish.classList.remove('hidden');
-                
-                btnFinish.disabled = userAnswers[currentIndex] === null;
-            } else {
-                btnNext.classList.remove('hidden');
-                btnFinish.classList.add('hidden');
-                btnNext.disabled = userAnswers[currentIndex] === null;
-            }
-        }
-
-        function showResult() {
-            let correctCount = 0;
-            userAnswers.forEach((ans, idx) => {
-                if (ans === quizData[idx].correctIndex) {
-                    correctCount++;
-                }
-            });
-
-            const percentage = Math.round((correctCount / quizData.length) * 100);
-
-            screenQuiz.classList.add('hidden');
-            screenResult.classList.remove('hidden');
+            // Force reflow
+            void bar.offsetWidth; 
             
-            document.getElementById('result-name').textContent = userName;
-            document.getElementById('result-stars').textContent = `${totalScore} ⭐`;
-            document.getElementById('result-score').textContent = `${correctCount} / ${quizData.length}`;
-            document.getElementById('result-percent').textContent = `${percentage}%`;
-            
+            bar.style.transition = "width 3s linear";
+            bar.style.width = "100%";
+
             setTimeout(() => {
-                document.getElementById('result-bar').style.width = `${percentage}%`;
-            }, 100);
+                currentQuestion++;
+                if (currentQuestion < activeQuestions.length) {
+                    loadQuestion();
+                } else {
+                    endGame();
+                }
+            }, 3000); 
+        }
 
-            const resultTitle = document.getElementById('result-title');
-            const resultEmoji = document.getElementById('result-emoji');
+        function showFeedback(isCorrect) {
+            const overlay = document.getElementById('feedback-overlay');
+            const icon = document.getElementById('feedback-icon');
+            const text = document.getElementById('feedback-text');
             
-            if (percentage >= 80) {
-                resultEmoji.textContent = '🌟';
-                resultTitle.textContent = "A'lo Natija!";
-                resultTitle.className = "text-3xl font-bold text-green-600 mb-2";
-                document.getElementById('result-score').classList.replace('text-blue-600', 'text-green-600');
-                document.getElementById('result-bar').classList.replace('bg-blue-600', 'bg-green-600');
-            } else if (percentage >= 60) {
-                resultEmoji.textContent = '👍';
-                resultTitle.textContent = "Yaxshi Natija!";
+            overlay.classList.remove('hidden');
+            if (isCorrect) {
+                icon.innerText = '🌟';
+                text.innerText = "To'g'ri!";
+                text.className = "text-4xl font-black text-green-600 mb-4 text-center bouncy-title";
             } else {
-                resultEmoji.textContent = '📚';
-                resultTitle.textContent = "Ko'proq o'qish kerak";
-                resultTitle.className = "text-3xl font-bold text-orange-500 mb-2";
-                document.getElementById('result-score').classList.replace('text-blue-600', 'text-orange-500');
-                document.getElementById('result-bar').classList.replace('bg-blue-600', 'bg-orange-500');
+                icon.innerText = '💥';
+                text.innerText = "Xato!";
+                text.className = "text-4xl font-black text-red-500 mb-4 text-center bouncy-title";
             }
-            
-            window.scrollTo(0, 0);
         }
 
-        function restartQuiz() {
-            screenResult.classList.add('hidden');
-            screenStart.classList.remove('hidden');
+        function endGame() {
+            document.getElementById('screen-quiz').classList.add('hidden-screen');
+            document.getElementById('screen-end').classList.remove('hidden-screen');
             
-            // Kitob belgisini qaytarish
-            headerIcon.classList.remove('hidden');
-
-            // Sarlavhani yana asl holatiga qaytarish
-            mainTitle.innerHTML = 'Matematika 2-sinf testi (4-qism)';
+            document.getElementById('end-name').innerText = userName + ",";
+            document.getElementById('final-score').innerText = `${score}/20`;
             
-            userDisplay.classList.add('hidden');
-            watermark.classList.add('hidden');
-            inputName.value = '';
+            const emoji = document.getElementById('end-emoji');
+            const title = document.getElementById('end-title');
+            const certContainer = document.getElementById('cert-container');
             
-            document.getElementById('result-bar').style.width = '0%';
-            document.getElementById('result-score').className = "text-3xl font-bold text-blue-600 mb-3";
-            document.getElementById('result-bar').className = "bg-blue-600 h-3 rounded-full transition-all duration-1000";
-            document.getElementById('result-title').className = "text-3xl font-bold text-slate-800 mb-2";
-
-            window.scrollTo(0, 0);
+            if (score === 20) {
+                emoji.innerText = '🏆';
+                title.innerText = "Mukammal!";
+                title.classList.add('text-indigo-900');
+                certContainer.classList.remove('hidden');
+                certContainer.classList.add('flex');
+                setTimeout(() => drawCertificate(userName), 100);
+            } else {
+                emoji.innerText = score >= 15 ? '🚀' : '📚';
+                title.innerText = score >= 15 ? "Yaxshi Natija!" : "Yana Harakat Qil!";
+                certContainer.classList.add('hidden');
+                certContainer.classList.remove('flex');
+            }
         }
 
-        document.addEventListener('DOMContentLoaded', initApp);
+        // Drawing a highly colorful and gamified certificate using Canvas API
+        function drawCertificate(name) {
+            const canvas = document.getElementById('cert-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = 800;
+            canvas.height = 560;
 
+            // Background Gradient
+            const bgGrad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+            bgGrad.addColorStop(0, "#ffecd2");
+            bgGrad.addColorStop(1, "#fcb69f");
+            ctx.fillStyle = bgGrad;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Colorful shapes in background
+            ctx.fillStyle = "rgba(255, 255, 255, 0.3)";
+            ctx.beginPath(); ctx.arc(100, 100, 150, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.arc(700, 450, 200, 0, Math.PI * 2); ctx.fill();
+
+            // Borders
+            ctx.lineWidth = 15;
+            ctx.strokeStyle = '#4f46e5'; // Indigo
+            ctx.strokeRect(20, 20, canvas.width - 40, canvas.height - 40);
+            ctx.lineWidth = 5;
+            ctx.strokeStyle = '#f43f5e'; // Rose
+            ctx.strokeRect(45, 45, canvas.width - 90, canvas.height - 90);
+
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            // "SERTIFIKAT" Huge gamified text
+            ctx.font = '900 70px Quicksand, sans-serif';
+            ctx.fillStyle = '#4f46e5';
+            ctx.shadowColor = 'rgba(79, 70, 229, 0.4)';
+            ctx.shadowBlur = 10;
+            ctx.shadowOffsetX = 4;
+            ctx.shadowOffsetY = 4;
+            ctx.fillText('SERTIFIKAT', canvas.width/2, 120);
+            
+            // Reset shadow
+            ctx.shadowColor = 'transparent';
+
+            ctx.font = 'bold 28px Quicksand, sans-serif';
+            ctx.fillStyle = '#334155';
+            ctx.fillText('2-SINF MATEMATIKA TESTLARIDA', canvas.width/2, 200);
+            ctx.fillText('100% TO\'G\'RI JAVOB BERGANLIGI UCHUN', canvas.width/2, 240);
+
+            // Name
+            ctx.font = '900 65px Quicksand, sans-serif';
+            ctx.fillStyle = '#db2777'; // Pink
+            ctx.fillText(name.toUpperCase(), canvas.width/2, 330);
+
+            ctx.font = 'bold 30px Quicksand, sans-serif';
+            ctx.fillStyle = '#059669'; // Emerald
+            ctx.fillText('🌟 MUKAMMAL NATIJA 🌟', canvas.width/2, 420);
+
+            // Required footer
+            ctx.font = '700 20px Quicksand, sans-serif';
+            ctx.fillStyle = '#1e293b';
+            ctx.fillText(`Test tuzuvchi: Akmaljon Jo'raqo'ziyev`, canvas.width/2, 510);
+        }
     </script>
 </body>
 </html>
