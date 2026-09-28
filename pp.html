@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AI Rasmli Mobil Taqdimot</title>
+    <title>AI Mobil Taqdimot Generatori</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -12,7 +12,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     
     <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     
     <style>
         body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
@@ -22,33 +22,18 @@
         [contenteditable="true"] {
             outline: none;
             transition: all 0.2s ease;
-            border: 1px dashed transparent;
-            border-radius: 4px;
+            border-bottom: 1px dashed transparent;
         }
         [contenteditable="true"]:focus {
-            background-color: rgba(255, 255, 255, 0.2);
-            border-color: rgba(59, 130, 246, 0.5);
-            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
-        }
-
-        /* Slide sizing for 16:9 aspect ratio */
-        .slide-aspect {
-            width: 100%;
-            aspect-ratio: 16/9;
-            position: relative;
-            overflow: hidden;
-        }
-
-        @media (max-width: 768px) {
-            /* For mobile, make slides stack better if needed, or maintain ratio */
-            .slide-aspect { aspect-ratio: auto; height: 100%; }
+            border-bottom: 1px dashed rgba(59, 130, 246, 0.5);
+            background-color: rgba(255, 255, 255, 0.1);
         }
 
         /* Presentation Mode vs PDF Mode */
         .pdf-mode {
             display: flex !important;
             flex-direction: column !important;
-            width: 1280px !important; /* Force desktop width for PDF */
+            width: 1280px !important; 
             background: white !important;
             height: auto !important;
         }
@@ -65,43 +50,42 @@
         .pdf-mode .no-print { display: none !important; }
 
         /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
 
-        /* Image Upload Overlay */
-        .image-overlay {
+        .img-overlay {
             opacity: 0;
             transition: opacity 0.3s;
-            background: rgba(0,0,0,0.5);
         }
-        .img-wrapper:hover .image-overlay, .img-wrapper:active .image-overlay {
-            opacity: 1;
-        }
+        .img-wrapper:hover .img-overlay { opacity: 1; }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen">
+<body class="bg-gray-100 text-gray-800 min-h-screen">
 
     <!-- SETTINGS PANEL -->
-    <div id="settings-view" class="max-w-4xl mx-auto w-full bg-white min-h-screen md:min-h-0 md:my-10 md:rounded-3xl shadow-xl overflow-hidden transition-all duration-300">
+    <div id="settings-view" class="max-w-2xl mx-auto w-full bg-white min-h-screen md:min-h-0 md:my-10 md:rounded-3xl shadow-2xl overflow-hidden">
         
-        <div class="bg-gradient-to-br from-indigo-600 via-blue-600 to-sky-500 p-6 md:p-10 text-white text-center">
-            <h1 class="text-3xl md:text-5xl font-extrabold mb-4 font-heading drop-shadow-md">Taqdimot Generatori 🚀</h1>
-            <p class="text-blue-100 text-sm md:text-lg opacity-90">AI matn yozadi + AI mos rasm tanlaydi. Tahrirlang va PDF oling!</p>
+        <div class="bg-gradient-to-r from-blue-600 to-indigo-600 p-6 md:p-8 text-white text-center">
+            <h1 class="text-3xl md:text-4xl font-extrabold mb-2 font-heading">Taqdimot Generatori 🚀</h1>
+            <p class="text-blue-100 text-sm">AI matn yozadi + AI mos rasm tanlaydi</p>
         </div>
         
-        <div id="error-box" class="hidden mx-6 mt-6 p-4 bg-red-100 text-red-700 rounded-xl border border-red-200 text-sm font-medium"></div>
+        <!-- Error Box -->
+        <div id="error-box" class="hidden mx-6 mt-6 p-4 bg-red-50 text-red-700 rounded-xl border border-red-200 text-sm font-semibold text-center"></div>
 
-        <form id="generate-form" class="p-6 md:p-10 space-y-6">
+        <form id="generate-form" class="p-6 md:p-8 space-y-5">
+            
+            <!-- 1. Ism -->
             <div>
-                <label class="block text-sm font-bold text-slate-700 mb-2">1. Ism va Familiyangiz</label>
-                <input type="text" id="input-name" required placeholder="Masalan: Akmaljon Jo'raqo'ziyev" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+                <label class="block text-sm font-bold text-gray-700 mb-2">👤 1. Ism va Familiyangiz</label>
+                <input type="text" id="input-name" required placeholder="Masalan: Akmaljon Jo'raqo'ziyev" class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none">
             </div>
 
+            <!-- 2. Mavzu -->
             <div>
-                <label class="block text-sm font-bold text-slate-700 mb-2">2. Pedagogik Mavzuni tanlang</label>
-                <select id="input-topic" required class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 outline-none cursor-pointer bg-white">
-                    <option value="" disabled selected>-- 12 ta mavzudan birini tanlang --</option>
+                <label class="block text-sm font-bold text-gray-700 mb-2">📚 2. Pedagogik Mavzuni tanlang</label>
+                <select id="input-topic" required class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none bg-white">
                     <option value="Pedagogika fanining predmetini o'rganish va ta'riflar tahlili">1. Pedagogika fanining predmetini o'rganish</option>
                     <option value="Pedagogikaning obyekti va predmeti o‘rtasidagi farq (Universitet misolida)">2. Pedagogikaning obyekti va predmeti o‘rtasidagi farq</option>
                     <option value="Pedagogikaning maqsad va vazifalari. Zamonaviy oliy ta'lim">3. Pedagogikaning maqsad va vazifalari</option>
@@ -117,339 +101,290 @@
                 </select>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- 3 & 4. Count & Theme -->
+            <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-sm font-bold text-slate-700 mb-2">3. Slaydlar soni</label>
-                    <select id="input-count" required class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 outline-none bg-white">
+                    <label class="block text-sm font-bold text-gray-700 mb-2">📑 3. Slaydlar soni</label>
+                    <select id="input-count" required class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none bg-white">
                         <option value="3">3 ta bet</option>
                         <option value="4" selected>4 ta bet</option>
                         <option value="5">5 ta bet</option>
                     </select>
                 </div>
                 <div>
-                    <label class="block text-sm font-bold text-slate-700 mb-2">4. Dizayn Temasi</label>
-                    <select id="input-theme" required class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 outline-none bg-white cursor-pointer">
-                        <option value="theme-modern">Zamonaviy (Moviy)</option>
-                        <option value="theme-elegant">Elegant (Qora-Tilla)</option>
-                        <option value="theme-nature">Tabiat (Yashil)</option>
-                        <option value="theme-creative">Kreativ (Siyohrang)</option>
-                        <option value="theme-sunset">Quyosh (To'q sariq)</option>
-                        <option value="theme-clean">Toza (Oq-Kulrang)</option>
-                        <option value="theme-tech">Texno (Qorong'u-Ko'k)</option>
-                        <option value="theme-rose">Atirgul (Pushti)</option>
-                        <option value="theme-education">Ta'lim (To'q Ko'k)</option>
-                        <option value="theme-minimal">Minimal (Oq-Qora)</option>
+                    <label class="block text-sm font-bold text-gray-700 mb-2">🎨 4. Dizayn</label>
+                    <select id="input-theme" required class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none bg-white">
+                        <option value="t-blue">Moviy</option>
+                        <option value="t-green">Yashil</option>
+                        <option value="t-purple">Siyohrang</option>
+                        <option value="t-dark">Qorong'u</option>
+                        <option value="t-orange">Apelsin</option>
+                        <option value="t-red">Qizil</option>
+                        <option value="t-teal">Yalpiz</option>
+                        <option value="t-indigo">Indigo</option>
+                        <option value="t-pink">Pushti</option>
+                        <option value="t-bw">Oq-Qora</option>
                     </select>
                 </div>
             </div>
 
-            <button type="submit" id="btn-generate" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-xl shadow-lg transition-transform transform active:scale-95 flex items-center justify-center gap-3 text-lg">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
-                <span>Slaydlarni Yaratish</span>
+            <button type="submit" id="btn-generate" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-xl shadow-lg transition-transform transform active:scale-95 flex items-center justify-center gap-3 text-lg mt-4">
+                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                <span>Taqdimotni Yaratish</span>
             </button>
             
+            <!-- Loader -->
             <div id="loader" class="hidden flex-col items-center justify-center py-6">
-                <div class="animate-spin rounded-full h-12 w-12 border-4 border-slate-200 border-t-blue-600 mb-4"></div>
-                <p class="text-slate-600 font-semibold text-center">Sun'iy intellekt matn yozmoqda va rasmlar qidirmoqda... <br><span class="text-sm font-normal text-slate-400">10-15 soniya</span></p>
+                <div class="animate-spin rounded-full h-10 w-10 border-4 border-gray-200 border-t-blue-600 mb-4"></div>
+                <p class="text-gray-600 font-semibold text-center text-sm">Sun'iy intellekt ishlamoqda... <br><span class="text-xs text-gray-400">10-20 soniya kutib turing</span></p>
             </div>
         </form>
     </div>
 
     <!-- PRESENTATION VIEWER -->
-    <div id="viewer-view" class="hidden fixed inset-0 w-full h-full flex-col z-50 bg-black transition-opacity duration-300">
+    <div id="viewer-view" class="hidden fixed inset-0 w-full h-full flex-col z-50 bg-black">
         
         <!-- Toolbar -->
         <div class="absolute top-0 left-0 right-0 z-50 flex justify-between items-center p-4 bg-gradient-to-b from-black/80 to-transparent no-print">
-            <button id="btn-close" class="bg-white/10 backdrop-blur-md text-white rounded-full p-2 hover:bg-red-500 transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            <button id="btn-close" class="bg-white/10 text-white rounded-full p-2 hover:bg-red-500">
+                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
             </button>
             
-            <div class="text-white/80 text-xs hidden md:block backdrop-blur-md bg-black/30 px-4 py-1 rounded-full pointer-events-none">
-                💡 Matnlarni va rasmlarni tahrirlash uchun ustiga bosing
+            <div class="text-white/80 text-xs hidden md:block bg-black/40 px-3 py-1 rounded-full">
+                💡 Tahrirlash uchun matnga, rasmni o'zgartirish uchun rasmga bosing
             </div>
 
-            <button id="btn-pdf" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2 px-4 rounded-full shadow-lg transition-all flex items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-                PDF Yuklab olish
+            <button id="btn-pdf" class="bg-indigo-600 text-white font-bold py-2 px-4 rounded-full shadow-lg flex items-center gap-2">
+                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                <span class="hidden md:inline">PDF qilib saqlash</span>
+                <span class="md:hidden">PDF</span>
             </button>
         </div>
 
-        <div class="text-white/80 text-xs md:hidden absolute top-16 left-4 right-4 text-center z-40 backdrop-blur-md bg-black/40 px-3 py-2 rounded-full pointer-events-none no-print">
-            Matn yoki rasmni tahrirlash uchun ustiga bosing
-        </div>
-
-        <!-- Slides Area -->
-        <div id="slides-wrapper" class="flex-1 w-full h-full relative overflow-hidden bg-slate-900 md:p-8 flex items-center justify-center">
+        <!-- Slides Wrapper -->
+        <div id="slides-wrapper" class="flex-1 w-full h-full relative overflow-hidden bg-gray-900 md:p-6 flex items-center justify-center">
             <div id="slides-container" class="w-full h-full relative flex items-center justify-center">
-                <!-- Injected via JS -->
+                <!-- Slides will be injected here -->
             </div>
         </div>
 
         <!-- Navigation -->
-        <div class="absolute bottom-4 left-0 right-0 px-4 md:px-8 flex justify-between items-center z-50 no-print">
-            <button id="btn-prev" class="bg-white/10 backdrop-blur-md text-white rounded-full p-3 hover:bg-white/30 transition-all disabled:opacity-30">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+        <div class="absolute bottom-16 left-0 right-0 px-4 flex justify-between items-center z-50 no-print pointer-events-none">
+            <button id="btn-prev" class="bg-black/50 text-white rounded-full p-3 pointer-events-auto active:bg-gray-700 disabled:opacity-30">
+                <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
             </button>
-            <div class="flex space-x-2" id="dots-container"></div>
-            <button id="btn-next" class="bg-white/10 backdrop-blur-md text-white rounded-full p-3 hover:bg-white/30 transition-all disabled:opacity-30">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            <button id="btn-next" class="bg-black/50 text-white rounded-full p-3 pointer-events-auto active:bg-gray-700 disabled:opacity-30">
+                <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
             </button>
         </div>
     </div>
 
     <script>
-        // --- THEMES ---
-        const themeConfig = {
-            'theme-modern': { bg: 'bg-blue-50', text: 'text-slate-800', accent: 'text-blue-700', card: 'bg-white/90 backdrop-blur shadow-lg border-l-4 border-blue-600', footer: 'bg-blue-900 text-blue-100' },
-            'theme-elegant': { bg: 'bg-slate-900', text: 'text-slate-100', accent: 'text-amber-400', card: 'bg-slate-800/80 backdrop-blur shadow-xl border-t border-amber-500', footer: 'bg-black text-amber-500' },
-            'theme-nature': { bg: 'bg-emerald-50', text: 'text-emerald-950', accent: 'text-emerald-700', card: 'bg-white shadow-md rounded-2xl', footer: 'bg-emerald-900 text-emerald-100' },
-            'theme-creative': { bg: 'bg-purple-50', text: 'text-indigo-950', accent: 'text-purple-600', card: 'bg-white/80 backdrop-blur shadow-xl rounded-xl border-2 border-purple-200', footer: 'bg-indigo-950 text-purple-200' },
-            'theme-sunset': { bg: 'bg-orange-50', text: 'text-red-950', accent: 'text-orange-600', card: 'bg-white shadow border-b-4 border-orange-500', footer: 'bg-orange-950 text-orange-200' },
-            'theme-clean': { bg: 'bg-gray-100', text: 'text-gray-900', accent: 'text-black', card: 'bg-white shadow-sm border border-gray-200', footer: 'bg-gray-800 text-gray-100' },
-            'theme-tech': { bg: 'bg-[#0f172a]', text: 'text-cyan-50', accent: 'text-cyan-400', card: 'bg-[#1e293b] border border-cyan-500/30 shadow-[0_0_15px_rgba(6,182,212,0.1)]', footer: 'bg-black text-cyan-500' },
-            'theme-rose': { bg: 'bg-rose-50', text: 'text-rose-950', accent: 'text-rose-600', card: 'bg-white shadow-md rounded-3xl border border-rose-100', footer: 'bg-rose-900 text-rose-100' },
-            'theme-education': { bg: 'bg-indigo-50', text: 'text-indigo-900', accent: 'text-indigo-700', card: 'bg-white shadow-lg', footer: 'bg-indigo-900 text-indigo-100' },
-            'theme-minimal': { bg: 'bg-white', text: 'text-black', accent: 'text-black', card: 'bg-white border-2 border-black rounded-none shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]', footer: 'bg-white text-black border-t-2 border-black' }
+        // Themes Palette
+        const themes = {
+            't-blue': { bg: 'bg-blue-50', text: 'text-blue-950', accent: 'text-blue-600', card: 'bg-white border-l-4 border-blue-500', footBg: 'bg-blue-900', footText: 'text-blue-100' },
+            't-green': { bg: 'bg-emerald-50', text: 'text-emerald-950', accent: 'text-emerald-600', card: 'bg-white border-l-4 border-emerald-500', footBg: 'bg-emerald-900', footText: 'text-emerald-100' },
+            't-purple': { bg: 'bg-purple-50', text: 'text-purple-950', accent: 'text-purple-600', card: 'bg-white border-l-4 border-purple-500', footBg: 'bg-purple-900', footText: 'text-purple-100' },
+            't-dark': { bg: 'bg-gray-900', text: 'text-gray-100', accent: 'text-blue-400', card: 'bg-gray-800 border-l-4 border-blue-500', footBg: 'bg-black', footText: 'text-gray-400' },
+            't-orange': { bg: 'bg-orange-50', text: 'text-orange-950', accent: 'text-orange-600', card: 'bg-white border-l-4 border-orange-500', footBg: 'bg-orange-900', footText: 'text-orange-100' },
+            't-red': { bg: 'bg-red-50', text: 'text-red-950', accent: 'text-red-600', card: 'bg-white border-l-4 border-red-500', footBg: 'bg-red-900', footText: 'text-red-100' },
+            't-teal': { bg: 'bg-teal-50', text: 'text-teal-950', accent: 'text-teal-600', card: 'bg-white border-l-4 border-teal-500', footBg: 'bg-teal-900', footText: 'text-teal-100' },
+            't-indigo': { bg: 'bg-indigo-50', text: 'text-indigo-950', accent: 'text-indigo-600', card: 'bg-white border-l-4 border-indigo-500', footBg: 'bg-indigo-900', footText: 'text-indigo-100' },
+            't-pink': { bg: 'bg-pink-50', text: 'text-pink-950', accent: 'text-pink-600', card: 'bg-white border-l-4 border-pink-500', footBg: 'bg-pink-900', footText: 'text-pink-100' },
+            't-bw': { bg: 'bg-white', text: 'text-black', accent: 'text-gray-700', card: 'bg-gray-50 border-l-4 border-black', footBg: 'bg-black', footText: 'text-white' }
         };
 
-        // --- ELEMENTS ---
-        const settingsView = document.getElementById('settings-view');
-        const viewerView = document.getElementById('viewer-view');
+        // Elements
         const form = document.getElementById('generate-form');
-        const btnGenerate = document.getElementById('btn-generate');
-        const loader = document.getElementById('loader');
-        const errorBox = document.getElementById('error-box');
-        
+        const errBox = document.getElementById('error-box');
         const slidesContainer = document.getElementById('slides-container');
-        const dotsContainer = document.getElementById('dots-container');
-        const btnPrev = document.getElementById('btn-prev');
-        const btnNext = document.getElementById('btn-next');
-        const btnClose = document.getElementById('btn-close');
-        const btnPdf = document.getElementById('btn-pdf');
-
+        
         let slidesData = [];
         let currentIdx = 0;
-        let selectedTheme = '';
 
-        // --- STREAMING_CHUNK:API Call Setup... ---
         function showError(msg) {
-            errorBox.textContent = msg;
-            errorBox.classList.remove('hidden');
-            btnGenerate.classList.remove('hidden');
-            loader.classList.add('hidden');
-            loader.classList.remove('flex');
+            errBox.textContent = msg;
+            errBox.classList.remove('hidden');
+            document.getElementById('btn-generate').classList.remove('hidden');
+            document.getElementById('loader').classList.add('hidden');
+            document.getElementById('loader').classList.remove('flex');
         }
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            errorBox.classList.add('hidden');
+            errBox.classList.add('hidden');
             
+            // API Kalit dastur ichiga yashirildi (hardcoded)
+            const apiKey = "AIzaSyDZZ6FmeMVA6QPc8f-P-lGKsl677XqcFpg"; 
+
             const name = document.getElementById('input-name').value.trim();
             const topic = document.getElementById('input-topic').options[document.getElementById('input-topic').selectedIndex].text;
-            const count = parseInt(document.getElementById('input-count').value);
-            selectedTheme = document.getElementById('input-theme').value;
+            const count = document.getElementById('input-count').value;
+            const themeKey = document.getElementById('input-theme').value;
 
-            btnGenerate.classList.add('hidden');
+            document.getElementById('btn-generate').classList.add('hidden');
+            const loader = document.getElementById('loader');
             loader.classList.remove('hidden');
             loader.classList.add('flex');
 
             try {
-                slidesData = await fetchSlidesData(topic, count);
-                buildSlidesDOM(slidesData, selectedTheme, name);
+                slidesData = await fetchSlidesData(apiKey, topic, count);
+                buildSlidesDOM(slidesData, themeKey, name);
                 
-                settingsView.classList.add('hidden');
-                viewerView.classList.remove('hidden');
-                viewerView.classList.add('flex');
+                document.getElementById('settings-view').classList.add('hidden');
+                document.getElementById('viewer-view').classList.remove('hidden');
+                document.getElementById('viewer-view').classList.add('flex');
             } catch (err) {
                 console.error(err);
-                showError("Xatolik: " + err.message + ". Iltimos qayta urinib ko'ring.");
+                showError("Xatolik: " + err.message);
             } finally {
-                btnGenerate.classList.remove('hidden');
+                document.getElementById('btn-generate').classList.remove('hidden');
                 loader.classList.add('hidden');
                 loader.classList.remove('flex');
             }
         });
 
-        // --- STREAMING_CHUNK:Gemini API Interaction... ---
-        async function fetchSlidesData(topic, count) {
-            const apiKey = ""; // API Key handled by environment
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+        // --- STREAMING_CHUNK:Gemini Fetch Logic... ---
+        async function fetchSlidesData(apiKey, topic, count) {
+            // Using gemini-1.5-flash as requested
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
             
-            const prompt = `Siz O'zbekistonlik universitet o'qituvchisisiz. Quyidagi mavzuda talabalar uchun ${count} ta slaydlik taqdimot yarating: "${topic}".
-            Javobingiz faqat JSON formatida bo'lishi kerak.
-            Muhim: imagePrompt maydoni slayd mazmunini ifodalovchi qisqa INGLIZ tilidagi prompt (1-2 ta so'z birikmasi) bo'lishi shart (masalan: "university students studying", "psychology brain graphic", "teacher in modern classroom"). Bu rasmlarni avtomatik yaratish uchun ishlatiladi.
+            const prompt = `Siz O'zbekistonlik pedagogika ekspertisiz. Quyidagi mavzuda talabalar uchun ${count} ta slaydlik taqdimot yarating: "${topic}".
+            Faqat qat'iy JSON formatida javob bering. Hech qanday boshqa so'z qo'shmang (```json kabi backticklar ham kerak emas, to'g'ridan to'g'ri array yuboring).
             
-            JSON structure to enforce:
+            JSON strukturasi shunday bo'lishi shart:
             [
               {
-                "title": "Slayd nomi (O'zbekcha)",
-                "items": [
-                  { "heading": "Kichik sarlavha", "description": "1-2 gaplik izoh" }
-                ],
-                "source": "ZiyoNet, ilmiy jurnallar yoki kitoblar nomi",
-                "imagePrompt": "English prompt for image generator"
+                "title": "Slayd sarlavhasi",
+                "content": ["Qisqa fakt 1", "Qisqa fakt 2", "Qisqa fakt 3"],
+                "image_prompt": "English prompt for image generation related to this slide (e.g., 'university students studying in a modern library', 'abstract psychology brain illustration')"
               }
             ]`;
 
             const payload = {
                 contents: [{ parts: [{ text: prompt }] }],
                 generationConfig: {
-                    responseMimeType: "application/json",
-                    responseSchema: {
-                        type: "ARRAY",
-                        items: {
-                            type: "OBJECT",
-                            properties: {
-                                "title": { "type": "STRING" },
-                                "items": {
-                                    "type": "ARRAY",
-                                    "items": {
-                                        "type": "OBJECT",
-                                        "properties": {
-                                            "heading": { "type": "STRING" },
-                                            "description": { "type": "STRING" }
-                                        }
-                                    }
-                                },
-                                "source": { "type": "STRING" },
-                                "imagePrompt": { "type": "STRING" }
-                            },
-                            "required": ["title", "items", "source", "imagePrompt"]
-                        }
-                    }
+                    responseMimeType: "application/json"
                 }
             };
 
-            const res = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-            if (!res.ok) throw new Error("Tarmoq yoki API xatosi");
+            const res = await fetch(apiUrl, { 
+                method: 'POST', 
+                headers: { 'Content-Type': 'application/json' }, 
+                body: JSON.stringify(payload) 
+            });
+
             const data = await res.json();
+
+            if (!res.ok) {
+                let errorMsg = "Tarmoq xatosi";
+                if(data.error && data.error.message) {
+                    errorMsg = data.error.message;
+                }
+                if(res.status === 400 && errorMsg.includes("API key")) {
+                    throw new Error("API Kalit noto'g'ri. Iltimos tekshiring.");
+                }
+                throw new Error(errorMsg);
+            }
             
             if (data.candidates && data.candidates[0].content && data.candidates[0].content.parts[0].text) {
                 return JSON.parse(data.candidates[0].content.parts[0].text);
             } else {
-                throw new Error("AI kutilgan formatda javob bermadi");
+                throw new Error("AI kutilgan formatda javob bermadi.");
             }
         }
 
-        // --- STREAMING_CHUNK:Rendering Slides & Image Handler... ---
+        // --- STREAMING_CHUNK:Slide Builder & Local Image Replacement... ---
         function getImageUrl(prompt) {
-            // using a random seed to prevent caching identical prompts
-            const seed = Math.floor(Math.random() * 10000);
-            return `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=800&height=500&nologo=true&seed=${seed}`;
+            const seed = Math.floor(Math.random() * 100000);
+            return `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=800&height=450&nologo=true&seed=${seed}`;
         }
 
-        function buildSlidesDOM(slides, themeKey, userName) {
-            slidesContainer.innerHTML = '';
-            dotsContainer.innerHTML = '';
-            const t = themeConfig[themeKey];
-
-            slides.forEach((slide, i) => {
-                const slEl = document.createElement('div');
-                slEl.className = `slide-container w-full h-full absolute inset-0 transition-opacity duration-300 ${t.bg} ${t.text} flex flex-col ${i === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0 hidden'}`;
-                slEl.id = `sl-${i}`;
-
-                const imgHtml = `
-                    <div class="relative w-full h-48 md:h-full bg-black/10 rounded-xl overflow-hidden img-wrapper shadow-inner no-print-bg">
-                        <img src="${getImageUrl(slide.imagePrompt)}" crossorigin="anonymous" class="w-full h-full object-cover target-img" alt="${slide.imagePrompt}" onerror="this.src='https://placehold.co/800x500/eeeeee/999999?text=Image+Load+Error'">
-                        <div class="absolute inset-0 image-overlay flex flex-col items-center justify-center backdrop-blur-sm no-print">
-                            <label class="cursor-pointer bg-white text-blue-600 font-bold px-4 py-2 md:px-6 md:py-3 rounded-full text-xs md:text-sm shadow-xl hover:scale-105 transition-transform flex items-center gap-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 md:h-5 md:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                                Boshqa rasm yuklash
-                                <input type="file" accept="image/*" class="hidden" onchange="handleLocalImage(this)">
-                            </label>
-                        </div>
-                    </div>
-                `;
-
-                if (i === 0) {
-                    slEl.innerHTML = `
-                        <div class="flex-1 flex flex-col md:flex-row w-full h-full overflow-y-auto overflow-x-hidden">
-                            <div class="flex-1 flex flex-col justify-center p-8 md:p-16 w-full">
-                                <div class="inline-block ${t.card} px-4 py-1 rounded-full text-xs md:text-sm font-bold tracking-widest uppercase mb-6 self-start" contenteditable="true">O'quv Taqdimoti</div>
-                                <h1 class="text-3xl md:text-5xl font-extrabold font-heading leading-tight mb-8 ${t.accent}" contenteditable="true">${slide.title}</h1>
-                                
-                                <div class="space-y-4">
-                                    ${slide.items.map(item => `
-                                        <div class="flex items-start gap-3">
-                                            <div class="mt-1.5 w-2 h-2 rounded-full ${t.accent} bg-current"></div>
-                                            <div>
-                                                <h3 class="font-bold font-heading text-lg" contenteditable="true">${item.heading}</h3>
-                                                <p class="opacity-80 text-sm md:text-base" contenteditable="true">${item.description}</p>
-                                            </div>
-                                        </div>
-                                    `).join('')}
-                                </div>
-                            </div>
-                            <div class="w-full md:w-5/12 p-6 md:p-8 flex items-center">
-                                ${imgHtml}
-                            </div>
-                        </div>
-                        ${renderFooter(t, userName, slide.source, i, slides.length)}
-                    `;
-                } else {
-                    slEl.innerHTML = `
-                        <div class="flex-1 p-6 md:p-12 overflow-y-auto flex flex-col w-full h-full">
-                            <h2 class="text-2xl md:text-4xl font-bold font-heading mb-6 md:mb-8 ${t.accent} w-full" contenteditable="true">${slide.title}</h2>
-                            <div class="flex flex-col md:flex-row gap-6 md:gap-10 flex-1">
-                                <div class="flex-1 grid grid-cols-1 gap-4 content-start w-full">
-                                    ${slide.items.map((item, idx) => `
-                                        <div class="p-5 ${t.card} rounded-xl">
-                                            <h3 class="text-lg md:text-xl font-bold font-heading mb-2 flex items-center gap-2" contenteditable="true">
-                                                <span class="${t.accent} opacity-70">${idx+1}.</span> ${item.heading}
-                                            </h3>
-                                            <p class="opacity-80 text-sm md:text-base" contenteditable="true">${item.description}</p>
-                                        </div>
-                                    `).join('')}
-                                </div>
-                                <div class="w-full md:w-1/3 flex-shrink-0 flex items-start">
-                                    ${imgHtml}
-                                </div>
-                            </div>
-                        </div>
-                        ${renderFooter(t, userName, slide.source, i, slides.length)}
-                    `;
-                }
-                slidesContainer.appendChild(slEl);
-
-                // Navigation Dots
-                const dot = document.createElement('button');
-                dot.className = `w-2 h-2 md:w-3 md:h-3 rounded-full transition-all ${i === 0 ? 'bg-blue-500 scale-125' : 'bg-white/40'}`;
-                dot.onclick = () => showSlide(i);
-                dotsContainer.appendChild(dot);
-            });
-
-            currentIdx = 0;
-            updateNavUI();
-        }
-
-        function renderFooter(t, userName, source, idx, total) {
-            return `
-                <div class="h-12 md:h-16 px-4 md:px-8 flex items-center justify-between text-xs md:text-sm font-semibold ${t.footer} shrink-0 w-full">
-                    <div class="flex items-center gap-2 md:gap-4 truncate">
-                        <span class="flex items-center gap-1 opacity-90 truncate" contenteditable="true">👤 ${userName}</span>
-                        <span class="opacity-50 hidden md:inline">|</span>
-                        <span class="flex items-center gap-1 opacity-80 truncate" contenteditable="true">📚 ${source}</span>
-                    </div>
-                    <div class="bg-black/20 px-3 py-1 rounded-full shrink-0">
-                        ${idx + 1} / ${total}
-                    </div>
-                </div>
-            `;
-        }
-
-        // --- STREAMING_CHUNK:Interactions & Local Image handling... ---
-        window.handleLocalImage = function(input) {
+        window.swapImage = function(input) {
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    const img = input.closest('.img-wrapper').querySelector('.target-img');
+                    // Find the image sibling in the same label
+                    const img = input.parentElement.querySelector('img');
                     img.src = e.target.result;
                 }
                 reader.readAsDataURL(input.files[0]);
             }
         };
 
-        // --- SLIDE NAVIGATION ---
+        function buildSlidesDOM(slides, themeKey, userName) {
+            slidesContainer.innerHTML = '';
+            const t = themes[themeKey];
+
+            slides.forEach((slide, i) => {
+                const slEl = document.createElement('div');
+                slEl.className = `slide-container w-full h-full absolute inset-0 transition-opacity duration-300 ${t.bg} ${t.text} flex flex-col ${i === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0 hidden'}`;
+                slEl.id = `sl-${i}`;
+
+                // Image Element with local upload feature
+                const imgHtml = `
+                    <label class="cursor-pointer block w-full h-48 md:h-full bg-black/10 rounded-xl overflow-hidden img-wrapper shadow-md relative group no-print-bg">
+                        <img src="${getImageUrl(slide.image_prompt)}" class="w-full h-full object-cover transition-transform group-hover:scale-105" alt="AI Image" crossorigin="anonymous">
+                        <div class="absolute inset-0 bg-black/50 flex items-center justify-center img-overlay no-print">
+                            <span class="bg-white/90 text-blue-700 px-4 py-2 rounded-lg font-bold text-sm shadow-lg">📁 Rasm yuklash</span>
+                        </div>
+                        <input type="file" accept="image/*" class="hidden" onchange="swapImage(this)">
+                    </label>
+                `;
+
+                // Slide Layout
+                let contentHtml = '';
+                if(i === 0) {
+                    contentHtml = `
+                        <div class="flex-1 flex flex-col md:flex-row w-full h-full p-6 md:p-12 overflow-y-auto">
+                            <div class="flex-1 flex flex-col justify-center mb-6 md:mb-0 md:pr-8">
+                                <h1 class="text-3xl md:text-5xl font-extrabold font-heading leading-tight mb-6 ${t.accent}" contenteditable="true">${slide.title}</h1>
+                                <div class="space-y-4">
+                                    ${slide.content.map(pt => `<p class="text-lg opacity-90" contenteditable="true">${pt}</p>`).join('')}
+                                </div>
+                            </div>
+                            <div class="w-full md:w-1/2 flex items-center">
+                                ${imgHtml}
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    contentHtml = `
+                        <div class="flex-1 p-6 md:p-12 overflow-y-auto flex flex-col h-full">
+                            <h2 class="text-2xl md:text-4xl font-bold font-heading mb-6 ${t.accent}" contenteditable="true">${slide.title}</h2>
+                            <div class="flex flex-col md:flex-row gap-6 flex-1 h-full">
+                                <div class="flex-1 space-y-4">
+                                    ${slide.content.map(pt => `
+                                        <div class="p-4 ${t.card} rounded-r-lg shadow-sm">
+                                            <p class="text-base md:text-lg opacity-90" contenteditable="true">${pt}</p>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                                <div class="w-full md:w-5/12 flex-shrink-0 h-48 md:h-auto">
+                                    ${imgHtml}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                // Footer (Universitet talabiga mos toza ko'rinish)
+                const footerHtml = `
+                    <div class="h-12 md:h-14 px-6 flex items-center justify-between text-xs md:text-sm font-semibold ${t.footBg} ${t.footText} shrink-0">
+                        <span class="truncate pr-4 flex items-center gap-2">👤 Talaba: <span contenteditable="true">${userName}</span></span>
+                        <span class="bg-black/20 px-3 py-1 rounded-full shrink-0">${i + 1} / ${slides.length}</span>
+                    </div>
+                `;
+
+                slEl.innerHTML = contentHtml + footerHtml;
+                slidesContainer.appendChild(slEl);
+            });
+
+            currentIdx = 0;
+            updateNavUI();
+        }
+
+        // --- STREAMING_CHUNK:Navigation & PDF Export... ---
         function showSlide(index) {
             if (index < 0 || index >= slidesData.length) return;
             
@@ -462,45 +397,40 @@
                 curEl.classList.replace('z-10', 'z-0');
             }, 300);
 
-            dotsContainer.children[currentIdx].className = 'w-2 h-2 md:w-3 md:h-3 rounded-full transition-all bg-white/40';
-            
             currentIdx = index;
             
             tgtEl.classList.remove('hidden');
             tgtEl.classList.replace('z-0', 'z-10');
-            // Trigger reflow
             void tgtEl.offsetWidth; 
             tgtEl.style.opacity = '1';
-            
-            dotsContainer.children[currentIdx].className = 'w-2 h-2 md:w-3 md:h-3 rounded-full transition-all bg-blue-500 scale-125';
             
             updateNavUI();
         }
 
         function updateNavUI() {
-            btnPrev.disabled = currentIdx === 0;
-            btnNext.disabled = currentIdx === slidesData.length - 1;
+            document.getElementById('btn-prev').disabled = currentIdx === 0;
+            document.getElementById('btn-next').disabled = currentIdx === slidesData.length - 1;
         }
 
-        btnPrev.onclick = () => showSlide(currentIdx - 1);
-        btnNext.onclick = () => showSlide(currentIdx + 1);
+        document.getElementById('btn-prev').onclick = () => showSlide(currentIdx - 1);
+        document.getElementById('btn-next').onclick = () => showSlide(currentIdx + 1);
         
-        btnClose.onclick = () => {
-            viewerView.classList.add('hidden');
-            viewerView.classList.remove('flex');
-            settingsView.classList.remove('hidden');
+        document.getElementById('btn-close').onclick = () => {
+            document.getElementById('viewer-view').classList.add('hidden');
+            document.getElementById('viewer-view').classList.remove('flex');
+            document.getElementById('settings-view').classList.remove('hidden');
         };
 
-        // --- STREAMING_CHUNK:PDF Export Logic... ---
-        btnPdf.onclick = async () => {
-            const btnHtml = btnPdf.innerHTML;
-            btnPdf.innerHTML = '<div class="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div> Kutib turing...';
+        // PDF Generation
+        document.getElementById('btn-pdf').onclick = async () => {
+            const btnPdf = document.getElementById('btn-pdf');
+            const originalHtml = btnPdf.innerHTML;
+            btnPdf.innerHTML = 'Yuklanmoqda...';
             btnPdf.disabled = true;
 
             const container = document.getElementById('slides-container');
             const allSlides = document.querySelectorAll('.slide-container');
 
-            // Switch to PDF rendering mode
             container.classList.add('pdf-mode');
             
             allSlides.forEach(s => {
@@ -510,7 +440,7 @@
 
             const opt = {
                 margin:       0,
-                filename:     'Pedagogika_Taqdimot_AI.pdf',
+                filename:     'AI_Taqdimot.pdf',
                 image:        { type: 'jpeg', quality: 0.98 },
                 html2canvas:  { scale: 2, useCORS: true, logging: false },
                 jsPDF:        { unit: 'px', format: [1280, 720], orientation: 'landscape' }
@@ -520,9 +450,8 @@
                 await html2pdf().set(opt).from(container).save();
             } catch (err) {
                 console.error(err);
-                alert("PDF yuklashda xatolik yuz berdi. Internetni tekshiring.");
+                alert("PDF saqlashda xatolik. Internetni tekshiring.");
             } finally {
-                // Restore presentation mode
                 container.classList.remove('pdf-mode');
                 allSlides.forEach((s, idx) => {
                     s.classList.add('absolute', 'inset-0');
@@ -531,29 +460,10 @@
                         s.style.opacity = '0';
                     }
                 });
-
-                btnPdf.innerHTML = btnHtml;
+                btnPdf.innerHTML = originalHtml;
                 btnPdf.disabled = false;
             }
         };
-
-        // Swipe support for mobile
-        let touchstartX = 0;
-        let touchendX = 0;
-        
-        viewerView.addEventListener('touchstart', e => {
-            touchstartX = e.changedTouches[0].screenX;
-        }, {passive: true});
-
-        viewerView.addEventListener('touchend', e => {
-            touchendX = e.changedTouches[0].screenX;
-            handleSwipe();
-        }, {passive: true});
-
-        function handleSwipe() {
-            if (touchendX < touchstartX - 50) showSlide(currentIdx + 1);
-            if (touchendX > touchstartX + 50) showSlide(currentIdx - 1);
-        }
     </script>
 </body>
 </html>
