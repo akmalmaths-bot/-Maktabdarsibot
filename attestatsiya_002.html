@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attestatsiya Tayyorgarlik Testi - 2-qism</title>
+    
+    <!-- Tailwind CSS ulash -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- React va ReactDOM ulash -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- Babel (JSX ni oddiy JS ga o'girish uchun) -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // Web Audio API orqali tugma bosilganda chiqadigan ovoz
+        const playSound = () => {
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) return;
+                if (!window.audioCtx) window.audioCtx = new AudioContext();
+                const ctx = window.audioCtx;
+                if (ctx.state === 'suspended') ctx.resume();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(800, ctx.currentTime);
+                gain.gain.setValueAtTime(0.1, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
+                osc.start(ctx.currentTime);
+                osc.stop(ctx.currentTime + 0.1);
+            } catch (e) {
+                console.error("Audio error:", e);
+            }
+        };
+
+        // Barcha 50 ta YANGI savol bazasi (2-qism)
+        const testQuestions = [
+          // --- ONA TILI VA METODIKASI (1-10) ---
+          { id: 1, subject: "Ona tili", question: "Qaysi qatorda yasama so'zlar berilgan?", options: ["Kitob, daftar, qalam", "Paxtakor, ishchi, bog'bon", "Baland, chiroyli, keng", "Yoz, qish, bahor"], correct: 1 },
+          { id: 2, subject: "Ona tili", question: "O'zbek tilida nechta kelishik bor?", options: ["5 ta", "6 ta", "7 ta", "8 ta"], correct: 1 },
+          { id: 3, subject: "Ona tili", question: "'O'qituvchi' so'zining asosi qaysi qatorda to'g'ri ko'rsatilgan?", options: ["o'qituv", "o'qit", "o'qituvchi", "o'qi"], correct: 3 },
+          { id: 4, subject: "Ona tili", question: "Boshlang'ich sinflarda so'z turkumlarini o'rganish nimadan boshlanadi?", options: ["Fe'ldan", "Sifatdan", "Otdan", "Sondan"], correct: 2 },
+          { id: 5, subject: "Ona tili", question: "Zid ma'noli (antonim) so'zlar qatorini toping.", options: ["Kun - tun, issiq - sovuq", "Do'st - o'rtoq, a'lo - yaxshi", "Katta - ulkan, baland - yuksak", "Oq - qizil, qora - ko'k"], correct: 0 },
+          { id: 6, subject: "Ona tili", question: "Qaysi so'z xato yozilgan?", options: ["Muzey", "Rassom", "Bokschi", "Po'chta"], correct: 3 },
+          { id: 7, subject: "Ona tili", question: "Gapning bosh bo'laklari qaysilar?", options: ["Hol va to'ldiruvchi", "Ega va kesim", "Aniqlovchi va ega", "To'ldiruvchi va kesim"], correct: 1 },
+          { id: 8, subject: "Ona tili", question: "Boshlang'ich sinf ona tili darsliklarida matn ustida ishlashning asosiy usuli qaysi?", options: ["Faqat grammatik tahlil qilish", "Matnni yodlash", "Savol-javob qilish, qayta hikoyalash va reja tuzish", "Faqat ko'chirib yozish"], correct: 2 },
+          { id: 9, subject: "Ona tili", question: "Qaysi undosh tovush ham jarangli, ham jarangsiz juftlikka ega EMAS?", options: ["b - p", "v - f", "m, n, l, r", "z - s"], correct: 2 },
+          { id: 10, subject: "Ona tili", question: "O'zbek tilida urg'u asosan qayerga tushadi?", options: ["So'zning birinchi bo'g'iniga", "So'zning oxirgi bo'g'iniga", "O'rtadagi bo'g'inga", "Urg'u mavjud emas"], correct: 1 },
+
+          // --- O'QISH SAVODXONLIGI (11-20) ---
+          { id: 11, subject: "O'qish savodxonligi", question: "Alisher Navoiy qachon va qayerda tug'ilgan?", options: ["1441-yil Hirotda", "1483-yil Andijonda", "1336-yil Shahrisabzda", "1894-yil Farg'onada"], correct: 0 },
+          { id: 12, subject: "O'qish savodxonligi", question: "'Susambil' qanday ertaklar turiga kiradi?", options: ["Sehrli ertaklar", "Maishiy ertaklar", "Hayvonlar haqidagi ertaklar", "Tarixiy ertaklar"], correct: 2 },
+          { id: 13, subject: "O'qish savodxonligi", question: "Boshlang'ich sinf darsliklaridagi rivoyat va afsonalarning farqi nimada?", options: ["Farqi yo'q", "Rivoyat tarixiy shaxs yoki voqeaga asoslanadi, afsona fantastik to'qimaga", "Afsonada tarixiy aniqlik ko'p bo'ladi", "Rivoyat faqat she'riy shaklda bo'ladi"], correct: 1 },
+          { id: 14, subject: "O'qish savodxonligi", question: "Boshlang'ich sinf o'quvchilari uchun o'qish tezligi 4-sinf oxiriga borib o'rtacha qancha bo'lishi talab etiladi (minutiga)?", options: ["30-40 ta so'z", "50-60 ta so'z", "90-110 ta so'z atrofida", "150-180 ta so'z"], correct: 2 },
+          { id: 15, subject: "O'qish savodxonligi", question: "Rolga kirib o'qish (sahnalashtirish) o'quvchida nimani rivojlantiradi?", options: ["Yozuv malakasini", "O'z fikrini ifodalash, qahramon his-tuyg'ularini anglash va ifodali nutqni", "Matematik mantiqni", "Faqat xotirani"], correct: 1 },
+          { id: 16, subject: "O'qish savodxonligi", question: "Dostonda qanday xususiyatlar birlashgan bo'ladi?", options: ["Faqat lirik", "Lirik va epik (she'riy shakldagi voqelik)", "Faqat dramatik", "Publitsistik va lirik"], correct: 1 },
+          { id: 17, subject: "O'qish savodxonligi", question: "Qaysi janr asosan qofiyali baytlar orqali bolalarni o'ylantirib, topqirlikka chorlaydi?", options: ["Maqol", "Matal", "Topishmoq", "Ertak"], correct: 2 },
+          { id: 18, subject: "O'qish savodxonligi", question: "Matn yuzasidan reja tuzishning eng muhim sharti nima?", options: ["Har bir qismning asosiy fikrini qisqa, aniq nomlash", "Juda uzun gaplar bilan yozish", "Matndagi hamma gaplarni ko'chirib yozish", "Faqat asar qahramonlari ismini yozish"], correct: 0 },
+          { id: 19, subject: "O'qish savodxonligi", question: "She'riy matnni o'rganish nimidan boshlanadi?", options: ["Grammatik qoidalarni qidirishdan", "O'qituvchining ifodali o'qib berishidan (yoki audio tinglashdan)", "Ko'chirib yozishdan", "Qismlarga bo'lishdan"], correct: 1 },
+          { id: 20, subject: "O'qish savodxonligi", question: "Abdulla Avloniyning axloq, odob, ta'lim-tarbiya haqidagi mashhur asari qaysi?", options: ["Turkiy guliston yoxud axloq", "Qutadg'u bilig", "O'tkan kunlar", "Boburnoma"], correct: 0 },
+
+          // --- MATEMATIKA VA METODIKASI (21-30) ---
+          { id: 21, subject: "Matematika", question: "72 ni 8 ga bo'lgandagi bo'linma 3 barobar orttirilsa qanday son hosil bo'ladi?", options: ["24", "18", "27", "81"], correct: 2 },
+          { id: 22, subject: "Matematika", question: "Zamonaviy matematikada (Singapur metodikasi) 'Bar modeling' (to'g'ri to'rtburchakli chizmalar) nima maqsadda qo'llaniladi?", options: ["Faqat rasmlarni bo'yash uchun", "Bolalarni o'yinlarga chalg'itish uchun", "Matnli va mantiqiy masalalarni vizual model yordamida oson tushunish va yechish uchun", "Yodlash tezligini oshirish uchun"], correct: 2 },
+          { id: 23, subject: "Matematika", question: "Tenglamani yeching: x + 45 = 100", options: ["x = 45", "x = 55", "x = 65", "x = 145"], correct: 1 },
+          { id: 24, subject: "Matematika", question: "Aylana va doiraning asosiy farqi nimada?", options: ["Farqi yo'q", "Aylana bu faqat chegara (chiziq), doira esa shu chiziq va uning ichidagi tekislik", "Doira faqat katta o'lchamda bo'ladi", "Aylana uchburchaksimon bo'lishi ham mumkin"], correct: 1 },
+          { id: 25, subject: "Matematika", question: "3 ta yuzlik, 5 ta o'nlik va 8 ta birlikdan tuzilgan son qaysi?", options: ["853", "538", "3058", "358"], correct: 3 },
+          { id: 26, subject: "Matematika", question: "Noto'g'ri kasrni aralash songa aylantiring: 25/4", options: ["4 butun 1/4", "6 butun 1/4", "5 butun 2/4", "6 butun 3/4"], correct: 1 },
+          { id: 27, subject: "Matematika", question: "1 kilogramm paxta og'irmi yoki 1 kilogramm temir?", options: ["Paxta og'ir", "Temir og'ir", "Ikkalasi teng", "Aniqlab bo'lmaydi"], correct: 2 },
+          { id: 28, subject: "Matematika", question: "To'g'ri to'rtburchakning bo'yi 12 sm, eni 5 sm. Uning yuzini toping.", options: ["34 sm²", "17 sm²", "60 sm²", "120 sm²"], correct: 2 },
+          { id: 29, subject: "Matematika", question: "Matematika darslarida ko'rgazmalilik qachon ayniqsa muhim hisoblanadi?", options: ["Oliy o'quv yurtlarida", "Yangi va murakkab mavzuni (ayniqsa boshlang'ich sinfda) tushuntirish jarayonida", "Faqat nazorat ishlarida", "Darsning eng oxirida"], correct: 1 },
+          { id: 30, subject: "Matematika", question: "Qaysi sonlar juft sonlar deyiladi?", options: ["3 ga qoldiqsiz bo'linadigan sonlar", "2 ga qoldiqsiz bo'linadigan sonlar", "Oxiri 0 yoki 5 bilan tugaydigan sonlar", "Faqat o'ziga bo'linadigan sonlar"], correct: 1 },
+
+          // --- TABIIY FANLAR (31-40) ---
+          { id: 31, subject: "Tabiiy fanlar", question: "G'o'zaning qaysi qismidan paxta olinadi?", options: ["Poyasidan", "Bargidan", "Ko'sagidan", "Ildizidan"], correct: 2 },
+          { id: 32, subject: "Tabiiy fanlar", question: "Havo tarkibida qaysi gaz eng ko'p miqdorni tashkil etadi?", options: ["Kislorod", "Karbonat angidrid", "Azot (78%)", "Vodorod"], correct: 2 },
+          { id: 33, subject: "Tabiiy fanlar", question: "Yerdan Quyoshgacha bo'lgan o'rtacha masofa qancha?", options: ["10 ming kilometr", "1 million kilometr", "150 million kilometr", "300 ming kilometr"], correct: 2 },
+          { id: 34, subject: "Tabiiy fanlar", question: "Tabiatda suvning qaynash harorati (normal bosimda) qancha?", options: ["50 °C", "90 °C", "100 °C", "0 °C"], correct: 2 },
+          { id: 35, subject: "Tabiiy fanlar", question: "O'zbekistonning milliy hayvonlaridan qaysi biri Qizil kitobga kiritilgan (tog'larda yashaydi)?", options: ["Jayron", "Qor qoploni (ilvirs)", "Bo'ri", "Toshbaqa"], correct: 1 },
+          { id: 36, subject: "Tabiiy fanlar", question: "Magnitning nechta qutbi bor?", options: ["Mavjud emas", "1 ta", "2 ta (Shimoliy va Janubiy)", "4 ta"], correct: 2 },
+          { id: 37, subject: "Tabiiy fanlar", question: "O'simliklar nafas olganda (fotosintez emas) yutadi va chiqaradi:", options: ["Karbonat angidrid yutib, kislorod chiqaradi", "Kislorod yutib, karbonat angidrid chiqaradi", "Faqat suv bug'lantiradi", "Faqat azot ajratadi"], correct: 1 },
+          { id: 38, subject: "Tabiiy fanlar", question: "Eng yirik suv havzasi qanday ataladi?", options: ["Daryo", "Ko'l", "Dengiz", "Okean"], correct: 3 },
+          { id: 39, subject: "Tabiiy fanlar", question: "Globus nima?", options: ["Yulduzlar xaritasi", "Yer sharining kichraytirilgan aniq modeli", "Faqat quruqliklarning rasmi", "Kitob turi"], correct: 1 },
+          { id: 40, subject: "Tabiiy fanlar", question: "Boshlang'ich sinflarda avvalgi 'Tabiatshunoslik' fani o'rniga qanday yangi fan kiritildi?", options: ["Geografiya", "Fizika", "Science (Tabiiy fanlar)", "Biologiya"], correct: 2 },
+
+          // --- PEDAGOGIKA, PSIXOLOGIYA VA METODIKA (41-50) ---
+          { id: 41, subject: "Pedagogika va psixologiya", question: "O'zbekiston Respublikasining yangi tahrirdagi 'Ta'lim to'g'risida'gi qonuni qachon qabul qilingan?", options: ["1997-yil", "2020-yil 23-sentabr", "2017-yil 7-fevral", "2023-yil 30-aprel"], correct: 1 },
+          { id: 42, subject: "Pedagogika va psixologiya", question: "Kichik maktab yoshidagi o'quvchilarda qanday diqqat turi ustunlik qiladi?", options: ["Ixtiyoriy (ongli) diqqat", "Ixtiyorsiz diqqat (tashqi, yorqin narsalarga tez chalg'ish)", "Diqqat umuman rivojlanmagan bo'ladi", "Post-ixtiyoriy diqqat"], correct: 1 },
+          { id: 43, subject: "Pedagogika va psixologiya", question: "Davlat ta'lim standarti (DTS) bu:", options: ["O'qituvchining dars ishlanmasi", "Ta'lim sifati, mazmuni va o'quvchi tayyorgarligiga qo'yilgan umumiy majburiy talablar", "Maktabning ichki nizomi", "Faqat baholash mezoni"], correct: 1 },
+          { id: 44, subject: "Pedagogika va psixologiya", question: "O'quvchilarni baholashning formativ (shakllantiruvchi) turidan maqsad nima?", options: ["Faqat jurnalga baho qo'yish", "Choraklik bahoni chiqarish", "O'quv jarayonida o'quvchi xatolarini tuzatish, unga yordam va to'g'ri yo'nalish berish (qayta aloqa)", "Sinfda qoldirish"], correct: 2 },
+          { id: 45, subject: "Pedagogika va psixologiya", question: "Muammoli ta'lim texnologiyasining eng asosiy afzalligi nimada?", options: ["Ma'lumotni tayyor holda berishda", "Bolalarni mustaqil fikrlashga, izlanishga va yechim topishga o'rgatishida", "Vaqtni qisqartirishda", "O'qituvchi umuman aralashmasligida"], correct: 1 },
+          { id: 46, subject: "Pedagogika va psixologiya", question: "'Keys-stadi' (Case-study) metodi qanday metod hisoblanadi?", options: ["Faqat test ishlash metodi", "Aniq bir hayotiy yoki amaliy vaziyatni o'rganish, muammoni tahlil qilib, uning yechimini topish metodi", "Rollarga kirib o'ynash metodi", "Matnni yodlash metodi"], correct: 1 },
+          { id: 47, subject: "Pedagogika va psixologiya", question: "Pedagogik qobiliyat nima?", options: ["Faqat yaxshi gapirish", "O'qituvchining ta'lim va tarbiya jarayonini muvaffaqiyatli, yuqori saviyada olib borishini ta'minlovchi shaxsiy xususiyatlari", "Yaxshi kiyinish", "Ko'p kitob o'qiganlik"], correct: 1 },
+          { id: 48, subject: "Pedagogika va psixologiya", question: "Boshlang'ich sinflarda tarbiyaviy ishlarning eng muhim quroli nima hisoblanadi?", options: ["Jazolash", "O'qituvchining shaxsiy namunasi va xulq-atvori", "Ko'p vazifa berish", "Ota-onani chaqirtirish"], correct: 1 },
+          { id: 49, subject: "Pedagogika va psixologiya", question: "Didaktikaning 'Ko'rgazmalilik' tamoyilini kim eng yuqori darajaga ko'tarib, 'Oltin qoida' deb atagan?", options: ["Abu Nasr Forobiy", "Yan Amos Komenskiy", "Abdulla Avloniy", "Iogan Pestalotssi"], correct: 1 },
+          { id: 50, subject: "Pedagogika va psixologiya", question: "Yangi 'Tarbiya' fani asosan qanday maqsadni ko'zlaydi?", options: ["Faqat dinni o'rgatish", "Yoshlarni vatanparvarlik, yuksak ma'naviy-axloqiy qadriyatlar ruhida tarbiyalash va muvaffaqiyatga tayyorlash", "Jismoniy chiniqtirish", "Tarixiy sanalarni yodlatish"], correct: 1 }
+        ];
+
+        function App() {
+          const [appState, setAppState] = useState('intro'); // intro, quiz, result
+          const [answers, setAnswers] = useState(Array(50).fill(null));
+          const [currentQuestion, setCurrentQuestion] = useState(0);
+          const [timeLeft, setTimeLeft] = useState(100 * 60);
+          const [showConfirm, setShowConfirm] = useState(false);
+          const [firstName, setFirstName] = useState('');
+          const [lastName, setLastName] = useState('');
+
+          useEffect(() => {
+            let timer;
+            if (appState === 'quiz' && timeLeft > 0) {
+              timer = setInterval(() => {
+                setTimeLeft((prev) => prev - 1);
+              }, 1000);
+            } else if (timeLeft === 0 && appState === 'quiz') {
+              finishTest();
+            }
+            return () => clearInterval(timer);
+          }, [appState, timeLeft]);
+
+          const startTest = () => {
+            playSound();
+            if (!firstName.trim() || !lastName.trim()) return;
+            setAppState('quiz');
+            setTimeLeft(100 * 60);
+            setAnswers(Array(50).fill(null));
+            setCurrentQuestion(0);
+            setShowConfirm(false);
+          };
+
+          const finishTest = () => {
+            setAppState('result');
+          };
+
+          const handleOptionSelect = (optionIndex) => {
+            playSound();
+            const newAnswers = [...answers];
+            newAnswers[currentQuestion] = optionIndex;
+            setAnswers(newAnswers);
+          };
+
+          const formatTime = (seconds) => {
+            const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+            const s = (seconds % 60).toString().padStart(2, '0');
+            return `${m}:${s}`;
+          };
+
+          const calculateScore = () => {
+            return answers.reduce((score, answer, index) => {
+              if (answer === testQuestions[index].correct) return score + 1;
+              return score;
+            }, 0);
+          };
+
+          const renderView = () => {
+              if (appState === 'intro') {
+                return (
+                  <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4 font-sans text-gray-800">
+                    <div className="max-w-2xl bg-white p-8 rounded-2xl shadow-xl border border-gray-100 w-full">
+                      
+                      <h1 className="text-xl md:text-2xl font-bold text-center text-blue-800 mb-6 border-b pb-4">
+                        Boshlang'ich Ta'lim O'qituvchilari Uchun<br/> Attestatsiya Tayyorgarlik Testi (2-qism)
+                      </h1>
+                      
+                      <div className="space-y-4 mb-8 text-lg">
+                        <p><strong>Umumiy savollar soni:</strong> 50 ta (Har bir to'g'ri javob 2 ball, jami 100 ball)</p>
+                        <ul className="list-disc pl-8 space-y-1 text-gray-600 text-base">
+                          <li>Ona tili va metodikasi (10 ta)</li>
+                          <li>O'qish savodxonligi (10 ta)</li>
+                          <li>Matematika va metodikasi (10 ta)</li>
+                          <li>Tabiiy fanlar (10 ta)</li>
+                          <li>Pedagogika, psixologiya, ta'lim texnologiyalari (10 ta)</li>
+                        </ul>
+                        <p><strong>Ajratilgan vaqt:</strong> 100 daqiqa</p>
+                        <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mt-4 text-sm text-yellow-800 rounded">
+                          <strong>Eslatma:</strong> Test jarayonida sahifani yangilamang, aks holda natijalaringiz o'chib ketadi.
+                        </div>
+                      </div>
+
+                      <div className="space-y-4 mb-6 bg-gray-50 p-6 rounded-xl border border-gray-200">
+                        <div>
+                          <label className="block text-sm font-bold text-gray-700 mb-2">Familiyangiz</label>
+                          <input 
+                            type="text" 
+                            value={lastName} 
+                            onChange={(e) => setLastName(e.target.value)} 
+                            placeholder="Masalan: Valiyev"
+                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-bold text-gray-700 mb-2">Ismingiz</label>
+                          <input 
+                            type="text" 
+                            value={firstName} 
+                            onChange={(e) => setFirstName(e.target.value)} 
+                            placeholder="Masalan: Ali"
+                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+                          />
+                        </div>
+                      </div>
+
+                      <button 
+                        onClick={startTest}
+                        disabled={!firstName.trim() || !lastName.trim()}
+                        className="w-full py-4 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 disabled:cursor-not-allowed text-white text-xl font-bold rounded-xl transition shadow-lg hover:shadow-blue-200"
+                      >
+                        {(!firstName.trim() || !lastName.trim()) ? "Ism va familiyani kiriting" : "Testni Boshlash"}
+                      </button>
+                      
+                      {/* Pastki yozuv doim saqlanadi */}
+                      <div className="mt-8 text-center text-sm text-gray-500 border-t pt-4">
+                        <p className="font-semibold text-gray-700">Test tuzuvchi: Akmaljon Jo'raqo'ziyev</p>
+                        <p>telegram: <a href="https://t.me/Akmalmaths" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">@Akmalmaths</a> va <a href="https://t.me/Maktabdarsibot" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">@Maktabdarsibot</a></p>
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
+
+              if (appState === 'quiz') {
+                const question = testQuestions[currentQuestion];
+                return (
+                  <div className="min-h-screen bg-gray-100 flex flex-col font-sans pb-20">
+                    <div className="bg-white shadow-sm border-b px-6 py-4 flex justify-between items-center sticky top-0 z-10">
+                      <div className="font-semibold text-gray-700 hidden sm:block">
+                        Attestatsiya Testi (2-qism)
+                      </div>
+                      <div className="flex items-center gap-4">
+                        <div className={`text-2xl font-bold flex items-center gap-2 ${timeLeft < 300 ? 'text-red-600' : 'text-blue-700'}`}>
+                          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                          {formatTime(timeLeft)}
+                        </div>
+                        <button 
+                          onClick={() => { playSound(); setShowConfirm(true); }}
+                          className="px-4 py-2 bg-red-100 text-red-700 rounded hover:bg-red-200 font-medium transition"
+                        >
+                          Yakunlash
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="flex-1 flex flex-col md:flex-row max-w-7xl mx-auto w-full p-4 gap-6">
+                      <div className="flex-1 bg-white rounded-2xl shadow-sm p-6 flex flex-col">
+                        <div className="mb-6 flex justify-between items-center border-b pb-4">
+                          <span className="bg-blue-100 text-blue-800 text-sm font-bold px-3 py-1 rounded-full">
+                            {question.subject}
+                          </span>
+                          <span className="text-gray-500 font-medium">
+                            Savol {currentQuestion + 1} / 50
+                          </span>
+                        </div>
+                        
+                        <h2 className="text-xl md:text-2xl font-medium text-gray-800 mb-8 leading-relaxed">
+                          {currentQuestion + 1}. {question.question}
+                        </h2>
+
+                        <div className="space-y-3 flex-1">
+                          {question.options.map((option, idx) => (
+                            <button
+                              key={idx}
+                              onClick={() => handleOptionSelect(idx)}
+                              className={`w-full text-left p-4 rounded-xl border-2 transition-all flex items-center gap-4 text-lg
+                                ${answers[currentQuestion] === idx 
+                                  ? 'border-blue-600 bg-blue-50 text-blue-900 shadow-sm' 
+                                  : 'border-gray-200 hover:border-blue-300 hover:bg-gray-50 text-gray-700'
+                                }`}
+                            >
+                              <span className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm shrink-0
+                                ${answers[currentQuestion] === idx ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'}
+                              `}>
+                                {['A', 'B', 'C', 'D'][idx]}
+                              </span>
+                              {option}
+                            </button>
+                          ))}
+                        </div>
+
+                        <div className="mt-8 flex justify-between items-center pt-4 border-t">
+                          <button
+                            onClick={() => { playSound(); setCurrentQuestion(prev => Math.max(0, prev - 1)); }}
+                            disabled={currentQuestion === 0}
+                            className="px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed font-medium transition"
+                          >
+                            &larr; Oldingi
+                          </button>
+                          
+                          {currentQuestion < 49 ? (
+                            <button
+                              onClick={() => { playSound(); setCurrentQuestion(prev => Math.min(49, prev + 1)); }}
+                              className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition shadow-md"
+                            >
+                              Keyingi &rarr;
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => { playSound(); setShowConfirm(true); }}
+                              className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium transition shadow-md"
+                            >
+                              Testni Yakunlash
+                            </button>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="w-full md:w-80 bg-white rounded-2xl shadow-sm p-4 h-fit">
+                        <h3 className="font-bold text-gray-700 mb-4 text-center">Savollar paneli</h3>
+                        <div className="grid grid-cols-5 gap-2">
+                          {answers.map((ans, idx) => (
+                            <button
+                              key={idx}
+                              onClick={() => { playSound(); setCurrentQuestion(idx); }}
+                              className={`h-10 w-full rounded font-medium flex items-center justify-center border transition-all
+                                ${currentQuestion === idx ? 'ring-2 ring-blue-600 scale-110 z-10' : ''}
+                                ${ans !== null 
+                                  ? 'bg-blue-600 text-white border-blue-600' 
+                                  : 'bg-gray-50 text-gray-500 border-gray-200 hover:bg-gray-100'
+                                }
+                              `}
+                            >
+                              {idx + 1}
+                            </button>
+                          ))}
+                        </div>
+                        <div className="mt-6 flex flex-col gap-2 text-sm text-gray-600">
+                          <div className="flex items-center gap-2">
+                            <div className="w-4 h-4 bg-blue-600 rounded"></div> Belgilangan
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <div className="w-4 h-4 bg-gray-50 border border-gray-200 rounded"></div> Belgilanmagan
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {showConfirm && (
+                      <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-4">
+                        <div className="bg-white rounded-2xl shadow-xl p-6 max-w-sm w-full">
+                          <h3 className="text-xl font-bold text-gray-800 mb-4">Testni yakunlaysizmi?</h3>
+                          <p className="text-gray-600 mb-6">Barcha belgilagan javoblaringiz bo'yicha natijangiz hisoblanadi.</p>
+                          <div className="flex justify-end gap-3">
+                            <button 
+                              onClick={() => { playSound(); setShowConfirm(false); }}
+                              className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 font-medium transition"
+                            >
+                              Bekor qilish
+                            </button>
+                            <button 
+                              onClick={() => {
+                                playSound();
+                                setShowConfirm(false);
+                                finishTest();
+                              }}
+                              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition"
+                            >
+                              Yakunlash
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              }
+
+              if (appState === 'result') {
+                const correctAnswers = calculateScore();
+                const totalPoints = correctAnswers * 2;
+                
+                let category = "Qoniqarsiz / Mutaxassis";
+                let colorClass = "text-red-600";
+                if (totalPoints >= 80) { category = "Oliy toifa darajasi"; colorClass = "text-green-600"; }
+                else if (totalPoints >= 70) { category = "1-toifa darajasi"; colorClass = "text-blue-600"; }
+                else if (totalPoints >= 60) { category = "2-toifa darajasi"; colorClass = "text-yellow-600"; }
+
+                return (
+                  <div className="min-h-screen bg-gray-100 p-4 py-8 font-sans pb-24">
+                    <div className="max-w-4xl mx-auto">
+                      <div className="bg-white rounded-2xl shadow-sm p-8 mb-8 text-center border-t-8 border-blue-600">
+                        <h1 className="text-3xl font-bold text-gray-800 mb-2">Test Yakunlandi!</h1>
+                        <p className="text-gray-500 mb-6">Diagnostika natijalaringiz bilan tanishing.</p>
+                        
+                        <div className="bg-blue-50 p-4 rounded-xl mb-8 inline-block border border-blue-100 min-w-[250px]">
+                          <h2 className="text-2xl font-bold text-blue-900">{lastName} {firstName}</h2>
+                        </div>
+                        
+                        <div className="flex flex-wrap justify-center gap-8 mb-8">
+                          <div className="bg-gray-50 p-6 rounded-xl border w-48 shadow-sm">
+                            <div className="text-4xl font-bold text-gray-800">{correctAnswers} / 50</div>
+                            <div className="text-gray-500 mt-2">To'g'ri javoblar</div>
+                          </div>
+                          <div className="bg-gray-50 p-6 rounded-xl border w-48 shadow-sm">
+                            <div className="text-4xl font-bold text-blue-600">{totalPoints}</div>
+                            <div className="text-gray-500 mt-2">To'plangan ball</div>
+                          </div>
+                        </div>
+
+                        <h2 className="text-xl font-medium text-gray-700">
+                          Natija: <span className={`font-bold ${colorClass}`}>{category}</span>
+                        </h2>
+                        
+                        <button 
+                          onClick={() => { playSound(); setAppState('intro'); }}
+                          className="mt-8 px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition shadow"
+                        >
+                          Bosh sahifaga qaytish
+                        </button>
+
+                        {/* Yakuniy sahifa pastki yozuv */}
+                        <div className="mt-8 text-center text-sm text-gray-500 border-t pt-6">
+                          <p className="font-semibold text-gray-700">Test tuzuvchi: Akmaljon Jo'raqo'ziyev</p>
+                          <p>telegram: <a href="https://t.me/Akmalmaths" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">@Akmalmaths</a> va <a href="https://t.me/Maktabdarsibot" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">@Maktabdarsibot</a></p>
+                        </div>
+                      </div>
+
+                      <h3 className="text-2xl font-bold text-gray-800 mb-6">Savollar tahlili</h3>
+                      <div className="space-y-4">
+                        {testQuestions.map((q, idx) => {
+                          const userAnswer = answers[idx];
+                          const isCorrect = userAnswer === q.correct;
+                          const isUnanswered = userAnswer === null;
+
+                          return (
+                            <div key={idx} className={`bg-white rounded-xl shadow-sm p-6 border-l-4 ${isCorrect ? 'border-green-500' : isUnanswered ? 'border-gray-400' : 'border-red-500'}`}>
+                              <div className="flex gap-4">
+                                <div className="font-bold text-gray-500">{idx + 1}.</div>
+                                <div className="flex-1">
+                                  <div className="text-sm font-bold text-blue-600 mb-1">{q.subject}</div>
+                                  <p className="font-medium text-gray-800 mb-4">{q.question}</p>
+                                  
+                                  <div className="space-y-2">
+                                    {q.options.map((opt, optIdx) => {
+                                      const isThisCorrect = optIdx === q.correct;
+                                      const isThisSelected = optIdx === userAnswer;
+                                      
+                                      let bgClass = "bg-gray-50 text-gray-600";
+                                      if (isThisCorrect) bgClass = "bg-green-100 text-green-800 border border-green-300 font-bold";
+                                      else if (isThisSelected && !isThisCorrect) bgClass = "bg-red-100 text-red-800 border border-red-300";
+
+                                      return (
+                                        <div key={optIdx} className={`p-3 rounded-lg flex items-center gap-3 ${bgClass}`}>
+                                          <span>{['A', 'B', 'C', 'D'][optIdx]})</span>
+                                          {opt}
+                                          {isThisCorrect && <span className="ml-auto text-green-600">✓ To'g'ri javob</span>}
+                                          {isThisSelected && !isThisCorrect && <span className="ml-auto text-red-600">✗ Sizning javobingiz</span>}
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                                  
+                                  {isUnanswered && (
+                                    <div className="mt-3 text-sm text-red-500 font-medium">Bu savolga javob berilmagan.</div>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
+              return null;
+          };
+
+          return (
+            <>
+              {renderView()}
+
+              {/* Hamma sahifada ko'rinib turuvchi @Maktabdarsibot doimiy tugmasi */}
+              <a
+                href="https://t.me/Maktabdarsibot"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={playSound}
+                className="fixed bottom-6 right-6 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-full shadow-2xl flex items-center gap-2 z-50 transition-transform transform hover:scale-105 border-2 border-white animate-bounce"
+              >
+                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.19-.08-.05-.19-.02-.27 0-.12.03-1.96 1.25-5.54 3.69-.52.36-1 .53-1.42.52-.47-.01-1.37-.26-2.03-.48-.82-.27-1.47-.42-1.42-.88.03-.22.29-.45.79-.69 3.08-1.35 5.14-2.24 6.17-2.67 2.93-1.24 3.54-1.45 3.94-1.46.09 0 .28.02.38.1.09.07.12.16.14.24.01.12.01.23 0 .34z"/></svg>
+                @Maktabdarsibot
+              </a>
+            </>
+          );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
