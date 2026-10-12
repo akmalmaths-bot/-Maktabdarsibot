@@ -3,101 +3,166 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>So'rovnoma va Admin Panel</title>
+    <title>Prezident Maktabiga Tayyorgarlik</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
-    <!-- Firebase v10 Compat kutubxonalari -->
+    <!-- Firebase v10 Compat -->
     <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore-compat.js"></script>
 
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--tg-theme-bg-color, #ffffff);
-            color: var(--tg-theme-text-color, #000000);
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+            color: #333;
             margin: 0;
             padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
+            min-height: 100vh;
         }
 
-        .container {
+        .card {
+            background-color: rgba(255, 255, 255, 0.95);
             width: 100%;
             max-width: 400px;
+            border-radius: 24px;
+            padding: 30px 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        .badge {
+            background: linear-gradient(90deg, #ff416c 0%, #ff4b2b 100%);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 800;
+            display: inline-block;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .header-text {
-            text-align: center;
             margin-bottom: 30px;
             user-select: none;
         }
 
         .header-text h2 {
-            margin: 0 0 5px 0;
-            font-size: 20px;
+            margin: 0 0 10px 0;
+            font-size: 24px;
+            font-weight: 800;
+            color: #1e1e1e;
             cursor: pointer;
         }
 
         .header-text p {
             margin: 0;
-            font-size: 14px;
-            color: var(--tg-theme-hint-color, #8e8e93);
+            font-size: 15px;
+            color: #666;
+            line-height: 1.5;
         }
 
         .step, #adminPanel {
             display: none;
             width: 100%;
+            animation: fadeIn 0.4s ease-in-out;
         }
 
         .step.active, #adminPanel.active {
             display: block;
         }
 
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         .question {
             font-size: 18px;
-            font-weight: bold;
+            font-weight: 600;
             margin-bottom: 20px;
+            color: #2c3e50;
         }
 
         .option-btn {
             display: block;
             width: 100%;
-            padding: 15px;
-            margin-bottom: 10px;
-            background-color: transparent;
-            border: 1px solid var(--tg-theme-hint-color, #ccc);
-            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            background-color: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 16px;
             font-size: 16px;
-            text-align: left;
-            color: var(--tg-theme-text-color, #000);
+            font-weight: 600;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .option-btn:hover, .option-btn:active {
+            background-color: #e3f2fd;
+            border-color: #2196f3;
+            transform: scale(0.98);
+        }
+
+        .input-group { margin-bottom: 15px; text-align: left; }
+        .input-group input {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 16px;
+            font-size: 16px;
+            box-sizing: border-box;
+            background-color: #f8f9fa;
+            transition: border-color 0.2s;
+        }
+        .input-group input:focus {
+            outline: none;
+            border-color: #2196f3;
+            background-color: #fff;
+        }
+        
+        .btn-primary {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+            color: #ffffff;
+            border: none;
+            border-radius: 16px;
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 10px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 242, 254, 0.4);
+            transition: 0.2s;
+        }
+        
+        .btn-primary:active { transform: scale(0.98); }
+        .btn-primary:disabled { opacity: 0.7; cursor: not-allowed; }
+
+        .btn-secondary {
+            width: 100%;
+            padding: 16px;
+            background-color: #f1f3f5;
+            color: #495057;
+            border: none;
+            border-radius: 16px;
+            font-size: 16px;
+            font-weight: 600;
+            margin-top: 10px;
             cursor: pointer;
             transition: 0.2s;
         }
 
-        .input-group { margin-bottom: 15px; }
-        .input-group input {
-            width: 100%;
-            padding: 15px;
-            border: 1px solid var(--tg-theme-hint-color, #ccc);
-            border-radius: 12px;
-            font-size: 16px;
-            box-sizing: border-box;
-        }
-        
-        .submit-btn, .back-btn {
-            width: 100%;
-            padding: 15px;
-            background-color: var(--tg-theme-button-color, #007aff);
-            color: var(--tg-theme-button-text-color, #ffffff);
-            border: none;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: bold;
-            margin-top: 20px;
-            cursor: pointer;
-        }
-
+        /* Admin panel uslublari */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -105,29 +170,31 @@
             font-size: 14px;
         }
         th, td {
-            border: 1px solid var(--tg-theme-hint-color, #ccc);
-            padding: 8px;
-            text-align: left;
+            border: 1px solid #dee2e6;
+            padding: 10px;
+            text-align: center;
         }
-        th {
-            background-color: rgba(0, 122, 255, 0.1);
-        }
+        th { background-color: #e3f2fd; color: #1976d2; }
     </style>
 </head>
 <body>
 
-<div class="container">
+<div class="card">
+    <div class="badge">Prezident maktabiga tayyorlov</div>
+    
     <div class="header-text">
         <h2 id="triggerAdmin">So'rov qoldiring</h2>
-        <p>Va bizning menejerimiz siz bilan bog'lanadi</p>
+        <p>Ma'lumotlaringizni kiriting va bizning menejerimiz siz bilan bog'lanadi</p>
     </div>
 
+    <!-- 1-BOSQICH -->
     <div id="step1" class="step active">
-        <div class="question">Siz Toshkent shahrida yashaysizmi?</div>
-        <button class="option-btn" onclick="selectLocation('Toshkent')">Ha, yashayman</button>
-        <button class="option-btn" onclick="selectLocation('Boshqa viloyat')">Yo'q, yashamayman</button>
+        <div class="question">Siz qayerda yashaysiz?</div>
+        <button class="option-btn" onclick="selectLocation('Toshkent (Offline)')">Toshkent shahri</button>
+        <button class="option-btn" onclick="selectLocation('Viloyat (Online/Offline)')">Boshqa viloyat</button>
     </div>
 
+    <!-- 2-BOSQICH -->
     <div id="step2" class="step">
         <div class="question">Iltimos, ma'lumotlaringizni kiriting</div>
         <div class="input-group">
@@ -136,18 +203,20 @@
         <div class="input-group">
             <input type="tel" id="phoneNumber" placeholder="+998 90 123 45 67" required>
         </div>
-        <button class="submit-btn" onclick="saveData()">Yuborish</button>
+        <button class="btn-primary" id="submitBtn" onclick="saveData()">Yuborish</button>
+        <button class="btn-secondary" onclick="goBack()">Orqaga qaytish</button>
     </div>
 
+    <!-- ADMIN PANEL (Yashirin) -->
     <div id="adminPanel">
-        <div class="question">Admin Panel - Ro'yxatdan o'tganlar</div>
-        <button class="back-btn" onclick="closeAdminPanel()" style="background-color: #ff3b30; margin-bottom: 15px;">Yopish</button>
-        <div id="usersList">Mijozlar yuklanmoqda...</div>
+        <div class="question">Admin Panel</div>
+        <button class="btn-secondary" onclick="closeAdminPanel()" style="background-color: #ffc9c9; color: #d32f2f;">Yopish</button>
+        <div id="usersList" style="margin-top: 15px; overflow-x: auto;">Mijozlar yuklanmoqda...</div>
     </div>
 </div>
 
 <script>
-    // Siz yuborgan Firebase konfiguratsiyasi
+    // Sizning Firebase konfiguratsiyangiz
     const firebaseConfig = {
         apiKey: "AIzaSyAkEt0HxuL62v832nMpH8D36bR28FU7dhk",
         authDomain: "maktab-darslari.firebaseapp.com",
@@ -163,21 +232,23 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    const tg = window.Telegram.WebApp;
-    tg.expand(); 
-
     let userLocation = "";
     let adminClickCount = 0;
 
-    // Admin panelni ochish mantiqi (3 marta bosish)
+    // Admin panelni ochish mantiqi (3 marta bosish + parol)
     document.getElementById('triggerAdmin').addEventListener('click', () => {
         adminClickCount++;
         if (adminClickCount === 3) {
-            document.getElementById('step1').classList.remove('active');
-            document.getElementById('step2').classList.remove('active');
-            document.getElementById('adminPanel').classList.add('active');
-            loadAdminData(); 
-            adminClickCount = 0;
+            adminClickCount = 0; // Sanagichni nolga tushiramiz
+            const pass = prompt("Admin parolini kiriting:");
+            if (pass === "admin0912") {
+                document.getElementById('step1').classList.remove('active');
+                document.getElementById('step2').classList.remove('active');
+                document.getElementById('adminPanel').classList.add('active');
+                loadAdminData(); 
+            } else if (pass !== null) {
+                alert("Parol noto'g'ri!");
+            }
         }
         setTimeout(() => { adminClickCount = 0; }, 2000);
     });
@@ -193,14 +264,27 @@
         document.getElementById('step2').classList.add('active');
     }
 
+    // Orqaga qaytish funksiyasi
+    function goBack() {
+        document.getElementById('step2').classList.remove('active');
+        document.getElementById('step1').classList.add('active');
+        userLocation = "";
+    }
+
+    // Ma'lumotlarni saqlash va yuborish
     function saveData() {
         const fullName = document.getElementById('fullName').value.trim();
         const phoneNumber = document.getElementById('phoneNumber').value.trim();
+        const btn = document.getElementById('submitBtn');
 
         if (fullName === "" || phoneNumber === "") {
-            tg.showAlert("Iltimos, ma'lumotlarni to'ldiring!");
+            alert("Iltimos, ismingizni va telefon raqamingizni kiriting!");
             return;
         }
+
+        // Tugmani bloklash (ikki marta bosib yubormaslik uchun)
+        btn.innerText = "Yuborilmoqda...";
+        btn.disabled = true;
 
         const data = {
             ism: fullName,
@@ -211,15 +295,33 @@
 
         db.collection("mijozlar").add(data)
         .then(() => {
-            tg.showAlert("Ma'lumotlaringiz muvaffaqiyatli saqlandi!");
-            tg.sendData(JSON.stringify(data));
+            alert("Ma'lumotlaringiz muvaffaqiyatli saqlandi! Tez orada siz bilan bog'lanamiz.");
+            
+            // Telegramga yuborish qismi (brauzerda xato bermasligi uchun try-catch ichida)
+            try {
+                if (window.Telegram && window.Telegram.WebApp) {
+                    window.Telegram.WebApp.sendData(JSON.stringify(data));
+                }
+            } catch(e) {
+                console.log("Telegram Web App ichida emasmiz.");
+            }
+
+            // Muvaffaqiyatli yuborilgach, formani tozalash
+            document.getElementById('fullName').value = "";
+            document.getElementById('phoneNumber').value = "";
+            btn.innerText = "Yuborish";
+            btn.disabled = false;
+            goBack(); // Bosh sahifaga qaytarish
         })
         .catch((error) => {
-            console.error("Xatolik: ", error);
-            tg.showAlert("Xatolik yuz berdi. Qaytadan urinib ko'ring.");
+            console.error("Xatolik yuz berdi: ", error);
+            alert("Saqlashda muammo yuzaga keldi! Firebase qoidalarini (Test mode) tekshiring.\nXato: " + error.message);
+            btn.innerText = "Yuborish";
+            btn.disabled = false;
         });
     }
 
+    // Admin panel ma'lumotlarini yuklash
     function loadAdminData() {
         const usersListDiv = document.getElementById('usersList');
         
@@ -237,7 +339,7 @@
                 html += `<tr>
                             <td>${data.ism || '-'}</td>
                             <td>${data.telefon || '-'}</td>
-                            <td>${data.manzil || '-'}</td>
+                            <td><small>${data.manzil || '-'}</small></td>
                          </tr>`;
             });
             html += `</table>`;
