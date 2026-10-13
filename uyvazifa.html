@@ -27,7 +27,7 @@
             border: 4px solid #fff;
         }
         h1 { color: #ff4081; font-weight: 800; font-size: 32px; margin-bottom: 20px; text-shadow: 1px 1px 2px rgba(0,0,0,0.1); }
-        h3 { color: #00bcd4; font-size: 24px; }
+        h3 { color: #00bcd4; font-size: 24px; margin-bottom: 20px;}
         .btn-grid { display: grid; grid-template-columns: 1fr; gap: 15px; margin-bottom: 20px; }
         
         button { 
@@ -64,7 +64,7 @@
         
         .add-btn { background-color: #ab47bc; margin-bottom: 15px;}
 
-        .admin-panel, .panel-section { display: none; margin-top: 20px; padding-top: 20px; border-top: 3px dashed #b2ebf2; }
+        .panel-section { display: none; margin-top: 10px; }
         
         ul { list-style: none; padding: 0; text-align: left; }
         li { background: #f1f8e9; padding: 15px; border-radius: 15px; margin-bottom: 10px; font-size: 18px; display: flex; flex-direction: column; gap: 10px; border: 2px solid #c5e1a5; }
@@ -102,6 +102,8 @@
         .status-blocked { background-color: #ff5252; }
 
         .add-student-form { background: #e3f2fd; padding: 15px; border-radius: 15px; margin-bottom: 20px; border: 2px solid #bbdefb; }
+        
+        #math-game-intro p { font-size: 18px; margin-bottom: 20px; color: #555; }
     </style>
 </head>
 <body>
@@ -126,14 +128,18 @@
         <button class="back-btn" onclick="goBack('class-selection')">Ortga</button>
     </div>
 
-    <!-- Admin panel -->
+    <!-- Admin panel asosiy menyusi -->
     <div class="container" id="admin-panel" style="display:none;">
         <h1>👑 Ustoz Paneli</h1>
-        <button class="feature-btn" onclick="showAdminSection('students-management')">👥 O'quvchilar ro'yxati</button>
-        <button class="feature-btn" onclick="showAdminSection('homework-upload')">📝 Uyga vazifa yuklash</button>
-        <button class="feature-btn" onclick="showAdminSection('video-upload')">🎬 Video yuklash</button>
-        <button class="feature-btn" onclick="showAdminSection('coin-management')">⭐ Coin berish/olish</button>
-        <button class="back-btn" onclick="goBack('class-selection')">Chiqish</button>
+        
+        <!-- Admin Menyusi -->
+        <div id="admin-menu" class="btn-grid">
+            <button class="feature-btn" onclick="showAdminSection('students-management')">👥 O'quvchilar ro'yxati</button>
+            <button class="feature-btn" onclick="showAdminSection('homework-upload')">📝 Uyga vazifa yuklash</button>
+            <button class="feature-btn" onclick="showAdminSection('video-upload')">🎬 Video yuklash</button>
+            <button class="feature-btn" onclick="showAdminSection('coin-management')">⭐ Coin berish/olish</button>
+            <button class="back-btn" onclick="goBack('class-selection')">Chiqish</button>
+        </div>
 
         <!-- O'quvchilarni boshqarish -->
         <div id="students-management" class="panel-section">
@@ -154,6 +160,7 @@
             </div>
 
             <ul id="admin-students-list"></ul>
+            <button class="back-btn" onclick="closeAdminSection()">Ortga</button>
         </div>
 
         <!-- Uyga vazifa yuklash -->
@@ -179,6 +186,7 @@
             <button class="add-btn" onclick="addHwQuestionField()">➕ Yana savol qo'shish</button>
             
             <button class="feature-btn" onclick="uploadHomework()">Yuklash</button>
+            <button class="back-btn" onclick="closeAdminSection()">Ortga</button>
         </div>
 
         <!-- Video yuklash -->
@@ -196,6 +204,7 @@
             </select>
             <input type="text" id="vid-link" placeholder="YouTube video havolasi...">
             <button class="feature-btn" onclick="uploadVideo()">Yuklash</button>
+            <button class="back-btn" onclick="closeAdminSection()">Ortga</button>
         </div>
 
         <!-- Coin berish/olish -->
@@ -218,6 +227,7 @@
             <input type="number" id="coin-amount" placeholder="Miqdori...">
             <input type="text" id="coin-reason" placeholder="Sababi...">
             <button class="feature-btn" onclick="manageCoins()">Bajarish</button>
+            <button class="back-btn" onclick="closeAdminSection()">Ortga</button>
         </div>
     </div>
 
@@ -243,13 +253,17 @@
             <span class="coin-text">⭐ Coinlar: <span id="student-coins">0</span></span>
             <span class="point-text">🎯 Ballar: <span id="student-points">0</span></span>
         </div>
-        <button class="feature-btn" onclick="openFeaturePanel('homework-submission')">📝 Uyga vazifa</button>
-        <button class="feature-btn" onclick="openFeaturePanel('math-game')">🎮 Matematik O'yin</button>
-        <button class="feature-btn" onclick="openVideoLessonsList()">🎬 Video darslar</button>
-        <button class="feature-btn" onclick="openFeaturePanel('coins-history')">📜 Coinlar tarixi</button>
-        <button class="feature-btn" onclick="openLeaderboard()">🏆 Chempionlar ro'yxati</button>
-        <button class="gift-btn" onclick="openFeaturePanel('gift-shop')">🎁 Sovg'alar do'koni</button>
-        <button class="back-btn" onclick="logoutStudent()">Chiqish</button>
+        
+        <!-- O'quvchi Menyusi -->
+        <div id="student-menu" class="btn-grid">
+            <button class="feature-btn" onclick="openFeaturePanel('homework-submission')">📝 Uyga vazifa</button>
+            <button class="feature-btn" onclick="openFeaturePanel('math-game')">🎮 Matematik O'yin</button>
+            <button class="feature-btn" onclick="openVideoLessonsList()">🎬 Video darslar</button>
+            <button class="feature-btn" onclick="openFeaturePanel('coins-history')">📜 Coinlar tarixi</button>
+            <button class="feature-btn" onclick="openLeaderboard()">🏆 Chempionlar ro'yxati</button>
+            <button class="gift-btn" onclick="openFeaturePanel('gift-shop')">🎁 Sovg'alar do'koni</button>
+            <button class="back-btn" onclick="logoutStudent()">Chiqish</button>
+        </div>
 
         <!-- Uyga vazifa jo'natish -->
         <div id="homework-submission" class="panel-section">
@@ -259,24 +273,35 @@
             </select>
             <div id="homework-questions-area"></div>
             <button class="feature-btn" id="submit-hw-btn" style="display:none;" onclick="submitHomework()">Jo'natish</button>
+            <button class="back-btn" onclick="closeFeaturePanel()">Ortga</button>
         </div>
 
         <!-- O'yin -->
         <div id="math-game" class="panel-section">
             <h3>🎮 Matematik O'yin</h3>
-            <div class="score-board">
-                <span class="lives">❤️ Jonlar: <span id="game-lives">3</span></span>
-                <span class="point-text">🎯 Ball: <span id="game-score">0</span></span>
+            
+            <div id="math-game-intro">
+                <p>Ushbu o'yinda sizga 30 soniya vaqt beriladi. Tez va to'g'ri javob topib, coinlar yig'ing! 100 ball = 1 Coin ⭐</p>
+                <button class="feature-btn" onclick="startMathGame()">▶️ O'yinni boshlash</button>
             </div>
-            <div class="timer">⏳ <span id="game-timer">30</span> soniya</div>
-            <div class="question" id="game-question"></div>
-            <div class="options-grid" id="game-options"></div>
+
+            <div id="math-game-play" style="display:none;">
+                <div class="score-board">
+                    <span class="lives">❤️ Jonlar: <span id="game-lives">3</span></span>
+                    <span class="point-text">🎯 Ball: <span id="game-score">0</span></span>
+                </div>
+                <div class="timer">⏳ <span id="game-timer">30</span> soniya</div>
+                <div class="question" id="game-question"></div>
+                <div class="options-grid" id="game-options"></div>
+            </div>
+            <button class="back-btn" onclick="closeFeaturePanel()">Ortga</button>
         </div>
 
         <!-- Coin tarixi -->
         <div id="coins-history" class="panel-section">
             <h3>📜 Coinlar tarixi</h3>
             <ul id="history-list"></ul>
+            <button class="back-btn" onclick="closeFeaturePanel()">Ortga</button>
         </div>
         
         <!-- Sovg'alar -->
@@ -284,6 +309,7 @@
             <h3>🎁 Sovg'alar do'koni</h3>
             <p>Ushbu bo'lim tez orada yuklanadi! 🚀</p>
             <p>Hozircha coinlaringizni ko'paytirib turing! ⭐</p>
+            <button class="back-btn" onclick="closeFeaturePanel()">Ortga</button>
         </div>
     </div>
 
@@ -291,21 +317,21 @@
     <div class="container" id="videos-grid-panel" style="display:none;">
         <h1 id="videos-title">Darsni tanlang</h1>
         <div class="btn-grid" id="videos-list-container"></div>
-        <button class="back-btn" onclick="goBack('student-panel')">Ortga</button>
+        <button class="back-btn" onclick="switchToView(['videos-grid-panel'], 'student-panel')">Ortga</button>
     </div>
 
     <!-- Video ko'rish oynasi -->
     <div class="container" id="video-view-panel" style="display:none;">
         <h1>🎬 Video dars</h1>
         <div id="video-embed-container"></div>
-        <button class="back-btn" onclick="goBack('videos-grid-panel')">Ortga</button>
+        <button class="back-btn" onclick="switchToView(['video-view-panel'], 'videos-grid-panel')">Ortga</button>
     </div>
 
     <!-- Leaderboard -->
     <div class="container" id="leaderboard-panel" style="display:none;">
         <h1>🏆 Chempionlar ro'yxati</h1>
         <ul id="leaderboard-list"></ul>
-        <button class="back-btn" onclick="goBack('student-panel')">Ortga</button>
+        <button class="back-btn" onclick="switchToView(['leaderboard-panel'], 'student-panel')">Ortga</button>
     </div>
 
     <script>
@@ -345,6 +371,7 @@
         function switchToView(hideArray, showId, isBack = false) {
             hideArray.forEach(id => document.getElementById(id).style.display = 'none');
             const allMain = ['class-selection', 'admin-login', 'admin-panel', 'student-selection', 'student-login', 'student-panel', 'videos-grid-panel', 'video-view-panel', 'leaderboard-panel'];
+            
             if(isBack && showId === 'class-selection') {
                 allMain.forEach(id => document.getElementById(id).style.display = 'none');
             }
@@ -355,6 +382,7 @@
         function verifyAdminPassword() {
             const pass = document.getElementById('admin-password').value;
             if (pass === "admin0912") {
+                closeAdminSection(); // Panelni toza holatda ochish
                 switchToView(['admin-login'], 'admin-panel');
                 document.getElementById('admin-password').value = "";
             } else {
@@ -363,9 +391,15 @@
         }
 
         function showAdminSection(sectionId) {
+            document.getElementById('admin-menu').style.display = 'none';
             document.querySelectorAll('#admin-panel .panel-section').forEach(sec => sec.style.display = 'none');
             document.getElementById(sectionId).style.display = 'block';
             if (sectionId === 'students-management') renderAdminStudentsList();
+        }
+
+        function closeAdminSection() {
+            document.querySelectorAll('#admin-panel .panel-section').forEach(sec => sec.style.display = 'none');
+            document.getElementById('admin-menu').style.display = 'grid'; 
         }
 
         function addNewStudent() {
@@ -590,6 +624,7 @@
                 }
                 document.getElementById('student-password').value = "";
                 updateStudentTopBoard();
+                closeFeaturePanel(); // Panelni toza holatda ochish
                 switchToView(['student-login'], 'student-panel');
             } else {
                 alert("Parol noto'g'ri!");
@@ -608,11 +643,19 @@
         }
 
         function openFeaturePanel(sectionId) {
+            document.getElementById('student-menu').style.display = 'none';
             document.querySelectorAll('#student-panel .panel-section').forEach(sec => sec.style.display = 'none');
             document.getElementById(sectionId).style.display = 'block';
+            
             if (sectionId === 'homework-submission') loadStudentHomeworkLessons();
             if (sectionId === 'coins-history') renderHistory();
-            if (sectionId === 'math-game') startMathGame();
+            if (sectionId === 'math-game') resetGameIntro();
+        }
+
+        function closeFeaturePanel() {
+            document.querySelectorAll('#student-panel .panel-section').forEach(sec => sec.style.display = 'none');
+            document.getElementById('student-menu').style.display = 'grid';
+            clearInterval(gameInterval); // O'yindan chiqsa vaqtni to'xtatamiz
         }
 
         // --- UYGA VAZIFA (O'QUVCHI) ---
@@ -699,8 +742,14 @@
         let gameLives = 3;
         let currentAnswer = null;
 
+        function resetGameIntro() {
+            document.getElementById('math-game-intro').style.display = 'block';
+            document.getElementById('math-game-play').style.display = 'none';
+        }
+
         function startMathGame() {
-            document.getElementById('math-game').style.display = 'block';
+            document.getElementById('math-game-intro').style.display = 'none';
+            document.getElementById('math-game-play').style.display = 'block';
             resetGame();
         }
 
@@ -803,7 +852,7 @@
             alert(`O'yin tugadi! To'plagan ballingiz: ${gameScore} 🎮`);
             currentStudent.points += gameScore;
             updateStudentTopBoard();
-            document.getElementById('math-game').style.display = 'none';
+            closeFeaturePanel();
         }
 
         // --- BOSHQA QISMLAR ---
