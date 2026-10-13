@@ -32,7 +32,7 @@
         .timer { font-size: 24px; color: #ff9800; margin-bottom: 15px; font-weight: bold; }
         .question { font-size: 28px; margin-bottom: 20px; font-weight: bold; }
         .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .student-status { font-size: 14px; padding: 5px 10px; border-radius: 5px; color: white; }
+        .student-status { font-size: 14px; padding: 5px 10px; border-radius: 5px; color: white; cursor: pointer; }
         .status-active { background-color: #28a745; }
         .status-blocked { background-color: #dc3545; }
     </style>
@@ -364,7 +364,7 @@
         function loadStudentsForCoinAdmin() {
             currentGrade = document.getElementById('coin-grade-select').value;
             const select = document.getElementById('coin-student-select');
-            select.innerHTML = '<option value="">O'quvchini tanlang</option>';
+            select.innerHTML = "<option value=''>O'quvchini tanlang</option>";
             if (currentGrade && studentsData[currentGrade]) {
                 studentsData[currentGrade].forEach(student => {
                     select.innerHTML += `<option value="${student.id}">${student.name}</option>`;
@@ -405,6 +405,7 @@
             studentsData[currentGrade].forEach(student => {
                 const li = document.createElement('li');
                 li.innerText = student.name;
+                li.style.cursor = 'pointer';
                 li.onclick = () => selectStudent(student);
                 list.appendChild(li);
             });
@@ -479,8 +480,6 @@
 
             if (studentAnswer.trim() === hw.answer) {
                 alert("Javobingiz to'g'ri!");
-                // Avtomatik coin berish tizimi murakkabroq bo'lishi mumkin,
-                // ammo talabga ko'ra bu yerda sodda ko'rinishda tasdiqlash
             } else {
                 alert("Javobingiz xato.");
             }
