@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Matematik Platforma</title>
+    <!-- Firebase kutubxonalari (CDN) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&display=swap');
 
@@ -29,6 +33,7 @@
         h1 { color: #ff4081; font-weight: 800; font-size: 32px; margin-bottom: 20px; text-shadow: 1px 1px 2px rgba(0,0,0,0.1); }
         h3 { color: #00bcd4; font-size: 24px; margin-bottom: 20px;}
         .btn-grid { display: grid; grid-template-columns: 1fr; gap: 15px; margin-bottom: 20px; }
+        .grid-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
         
         button { 
             padding: 15px; 
@@ -59,11 +64,8 @@
         .gift-btn:hover { background-color: #0091ea; }
         
         .back-btn { background-color: #b0bec5; color: #333; margin-top: 20px; }
-        
         .danger-btn { background-color: #ff5252; font-size: 14px; padding: 5px 10px; width: auto; box-shadow: 0 2px 0 rgba(0,0,0,0.15); }
-        
         .add-btn { background-color: #ab47bc; margin-bottom: 15px;}
-
         .panel-section { display: none; margin-top: 10px; }
         
         ul { list-style: none; padding: 0; text-align: left; }
@@ -71,7 +73,7 @@
         .li-header { display: flex; justify-content: space-between; align-items: center; width: 100%; }
         .li-actions { display: flex; gap: 10px; justify-content: flex-end; }
         
-        input[type="text"], input[type="password"], input[type="number"], select { 
+        input[type="text"], input[type="password"], input[type="number"], input[type="datetime-local"], select { 
             padding: 12px 15px; 
             font-size: 18px; 
             font-family: 'Baloo 2', cursive;
@@ -87,6 +89,9 @@
         
         .hw-item { background: #fff3e0; padding: 15px; border-radius: 15px; margin-bottom: 15px; border: 2px solid #ffe0b2; }
         .student-hw-item { background: #e8eaf6; padding: 15px; border-radius: 15px; margin-bottom: 15px; text-align: left; }
+        .hw-result-item { padding: 10px; margin-bottom: 10px; border-radius: 10px; text-align: left; font-size: 18px; }
+        .hw-correct { background-color: #c8e6c9; border: 2px solid #81c784; color: #2e7d32; }
+        .hw-incorrect { background-color: #ffcdd2; border: 2px solid #e57373; color: #c62828; }
         
         .score-board { font-size: 22px; margin-bottom: 15px; display: flex; justify-content: space-between; background: #fff9c4; padding: 15px; border-radius: 15px; border: 2px solid #fff59d; }
         .coin-text { color: #f57f17; font-weight: 800; }
@@ -100,22 +105,25 @@
         .student-status { font-size: 14px; padding: 5px 10px; border-radius: 10px; color: white; cursor: pointer; text-align: center; }
         .status-active { background-color: #00c853; }
         .status-blocked { background-color: #ff5252; }
-
         .add-student-form { background: #e3f2fd; padding: 15px; border-radius: 15px; margin-bottom: 20px; border: 2px solid #bbdefb; }
-        
         #math-game-intro p { font-size: 18px; margin-bottom: 20px; color: #555; }
+        .deadline-warning { color: #d32f2f; font-weight: bold; font-size: 18px; margin-bottom: 15px; background: #ffcdd2; padding: 10px; border-radius: 10px; }
+        
+        #loading-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); display: flex; justify-content: center; align-items: center; z-index: 1000; font-size: 24px; color: #ff4081; font-weight: bold; }
     </style>
 </head>
 <body>
 
+    <div id="loading-screen">Baza ulanmoqda, kuting... ⏳</div>
+
     <!-- Asosiy menyu: Sinf tanlash -->
-    <div class="container" id="class-selection">
+    <div class="container" id="class-selection" style="display:none;">
         <h1>🌟 Matematika Olamiga Xush Kelibsiz! 🌟</h1>
         <div class="btn-grid">
-            <button class="class-btn" onclick="openStudentLogin(2)">🎒 2-sinf</button>
-            <button class="class-btn" onclick="openStudentLogin(3)">📚 3-sinf</button>
-            <button class="class-btn" onclick="openStudentLogin(4)">🚀 4-sinf</button>
-            <button class="class-btn" onclick="openStudentLogin(5)">🎓 5-sinf</button>
+            <button class="class-btn" onclick="openStudentLogin('2')">🎒 2-sinf</button>
+            <button class="class-btn" onclick="openStudentLogin('3')">📚 3-sinf</button>
+            <button class="class-btn" onclick="openStudentLogin('4')">🚀 4-sinf</button>
+            <button class="class-btn" onclick="openStudentLogin('5')">🎓 5-sinf</button>
         </div>
         <button class="admin-btn" onclick="openAdminLogin()">⚙️ Admin Panel</button>
     </div>
@@ -132,7 +140,6 @@
     <div class="container" id="admin-panel" style="display:none;">
         <h1>👑 Ustoz Paneli</h1>
         
-        <!-- Admin Menyusi -->
         <div id="admin-menu" class="btn-grid">
             <button class="feature-btn" onclick="showAdminSection('students-management')">👥 O'quvchilar ro'yxati</button>
             <button class="feature-btn" onclick="showAdminSection('homework-upload')">📝 Uyga vazifa yuklash</button>
@@ -144,7 +151,6 @@
         <!-- O'quvchilarni boshqarish -->
         <div id="students-management" class="panel-section">
             <h3>👥 O'quvchilarni boshqarish</h3>
-            
             <div class="add-student-form">
                 <h4>Yangi o'quvchi qo'shish</h4>
                 <input type="text" id="new-std-name" placeholder="Ism va familiya...">
@@ -158,7 +164,6 @@
                 <input type="text" id="new-std-pass" placeholder="Parolni kiriting...">
                 <button class="add-btn" onclick="addNewStudent()">➕ Qo'shish</button>
             </div>
-
             <ul id="admin-students-list"></ul>
             <button class="back-btn" onclick="closeAdminSection()">Ortga</button>
         </div>
@@ -173,10 +178,9 @@
                 <option value="4">4-sinf</option>
                 <option value="5">5-sinf</option>
             </select>
-            <select id="hw-lesson-select">
-                <option value="">Darsni tanlang</option>
-            </select>
-            
+            <select id="hw-lesson-select"><option value="">Darsni tanlang</option></select>
+            <h4>Muddatni belgilang (Deadline)</h4>
+            <input type="datetime-local" id="hw-deadline">
             <div id="hw-questions-container">
                 <div class="hw-item">
                     <input type="text" class="hw-q" placeholder="Savol yoki masala...">
@@ -184,7 +188,6 @@
                 </div>
             </div>
             <button class="add-btn" onclick="addHwQuestionField()">➕ Yana savol qo'shish</button>
-            
             <button class="feature-btn" onclick="uploadHomework()">Yuklash</button>
             <button class="back-btn" onclick="closeAdminSection()">Ortga</button>
         </div>
@@ -199,9 +202,7 @@
                 <option value="4">4-sinf</option>
                 <option value="5">5-sinf</option>
             </select>
-            <select id="vid-lesson-select">
-                <option value="">Darsni tanlang</option>
-            </select>
+            <select id="vid-lesson-select"><option value="">Darsni tanlang</option></select>
             <input type="text" id="vid-link" placeholder="YouTube video havolasi...">
             <button class="feature-btn" onclick="uploadVideo()">Yuklash</button>
             <button class="back-btn" onclick="closeAdminSection()">Ortga</button>
@@ -217,9 +218,7 @@
                 <option value="4">4-sinf</option>
                 <option value="5">5-sinf</option>
             </select>
-            <select id="coin-student-select">
-                <option value="">O'quvchini tanlang</option>
-            </select>
+            <select id="coin-student-select"><option value="">O'quvchini tanlang</option></select>
             <select id="coin-action-select">
                 <option value="give">Coin berish</option>
                 <option value="take">Coin olib tashlash</option>
@@ -248,43 +247,44 @@
 
     <!-- O'quvchi paneli -->
     <div class="container" id="student-panel" style="display:none;">
-        <h1>Assalomu alaykum! 🖐️</h1>
+        <h1 id="welcome-msg">Assalomu alaykum! 🖐️</h1>
         <div class="score-board">
             <span class="coin-text">⭐ Coinlar: <span id="student-coins">0</span></span>
             <span class="point-text">🎯 Ballar: <span id="student-points">0</span></span>
         </div>
         
-        <!-- O'quvchi Menyusi -->
         <div id="student-menu" class="btn-grid">
-            <button class="feature-btn" onclick="openFeaturePanel('homework-submission')">📝 Uyga vazifa</button>
+            <button class="feature-btn" onclick="openStudentLessonsGrid('homework')">📝 Uyga vazifa</button>
             <button class="feature-btn" onclick="openFeaturePanel('math-game')">🎮 Matematik O'yin</button>
-            <button class="feature-btn" onclick="openVideoLessonsList()">🎬 Video darslar</button>
+            <button class="feature-btn" onclick="openStudentLessonsGrid('video')">🎬 Video darslar</button>
             <button class="feature-btn" onclick="openFeaturePanel('coins-history')">📜 Coinlar tarixi</button>
             <button class="feature-btn" onclick="openLeaderboard()">🏆 Chempionlar ro'yxati</button>
             <button class="gift-btn" onclick="openFeaturePanel('gift-shop')">🎁 Sovg'alar do'koni</button>
             <button class="back-btn" onclick="logoutStudent()">Chiqish</button>
         </div>
 
-        <!-- Uyga vazifa jo'natish -->
+        <!-- Darslar ro'yxati (Uyga vazifa va Video uchun umumiy Grid) -->
+        <div id="student-lessons-grid-panel" class="panel-section">
+            <h3 id="lessons-grid-title">Darsni tanlang</h3>
+            <div id="student-lessons-grid" class="grid-2col"></div>
+            <button class="back-btn" onclick="closeFeaturePanel()">Ortga</button>
+        </div>
+
+        <!-- Uyga vazifa yechish maydoni -->
         <div id="homework-submission" class="panel-section">
-            <h3>📝 Uyga vazifa</h3>
-            <select id="student-hw-lesson-select" onchange="loadStudentHomeworkQuestions()">
-                <option value="">Darsni tanlang</option>
-            </select>
+            <h3 id="hw-current-title">📝 Uyga vazifa</h3>
             <div id="homework-questions-area"></div>
             <button class="feature-btn" id="submit-hw-btn" style="display:none;" onclick="submitHomework()">Jo'natish</button>
-            <button class="back-btn" onclick="closeFeaturePanel()">Ortga</button>
+            <button class="back-btn" onclick="openStudentLessonsGrid('homework')">Ortga</button>
         </div>
 
         <!-- O'yin -->
         <div id="math-game" class="panel-section">
             <h3>🎮 Matematik O'yin</h3>
-            
             <div id="math-game-intro">
                 <p>Ushbu o'yinda sizga 30 soniya vaqt beriladi. Tez va to'g'ri javob topib, coinlar yig'ing! 100 ball = 1 Coin ⭐</p>
                 <button class="feature-btn" onclick="startMathGame()">▶️ O'yinni boshlash</button>
             </div>
-
             <div id="math-game-play" style="display:none;">
                 <div class="score-board">
                     <span class="lives">❤️ Jonlar: <span id="game-lives">3</span></span>
@@ -311,20 +311,13 @@
             <p>Hozircha coinlaringizni ko'paytirib turing! ⭐</p>
             <button class="back-btn" onclick="closeFeaturePanel()">Ortga</button>
         </div>
-    </div>
 
-    <!-- Video darslar ro'yxati -->
-    <div class="container" id="videos-grid-panel" style="display:none;">
-        <h1 id="videos-title">Darsni tanlang</h1>
-        <div class="btn-grid" id="videos-list-container"></div>
-        <button class="back-btn" onclick="switchToView(['videos-grid-panel'], 'student-panel')">Ortga</button>
-    </div>
-
-    <!-- Video ko'rish oynasi -->
-    <div class="container" id="video-view-panel" style="display:none;">
-        <h1>🎬 Video dars</h1>
-        <div id="video-embed-container"></div>
-        <button class="back-btn" onclick="switchToView(['video-view-panel'], 'videos-grid-panel')">Ortga</button>
+        <!-- Video ko'rish oynasi -->
+        <div id="video-view-panel" class="panel-section">
+            <h3 id="video-current-title">🎬 Video dars</h3>
+            <div id="video-embed-container"></div>
+            <button class="back-btn" onclick="openStudentLessonsGrid('video')">Ortga</button>
+        </div>
     </div>
 
     <!-- Leaderboard -->
@@ -335,59 +328,113 @@
     </div>
 
     <script>
-        // Ma'lumotlar omborini imitatsiya qilish
-        let studentsData = {
-            2: [
-                { id: 1, name: "Ali Valiyev", password: "123", coins: 50, points: 70, isBlocked: false, history: [] }
-            ],
-            3: [
-                { id: 3, name: "Malika Tursunova", password: "123", coins: 120, points: 150, isBlocked: false, history: [] }
-            ],
-            4: [
-                { id: 4, name: "Ziyoda Ahmedova", password: "123", coins: 85, points: 90, isBlocked: false, history: [] }
-            ],
-            5: [
-                { id: 5, name: "Jasur Bekov", password: "123", coins: 300, points: 200, isBlocked: false, history: [] }
-            ]
+        // --- 1. FIREBASE KONFIGURATSIYASI ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyAkEt0Hxul62v832nMpH8D36bR28FU7dhk",
+            authDomain: "maktab-darslari.firebaseapp.com",
+            databaseURL: "https://maktab-darslari-default-rtdb.firebaseio.com",
+            projectId: "maktab-darslari",
+            storageBucket: "maktab-darslari.firebasestorage.app",
+            messagingSenderId: "375361700394",
+            appId: "1:375361700394:web:c7b74f29fb302e7743f953"
         };
+        
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
 
-        let lessons = [
-            "1-dars. Kirish", "2-dars. Qo'shish", "3-dars. Ayirish", "4-dars. Ko'paytirish",
-            "5-dars. Bo'lish", "6-dars. Masalalar", "7-dars. Geometriya", "8-dars. Tenglamalar",
-            "9-dars. Kasrlar", "10-dars. Vaqt o'lchovlari", "11-dars. Og'irlik o'lchovlari", "12-dars. Xulosa"
-        ];
+        // Ovoz effekti
+        document.addEventListener('click', function(e) {
+            if (e.target.tagName.toLowerCase() === 'button') {
+                try {
+                    const AudioContext = window.AudioContext || window.webkitAudioContext;
+                    if(!AudioContext) return;
+                    const audioCtx = new AudioContext();
+                    const osc = audioCtx.createOscillator();
+                    const gainNode = audioCtx.createGain();
+                    osc.type = 'sine'; osc.frequency.setValueAtTime(600, audioCtx.currentTime); osc.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.1);
+                    gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime); gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                    osc.connect(gainNode); gainNode.connect(audioCtx.destination); osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+                } catch(err) {} 
+            }
+        });
 
-        let homeworks = {}; // Endi array saqlaydi: { grade: { lessonIndex: [ {q: "", a: ""}, ... ] } }
-        let videos = {}; 
+        // Tizim O'zgaruvchilari
+        let platformData = {
+            students: { "2": [], "3": [], "4": [], "5": [] },
+            homeworks: {},
+            videos: {}
+        };
+        let docRef = db.collection("platformData").doc("mainDocument");
+
+        let lessons = [];
+        for(let i = 1; i <= 12; i++) { lessons.push(`${i}-dars`); }
 
         let currentGrade = null;
         let currentStudent = null;
-        let globalIdCounter = 10;
+        let activeLessonIndex = null;
+        let gridMode = 'homework';
 
-        // Umumiy yordamchi funksiyalar
+        // Ma'lumotlarni bazadan yuklash
+        docRef.onSnapshot((doc) => {
+            if (doc.exists) {
+                platformData = doc.data();
+                // Boshlang'ich qiymatlar yo'q bo'lsa yaratish
+                if(!platformData.students) platformData.students = { "2": [], "3": [], "4": [], "5": [] };
+                if(!platformData.homeworks) platformData.homeworks = {};
+                if(!platformData.videos) platformData.videos = {};
+            } else {
+                docRef.set(platformData); // Birinchi marta kirganda hujjat yaratish
+            }
+            document.getElementById('loading-screen').style.display = 'none';
+            checkAutoLogin();
+        });
+
+        function saveDataToFirebase() {
+            docRef.set(platformData).catch((error) => {
+                console.error("Xatolik yuz berdi: ", error);
+                alert("Ma'lumotlar saqlanmadi, internetni tekshiring!");
+            });
+        }
+
+        // Avtomat kirishni tekshirish
+        function checkAutoLogin() {
+            const savedSession = localStorage.getItem('loggedInStudent');
+            if(savedSession) {
+                const sessionData = JSON.parse(savedSession);
+                const student = platformData.students[sessionData.grade]?.find(s => s.id === sessionData.id);
+                if(student && !student.isBlocked && document.getElementById('class-selection').style.display !== 'none') {
+                    currentGrade = sessionData.grade;
+                    currentStudent = student;
+                    updateStudentTopBoard();
+                    switchToView(['class-selection'], 'student-panel');
+                } else if(!currentStudent) {
+                    document.getElementById('class-selection').style.display = 'block';
+                }
+            } else {
+                if(!currentStudent) document.getElementById('class-selection').style.display = 'block';
+            }
+        }
+
         function openAdminLogin() { switchToView(['class-selection'], 'admin-login'); }
         function goBack(sectionId) { switchToView([], sectionId, true); }
 
         function switchToView(hideArray, showId, isBack = false) {
             hideArray.forEach(id => document.getElementById(id).style.display = 'none');
-            const allMain = ['class-selection', 'admin-login', 'admin-panel', 'student-selection', 'student-login', 'student-panel', 'videos-grid-panel', 'video-view-panel', 'leaderboard-panel'];
-            
+            const allMain = ['class-selection', 'admin-login', 'admin-panel', 'student-selection', 'student-login', 'student-panel', 'leaderboard-panel'];
             if(isBack && showId === 'class-selection') {
                 allMain.forEach(id => document.getElementById(id).style.display = 'none');
             }
             document.getElementById(showId).style.display = 'block';
         }
 
-        // --- ADMIN PANEL: O'QUVCHILAR ---
+        // --- ADMIN PANEL ---
         function verifyAdminPassword() {
             const pass = document.getElementById('admin-password').value;
             if (pass === "admin0912") {
-                closeAdminSection(); // Panelni toza holatda ochish
+                closeAdminSection();
                 switchToView(['admin-login'], 'admin-panel');
                 document.getElementById('admin-password').value = "";
-            } else {
-                alert("Parol noto'g'ri!");
-            }
+            } else { alert("Parol noto'g'ri!"); }
         }
 
         function showAdminSection(sectionId) {
@@ -407,31 +454,21 @@
             const grade = document.getElementById('new-std-grade').value;
             const pass = document.getElementById('new-std-pass').value;
 
-            if(!name || !grade || !pass) {
-                alert("Iltimos barcha maydonlarni to'ldiring!");
-                return;
-            }
+            if(!name || !grade || !pass) { alert("Iltimos barcha maydonlarni to'ldiring!"); return; }
 
-            globalIdCounter++;
-            studentsData[grade].push({
-                id: globalIdCounter,
-                name: name,
-                password: pass,
-                coins: 0,
-                points: 0,
-                isBlocked: false,
-                history: []
-            });
+            const newId = new Date().getTime(); // Takrorlanmas ID
+            platformData.students[grade].push({ id: newId, name: name, password: pass, coins: 0, points: 0, isBlocked: false, history: [] });
 
-            document.getElementById('new-std-name').value = "";
-            document.getElementById('new-std-pass').value = "";
-            alert("Yangi o'quvchi muvaffaqiyatli qo'shildi!");
+            saveDataToFirebase();
+            document.getElementById('new-std-name').value = ""; document.getElementById('new-std-pass').value = "";
+            alert("Yangi o'quvchi qo'shildi!");
             renderAdminStudentsList();
         }
 
         function deleteStudent(grade, studentId) {
-            if(confirm("Haqiqatan ham bu o'quvchini o'chirmoqchimisiz?")) {
-                studentsData[grade] = studentsData[grade].filter(s => s.id !== studentId);
+            if(confirm("Bu o'quvchini o'chirmoqchimisiz?")) {
+                platformData.students[grade] = platformData.students[grade].filter(s => s.id !== studentId);
+                saveDataToFirebase();
                 renderAdminStudentsList();
             }
         }
@@ -439,63 +476,46 @@
         function renderAdminStudentsList() {
             const list = document.getElementById('admin-students-list');
             list.innerHTML = '';
-            for (let grade in studentsData) {
-                studentsData[grade].forEach(student => {
-                    const li = document.createElement('li');
-                    const statusText = student.isBlocked ? "To'lov qilinmagan" : "Faol holatda";
+            for (let grade in platformData.students) {
+                platformData.students[grade].forEach(student => {
+                    const statusText = student.isBlocked ? "To'lov qilinmagan" : "Faol";
                     const statusClass = student.isBlocked ? "status-blocked" : "status-active";
-                    
-                    li.innerHTML = `
-                        <div class="li-header">
-                            <strong>${student.name} (${grade}-sinf)</strong>
-                            <span class="student-status ${statusClass}" onclick="toggleStudentStatus(${grade}, ${student.id})">${statusText}</span>
-                        </div>
-                        <div class="li-actions">
-                            <span style="font-size:14px; color:#555;">Parol: ${student.password}</span>
-                            <button class="danger-btn" onclick="deleteStudent(${grade}, ${student.id})">O'chirish</button>
-                        </div>
-                    `;
+                    const li = document.createElement('li');
+                    li.innerHTML = `<div class="li-header"><strong>${student.name} (${grade}-sinf)</strong><span class="student-status ${statusClass}" onclick="toggleStudentStatus('${grade}', ${student.id})">${statusText}</span></div><div class="li-actions"><span style="font-size:14px; color:#555;">Parol: ${student.password}</span><button class="danger-btn" onclick="deleteStudent('${grade}', ${student.id})">O'chirish</button></div>`;
                     list.appendChild(li);
                 });
             }
         }
 
         function toggleStudentStatus(grade, studentId) {
-            const student = studentsData[grade].find(s => s.id === studentId);
-            if (student) {
-                student.isBlocked = !student.isBlocked;
-                renderAdminStudentsList();
+            const student = platformData.students[grade].find(s => s.id === studentId);
+            if (student) { 
+                student.isBlocked = !student.isBlocked; 
+                saveDataToFirebase();
+                renderAdminStudentsList(); 
             }
         }
 
-        // --- ADMIN PANEL: UYGA VAZIFA ---
         function loadLessonsForHwAdmin() {
             const select = document.getElementById('hw-lesson-select');
             select.innerHTML = '<option value="">Darsni tanlang</option>';
-            lessons.forEach((les, index) => {
-                select.innerHTML += `<option value="${index}">${les}</option>`;
-            });
+            lessons.forEach((les, index) => { select.innerHTML += `<option value="${index}">${les}</option>`; });
         }
 
         function addHwQuestionField() {
             const container = document.getElementById('hw-questions-container');
             const newField = document.createElement('div');
             newField.className = 'hw-item';
-            newField.innerHTML = `
-                <input type="text" class="hw-q" placeholder="Savol yoki masala...">
-                <input type="text" class="hw-a" placeholder="To'g'ri javob...">
-            `;
+            newField.innerHTML = `<input type="text" class="hw-q" placeholder="Savol yoki masala..."><input type="text" class="hw-a" placeholder="To'g'ri javob...">`;
             container.appendChild(newField);
         }
 
         function uploadHomework() {
             const grade = document.getElementById('hw-grade-select').value;
             const lessonIndex = document.getElementById('hw-lesson-select').value;
+            const deadlineVal = document.getElementById('hw-deadline').value;
             
-            if (!grade || !lessonIndex) {
-                alert("Sinf va darsni tanlang!");
-                return;
-            }
+            if (!grade || !lessonIndex) { alert("Sinf va darsni tanlang!"); return; }
 
             const items = document.querySelectorAll('#hw-questions-container .hw-item');
             let questionsArray = [];
@@ -503,36 +523,23 @@
             items.forEach(item => {
                 const q = item.querySelector('.hw-q').value;
                 const a = item.querySelector('.hw-a').value;
-                if(q.trim() !== "" && a.trim() !== "") {
-                    questionsArray.push({ question: q, answer: a });
-                }
+                if(q.trim() !== "" && a.trim() !== "") questionsArray.push({ question: q, answer: a });
             });
 
-            if (questionsArray.length === 0) {
-                alert("Hech bo'lmasa bitta to'liq savol va javob kiriting!");
-                return;
-            }
+            if (questionsArray.length === 0) { alert("Kamida 1 ta savol kiriting!"); return; }
 
-            if (!homeworks[grade]) homeworks[grade] = {};
-            homeworks[grade][lessonIndex] = questionsArray;
-            alert(`${questionsArray.length} ta savoldan iborat uyga vazifa yuklandi!`);
+            if (!platformData.homeworks[grade]) platformData.homeworks[grade] = {};
+            platformData.homeworks[grade][lessonIndex] = { questions: questionsArray, deadline: deadlineVal ? new Date(deadlineVal).getTime() : null };
+            saveDataToFirebase();
             
-            // Maydonlarni tozalash
-            document.getElementById('hw-questions-container').innerHTML = `
-                <div class="hw-item">
-                    <input type="text" class="hw-q" placeholder="Savol yoki masala...">
-                    <input type="text" class="hw-a" placeholder="To'g'ri javob...">
-                </div>
-            `;
+            alert(`${questionsArray.length} ta savol yuklandi!`);
+            document.getElementById('hw-questions-container').innerHTML = `<div class="hw-item"><input type="text" class="hw-q" placeholder="Savol..."><input type="text" class="hw-a" placeholder="Javob..."></div>`;
         }
 
-        // --- ADMIN PANEL: VIDEO VA COIN ---
         function loadLessonsForVidAdmin() {
             const select = document.getElementById('vid-lesson-select');
             select.innerHTML = '<option value="">Darsni tanlang</option>';
-            lessons.forEach((les, index) => {
-                select.innerHTML += `<option value="${index}">${les}</option>`;
-            });
+            lessons.forEach((les, index) => { select.innerHTML += `<option value="${index}">${les}</option>`; });
         }
 
         function uploadVideo() {
@@ -540,20 +547,17 @@
             const lessonIndex = document.getElementById('vid-lesson-select').value;
             const link = document.getElementById('vid-link').value;
 
-            if (!grade || !lessonIndex || !link) {
-                alert("Barcha maydonlarni to'ldiring!");
-                return;
-            }
+            if (!grade || !lessonIndex || !link) { alert("Barcha maydonlarni to'ldiring!"); return; }
             const videoId = extractYouTubeID(link);
-            if (!videos[grade]) videos[grade] = {};
-            videos[grade][lessonIndex] = videoId;
+            if (!platformData.videos[grade]) platformData.videos[grade] = {};
+            platformData.videos[grade][lessonIndex] = videoId;
+            saveDataToFirebase();
             alert("Video dars yuklandi!");
             document.getElementById('vid-link').value = "";
         }
 
         function extractYouTubeID(url) {
-            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-            const match = url.match(regExp);
+            const match = url.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/);
             return (match && match[2].length === 11) ? match[2] : null;
         }
 
@@ -561,10 +565,8 @@
             currentGrade = document.getElementById('coin-grade-select').value;
             const select = document.getElementById('coin-student-select');
             select.innerHTML = "<option value=''>O'quvchini tanlang</option>";
-            if (currentGrade && studentsData[currentGrade]) {
-                studentsData[currentGrade].forEach(student => {
-                    select.innerHTML += `<option value="${student.id}">${student.name}</option>`;
-                });
+            if (currentGrade && platformData.students[currentGrade]) {
+                platformData.students[currentGrade].forEach(student => { select.innerHTML += `<option value="${student.id}">${student.name}</option>`; });
             }
         }
 
@@ -575,12 +577,9 @@
             const amount = parseInt(document.getElementById('coin-amount').value);
             const reason = document.getElementById('coin-reason').value;
 
-            if (!grade || !studentId || !amount || !reason) {
-                alert("Barcha maydonlarni to'ldiring!");
-                return;
-            }
+            if (!grade || !studentId || !amount || !reason) { alert("Maydonlarni to'ldiring!"); return; }
 
-            const student = studentsData[grade].find(s => s.id == studentId);
+            const student = platformData.students[grade].find(s => s.id == studentId);
             if (student) {
                 if (action === 'give') {
                     student.coins += amount;
@@ -589,9 +588,9 @@
                     student.coins -= amount;
                     student.history.push({ type: 'Olib tashlandi', amount: amount, reason: reason, date: new Date().toLocaleDateString() });
                 }
-                alert("Coinlar muvaffaqiyatli o'zgartirildi!");
-                document.getElementById('coin-amount').value = "";
-                document.getElementById('coin-reason').value = "";
+                saveDataToFirebase();
+                alert("Coinlar yangilandi!");
+                document.getElementById('coin-amount').value = ""; document.getElementById('coin-reason').value = "";
             }
         }
 
@@ -600,13 +599,15 @@
             currentGrade = grade;
             const list = document.getElementById('students-list');
             list.innerHTML = '';
-            studentsData[currentGrade].forEach(student => {
-                const li = document.createElement('li');
-                li.innerText = "👦 " + student.name;
-                li.style.cursor = 'pointer';
-                li.onclick = () => selectStudent(student);
-                list.appendChild(li);
-            });
+            if(platformData.students[currentGrade]) {
+                platformData.students[currentGrade].forEach(student => {
+                    const li = document.createElement('li');
+                    li.innerText = "👦 " + student.name;
+                    li.style.cursor = 'pointer';
+                    li.onclick = () => selectStudent(student);
+                    list.appendChild(li);
+                });
+            }
             switchToView(['class-selection'], 'student-selection');
         }
 
@@ -618,27 +619,26 @@
         function verifyStudentPassword() {
             const pass = document.getElementById('student-password').value;
             if (pass === currentStudent.password) {
-                if (currentStudent.isBlocked) {
-                    alert("Kechirasiz, oylik to'lovni bajarmagansiz. Ustozingizga murojaat qiling.");
-                    return;
-                }
+                if (currentStudent.isBlocked) { alert("Oylik to'lovni bajarmagansiz. Ustozingizga murojaat qiling."); return; }
+                
+                localStorage.setItem('loggedInStudent', JSON.stringify({ grade: currentGrade, id: currentStudent.id }));
+                
                 document.getElementById('student-password').value = "";
                 updateStudentTopBoard();
-                closeFeaturePanel(); // Panelni toza holatda ochish
+                closeFeaturePanel();
                 switchToView(['student-login'], 'student-panel');
-            } else {
-                alert("Parol noto'g'ri!");
-            }
+            } else { alert("Parol noto'g'ri!"); }
         }
 
         function updateStudentTopBoard() {
+            document.getElementById('welcome-msg').innerText = `Assalomu alaykum, ${currentStudent.name}! 🖐️`;
             document.getElementById('student-coins').innerText = currentStudent.coins;
             document.getElementById('student-points').innerText = currentStudent.points;
         }
 
         function logoutStudent() {
-            currentGrade = null;
-            currentStudent = null;
+            currentGrade = null; currentStudent = null;
+            localStorage.removeItem('loggedInStudent');
             switchToView(['student-panel'], 'class-selection', true);
         }
 
@@ -647,7 +647,6 @@
             document.querySelectorAll('#student-panel .panel-section').forEach(sec => sec.style.display = 'none');
             document.getElementById(sectionId).style.display = 'block';
             
-            if (sectionId === 'homework-submission') loadStudentHomeworkLessons();
             if (sectionId === 'coins-history') renderHistory();
             if (sectionId === 'math-game') resetGameIntro();
         }
@@ -655,28 +654,55 @@
         function closeFeaturePanel() {
             document.querySelectorAll('#student-panel .panel-section').forEach(sec => sec.style.display = 'none');
             document.getElementById('student-menu').style.display = 'grid';
-            clearInterval(gameInterval); // O'yindan chiqsa vaqtni to'xtatamiz
+            clearInterval(gameInterval); 
+            document.getElementById('video-embed-container').innerHTML = ''; 
         }
 
-        // --- UYGA VAZIFA (O'QUVCHI) ---
-        function loadStudentHomeworkLessons() {
-            const select = document.getElementById('student-hw-lesson-select');
-            select.innerHTML = '<option value="">Darsni tanlang</option>';
+        function openStudentLessonsGrid(mode) {
+            gridMode = mode;
+            document.getElementById('student-menu').style.display = 'none';
+            document.querySelectorAll('#student-panel .panel-section').forEach(sec => sec.style.display = 'none');
+            
+            document.getElementById('lessons-grid-title').innerText = mode === 'homework' ? "📝 Uyga vazifa" : "🎬 Video dars";
+            
+            const grid = document.getElementById('student-lessons-grid');
+            grid.innerHTML = '';
+            
             lessons.forEach((les, index) => {
-                select.innerHTML += `<option value="${index}">${les}</option>`;
+                const btn = document.createElement('button');
+                btn.className = 'feature-btn';
+                btn.innerText = les;
+                btn.onclick = () => {
+                    activeLessonIndex = index;
+                    if(gridMode === 'homework') loadHomeworkArea();
+                    else loadVideoArea();
+                };
+                grid.appendChild(btn);
             });
+            
+            document.getElementById('student-lessons-grid-panel').style.display = 'block';
         }
 
-        function loadStudentHomeworkQuestions() {
-            const lessonIndex = document.getElementById('student-hw-lesson-select').value;
+        // --- UYGA VAZIFA ---
+        function loadHomeworkArea() {
+            document.getElementById('student-lessons-grid-panel').style.display = 'none';
+            document.getElementById('homework-submission').style.display = 'block';
+            document.getElementById('hw-current-title').innerText = `📝 ${lessons[activeLessonIndex]} vazifasi`;
+            
             const area = document.getElementById('homework-questions-area');
             area.innerHTML = '';
             const submitBtn = document.getElementById('submit-hw-btn');
 
-            if (homeworks[currentGrade] && homeworks[currentGrade][lessonIndex]) {
-                const hwArray = homeworks[currentGrade][lessonIndex];
+            if (platformData.homeworks[currentGrade] && platformData.homeworks[currentGrade][activeLessonIndex]) {
+                const hwData = platformData.homeworks[currentGrade][activeLessonIndex];
                 
-                hwArray.forEach((hw, idx) => {
+                if(hwData.deadline && new Date().getTime() > hwData.deadline) {
+                    area.innerHTML = `<div class="deadline-warning">⏳ Ushbu vazifani topshirish muddati o'tib ketgan!</div>`;
+                    submitBtn.style.display = 'none';
+                    return;
+                }
+
+                hwData.questions.forEach((hw, idx) => {
                     area.innerHTML += `
                         <div class="student-hw-item">
                             <p><strong>${idx + 1}-savol:</strong> ${hw.question}</p>
@@ -692,55 +718,64 @@
         }
 
         function submitHomework() {
-            const lessonIndex = document.getElementById('student-hw-lesson-select').value;
-            const hwArray = homeworks[currentGrade][lessonIndex];
+            const hwData = platformData.homeworks[currentGrade][activeLessonIndex];
             const inputs = document.querySelectorAll('.student-answer-input');
             
             let correctCount = 0;
-            let totalCount = hwArray.length;
+            let totalCount = hwData.questions.length;
+            let resultHTML = "<h4>Natijalaringiz:</h4>";
 
             inputs.forEach(input => {
                 const idx = input.getAttribute('data-index');
                 const studentAns = input.value.trim().toLowerCase();
-                const correctAns = hwArray[idx].answer.trim().toLowerCase();
+                const correctAns = hwData.questions[idx].answer.trim().toLowerCase();
+                const questionText = hwData.questions[idx].question;
                 
                 if(studentAns === correctAns) {
                     correctCount++;
+                    resultHTML += `<div class="hw-result-item hw-correct">✅ <strong>${idx*1+1}-savol:</strong> ${questionText}<br>Sizning javob: ${studentAns} (To'g'ri)</div>`;
+                } else {
+                    let dispAns = studentAns === "" ? "Bosh joy" : studentAns;
+                    resultHTML += `<div class="hw-result-item hw-incorrect">❌ <strong>${idx*1+1}-savol:</strong> ${questionText}<br>Sizning javob: ${dispAns}<br><i>To'g'ri javob: ${correctAns}</i></div>`;
                 }
             });
 
             let percent = (correctCount / totalCount) * 100;
-            let earnedCoin = 0;
+            let earnedCoin = percent === 100 ? 2 : (percent >= 30 ? 1 : 0);
 
-            if (percent === 100) {
-                earnedCoin = 2;
-            } else if (percent >= 30) {
-                earnedCoin = 1;
-            } else {
-                earnedCoin = 0;
-            }
+            resultHTML = `<h3>Jami: ${totalCount} tadan ${correctCount} ta to'g'ri!</h3>` + resultHTML;
 
-            let msg = `Siz ${totalCount} ta savoldan ${correctCount} tasiga to'g'ri javob berdingiz!\n`;
             if(earnedCoin > 0) {
-                msg += `Siz ${earnedCoin} ta coin yutib oldingiz! 🎉`;
+                resultHTML += `<h3>🎉 Siz ${earnedCoin} ta coin yutib oldingiz!</h3>`;
                 currentStudent.coins += earnedCoin;
-                currentStudent.history.push({ type: 'Uyga vazifa', amount: earnedCoin, reason: `${lessons[lessonIndex]} vazifasi`, date: new Date().toLocaleDateString() });
+                currentStudent.history.push({ type: 'Uyga vazifa', amount: earnedCoin, reason: `${lessons[activeLessonIndex]}`, date: new Date().toLocaleDateString() });
+                saveDataToFirebase();
                 updateStudentTopBoard();
             } else {
-                msg += `Afsuski coin ololmadingiz, ko'proq harakat qiling! 💪`;
+                resultHTML += `<h3>💪 Afsuski coin ololmadingiz, ko'proq harakat qiling!</h3>`;
             }
 
-            alert(msg);
-            document.getElementById('homework-questions-area').innerHTML = "<p>Javoblar yuborildi! ✅</p>";
+            document.getElementById('homework-questions-area').innerHTML = resultHTML;
             document.getElementById('submit-hw-btn').style.display = 'none';
         }
 
+        // --- VIDEO ---
+        function loadVideoArea() {
+            document.getElementById('student-lessons-grid-panel').style.display = 'none';
+            document.getElementById('video-view-panel').style.display = 'block';
+            document.getElementById('video-current-title').innerText = `🎬 ${lessons[activeLessonIndex]}`;
+            
+            const embedContainer = document.getElementById('video-embed-container');
+            if (platformData.videos[currentGrade] && platformData.videos[currentGrade][activeLessonIndex]) {
+                const videoId = platformData.videos[currentGrade][activeLessonIndex];
+                embedContainer.innerHTML = `<iframe width="100%" height="315" src="https://www.youtube.com/embed/${videoId}?rel=0" frameborder="0" allowfullscreen style="border-radius:15px;"></iframe>`;
+            } else {
+                embedContainer.innerHTML = "<p>Ustoz hali ushbu darsga video yuklamagan. ⏳</p>";
+            }
+        }
+
         // --- MATEMATIK O'YIN ---
-        let gameInterval = null;
-        let gameTimer = 30;
-        let gameScore = 0;
-        let gameLives = 3;
-        let currentAnswer = null;
+        let gameInterval = null; let gameTimer = 30; let gameScore = 0; let gameLives = 3; let currentAnswer = null;
 
         function resetGameIntro() {
             document.getElementById('math-game-intro').style.display = 'block';
@@ -750,14 +785,7 @@
         function startMathGame() {
             document.getElementById('math-game-intro').style.display = 'none';
             document.getElementById('math-game-play').style.display = 'block';
-            resetGame();
-        }
-
-        function resetGame() {
-            gameScore = 0;
-            gameLives = 3;
-            updateGameUI();
-            nextQuestion();
+            gameScore = 0; gameLives = 3; updateGameUI(); nextQuestion();
         }
 
         function updateGameUI() {
@@ -766,26 +794,14 @@
         }
 
         function nextQuestion() {
-            if (gameLives <= 0) {
-                endGame();
-                return;
-            }
-            gameTimer = 30;
-            document.getElementById('game-timer').innerText = gameTimer;
+            if (gameLives <= 0) { endGame(); return; }
+            gameTimer = 30; document.getElementById('game-timer').innerText = gameTimer;
             
-            const ops = ['+', '-', '*', '/'];
-            const op = ops[Math.floor(Math.random() * ops.length)];
-            let n1 = Math.floor(Math.random() * 50) + 1;
-            let n2 = Math.floor(Math.random() * 50) + 1;
+            const ops = ['+', '-', '*', '/']; const op = ops[Math.floor(Math.random() * ops.length)];
+            let n1 = Math.floor(Math.random() * 50) + 1; let n2 = Math.floor(Math.random() * 50) + 1;
             
-            if (op === '/') {
-                n2 = Math.floor(Math.random() * 10) + 1;
-                n1 = n2 * Math.floor(Math.random() * 10);
-            }
-            
-            if (op === '-') {
-                if (n2 > n1) { let tmp = n1; n1 = n2; n2 = tmp; }
-            }
+            if (op === '/') { n2 = Math.floor(Math.random() * 10) + 1; n1 = n2 * Math.floor(Math.random() * 10); }
+            if (op === '-') { if (n2 > n1) { let tmp = n1; n1 = n2; n2 = tmp; } }
 
             switch(op) {
                 case '+': currentAnswer = n1 + n2; break;
@@ -799,103 +815,53 @@
             
             clearInterval(gameInterval);
             gameInterval = setInterval(() => {
-                gameTimer--;
-                document.getElementById('game-timer').innerText = gameTimer;
-                if (gameTimer <= 0) {
-                    gameLives--;
-                    updateGameUI();
-                    nextQuestion();
-                }
+                gameTimer--; document.getElementById('game-timer').innerText = gameTimer;
+                if (gameTimer <= 0) { gameLives--; updateGameUI(); nextQuestion(); }
             }, 1000);
         }
 
         function renderOptions() {
-            const optionsArea = document.getElementById('game-options');
-            optionsArea.innerHTML = '';
-            const opts = new Set();
-            opts.add(currentAnswer);
-            while (opts.size < 4) {
-                let off = Math.floor(Math.random() * 20) - 10;
-                let opt = currentAnswer + off;
-                if (opt >= 0) opts.add(opt);
-            }
-            
+            const optionsArea = document.getElementById('game-options'); optionsArea.innerHTML = '';
+            const opts = new Set(); opts.add(currentAnswer);
+            while (opts.size < 4) { let off = Math.floor(Math.random() * 20) - 10; let opt = currentAnswer + off; if (opt >= 0) opts.add(opt); }
             const arr = Array.from(opts).sort(() => Math.random() - 0.5);
-            arr.forEach(opt => {
-                optionsArea.innerHTML += `<button class="feature-btn" onclick="checkAnswer(${opt})">${opt}</button>`;
-            });
+            arr.forEach(opt => { optionsArea.innerHTML += `<button class="feature-btn" onclick="checkAnswer(${opt})">${opt}</button>`; });
         }
 
         function checkAnswer(chosen) {
             clearInterval(gameInterval);
-            if (chosen === currentAnswer) {
-                gameScore += gameTimer > 15 ? 2 : 1;
-                checkCoinUpgrade();
-            } else {
-                gameLives--;
-            }
-            updateGameUI();
-            nextQuestion();
+            if (chosen === currentAnswer) { gameScore += gameTimer > 15 ? 2 : 1; checkCoinUpgrade(); } 
+            else { gameLives--; }
+            updateGameUI(); nextQuestion();
         }
 
         function checkCoinUpgrade() {
             if (gameScore >= 100) {
-                currentStudent.coins += 1;
-                gameScore -= 100;
+                currentStudent.coins += 1; gameScore -= 100; 
+                currentStudent.history.push({ type: 'Berildi', amount: 1, reason: 'O\'yinda 100 ball', date: new Date().toLocaleDateString() });
+                saveDataToFirebase();
                 updateStudentTopBoard();
-                currentStudent.history.push({ type: 'Berildi', amount: 1, reason: 'O\'yinda 100 ball yig\'ildi', date: new Date().toLocaleDateString() });
                 alert("Tabriklaymiz, 100 ball yig'ib 1 coin oldingiz! 🎉");
             }
         }
 
         function endGame() {
             alert(`O'yin tugadi! To'plagan ballingiz: ${gameScore} 🎮`);
-            currentStudent.points += gameScore;
-            updateStudentTopBoard();
-            closeFeaturePanel();
+            currentStudent.points += gameScore; 
+            saveDataToFirebase();
+            updateStudentTopBoard(); closeFeaturePanel();
         }
 
-        // --- BOSHQA QISMLAR ---
         function renderHistory() {
-            const list = document.getElementById('history-list');
-            list.innerHTML = '';
-            if(currentStudent.history.length === 0) {
-                list.innerHTML = "<li>Hozircha tarix bo'sh.</li>";
-            }
-            currentStudent.history.forEach(h => {
-                list.innerHTML += `<li>📅 ${h.date}: ${h.type} ${h.amount} coin.<br>💡 Sabab: ${h.reason}</li>`;
-            });
-        }
-
-        function openVideoLessonsList() {
-            const container = document.getElementById('videos-list-container');
-            container.innerHTML = '';
-            lessons.forEach((les, index) => {
-                container.innerHTML += `<button class="feature-btn" onclick="openVideoLesson(${index})">${les}</button>`;
-            });
-            switchToView(['student-panel'], 'videos-grid-panel');
-        }
-
-        function openVideoLesson(lessonIndex) {
-            const embedContainer = document.getElementById('video-embed-container');
-            if (videos[currentGrade] && videos[currentGrade][lessonIndex]) {
-                const videoId = videos[currentGrade][lessonIndex];
-                embedContainer.innerHTML = `
-                    <iframe width="100%" height="315" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen style="border-radius:15px;"></iframe>
-                `;
-                switchToView(['videos-grid-panel'], 'video-view-panel');
-            } else {
-                alert("Ustoz hali ushbu darsga video yuklamagan. ⏳");
-            }
+            const list = document.getElementById('history-list'); list.innerHTML = '';
+            if(currentStudent.history.length === 0) list.innerHTML = "<li>Hozircha tarix bo'sh.</li>";
+            currentStudent.history.forEach(h => { list.innerHTML += `<li>📅 ${h.date}: ${h.type} ${h.amount} coin.<br>💡 Sabab: ${h.reason}</li>`; });
         }
 
         function openLeaderboard() {
-            const list = document.getElementById('leaderboard-list');
-            list.innerHTML = '';
+            const list = document.getElementById('leaderboard-list'); list.innerHTML = '';
             let allStudents = [];
-            for (let grade in studentsData) {
-                studentsData[grade].forEach(s => allStudents.push({ name: s.name, coins: s.coins, grade: grade }));
-            }
+            for (let grade in platformData.students) { platformData.students[grade].forEach(s => allStudents.push({ name: s.name, coins: s.coins, grade: grade })); }
             allStudents.sort((a, b) => b.coins - a.coins);
             allStudents.forEach((s, idx) => {
                 let medal = idx === 0 ? "🥇" : (idx === 1 ? "🥈" : (idx === 2 ? "🥉" : "🏅"));
