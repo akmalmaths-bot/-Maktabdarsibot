@@ -110,6 +110,10 @@
         #math-game-intro p { font-size: 18px; margin-bottom: 20px; color: #555; }
         .deadline-warning { color: #d32f2f; font-weight: bold; font-size: 18px; margin-bottom: 15px; background: #ffcdd2; padding: 10px; border-radius: 10px; }
     </style>
+    
+    <!-- Firebase ulash kutubxonalari -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
@@ -336,6 +340,20 @@
     </div>
 
     <script>
+        // --- FIREBASE ULASHLARI ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyAkEt0HxuL62v832nMpH8D36bR28FU7dhk",
+            authDomain: "maktab-darslari.firebaseapp.com",
+            databaseURL: "https://maktab-darslari-default-rtdb.firebaseio.com",
+            projectId: "maktab-darslari",
+            storageBucket: "maktab-darslari.firebasestorage.app",
+            messagingSenderId: "375361700394",
+            appId: "1:375361700394:web:c7b74f29fb302e7743f953",
+            measurementId: "G-8S1HF14QEH"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
         // Ovoz effekti uchun funksiya
         document.addEventListener('click', function(e) {
             if (e.target.tagName.toLowerCase() === 'button') {
@@ -354,40 +372,29 @@
                     gainNode.connect(audioCtx.destination);
                     osc.start();
                     osc.stop(audioCtx.currentTime + 0.1);
-                } catch(err) {} // Ovoz ishlamay qolsa xato bermasligi uchun
+                } catch(err) {} 
             }
         });
 
-        // Ma'lumotlar omborini imitatsiya qilish
+        // Vaqtinchalik Ma'lumotlar ombori
         let studentsData = {
-            2: [
-                { id: 1, name: "Ali Valiyev", password: "123", coins: 50, points: 70, isBlocked: false, history: [] }
-            ],
-            3: [
-                { id: 3, name: "Malika Tursunova", password: "123", coins: 120, points: 150, isBlocked: false, history: [] }
-            ],
-            4: [
-                { id: 4, name: "Ziyoda Ahmedova", password: "123", coins: 85, points: 90, isBlocked: false, history: [] }
-            ],
-            5: [
-                { id: 5, name: "Jasur Bekov", password: "123", coins: 300, points: 200, isBlocked: false, history: [] }
-            ]
+            2: [{ id: 1, name: "Ali Valiyev", password: "123", coins: 50, points: 70, isBlocked: false, history: [] }],
+            3: [{ id: 3, name: "Malika Tursunova", password: "123", coins: 120, points: 150, isBlocked: false, history: [] }],
+            4: [{ id: 4, name: "Ziyoda Ahmedova", password: "123", coins: 85, points: 90, isBlocked: false, history: [] }],
+            5: [{ id: 5, name: "Jasur Bekov", password: "123", coins: 300, points: 200, isBlocked: false, history: [] }]
         };
 
-        // Darslar faqat qisqa formatda (Grid uchun)
         let lessons = [];
-        for(let i = 1; i <= 12; i++) {
-            lessons.push(`${i}-dars`);
-        }
+        for(let i = 1; i <= 12; i++) lessons.push(`${i}-dars`);
 
-        let homeworks = {}; // { grade: { lessonIndex: { questions: [...], deadline: "ISOString" } } }
+        let homeworks = {}; 
         let videos = {}; 
 
         let currentGrade = null;
         let currentStudent = null;
         let globalIdCounter = 10;
         let activeLessonIndex = null;
-        let gridMode = 'homework'; // 'homework' yoki 'video'
+        let gridMode = 'homework'; 
 
         // Avtomat kirishni tekshirish
         window.onload = function() {
@@ -603,7 +610,6 @@
             if (pass === currentStudent.password) {
                 if (currentStudent.isBlocked) { alert("Oylik to'lovni bajarmagansiz. Ustozingizga murojaat qiling."); return; }
                 
-                // Avtomatik kirish uchun saqlash
                 localStorage.setItem('loggedInStudent', JSON.stringify({ grade: currentGrade, id: currentStudent.id }));
                 
                 document.getElementById('student-password').value = "";
@@ -638,7 +644,7 @@
             document.querySelectorAll('#student-panel .panel-section').forEach(sec => sec.style.display = 'none');
             document.getElementById('student-menu').style.display = 'grid';
             clearInterval(gameInterval); 
-            document.getElementById('video-embed-container').innerHTML = ''; // Videoni to'xtatish
+            document.getElementById('video-embed-container').innerHTML = '';
         }
 
         // --- GRID MENYU (Uy vazifa va Video uchun) ---
@@ -655,7 +661,7 @@
             lessons.forEach((les, index) => {
                 const btn = document.createElement('button');
                 btn.className = 'feature-btn';
-                btn.innerText = les; // Qisqa nom: "1-dars"
+                btn.innerText = les;
                 btn.onclick = () => {
                     activeLessonIndex = index;
                     if(gridMode === 'homework') loadHomeworkArea();
@@ -680,7 +686,6 @@
             if (homeworks[currentGrade] && homeworks[currentGrade][activeLessonIndex]) {
                 const hwData = homeworks[currentGrade][activeLessonIndex];
                 
-                // Vaqtni tekshirish
                 if(hwData.deadline && new Date().getTime() > hwData.deadline) {
                     area.innerHTML = `<div class="deadline-warning">⏳ Ushbu vazifani topshirish muddati o'tib ketgan!</div>`;
                     submitBtn.style.display = 'none';
@@ -752,7 +757,6 @@
             const embedContainer = document.getElementById('video-embed-container');
             if (videos[currentGrade] && videos[currentGrade][activeLessonIndex]) {
                 const videoId = videos[currentGrade][activeLessonIndex];
-                // ?rel=0 qismi orqali boshqa videolar chiqishi oldi olinadi
                 embedContainer.innerHTML = `<iframe width="100%" height="315" src="https://www.youtube.com/embed/${videoId}?rel=0" frameborder="0" allowfullscreen style="border-radius:15px;"></iframe>`;
             } else {
                 embedContainer.innerHTML = "<p>Ustoz hali ushbu darsga video yuklamagan. ⏳</p>";
@@ -833,7 +837,6 @@
             currentStudent.points += gameScore; updateStudentTopBoard(); closeFeaturePanel();
         }
 
-        // --- BOSHQA QISMLAR ---
         function renderHistory() {
             const list = document.getElementById('history-list'); list.innerHTML = '';
             if(currentStudent.history.length === 0) list.innerHTML = "<li>Hozircha tarix bo'sh.</li>";
