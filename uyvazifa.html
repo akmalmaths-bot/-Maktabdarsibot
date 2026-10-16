@@ -324,19 +324,20 @@
     <div class="container" id="leaderboard-panel" style="display:none;">
         <h1>🏆 Chempionlar ro'yxati</h1>
         <ul id="leaderboard-list"></ul>
-        <button class="back-btn" onclick="switchToView(['leaderboard-panel'], 'student-panel')">Ortga</button>
+        <button class="back-btn" onclick="switchToView('student-panel')">Ortga</button>
     </div>
 
     <script>
         // --- 1. FIREBASE KONFIGURATSIYASI ---
         const firebaseConfig = {
-            apiKey: "AIzaSyAkEt0Hxul62v832nMpH8D36bR28FU7dhk",
+            apiKey: "AIzaSyAkEt0HxuL62v832nMpH8D36bR28FU7dhk",
             authDomain: "maktab-darslari.firebaseapp.com",
             databaseURL: "https://maktab-darslari-default-rtdb.firebaseio.com",
             projectId: "maktab-darslari",
             storageBucket: "maktab-darslari.firebasestorage.app",
             messagingSenderId: "375361700394",
-            appId: "1:375361700394:web:c7b74f29fb302e7743f953"
+            appId: "1:375361700394:web:c7b74f29fb302e7743f953",
+            measurementId: "G-8S1HF14QEH"
         };
         
         firebase.initializeApp(firebaseConfig);
@@ -378,12 +379,11 @@
         docRef.onSnapshot((doc) => {
             if (doc.exists) {
                 platformData = doc.data();
-                // Boshlang'ich qiymatlar yo'q bo'lsa yaratish
                 if(!platformData.students) platformData.students = { "2": [], "3": [], "4": [], "5": [] };
                 if(!platformData.homeworks) platformData.homeworks = {};
                 if(!platformData.videos) platformData.videos = {};
             } else {
-                docRef.set(platformData); // Birinchi marta kirganda hujjat yaratish
+                docRef.set(platformData); 
             }
             document.getElementById('loading-screen').style.display = 'none';
             checkAutoLogin();
@@ -396,7 +396,34 @@
             });
         }
 
-        // Avtomat kirishni tekshirish
+        // --- QAYTA YOZILGAN SAHIFA ALMASHTIRISH MANTIG'I ---
+        function switchToView(showId) {
+            // Tizimdagi barcha asosiy sahifalarni yig'ib oldik
+            const allMainContainers = [
+                'class-selection', 
+                'admin-login', 
+                'admin-panel', 
+                'student-selection', 
+                'student-login', 
+                'student-panel', 
+                'leaderboard-panel'
+            ];
+            
+            // Avval hammasini yashiramiz (Bu ustma-ust tushish xatosini to'liq yo'qotadi)
+            allMainContainers.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) element.style.display = 'none';
+            });
+            
+            // Keyin faqat so'ralganini ko'rsatamiz
+            document.getElementById(showId).style.display = 'block';
+        }
+
+        // Ortga qaytish tugmasi endi shunchaki switchToView funksiyasini chaqiradi
+        function goBack(sectionId) { 
+            switchToView(sectionId); 
+        }
+
         function checkAutoLogin() {
             const savedSession = localStorage.getItem('loggedInStudent');
             if(savedSession) {
@@ -406,33 +433,23 @@
                     currentGrade = sessionData.grade;
                     currentStudent = student;
                     updateStudentTopBoard();
-                    switchToView(['class-selection'], 'student-panel');
+                    switchToView('student-panel');
                 } else if(!currentStudent) {
-                    document.getElementById('class-selection').style.display = 'block';
+                    switchToView('class-selection');
                 }
             } else {
-                if(!currentStudent) document.getElementById('class-selection').style.display = 'block';
+                if(!currentStudent) switchToView('class-selection');
             }
         }
 
-        function openAdminLogin() { switchToView(['class-selection'], 'admin-login'); }
-        function goBack(sectionId) { switchToView([], sectionId, true); }
-
-        function switchToView(hideArray, showId, isBack = false) {
-            hideArray.forEach(id => document.getElementById(id).style.display = 'none');
-            const allMain = ['class-selection', 'admin-login', 'admin-panel', 'student-selection', 'student-login', 'student-panel', 'leaderboard-panel'];
-            if(isBack && showId === 'class-selection') {
-                allMain.forEach(id => document.getElementById(id).style.display = 'none');
-            }
-            document.getElementById(showId).style.display = 'block';
-        }
+        function openAdminLogin() { switchToView('admin-login'); }
 
         // --- ADMIN PANEL ---
         function verifyAdminPassword() {
             const pass = document.getElementById('admin-password').value;
             if (pass === "admin0912") {
                 closeAdminSection();
-                switchToView(['admin-login'], 'admin-panel');
+                switchToView('admin-panel');
                 document.getElementById('admin-password').value = "";
             } else { alert("Parol noto'g'ri!"); }
         }
@@ -456,7 +473,7 @@
 
             if(!name || !grade || !pass) { alert("Iltimos barcha maydonlarni to'ldiring!"); return; }
 
-            const newId = new Date().getTime(); // Takrorlanmas ID
+            const newId = new Date().getTime(); 
             platformData.students[grade].push({ id: newId, name: name, password: pass, coins: 0, points: 0, isBlocked: false, history: [] });
 
             saveDataToFirebase();
@@ -608,12 +625,12 @@
                     list.appendChild(li);
                 });
             }
-            switchToView(['class-selection'], 'student-selection');
+            switchToView('student-selection');
         }
 
         function selectStudent(student) {
             currentStudent = student;
-            switchToView(['student-selection'], 'student-login');
+            switchToView('student-login');
         }
 
         function verifyStudentPassword() {
@@ -626,7 +643,7 @@
                 document.getElementById('student-password').value = "";
                 updateStudentTopBoard();
                 closeFeaturePanel();
-                switchToView(['student-login'], 'student-panel');
+                switchToView('student-panel');
             } else { alert("Parol noto'g'ri!"); }
         }
 
@@ -639,7 +656,7 @@
         function logoutStudent() {
             currentGrade = null; currentStudent = null;
             localStorage.removeItem('loggedInStudent');
-            switchToView(['student-panel'], 'class-selection', true);
+            switchToView('class-selection');
         }
 
         function openFeaturePanel(sectionId) {
@@ -867,7 +884,7 @@
                 let medal = idx === 0 ? "🥇" : (idx === 1 ? "🥈" : (idx === 2 ? "🥉" : "🏅"));
                 list.innerHTML += `<li><div class="li-header"><span>${medal} ${s.name} (${s.grade}-sinf)</span> <span class="coin-text">${s.coins} Coin</span></div></li>`;
             });
-            switchToView(['student-panel'], 'leaderboard-panel');
+            switchToView('leaderboard-panel');
         }
     </script>
 </body>
