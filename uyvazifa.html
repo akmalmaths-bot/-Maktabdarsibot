@@ -396,9 +396,7 @@
             });
         }
 
-        // --- QAYTA YOZILGAN SAHIFA ALMASHTIRISH MANTIG'I ---
         function switchToView(showId) {
-            // Tizimdagi barcha asosiy sahifalarni yig'ib oldik
             const allMainContainers = [
                 'class-selection', 
                 'admin-login', 
@@ -409,17 +407,14 @@
                 'leaderboard-panel'
             ];
             
-            // Avval hammasini yashiramiz (Bu ustma-ust tushish xatosini to'liq yo'qotadi)
             allMainContainers.forEach(id => {
                 const element = document.getElementById(id);
                 if (element) element.style.display = 'none';
             });
             
-            // Keyin faqat so'ralganini ko'rsatamiz
             document.getElementById(showId).style.display = 'block';
         }
 
-        // Ortga qaytish tugmasi endi shunchaki switchToView funksiyasini chaqiradi
         function goBack(sectionId) { 
             switchToView(sectionId); 
         }
@@ -429,16 +424,16 @@
             if(savedSession) {
                 const sessionData = JSON.parse(savedSession);
                 const student = platformData.students[sessionData.grade]?.find(s => s.id === sessionData.id);
-                if(student && !student.isBlocked && document.getElementById('class-selection').style.display !== 'none') {
+                if(student && !student.isBlocked) {
                     currentGrade = sessionData.grade;
                     currentStudent = student;
                     updateStudentTopBoard();
                     switchToView('student-panel');
-                } else if(!currentStudent) {
+                } else {
                     switchToView('class-selection');
                 }
             } else {
-                if(!currentStudent) switchToView('class-selection');
+                switchToView('class-selection');
             }
         }
 
