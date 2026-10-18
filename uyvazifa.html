@@ -263,7 +263,7 @@
             <button class="back-btn" onclick="logoutStudent()">Chiqish</button>
         </div>
 
-        <!-- Darslar ro'yxati (Uyga vazifa va Video uchun umumiy Grid) -->
+        <!-- Darslar ro'yxati -->
         <div id="student-lessons-grid-panel" class="panel-section">
             <h3 id="lessons-grid-title">Darsni tanlang</h3>
             <div id="student-lessons-grid" class="grid-2col"></div>
@@ -360,11 +360,7 @@
         });
 
         // Tizim O'zgaruvchilari
-        let platformData = {
-            students: { "2": [], "3": [], "4": [], "5": [] },
-            homeworks: {},
-            videos: {}
-        };
+        let platformData = { students: { "2": [], "3": [], "4": [], "5": [] }, homeworks: {}, videos: {} };
         let docRef = db.collection("platformData").doc("mainDocument");
 
         let lessons = [];
@@ -375,7 +371,7 @@
         let activeLessonIndex = null;
         let gridMode = 'homework';
 
-        // Ma'lumotlarni bazadan yuklash
+        // --- BAZADAN MA'LUMOTLARNI REAL VAQTDA (TRANZAKSIYASIZ) O'QISH ---
         docRef.onSnapshot((doc) => {
             if (doc.exists) {
                 platformData = doc.data();
@@ -383,27 +379,75 @@
                 if(!platformData.homeworks) platformData.homeworks = {};
                 if(!platformData.videos) platformData.videos = {};
             } else {
-                docRef.set(platformData); 
+                // Agar baza yangi bo'lsa, xavfsiz tarzda boshlang'ich ma'lumotni yaratish
+                safeUpdateDB((data) => { /* Initial data handled in safeUpdateDB automatically */ });
             }
+            
             document.getElementById('loading-screen').style.display = 'none';
-            checkAutoLogin();
+
+            // Agar o'quvchi tizimda bo'lsa, ma'lumotlarini yangilash
+            if (currentGrade && currentStudent) {
+                const updatedStudent = platformData.students[currentGrade].find(s => s.id === currentStudent.id);
+                if (updatedStudent) {
+                    if (updatedStudent.isBlocked) {
+                        alert("Profilingiz admin tomonidan bloklandi (To'lov qilinmagan).");
+                        logoutStudent();
+                        return;
+                    }
+                    currentStudent = updatedStudent;
+                    updateStudentTopBoard();
+                } else {
+                    alert("Profilingiz admin tomonidan o'chirildi.");
+                    logoutStudent();
+                    return;
+                }
+            } else {
+                checkAutoLogin();
+            }
+
+            // Ochiq bo'lgan ekranlarni avtomatik yangilash
+            if (document.getElementById('students-management').style.display === 'block') renderAdminStudentsList();
+            if (document.getElementById('leaderboard-panel').style.display === 'block') openLeaderboard();
+            if (document.getElementById('coins-history').style.display === 'block') renderHistory();
+            if (document.getElementById('student-selection').style.display === 'block') openStudentLogin(currentGrade);
         });
 
-        function saveDataToFirebase() {
-            docRef.set(platformData).catch((error) => {
-                console.error("Xatolik yuz berdi: ", error);
-                alert("Ma'lumotlar saqlanmadi, internetni tekshiring!");
-            });
+        // --- 🔥 YARATILGAN XAVFSIZ TRANZAKSIYA TIZIMI (RACE CONDITION NI OLDINI OLADI) 🔥 ---
+        async function safeUpdateDB(updateCallback) {
+            try {
+                await db.runTransaction(async (transaction) => {
+                    const doc = await transaction.get(docRef);
+                    
+                    let serverData;
+                    if (!doc.exists) {
+                        serverData = { students: { "2": [], "3": [], "4": [], "5": [] }, homeworks: {}, videos: {} };
+                        updateCallback(serverData);
+                        transaction.set(docRef, serverData);
+                        return;
+                    } else {
+                        serverData = doc.data();
+                        if(!serverData.students) serverData.students = { "2": [], "3": [], "4": [], "5": [] };
+                        if(!serverData.homeworks) serverData.homeworks = {};
+                        if(!serverData.videos) serverData.videos = {};
+                    }
+
+                    // Tizimga kiritilayotgan o'zgarishni serverdan kelgan eng so'nggi ma'lumotga qo'shish
+                    updateCallback(serverData);
+                    
+                    // Va qayta saqlash
+                    transaction.update(docRef, serverData);
+                });
+            } catch (e) {
+                console.error("Xatolik:", e);
+                alert("Ma'lumotni saqlashda xatolik yuz berdi. Internetni tekshiring.");
+            }
         }
 
+        // --- SAHIFA ALMASHTIRISH MANTIG'I ---
         function switchToView(showId) {
             const allMainContainers = [
-                'class-selection', 
-                'admin-login', 
-                'admin-panel', 
-                'student-selection', 
-                'student-login', 
-                'student-panel', 
+                'class-selection', 'admin-login', 'admin-panel', 
+                'student-selection', 'student-login', 'student-panel', 
                 'leaderboard-panel'
             ];
             
@@ -415,9 +459,7 @@
             document.getElementById(showId).style.display = 'block';
         }
 
-        function goBack(sectionId) { 
-            switchToView(sectionId); 
-        }
+        function goBack(sectionId) { switchToView(sectionId); }
 
         function checkAutoLogin() {
             const savedSession = localStorage.getItem('loggedInStudent');
@@ -469,19 +511,21 @@
             if(!name || !grade || !pass) { alert("Iltimos barcha maydonlarni to'ldiring!"); return; }
 
             const newId = new Date().getTime(); 
-            platformData.students[grade].push({ id: newId, name: name, password: pass, coins: 0, points: 0, isBlocked: false, history: [] });
+            const newStudent = { id: newId, name: name, password: pass, coins: 0, points: 0, isBlocked: false, history: [] };
 
-            saveDataToFirebase();
-            document.getElementById('new-std-name').value = ""; document.getElementById('new-std-pass').value = "";
-            alert("Yangi o'quvchi qo'shildi!");
-            renderAdminStudentsList();
+            safeUpdateDB((data) => {
+                data.students[grade].push(newStudent);
+            }).then(() => {
+                document.getElementById('new-std-name').value = ""; document.getElementById('new-std-pass').value = "";
+                alert("Yangi o'quvchi qo'shildi!");
+            });
         }
 
         function deleteStudent(grade, studentId) {
             if(confirm("Bu o'quvchini o'chirmoqchimisiz?")) {
-                platformData.students[grade] = platformData.students[grade].filter(s => s.id !== studentId);
-                saveDataToFirebase();
-                renderAdminStudentsList();
+                safeUpdateDB((data) => {
+                    data.students[grade] = data.students[grade].filter(s => s.id !== studentId);
+                });
             }
         }
 
@@ -500,12 +544,10 @@
         }
 
         function toggleStudentStatus(grade, studentId) {
-            const student = platformData.students[grade].find(s => s.id === studentId);
-            if (student) { 
-                student.isBlocked = !student.isBlocked; 
-                saveDataToFirebase();
-                renderAdminStudentsList(); 
-            }
+            safeUpdateDB((data) => {
+                const student = data.students[grade].find(s => s.id === studentId);
+                if (student) student.isBlocked = !student.isBlocked;
+            });
         }
 
         function loadLessonsForHwAdmin() {
@@ -540,12 +582,13 @@
 
             if (questionsArray.length === 0) { alert("Kamida 1 ta savol kiriting!"); return; }
 
-            if (!platformData.homeworks[grade]) platformData.homeworks[grade] = {};
-            platformData.homeworks[grade][lessonIndex] = { questions: questionsArray, deadline: deadlineVal ? new Date(deadlineVal).getTime() : null };
-            saveDataToFirebase();
-            
-            alert(`${questionsArray.length} ta savol yuklandi!`);
-            document.getElementById('hw-questions-container').innerHTML = `<div class="hw-item"><input type="text" class="hw-q" placeholder="Savol..."><input type="text" class="hw-a" placeholder="Javob..."></div>`;
+            safeUpdateDB((data) => {
+                if (!data.homeworks[grade]) data.homeworks[grade] = {};
+                data.homeworks[grade][lessonIndex] = { questions: questionsArray, deadline: deadlineVal ? new Date(deadlineVal).getTime() : null };
+            }).then(() => {
+                alert(`${questionsArray.length} ta savol yuklandi!`);
+                document.getElementById('hw-questions-container').innerHTML = `<div class="hw-item"><input type="text" class="hw-q" placeholder="Savol..."><input type="text" class="hw-a" placeholder="Javob..."></div>`;
+            });
         }
 
         function loadLessonsForVidAdmin() {
@@ -561,11 +604,14 @@
 
             if (!grade || !lessonIndex || !link) { alert("Barcha maydonlarni to'ldiring!"); return; }
             const videoId = extractYouTubeID(link);
-            if (!platformData.videos[grade]) platformData.videos[grade] = {};
-            platformData.videos[grade][lessonIndex] = videoId;
-            saveDataToFirebase();
-            alert("Video dars yuklandi!");
-            document.getElementById('vid-link').value = "";
+            
+            safeUpdateDB((data) => {
+                if (!data.videos[grade]) data.videos[grade] = {};
+                data.videos[grade][lessonIndex] = videoId;
+            }).then(() => {
+                alert("Video dars yuklandi!");
+                document.getElementById('vid-link').value = "";
+            });
         }
 
         function extractYouTubeID(url) {
@@ -591,19 +637,21 @@
 
             if (!grade || !studentId || !amount || !reason) { alert("Maydonlarni to'ldiring!"); return; }
 
-            const student = platformData.students[grade].find(s => s.id == studentId);
-            if (student) {
-                if (action === 'give') {
-                    student.coins += amount;
-                    student.history.push({ type: 'Berildi', amount: amount, reason: reason, date: new Date().toLocaleDateString() });
-                } else if (action === 'take') {
-                    student.coins -= amount;
-                    student.history.push({ type: 'Olib tashlandi', amount: amount, reason: reason, date: new Date().toLocaleDateString() });
+            safeUpdateDB((data) => {
+                const student = data.students[grade].find(s => s.id == studentId);
+                if (student) {
+                    if (action === 'give') {
+                        student.coins += amount;
+                        student.history.push({ type: 'Berildi', amount: amount, reason: reason, date: new Date().toLocaleDateString() });
+                    } else if (action === 'take') {
+                        student.coins -= amount;
+                        student.history.push({ type: 'Olib tashlandi', amount: amount, reason: reason, date: new Date().toLocaleDateString() });
+                    }
                 }
-                saveDataToFirebase();
+            }).then(() => {
                 alert("Coinlar yangilandi!");
                 document.getElementById('coin-amount').value = ""; document.getElementById('coin-reason').value = "";
-            }
+            });
         }
 
         // --- O'QUVCHI PANELI ---
@@ -759,10 +807,14 @@
 
             if(earnedCoin > 0) {
                 resultHTML += `<h3>🎉 Siz ${earnedCoin} ta coin yutib oldingiz!</h3>`;
-                currentStudent.coins += earnedCoin;
-                currentStudent.history.push({ type: 'Uyga vazifa', amount: earnedCoin, reason: `${lessons[activeLessonIndex]}`, date: new Date().toLocaleDateString() });
-                saveDataToFirebase();
-                updateStudentTopBoard();
+                
+                safeUpdateDB((data) => {
+                    const student = data.students[currentGrade].find(s => s.id === currentStudent.id);
+                    if(student) {
+                        student.coins += earnedCoin;
+                        student.history.push({ type: 'Uyga vazifa', amount: earnedCoin, reason: `${lessons[activeLessonIndex]}`, date: new Date().toLocaleDateString() });
+                    }
+                });
             } else {
                 resultHTML += `<h3>💪 Afsuski coin ololmadingiz, ko'proq harakat qiling!</h3>`;
             }
@@ -849,19 +901,27 @@
 
         function checkCoinUpgrade() {
             if (gameScore >= 100) {
-                currentStudent.coins += 1; gameScore -= 100; 
-                currentStudent.history.push({ type: 'Berildi', amount: 1, reason: 'O\'yinda 100 ball', date: new Date().toLocaleDateString() });
-                saveDataToFirebase();
-                updateStudentTopBoard();
-                alert("Tabriklaymiz, 100 ball yig'ib 1 coin oldingiz! 🎉");
+                gameScore -= 100; 
+                safeUpdateDB((data) => {
+                    const student = data.students[currentGrade].find(s => s.id === currentStudent.id);
+                    if (student) {
+                        student.coins += 1;
+                        student.history.push({ type: 'Berildi', amount: 1, reason: 'O\'yinda 100 ball', date: new Date().toLocaleDateString() });
+                    }
+                }).then(() => {
+                    alert("Tabriklaymiz, 100 ball yig'ib 1 coin oldingiz! 🎉");
+                });
             }
         }
 
         function endGame() {
             alert(`O'yin tugadi! To'plagan ballingiz: ${gameScore} 🎮`);
-            currentStudent.points += gameScore; 
-            saveDataToFirebase();
-            updateStudentTopBoard(); closeFeaturePanel();
+            safeUpdateDB((data) => {
+                const student = data.students[currentGrade].find(s => s.id === currentStudent.id);
+                if (student) student.points += gameScore;
+            }).then(() => {
+                closeFeaturePanel();
+            });
         }
 
         function renderHistory() {
