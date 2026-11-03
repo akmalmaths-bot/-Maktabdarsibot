@@ -41,7 +41,7 @@
             margin: 0 auto;
             min-height: 100vh;
             background: #f4f6fa;
-            padding-bottom: 90px;
+            padding-bottom: 95px;
             position: relative;
         }
 
@@ -57,20 +57,31 @@
 
         @keyframes pulseGlow {
             0% { transform: scale(1); }
-            50% { transform: scale(1.06); }
+            50% { transform: scale(1.04); }
             100% { transform: scale(1); }
         }
 
-        @keyframes floatUpCoin {
-            0% { opacity: 1; transform: translateY(0) scale(0.8); }
-            50% { opacity: 1; transform: translateY(-60px) scale(1.2); }
-            100% { opacity: 0; transform: translateY(-110px) scale(1); }
+        @keyframes popScale {
+            0% { transform: scale(0.4); opacity: 0; }
+            70% { transform: scale(1.08); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes chestBounce {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-10px) rotate(-6deg); }
+            75% { transform: translateY(-6px) rotate(6deg); }
+        }
+
+        @keyframes coinFall {
+            0% { transform: translateY(-10vh) rotate(0deg) scale(0.8); opacity: 1; }
+            100% { transform: translateY(105vh) rotate(720deg) scale(1.1); opacity: 0; }
         }
 
         .tab-view {
             display: none;
             padding: 16px;
-            animation: fadeInSlide 0.28s ease-out;
+            animation: fadeInSlide 0.25s ease-out;
         }
         .tab-view.active {
             display: block;
@@ -121,7 +132,7 @@
         .topbar-right {
             display: flex;
             align-items: center;
-            gap: 14px;
+            gap: 10px;
         }
 
         .stat-badge {
@@ -129,7 +140,7 @@
             align-items: center;
             gap: 5px;
             font-weight: 800;
-            font-size: 16px;
+            font-size: 15px;
             color: #1e293b;
             background: #f8fafc;
             padding: 6px 12px;
@@ -204,7 +215,7 @@
             text-align: left;
             position: relative;
             overflow: hidden;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
             box-shadow: 0 8px 20px rgba(67, 56, 202, 0.25);
             cursor: pointer;
         }
@@ -307,6 +318,7 @@
         /* --- TUGMALAR VA GRIDLAR --- */
         .btn-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 16px; }
         .grid-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+        .grid-3col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 16px; }
         
         button { 
             padding: 14px 18px; font-size: 17px; font-weight: 800; font-family: 'Nunito', sans-serif; 
@@ -326,25 +338,22 @@
         .refresh-btn { background: #06b6d4; font-size: 14px; padding: 8px 14px; width: auto; border-radius: 12px; box-shadow: none; }
 
         /* --- OYLAR VA DARSLAR UCHUN 3 XIL RANG TIZIMI --- */
-        /* Kulrang: O'tib ketgan / To'liq yuklangan */
         .state-gray {
             background: #94a3b8 !important;
             color: #ffffff !important;
             box-shadow: 0 4px 0 #64748b !important;
         }
-        /* Yashil: Hozirgi faol dars yoki joriy oy */
         .state-green {
             background: #10b981 !important;
             color: #ffffff !important;
             box-shadow: 0 4px 0 #059669 !important;
             animation: pulseGlow 2s infinite;
         }
-        /* Qizil: Hali yuklanmagan */
         .state-red {
             background: #ef4444 !important;
             color: #ffffff !important;
             box-shadow: 0 4px 0 #dc2626 !important;
-            opacity: 0.9;
+            opacity: 0.92;
         }
 
         .lesson-card-btn {
@@ -361,7 +370,7 @@
         .lesson-card-btn small {
             font-size: 11px;
             font-weight: 700;
-            opacity: 0.9;
+            opacity: 0.92;
             margin-top: 4px;
         }
 
@@ -387,10 +396,10 @@
         .profile-card {
             background: #ffffff;
             border-radius: 24px;
-            padding: 24px 18px;
+            padding: 22px 18px;
             text-align: center;
             box-shadow: 0 4px 15px rgba(0,0,0,0.04);
-            margin-bottom: 18px;
+            margin-bottom: 16px;
         }
 
         .avatar-wrapper {
@@ -438,8 +447,40 @@
         .warning-text { color: #dc2626; font-weight: 800; font-size: 16px; }
         
         .timer { font-size: 24px; color: #ea580c; margin-bottom: 15px; font-weight: 900; background: #ffedd5; padding: 8px 20px; border-radius: 14px; display: inline-block; }
-        .question { font-size: 28px; margin-bottom: 20px; font-weight: 900; color: #1e293b; background: #ffffff; padding: 22px 15px; border-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); white-space: pre-line; }
+        .question { font-size: 26px; margin-bottom: 20px; font-weight: 900; color: #1e293b; background: #ffffff; padding: 22px 15px; border-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); white-space: pre-line; }
         .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+        .compare-box {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            gap: 10px;
+            background: #ffffff;
+            padding: 20px 14px;
+            border-radius: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+            margin-bottom: 20px;
+        }
+        .compare-side {
+            background: #f1f5f9;
+            padding: 16px 8px;
+            border-radius: 14px;
+            font-size: 22px;
+            font-weight: 900;
+            color: #1e293b;
+        }
+        .compare-vs {
+            font-size: 24px;
+            font-weight: 900;
+            color: #f59e0b;
+            background: #fef3c7;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
         .student-status { font-size: 13px; padding: 5px 10px; border-radius: 10px; color: white; cursor: pointer; font-weight: 800; }
         .status-active { background-color: #10b981; } 
@@ -455,21 +496,64 @@
         
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 23, 42, 0.6); display: none; justify-content: center; align-items: center;
+            background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(4px);
+            display: none; justify-content: center; align-items: center;
             z-index: 1500; padding: 20px;
         }
         .modal-card {
-            background: #ffffff; width: 100%; max-width: 440px; border-radius: 24px;
-            padding: 24px; max-height: 80vh; overflow-y: auto; text-align: left;
-            animation: fadeInSlide 0.25s ease-out;
+            background: #ffffff; width: 100%; max-width: 440px; border-radius: 26px;
+            padding: 24px; max-height: 82vh; overflow-y: auto; text-align: left;
+            animation: popScale 0.3s ease-out;
+            position: relative;
         }
 
-        .coin-burst {
-            position: fixed; left: 50%; top: 55%; transform: translate(-50%, -50%);
-            font-size: 32px; font-weight: 900; color: #f59e0b;
-            text-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
-            pointer-events: none; z-index: 3000;
-            animation: floatUpCoin 1.3s ease-out forwards;
+        /* --- SOVG'A / COIN ANIMATSIYA MODALI --- */
+        .reward-modal-card {
+            background: linear-gradient(180deg, #ffffff 0%, #fffbeb 100%);
+            border: 4px solid #fcd34d;
+            text-align: center;
+            padding: 30px 22px;
+            box-shadow: 0 20px 50px rgba(245, 158, 11, 0.35);
+        }
+        .reward-chest-icon {
+            font-size: 76px;
+            display: inline-block;
+            margin-bottom: 10px;
+            animation: chestBounce 1.2s infinite ease-in-out;
+            filter: drop-shadow(0 8px 16px rgba(245, 158, 11, 0.4));
+        }
+        .reward-title {
+            font-size: 24px;
+            font-weight: 900;
+            color: #b45309;
+            margin: 5px 0 8px;
+        }
+        .reward-amount-pill {
+            display: inline-block;
+            background: linear-gradient(135deg, #fbbf24, #d97706);
+            color: #ffffff;
+            font-size: 26px;
+            font-weight: 900;
+            padding: 8px 24px;
+            border-radius: 30px;
+            margin: 8px 0 14px;
+            box-shadow: 0 6px 15px rgba(217, 119, 6, 0.35);
+        }
+        .reward-subtext {
+            font-size: 16px;
+            font-weight: 700;
+            color: #475569;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        .falling-coin {
+            position: fixed;
+            top: -50px;
+            font-size: 28px;
+            z-index: 2500;
+            pointer-events: none;
+            animation: coinFall linear forwards;
         }
     </style>
 </head>
@@ -479,8 +563,29 @@
         <div>Platforma yuklanmoqda... ⏳</div>
     </div>
 
-    <!-- History Modal (Admin Reytingda o'quvchi bosilganda chiqadi) -->
-    <div id="history-modal" class="modal-overlay" onclick="closeHistoryModal(event)">
+    <!-- 🎁 YANGI ANIMATSIYALI SOVG'A VA BONUS OYNASI (Alert o'rniga!) -->
+    <div id="reward-modal" class="modal-overlay" onclick="closeRewardModal()">
+        <div class="modal-card reward-modal-card" onclick="event.stopPropagation()">
+            <div id="reward-icon" class="reward-chest-icon">🎁</div>
+            <div id="reward-title" class="reward-title">Tabriklaymiz!</div>
+            <div id="reward-badge" class="reward-amount-pill">+1 ⭐ Coin</div>
+            <div id="reward-desc" class="reward-subtext">Kunlik faollik bonusi hisobingizga qo'shildi!</div>
+            <button class="admin-btn" onclick="closeRewardModal()" style="font-size:18px; color:#fff; background:linear-gradient(135deg, #10b981, #059669);">Ajoyib! 🚀</button>
+        </div>
+    </div>
+
+    <!-- 🏆 O'QUVCHILAR UCHUN CHEMPIONLAR REYTINGI MODALI -->
+    <div id="student-leaderboard-modal" class="modal-overlay" onclick="closeStudentLeaderboardModal()">
+        <div class="modal-card" onclick="event.stopPropagation()">
+            <h2 style="margin-top:0; text-align:center; color:#d97706;">🏆 Chempionlar Ro'yxati</h2>
+            <p style="text-align:center; font-size:13px; color:#64748b; margin-top:-8px; margin-bottom:15px;">3, 4 va 5-sinflar bo'yicha eng faol o'quvchilar</p>
+            <ul id="leaderboard-list"></ul>
+            <button class="back-btn" onclick="closeStudentLeaderboardModal()">Yopish</button>
+        </div>
+    </div>
+
+    <!-- 📜 ADMIN UCHUN O'QUVCHI COIN TARIXI MODALI -->
+    <div id="history-modal" class="modal-overlay" onclick="closeHistoryModal()">
         <div class="modal-card" onclick="event.stopPropagation()">
             <h3 id="modal-student-name" style="margin-top:0;">O'quvchi tarixi</h3>
             <ul id="modal-history-list"></ul>
@@ -659,17 +764,17 @@
         <button class="back-btn" onclick="goBack('student-selection')">Ortga</button>
     </div>
 
-    <!-- 6. O'QUVCHI ASOSIY ILOVASI (ZAMONAVIY INTERFEYS VA PASTKI MENYU BILAN) -->
+    <!-- 6. O'QUVCHI ASOSIY ILOVASI -->
     <div class="app-shell" id="student-panel" style="display:none;">
         
         <!-- Yuqori Status Bar -->
         <div class="app-topbar">
             <div class="topbar-left">
-                <div class="grade-pill">🎓 <span id="top-grade-label">3-sinf</span></div>
+                <div class="grade-pill">🎓 <span id="top-grade-label">4-sinf</span></div>
                 <div class="pro-badge">PRO</div>
             </div>
             <div class="topbar-right">
-                <div class="stat-badge" title="Kunlik faollik">🔥 <span id="top-streak">1</span></div>
+                <div class="stat-badge" title="O'yin ballari">🎯 <span id="top-points">0</span></div>
                 <div class="stat-badge" title="Yig'ilgan coinlar">⭐ <span id="student-coins">0</span></div>
             </div>
         </div>
@@ -678,14 +783,14 @@
         <div id="tab-asosiy" class="tab-view active">
             <h2 id="welcome-msg" style="margin-top: 4px; margin-bottom: 16px;">Salom! 👋</h2>
 
-            <!-- 2 ta yuqori kartochka (Bento style) -->
+            <!-- 2 ta yuqori kartochka -->
             <div class="top-cards-grid">
-                <div class="bento-card" onclick="openLearningFlow('video')">
+                <div class="bento-card" onclick="switchBottomTab('organish')">
                     <div class="bento-icon" style="background:#ede9fe; color:#7c3aed;">🎬</div>
                     <div class="bento-title">Video<br>darslar</div>
                     <div class="bento-arrow">❯</div>
                 </div>
-                <div class="bento-card" onclick="openLearningFlow('homework')">
+                <div class="bento-card" onclick="switchBottomTab('missiya')">
                     <div class="bento-icon" style="background:#fef3c7; color:#d97706;">📝</div>
                     <div class="bento-title">Uyga<br>vazifalar</div>
                     <div class="bento-arrow">❯</div>
@@ -693,34 +798,34 @@
             </div>
 
             <!-- Reyting Banneri -->
-            <div class="league-banner" onclick="switchBottomTab('missiya')">
+            <div class="league-banner" onclick="openStudentLeaderboardModal()">
                 <h4>🏆 Maktab Ligasi</h4>
                 <div class="big-prize">Chempionlar Reytingi</div>
                 <p>Barcha o'quvchilar orasida o'z o'rningizni ko'ring ❯</p>
                 <div class="trophy-decor">🏆</div>
             </div>
 
-            <!-- Kunlik Bonus Kartochkasi -->
-            <div class="bento-card" style="min-height: auto; margin-bottom: 20px; background: linear-gradient(135deg, #ecfdf5, #d1fae5); border: 2px solid #6ee7b7;" onclick="claimDailyCoin(true)">
+            <!-- Kunlik Bonus Sandig'i Kartochkasi -->
+            <div class="bento-card" style="min-height: auto; margin-bottom: 20px; background: linear-gradient(135deg, #fffbeb, #fef3c7); border: 2px solid #fbbf24;" onclick="claimDailyCoin(true)">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <div>
-                        <div style="font-weight:900; font-size:17px; color:#065f46;">🎁 Kunlik 1 Coin Bonusi</div>
-                        <div id="daily-bonus-status" style="font-size:13px; font-weight:700; color:#047857; margin-top:4px;">Har kuni kiring va +1 Coin oling!</div>
+                        <div style="font-weight:900; font-size:17px; color:#b45309;">🎁 Kunlik Xazina Sandig'i</div>
+                        <div id="daily-bonus-status" style="font-size:13px; font-weight:700; color:#92400e; margin-top:4px;">Sandiqni oching va +1 Coin oling!</div>
                     </div>
-                    <div style="font-size:32px;">🪙</div>
+                    <div id="daily-chest-emoji" style="font-size:38px; animation: chestBounce 2s infinite;">🎁</div>
                 </div>
             </div>
 
-            <!-- Tezkor Bo'limlar (3 ustunli) -->
+            <!-- Qo'shimcha Bo'limlar (3 ustunli) -->
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
                 <h2 style="margin:0; font-size:18px;">Qo'shimcha bo'limlar</h2>
             </div>
             <div class="quick-grid-3">
                 <div class="quick-item" onclick="switchBottomTab('oyinlar')">
                     <div class="quick-circle" style="background:#fce7f3; color:#db2777;">🎮</div>
-                    <div class="quick-label">Tezkor O'yin</div>
+                    <div class="quick-label">O'yinlar</div>
                 </div>
-                <div class="quick-item" onclick="switchBottomTab('missiya')">
+                <div class="quick-item" onclick="openStudentLeaderboardModal()">
                     <div class="quick-circle" style="background:#e0f2fe; color:#0284c7;">🥇</div>
                     <div class="quick-label">Reyting</div>
                 </div>
@@ -731,102 +836,142 @@
             </div>
         </div>
 
-        <!-- TAB 2: O'RGANISH (10 OY VA 120 DARS) -->
-        <div id="tab-organish" class="tab-view">
-            
-            <!-- Rejim tanlash: Uy vazifa yoki Video -->
-            <div id="learning-mode-selector" style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:18px;">
-                <button id="mode-btn-hw" onclick="setLearningMode('homework')" style="padding:12px; font-size:15px; border-radius:14px;">📝 Uyga vazifa</button>
-                <button id="mode-btn-vid" onclick="setLearningMode('video')" style="padding:12px; font-size:15px; border-radius:14px;">🎬 Video darslar</button>
-            </div>
-
+        <!-- TAB 2: MISSIYA (FAQAT UYGA VAZIFALAR - 10 OY, 120 DARS) -->
+        <div id="tab-missiya" class="tab-view">
             <!-- 10 ta Oy Gridi -->
-            <div id="months-view-box">
-                <h3 id="months-box-title" style="margin-top:0;">Oyni tanlang (1 - 10 oy)</h3>
+            <div id="hw-months-box">
+                <h3 style="margin-top:0; color:#d97706;">📝 Uyga vazifa — Oyni tanlang</h3>
                 <p style="font-size:13px; color:#64748b; margin-top:-10px; margin-bottom:14px;">
                     ⬜ Kulrang: Tugallangan | 🟩 Yashil: Joriy oy | 🟥 Qizil: Yuklanmagan
                 </p>
-                <div id="student-months-grid" class="grid-2col"></div>
+                <div id="hw-months-grid" class="grid-2col"></div>
             </div>
 
             <!-- Tanlangan oyning 12 ta darsi Gridi -->
-            <div id="lessons-view-box" style="display:none;">
-                <h3 id="lessons-box-title" style="margin-top:0;">1-oy darslari</h3>
+            <div id="hw-lessons-box" style="display:none;">
+                <h3 id="hw-lessons-title" style="margin-top:0; color:#d97706;">1-oy vazifalari</h3>
                 <p style="font-size:13px; color:#64748b; margin-top:-10px; margin-bottom:14px;">
-                    ⬜ O'tilgan dars | 🟩 Yangi dars | 🟥 Yuklanmagan
+                    ⬜ O'tilgan | 🟩 Yangi vazifa | 🟥 Yuklanmagan
                 </p>
-                <div id="student-lessons-grid" class="grid-2col"></div>
-                <button class="back-btn" onclick="backToMonthsGrid()">⬅️ Oylar ro'yxatiga qaytish</button>
+                <div id="hw-lessons-grid" class="grid-2col"></div>
+                <button class="back-btn" onclick="showHwMonthsView()">⬅️ Oylar ro'yxatiga qaytish</button>
             </div>
 
             <!-- Uy vazifa yechish maydoni -->
             <div id="homework-work-box" style="display:none;">
-                <h3 id="hw-current-title">📝 Uyga vazifa</h3>
+                <h3 id="hw-current-title" style="color:#d97706;">📝 Uyga vazifa</h3>
                 <div id="homework-questions-area"></div>
                 <button class="feature-btn" id="submit-hw-btn" style="display:none;" onclick="submitHomework()">✅ Javoblarni jo'natish</button>
-                <button class="back-btn" onclick="backToLessonsGrid()">⬅️ Darslarga qaytish</button>
+                <button class="back-btn" onclick="openHwMonthLessons(selectedHwMonth)">⬅️ Darslarga qaytish</button>
+            </div>
+        </div>
+
+        <!-- TAB 3: O'RGANISH (FAQAT VIDEO DARSLAR - 10 OY, 120 DARS) -->
+        <div id="tab-organish" class="tab-view">
+            <!-- 10 ta Oy Gridi -->
+            <div id="vid-months-box">
+                <h3 style="margin-top:0; color:#7c3aed;">🎬 Video darslar — Oyni tanlang</h3>
+                <p style="font-size:13px; color:#64748b; margin-top:-10px; margin-bottom:14px;">
+                    ⬜ Kulrang: Tugallangan | 🟩 Yashil: Joriy oy | 🟥 Qizil: Yuklanmagan
+                </p>
+                <div id="vid-months-grid" class="grid-2col"></div>
+            </div>
+
+            <!-- Tanlangan oyning 12 ta video darsi Gridi -->
+            <div id="vid-lessons-box" style="display:none;">
+                <h3 id="vid-lessons-title" style="margin-top:0; color:#7c3aed;">1-oy video darslari</h3>
+                <p style="font-size:13px; color:#64748b; margin-top:-10px; margin-bottom:14px;">
+                    ⬜ O'tilgan | 🟩 Yangi dars | 🟥 Yuklanmagan
+                </p>
+                <div id="vid-lessons-grid" class="grid-2col"></div>
+                <button class="back-btn" onclick="showVidMonthsView()">⬅️ Oylar ro'yxatiga qaytish</button>
             </div>
 
             <!-- Video ko'rish maydoni -->
             <div id="video-work-box" style="display:none;">
-                <h3 id="video-current-title">🎬 Video dars</h3>
+                <h3 id="video-current-title" style="color:#7c3aed;">🎬 Video dars</h3>
                 <div id="video-embed-container"></div>
-                <button class="back-btn" onclick="backToLessonsGrid()">⬅️ Darslarga qaytish</button>
+                <button class="back-btn" onclick="openVidMonthLessons(selectedVidMonth)">⬅️ Darslarga qaytish</button>
             </div>
         </div>
 
-        <!-- TAB 3: MISSIYA VA REYTING -->
-        <div id="tab-missiya" class="tab-view">
-            <h2 style="margin-top:0;">🎯 Kunlik Missiyalar</h2>
-            <ul style="margin-bottom:22px;">
-                <li>
-                    <div class="li-header">
-                        <span>📅 Har kuni platformaga kirish</span>
-                        <span class="coin-text">+1 Coin</span>
-                    </div>
-                </li>
-                <li>
-                    <div class="li-header">
-                        <span>📝 Uy vazifani vaqtida 100% bajarish</span>
-                        <span class="coin-text">+2 Coin</span>
-                    </div>
-                </li>
-                <li>
-                    <div class="li-header">
-                        <span>🎮 Matematik o'yinda 100 ball to'plash</span>
-                        <span class="coin-text">+1 Coin</span>
-                    </div>
-                </li>
-            </ul>
-
-            <h2>🏆 Chempionlar Ro'yxati (3–5-sinflar)</h2>
-            <ul id="leaderboard-list"></ul>
-        </div>
-
-        <!-- TAB 4: O'YINLAR -->
+        <!-- TAB 4: O'YINLAR (2 TA O'YIN + 100 BALLNI 1 COINGA ALMASHTIRISH) -->
         <div id="tab-oyinlar" class="tab-view">
-            <h2 style="margin-top:0;">🎮 Tezkor Matematik O'yin</h2>
             
-            <div id="math-game-intro" class="profile-card">
-                <div style="font-size:48px; margin-bottom:10px;">🧠</div>
-                <p style="font-size:16px; color:#334155; line-height:1.5;">
-                    Sinfingizga mos qiziqarli va osonlashtirilgan misollar!<br>
-                    Har bir savolga <strong>15 soniya</strong> beriladi.<br>
-                    <span style="color:#dc2626; font-weight:800;">⚠️ Bitta xato qilsangiz o'yin tugaydi!</span><br>
-                    Har 100 ball = <strong>1 Coin ⭐</strong>
-                </p>
-                <button class="feature-btn" onclick="checkAndStartMathGame()">▶️ O'yinni boshlash</button>
+            <!-- O'yinlar Asosiy Menyusi -->
+            <div id="games-hub">
+                <h2 style="margin-top:0;">🎮 Matematik O'yinlar</h2>
+
+                <!-- Ballni Coinga almashtirish Konvertori -->
+                <div class="profile-card" style="background: linear-gradient(135deg, #eff6ff, #dbeafe); border: 2px solid #93c5fd; padding: 18px; margin-bottom: 18px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                        <div style="text-align:left;">
+                            <div style="font-size:13px; font-weight:800; color:#1e40af;">SIZNING O'YIN BALLARINGIZ</div>
+                            <div style="font-size:26px; font-weight:900; color:#1d4ed8;">🎯 <span id="hub-points-display">0</span> ball</div>
+                        </div>
+                        <div style="background:#ffffff; padding:8px 14px; border-radius:14px; font-weight:900; color:#d97706; font-size:15px; box-shadow:0 2px 6px rgba(0,0,0,0.05);">
+                            100 ball = 1 ⭐
+                        </div>
+                    </div>
+                    <button class="gift-btn" onclick="exchangePointsToCoins()" style="padding:12px; font-size:16px;">🔄 100 ballni 1 Coinga almashtirish</button>
+                </div>
+
+                <!-- 1-O'YIN KARTOCHKASI -->
+                <div class="profile-card" style="text-align:left; display:flex; flex-direction:column; gap:10px;">
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <div style="font-size:38px; background:#dcfce7; width:60px; height:60px; border-radius:16px; display:flex; align-items:center; justify-content:center;">🧮</div>
+                        <div>
+                            <h3 style="margin:0; color:#1e293b; font-size:18px;">1. Tezkor Hisoblagich</h3>
+                            <div style="font-size:13px; color:#64748b; font-weight:700;">4 ta variantdan to'g'risini toping (15s)</div>
+                        </div>
+                    </div>
+                    <button class="feature-btn" onclick="checkAndStartGame(1)">▶️ O'ynash (Kuniga 1 marta)</button>
+                </div>
+
+                <!-- 2-O'YIN KARTOCHKASI -->
+                <div class="profile-card" style="text-align:left; display:flex; flex-direction:column; gap:10px;">
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <div style="font-size:38px; background:#fef3c7; width:60px; height:60px; border-radius:16px; display:flex; align-items:center; justify-content:center;">⚖️</div>
+                        <div>
+                            <h3 style="margin:0; color:#1e293b; font-size:18px;">2. Taqqoslash Dueli ( &gt; = &lt; )</h3>
+                            <div style="font-size:13px; color:#64748b; font-weight:700;">Qaysi ifoda kattaligini toping (15s)</div>
+                        </div>
+                    </div>
+                    <button class="admin-btn" onclick="checkAndStartGame(2)" style="color:#fff; background:linear-gradient(135deg, #f59e0b, #d97706);">▶️ O'ynash (Kuniga 1 marta)</button>
+                </div>
             </div>
 
-            <div id="math-game-play" style="display:none;">
+            <!-- 1-O'YIN MAYDONI -->
+            <div id="math-game-1-play" style="display:none;">
                 <div class="score-board">
                     <span class="warning-text">⚡ Xatosiz rejim!</span>
-                    <span class="point-text">🎯 Ball: <span id="game-score">0</span></span>
+                    <span class="point-text">🎯 Ball: <span id="game1-score">0</span></span>
                 </div>
-                <div class="timer">⏳ <span id="game-timer">15</span> s</div>
-                <div class="question" id="game-question"></div>
-                <div class="options-grid" id="game-options"></div>
+                <div class="timer">⏳ <span id="game1-timer">15</span> s</div>
+                <div class="question" id="game1-question"></div>
+                <div class="options-grid" id="game1-options"></div>
             </div>
+
+            <!-- 2-O'YIN MAYDONI (TAQQOSLASH) -->
+            <div id="math-game-2-play" style="display:none;">
+                <div class="score-board">
+                    <span class="warning-text">⚖️ Taqqoslash!</span>
+                    <span class="point-text">🎯 Ball: <span id="game2-score">0</span></span>
+                </div>
+                <div class="timer">⏳ <span id="game2-timer">15</span> s</div>
+                <p style="font-weight:800; color:#475569; margin-top:0;">O'rtadagi "?" o'rniga mos belgini tanlang:</p>
+                <div class="compare-box">
+                    <div id="comp-left" class="compare-side">12 + 5</div>
+                    <div class="compare-vs">?</div>
+                    <div id="comp-right" class="compare-side">20 - 4</div>
+                </div>
+                <div class="grid-3col">
+                    <button class="feature-btn" style="font-size:28px; padding:16px;" onclick="checkGame2Answer('>')">&gt;</button>
+                    <button class="gift-btn" style="font-size:28px; padding:16px;" onclick="checkGame2Answer('=')">=</button>
+                    <button class="class-btn" style="font-size:28px; padding:16px;" onclick="checkGame2Answer('<')">&lt;</button>
+                </div>
+            </div>
+
         </div>
 
         <!-- TAB 5: SHAXSIY PROFIL -->
@@ -839,7 +984,7 @@
                     <div class="avatar-edit-badge">📷 Rasm</div>
                 </div>
                 <h2 id="profile-name" style="margin:6px 0 2px;">O'quvchi Ismi</h2>
-                <div id="profile-grade" style="color:#64748b; font-weight:700; font-size:14px; margin-bottom:16px;">3-sinf o'quvchisi</div>
+                <div id="profile-grade" style="color:#64748b; font-weight:700; font-size:14px; margin-bottom:16px;">4-sinf o'quvchisi</div>
 
                 <div class="grid-2col" style="margin-bottom:10px;">
                     <div style="background:#fef3c7; padding:12px; border-radius:16px;">
@@ -861,19 +1006,19 @@
             <button class="back-btn" onclick="logoutStudent()" style="margin-top:20px; background:#fee2e2; color:#b91c1c; box-shadow:none;">🚪 Profildan chiqish</button>
         </div>
 
-        <!-- PASTKI NAVIGATSIYA PANELI (5 TA TUGMA) -->
+        <!-- PASTKI NAVIGATSIYA PANELI (ASOSIY | MISSIYA | O'RGANISH | O'YINLAR | PROFIL) -->
         <div class="bottom-navbar">
             <button class="nav-tab active" data-tab="asosiy" onclick="switchBottomTab('asosiy')">
                 <svg viewBox="0 0 24 24"><path d="M12 3L4 9v12h5v-7h6v7h5V9z"/></svg>
                 <span>Asosiy</span>
             </button>
-            <button class="nav-tab" data-tab="organish" onclick="switchBottomTab('organish')">
-                <svg viewBox="0 0 24 24"><path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z"/></svg>
-                <span>O'rganish</span>
-            </button>
             <button class="nav-tab" data-tab="missiya" onclick="switchBottomTab('missiya')">
                 <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm0-14c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm0-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
                 <span>Missiya</span>
+            </button>
+            <button class="nav-tab" data-tab="organish" onclick="switchBottomTab('organish')">
+                <svg viewBox="0 0 24 24"><path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z"/></svg>
+                <span>O'rganish</span>
             </button>
             <button class="nav-tab" data-tab="oyinlar" onclick="switchBottomTab('oyinlar')">
                 <svg viewBox="0 0 24 24"><path d="M14.4 6L14 4H5v17h2v-7h5.6l.4 2h7V6z"/></svg>
@@ -920,19 +1065,64 @@
             } catch(err) {}
         }
 
+        function playRewardFanfare() {
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if(!AudioContext) return;
+                const ctx = new AudioContext();
+                const notes = [523.25, 659.25, 783.99, 1046.50];
+                notes.forEach((freq, idx) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(freq, ctx.currentTime + idx * 0.09);
+                    gain.gain.setValueAtTime(0.22, ctx.currentTime + idx * 0.09);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + idx * 0.09 + 0.35);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(ctx.currentTime + idx * 0.09);
+                    osc.stop(ctx.currentTime + idx * 0.09 + 0.35);
+                });
+            } catch(e) {}
+        }
+
         document.addEventListener('click', function(e) {
             if (e.target.closest('button') || e.target.closest('.bento-card') || e.target.closest('.quick-item')) {
                 playPopSound(620);
             }
         });
 
-        function showCoinAnimation(amount) {
-            playPopSound(880);
-            const el = document.createElement('div');
-            el.className = 'coin-burst';
-            el.innerText = `+${amount} ⭐ Coin!`;
-            document.body.appendChild(el);
-            setTimeout(() => el.remove(), 1300);
+        // Tanga yomg'iri va 3D Sovg'a Oynasi
+        function triggerCoinShower() {
+            const emojis = ['🪙', '⭐', '✨', '🎉', '💰'];
+            for (let i = 0; i < 24; i++) {
+                const drop = document.createElement('div');
+                drop.className = 'falling-coin';
+                drop.innerText = emojis[i % emojis.length];
+                drop.style.left = Math.random() * 94 + 'vw';
+                drop.style.animationDuration = (1.2 + Math.random() * 1.2) + 's';
+                drop.style.animationDelay = (Math.random() * 0.4) + 's';
+                document.body.appendChild(drop);
+                setTimeout(() => drop.remove(), 2800);
+            }
+        }
+
+        function showRewardCelebration(title, badgeText, descText, icon = '🎁', withShower = true) {
+            document.getElementById('reward-icon').innerText = icon;
+            document.getElementById('reward-title').innerText = title;
+            document.getElementById('reward-badge').innerText = badgeText;
+            document.getElementById('reward-desc').innerText = descText;
+            document.getElementById('reward-modal').style.display = 'flex';
+            if (withShower) {
+                playRewardFanfare();
+                triggerCoinShower();
+            } else {
+                playPopSound(450);
+            }
+        }
+
+        function closeRewardModal() {
+            document.getElementById('reward-modal').style.display = 'none';
         }
 
         // --- 10 OY VA 120 TA DARS TIZIMI ---
@@ -945,14 +1135,13 @@
 
         let currentGrade = null;
         let currentStudent = null;
-        let learningMode = 'homework'; // 'homework' yoki 'video'
-        let selectedMonth = 1; // 1 dan 10 gacha
-        let activeLessonIndex = null; // 0 dan 119 gacha
+        let selectedHwMonth = 1;
+        let selectedVidMonth = 1;
+        let activeLessonIndex = null;
 
         let uploadHwTargets = [];
         let uploadVidTargets = [];
 
-        // Admin selectlariga 10 ta oyni joylash
         function initAdminMonthSelects() {
             document.querySelectorAll('.dynamic-month-select').forEach(sel => {
                 sel.innerHTML = '<option value="">Oyni tanlang...</option>';
@@ -992,7 +1181,7 @@
                     if(!platformData.videos) platformData.videos = {};
                     localStorage.setItem('cachedPlatformData', JSON.stringify(platformData));
                 }
-                if (isManual) alert("Ma'lumotlar yangilandi! ✅");
+                if (isManual) showRewardCelebration("Yangilandi!", "✅ Tayyor", "Barcha ma'lumotlar muvaffaqiyatli yangilandi.", "🔄", false);
             } catch (e) {
                 const cached = localStorage.getItem('cachedPlatformData');
                 if (cached) platformData = JSON.parse(cached);
@@ -1114,7 +1303,7 @@
                 data.students[grade].push({ 
                     id: new Date().getTime(), name: name, password: pass, 
                     coins: 0, points: 0, isBlocked: false, 
-                    history: [], homeworkResults: {}, lastGamePlayed: 0,
+                    history: [], homeworkResults: {}, lastGamePlayed: 0, lastGame2Played: 0,
                     avatar: "", lastDailyClaim: ""
                 });
             }).then(() => {
@@ -1295,7 +1484,6 @@
             });
         }
 
-        // Admin Reyting (ustiga bosganda coin tarixi chiqadi)
         function openAdminLeaderboard() {
             const list = document.getElementById('admin-leaderboard-list'); list.innerHTML = '';
             let all = []; 
@@ -1343,7 +1531,7 @@
             document.getElementById('history-modal').style.display = 'flex';
         }
 
-        function closeHistoryModal(e) {
+        function closeHistoryModal() {
             document.getElementById('history-modal').style.display = 'none';
         }
 
@@ -1376,7 +1564,6 @@
             updateStudentUI();
             switchToView('student-panel');
             switchBottomTab('asosiy');
-            // Kunlik 1 coin bonusni avtomatik tekshirish
             setTimeout(() => claimDailyCoin(false), 600);
         }
 
@@ -1385,8 +1572,9 @@
             document.getElementById('top-grade-label').innerText = `${currentGrade}-sinf`;
             document.getElementById('welcome-msg').innerText = `Salom, ${currentStudent.name}! 👋`;
             document.getElementById('student-coins').innerText = currentStudent.coins || 0;
+            document.getElementById('top-points').innerText = currentStudent.points || 0;
+            document.getElementById('hub-points-display').innerText = currentStudent.points || 0;
             
-            // Profil tab ma'lumotlari
             document.getElementById('profile-name').innerText = currentStudent.name;
             document.getElementById('profile-grade').innerText = `${currentGrade}-sinf o'quvchisi`;
             document.getElementById('profile-coins').innerText = currentStudent.coins || 0;
@@ -1401,31 +1589,47 @@
                 document.getElementById('profile-avatar-placeholder').style.display = 'block';
             }
 
-            // Kunlik bonus yozuvi
             const todayStr = new Date().toISOString().split('T')[0];
             const bonusEl = document.getElementById('daily-bonus-status');
+            const chestEl = document.getElementById('daily-chest-emoji');
             if (currentStudent.lastDailyClaim === todayStr) {
-                bonusEl.innerText = "✅ Bugungi +1 Coin bonusi olingan! Ertaga yana kiring.";
+                bonusEl.innerText = "✅ Bugungi +1 Coin olindi! Ertaga yangi sandiq ochiladi.";
+                chestEl.innerText = "🔓";
             } else {
-                bonusEl.innerText = "🔥 Bugungi +1 Coin bonusni olish uchun bosing!";
+                bonusEl.innerText = "🔥 Sandiqni bosing va bugungi +1 Coinni oling!";
+                chestEl.innerText = "🎁";
             }
 
             renderStudentHistory();
         }
 
-        // Kunlik +1 Coin berish funksiyasi
-        function claimDailyCoin(showAlertIfTaken = false) {
+        // Kunlik +1 Coin berish (3D Xazina Sandig'i Animatsiyasi bilan!)
+        function claimDailyCoin(showModalIfTaken = false) {
             if (!currentStudent) return;
             const todayStr = new Date().toISOString().split('T')[0];
             const localKey = `daily_${currentStudent.id}_${todayStr}`;
 
             if (currentStudent.lastDailyClaim === todayStr || localStorage.getItem(localKey)) {
-                if (showAlertIfTaken) alert("Siz bugungi kunlik +1 Coin bonusini olgansiz! ✅ Ertaga yana kiring.");
+                if (showModalIfTaken) {
+                    showRewardCelebration(
+                        "Sandiq ochilgan! ✨",
+                        "✅ +1 Coin olingan",
+                        "Siz bugungi kunlik bonusni olgansiz. Ertaga kirib yana yangi sandiqni oching!",
+                        "⏳",
+                        false
+                    );
+                }
                 return;
             }
 
             localStorage.setItem(localKey, "1");
-            showCoinAnimation(1);
+            showRewardCelebration(
+                "Kunlik Xazina Ochildi!",
+                "+1 ⭐ Coin",
+                "Har kuni platformaga kirganingiz uchun maxsus mukofot!",
+                "🎁",
+                true
+            );
 
             safeUpdateDB((data) => {
                 const s = data.students[currentGrade].find(x => x.id === currentStudent.id);
@@ -1443,7 +1647,6 @@
             }).catch(() => {});
         }
 
-        // Rasm yuklash (Avtomatik kichraytirib Base64 saqlash)
         function handleAvatarUpload(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -1470,7 +1673,7 @@
                         const s = data.students[currentGrade].find(x => x.id === currentStudent.id);
                         if (s) s.avatar = dataUrl;
                     }).then(() => {
-                        alert("Profil rasmi yangilandi! 📸");
+                        showRewardCelebration("Rasm saqlandi!", "📸 Tayyor", "Profilingiz rasmi muvaffaqiyatli yangilandi!", "👦", false);
                     }).catch(() => {});
                 };
                 img.src = e.target.result;
@@ -1506,7 +1709,9 @@
         }
 
         // --- PASTKI MENYU TABLARINI ALMASHTIRISH ---
+        // Ketma-ketlik: Asosiy | Missiya (Uy vazifa) | O'rganish (Video) | O'yinlar | Profil
         function switchBottomTab(tabName) {
+            isGameActive = false;
             clearInterval(gameInterval);
             document.getElementById('video-embed-container').innerHTML = '';
 
@@ -1517,64 +1722,58 @@
                 btn.classList.toggle('active', btn.getAttribute('data-tab') === tabName);
             });
 
-            if (tabName === 'organish') {
-                setLearningMode(learningMode);
-            } else if (tabName === 'missiya') {
-                renderStudentLeaderboard();
+            if (tabName === 'missiya') {
+                showHwMonthsView();
+            } else if (tabName === 'organish') {
+                showVidMonthsView();
             } else if (tabName === 'oyinlar') {
-                document.getElementById('math-game-intro').style.display = 'block';
-                document.getElementById('math-game-play').style.display = 'none';
+                showGamesHub();
             } else if (tabName === 'profil') {
                 updateStudentUI();
             }
         }
 
-        function openLearningFlow(mode) {
-            learningMode = mode;
-            switchBottomTab('organish');
+        // --- REYTING MODALI (O'QUVCHILAR UCHUN) ---
+        function openStudentLeaderboardModal() {
+            const list = document.getElementById('leaderboard-list'); list.innerHTML = '';
+            let all = []; 
+            ["3", "4", "5"].forEach(g => {
+                if (platformData.students[g]) {
+                    platformData.students[g].forEach(s => all.push({name: s.name, coins: s.coins || 0, grade: g}));
+                }
+            });
+            all.sort((a,b) => b.coins - a.coins);
+            
+            all.forEach((s,i) => { 
+                let m = i === 0 ? "🥇" : (i === 1 ? "🥈" : (i === 2 ? "🥉" : `${i+1}.`)); 
+                list.innerHTML += `<li><div class="li-header"><span><strong>${m} ${s.name}</strong> (${s.grade}-sinf)</span> <span class="coin-text">${s.coins} ⭐</span></div></li>`; 
+            });
+            document.getElementById('student-leaderboard-modal').style.display = 'flex';
         }
 
-        // --- 10 OY VA 120 DARS RANG MANTIG'I (KULRANG / YASHIL / QIZIL) ---
-        function setLearningMode(mode) {
-            learningMode = mode;
-            const btnHw = document.getElementById('mode-btn-hw');
-            const btnVid = document.getElementById('mode-btn-vid');
-
-            if (mode === 'homework') {
-                btnHw.style.background = '#10b981'; btnHw.style.color = '#fff';
-                btnVid.style.background = '#e2e8f0'; btnVid.style.color = '#334155';
-            } else {
-                btnVid.style.background = '#7c3aed'; btnVid.style.color = '#fff';
-                btnHw.style.background = '#e2e8f0'; btnHw.style.color = '#334155';
-            }
-
-            backToMonthsGrid();
+        function closeStudentLeaderboardModal() {
+            document.getElementById('student-leaderboard-modal').style.display = 'none';
         }
 
-        function getSourceDict() {
-            const dict = learningMode === 'homework' ? platformData.homeworks : platformData.videos;
-            return (dict && dict[currentGrade]) ? dict[currentGrade] : {};
-        }
-
-        // Eng oxirgi yuklangan dars indeksini topish (Yashil tugmani aniqlash uchun)
+        // --- MISSIYA BO'LIMI: UYGA VAZIFALAR (10 OY, 120 DARS) ---
         function getHighestUploadedIndex(gradeDict) {
             let maxIdx = -1;
             for (let i = 0; i < 120; i++) {
-                if (gradeDict[i]) maxIdx = i;
+                if (gradeDict && gradeDict[i]) maxIdx = i;
             }
             return maxIdx;
         }
 
-        function renderMonthsGrid() {
-            const gradeDict = getSourceDict();
+        function showHwMonthsView() {
+            document.getElementById('hw-lessons-box').style.display = 'none';
+            document.getElementById('homework-work-box').style.display = 'none';
+            document.getElementById('hw-months-box').style.display = 'block';
+
+            const gradeDict = (platformData.homeworks && platformData.homeworks[currentGrade]) ? platformData.homeworks[currentGrade] : {};
             const maxIdx = getHighestUploadedIndex(gradeDict);
             const activeMonth = maxIdx >= 0 ? Math.floor(maxIdx / 12) + 1 : 1;
 
-            document.getElementById('months-box-title').innerText = learningMode === 'homework' 
-                ? "📝 Uyga vazifa — Oyni tanlang" 
-                : "🎬 Video darslar — Oyni tanlang";
-
-            const grid = document.getElementById('student-months-grid');
+            const grid = document.getElementById('hw-months-grid');
             grid.innerHTML = '';
 
             for (let m = 1; m <= 10; m++) {
@@ -1584,10 +1783,6 @@
                     if (gradeDict[i]) uploadedCount++;
                 }
 
-                // Rang qoidasi:
-                // 1) Agar barcha 12 ta dars yuklangan bo'lsa (va keyingi oylarga o'tilgan bo'lsa) -> Kulrang
-                // 2) Hozir dars yuklanayotgan joriy oy -> Yashil
-                // 3) Hali yuklanmagan oylar -> Qizil
                 let stateClass = 'state-red';
                 let statusSub = `${uploadedCount}/12 dars`;
 
@@ -1607,23 +1802,22 @@
                 const btn = document.createElement('button');
                 btn.className = `lesson-card-btn ${stateClass}`;
                 btn.innerHTML = `<span>📅 ${m}-oy</span><small>${statusSub}</small>`;
-                btn.onclick = () => openMonthLessons(m);
+                btn.onclick = () => openHwMonthLessons(m);
                 grid.appendChild(btn);
             }
         }
 
-        function openMonthLessons(monthNum) {
-            selectedMonth = monthNum;
-            document.getElementById('months-view-box').style.display = 'none';
+        function openHwMonthLessons(monthNum) {
+            selectedHwMonth = monthNum;
+            document.getElementById('hw-months-box').style.display = 'none';
             document.getElementById('homework-work-box').style.display = 'none';
-            document.getElementById('video-work-box').style.display = 'none';
-            document.getElementById('lessons-view-box').style.display = 'block';
+            document.getElementById('hw-lessons-box').style.display = 'block';
 
-            document.getElementById('lessons-box-title').innerText = `${monthNum}-oy darslari (12 ta dars)`;
-            const gradeDict = getSourceDict();
+            document.getElementById('hw-lessons-title').innerText = `📝 ${monthNum}-oy vazifalari (12 ta dars)`;
+            const gradeDict = (platformData.homeworks && platformData.homeworks[currentGrade]) ? platformData.homeworks[currentGrade] : {};
             const maxIdx = getHighestUploadedIndex(gradeDict);
 
-            const grid = document.getElementById('student-lessons-grid');
+            const grid = document.getElementById('hw-lessons-grid');
             grid.innerHTML = '';
 
             const startIdx = (monthNum - 1) * 12;
@@ -1631,24 +1825,20 @@
                 const globalIdx = startIdx + (d - 1);
                 const isUploaded = Boolean(gradeDict[globalIdx]);
 
-                // Dars rang qoidasi:
-                // Eng oxirgi yuklangan dars -> Yashil
-                // Undan oldingi yuklangan darslar -> Kulrang
-                // Hali yuklanmagan darslar -> Qizil
                 let stateClass = 'state-red';
                 let subLabel = "Yuklanmagan";
 
                 if (isUploaded) {
                     if (globalIdx === maxIdx) {
                         stateClass = 'state-green';
-                        subLabel = "Yangi dars!";
+                        subLabel = "Yangi vazifa!";
                     } else {
                         stateClass = 'state-gray';
                         subLabel = "Yuklangan";
                     }
                 }
 
-                if (learningMode === 'homework' && currentStudent.homeworkResults && currentStudent.homeworkResults[globalIdx]) {
+                if (currentStudent.homeworkResults && currentStudent.homeworkResults[globalIdx]) {
                     subLabel = "✅ Topshirilgan";
                 }
 
@@ -1657,36 +1847,20 @@
                 btn.innerHTML = `<span>${d}-dars</span><small>${subLabel}</small>`;
                 btn.onclick = () => {
                     if (!isUploaded) {
-                        alert("Ustoz hali bu darsni yuklamagan. ⏳");
+                        showRewardCelebration("Yuklanmagan ⏳", `${d}-dars`, "Ustoz hali bu darsga uy vazifa yuklamagan.", "📝", false);
                         return;
                     }
-                    if (learningMode === 'homework') loadHomeworkArea(globalIdx, d);
-                    else loadVideoArea(globalIdx, d);
+                    loadHomeworkArea(globalIdx, d);
                 };
                 grid.appendChild(btn);
             }
         }
 
-        function backToMonthsGrid() {
-            document.getElementById('video-embed-container').innerHTML = '';
-            document.getElementById('lessons-view-box').style.display = 'none';
-            document.getElementById('homework-work-box').style.display = 'none';
-            document.getElementById('video-work-box').style.display = 'none';
-            document.getElementById('months-view-box').style.display = 'block';
-            renderMonthsGrid();
-        }
-
-        function backToLessonsGrid() {
-            document.getElementById('video-embed-container').innerHTML = '';
-            openMonthLessons(selectedMonth);
-        }
-
-        // --- UY VAZIFA YECHISH (Muddat o'tsa coin berilmaydi, lekin ishlash mumkin) ---
         function loadHomeworkArea(globalIdx, lessonNumInMonth) {
             activeLessonIndex = globalIdx;
-            document.getElementById('lessons-view-box').style.display = 'none';
+            document.getElementById('hw-lessons-box').style.display = 'none';
             document.getElementById('homework-work-box').style.display = 'block';
-            document.getElementById('hw-current-title').innerText = `📝 ${selectedMonth}-oy, ${lessonNumInMonth}-dars vazifasi`;
+            document.getElementById('hw-current-title').innerText = `📝 ${selectedHwMonth}-oy, ${lessonNumInMonth}-dars vazifasi`;
             
             const area = document.getElementById('homework-questions-area'); area.innerHTML = '';
             const btn = document.getElementById('submit-hw-btn');
@@ -1749,7 +1923,7 @@
                 statusBanner = `<div class="deadline-warning">⏳ Muddatdan kechikib topshirilgani uchun 0 Coin berildi.</div>`;
             } else if (coin > 0) {
                 statusBanner = `<h3 style="color:#16a34a;">🎉 Barakalla! +${coin} Coin oldingiz!</h3>`;
-                showCoinAnimation(coin);
+                showRewardCelebration("Vazifa bajarildi!", `+${coin} ⭐ Coin`, `${tot} tadan ${corr} ta savolga to'g'ri javob berdingiz!`, "🏆", true);
             } else {
                 statusBanner = `<h3>💪 Yana harakat qiling!</h3>`;
             }
@@ -1778,32 +1952,180 @@
             }).catch(()=>{});
         }
 
+        // --- O'RGANISH BO'LIMI: VIDEO DARSLAR (10 OY, 120 DARS) ---
+        function showVidMonthsView() {
+            document.getElementById('video-embed-container').innerHTML = '';
+            document.getElementById('vid-lessons-box').style.display = 'none';
+            document.getElementById('video-work-box').style.display = 'none';
+            document.getElementById('vid-months-box').style.display = 'block';
+
+            const gradeDict = (platformData.videos && platformData.videos[currentGrade]) ? platformData.videos[currentGrade] : {};
+            const maxIdx = getHighestUploadedIndex(gradeDict);
+            const activeMonth = maxIdx >= 0 ? Math.floor(maxIdx / 12) + 1 : 1;
+
+            const grid = document.getElementById('vid-months-grid');
+            grid.innerHTML = '';
+
+            for (let m = 1; m <= 10; m++) {
+                const startIdx = (m - 1) * 12;
+                let uploadedCount = 0;
+                for (let i = startIdx; i < startIdx + 12; i++) {
+                    if (gradeDict[i]) uploadedCount++;
+                }
+
+                let stateClass = 'state-red';
+                let statusSub = `${uploadedCount}/12 video`;
+
+                if (uploadedCount === 12 && m < activeMonth) {
+                    stateClass = 'state-gray';
+                    statusSub = "Tugallangan (12/12)";
+                } else if (m === activeMonth && uploadedCount > 0) {
+                    stateClass = 'state-green';
+                    statusSub = `Joriy oy (${uploadedCount}/12)`;
+                } else if (uploadedCount === 12) {
+                    stateClass = 'state-gray';
+                    statusSub = "To'liq (12/12)";
+                } else if (uploadedCount > 0) {
+                    stateClass = 'state-green';
+                }
+
+                const btn = document.createElement('button');
+                btn.className = `lesson-card-btn ${stateClass}`;
+                btn.innerHTML = `<span>🎬 ${m}-oy</span><small>${statusSub}</small>`;
+                btn.onclick = () => openVidMonthLessons(m);
+                grid.appendChild(btn);
+            }
+        }
+
+        function openVidMonthLessons(monthNum) {
+            selectedVidMonth = monthNum;
+            document.getElementById('video-embed-container').innerHTML = '';
+            document.getElementById('vid-months-box').style.display = 'none';
+            document.getElementById('video-work-box').style.display = 'none';
+            document.getElementById('vid-lessons-box').style.display = 'block';
+
+            document.getElementById('vid-lessons-title').innerText = `🎬 ${monthNum}-oy video darslari`;
+            const gradeDict = (platformData.videos && platformData.videos[currentGrade]) ? platformData.videos[currentGrade] : {};
+            const maxIdx = getHighestUploadedIndex(gradeDict);
+
+            const grid = document.getElementById('vid-lessons-grid');
+            grid.innerHTML = '';
+
+            const startIdx = (monthNum - 1) * 12;
+            for (let d = 1; d <= 12; d++) {
+                const globalIdx = startIdx + (d - 1);
+                const isUploaded = Boolean(gradeDict[globalIdx]);
+
+                let stateClass = 'state-red';
+                let subLabel = "Yuklanmagan";
+
+                if (isUploaded) {
+                    if (globalIdx === maxIdx) {
+                        stateClass = 'state-green';
+                        subLabel = "Yangi dars!";
+                    } else {
+                        stateClass = 'state-gray';
+                        subLabel = "Ko'rish";
+                    }
+                }
+
+                const btn = document.createElement('button');
+                btn.className = `lesson-card-btn ${stateClass}`;
+                btn.innerHTML = `<span>${d}-dars</span><small>${subLabel}</small>`;
+                btn.onclick = () => {
+                    if (!isUploaded) {
+                        showRewardCelebration("Yuklanmagan ⏳", `${d}-dars`, "Ustoz hali bu darsga video yuklamagan.", "🎬", false);
+                        return;
+                    }
+                    loadVideoArea(globalIdx, d);
+                };
+                grid.appendChild(btn);
+            }
+        }
+
         function loadVideoArea(globalIdx, lessonNumInMonth) {
             activeLessonIndex = globalIdx; 
-            document.getElementById('lessons-view-box').style.display = 'none';
+            document.getElementById('vid-lessons-box').style.display = 'none';
             document.getElementById('video-work-box').style.display = 'block'; 
-            document.getElementById('video-current-title').innerText = `🎬 ${selectedMonth}-oy, ${lessonNumInMonth}-dars`;
+            document.getElementById('video-current-title').innerText = `🎬 ${selectedVidMonth}-oy, ${lessonNumInMonth}-dars`;
             
             const vidId = platformData.videos[currentGrade][globalIdx];
             document.getElementById('video-embed-container').innerHTML = `
                 <iframe width="100%" height="280" src="https://www.youtube.com/embed/${vidId}?rel=0" frameborder="0" allowfullscreen style="border-radius:18px;"></iframe>`;
         }
 
-        // --- SODDALASHTIRILGAN MATEMATIK O'YIN (3, 4, 5-SINF UCHUN OSONROQ) ---
+        // --- O'YINLAR BO'LIMI (2 TA O'YIN + 100 BALLNI 1 COINGA ALMASHTIRISH) ---
         let gameInterval = null; 
         let gameTimer = 15; 
         let gameScore = 0; 
         let currentAnswer = null;
         let isGameActive = false;
+        let activeGameType = 1;
 
         function rand(min, max) {
             return Math.floor(Math.random() * (max - min + 1)) + min;
         }
 
-        function checkAndStartMathGame() {
+        function showGamesHub() {
+            isGameActive = false;
+            clearInterval(gameInterval);
+            document.getElementById('games-hub').style.display = 'block';
+            document.getElementById('math-game-1-play').style.display = 'none';
+            document.getElementById('math-game-2-play').style.display = 'none';
+            if (currentStudent) {
+                document.getElementById('hub-points-display').innerText = currentStudent.points || 0;
+            }
+        }
+
+        // 100 ballni 1 Coinga almashtirish funksiyasi
+        function exchangePointsToCoins() {
+            if (!currentStudent) return;
+            const pts = currentStudent.points || 0;
+            if (pts < 100) {
+                showRewardCelebration(
+                    "Ball yetarli emas 🎯",
+                    `${pts} / 100 ball`,
+                    `1 Coin olish uchun yana ${100 - pts} ball to'plashingiz kerak. O'yinlarni o'ynab ball yig'ing!`,
+                    "🎯",
+                    false
+                );
+                return;
+            }
+
+            const coinsToConvert = Math.floor(pts / 100);
+            const pointsSpent = coinsToConvert * 100;
+
+            showRewardCelebration(
+                "Ballar Coinga aylandi!",
+                `+${coinsToConvert} ⭐ Coin`,
+                `${pointsSpent} ball evaziga hisobingizga +${coinsToConvert} Coin qo'shildi!`,
+                "🪙",
+                true
+            );
+
+            safeUpdateDB((data) => {
+                const s = data.students[currentGrade].find(x => x.id === currentStudent.id);
+                if (s && (s.points || 0) >= pointsSpent) {
+                    s.points -= pointsSpent;
+                    s.coins = (s.coins || 0) + coinsToConvert;
+                    if (!s.history) s.history = [];
+                    s.history.push({
+                        type: "Ball almashinuvi",
+                        amount: coinsToConvert,
+                        reason: `${pointsSpent} o'yin balli almashtirildi`,
+                        date: new Date().toLocaleDateString()
+                    });
+                }
+            }).catch(() => {});
+        }
+
+        function checkAndStartGame(gameType) {
+            activeGameType = gameType;
             const now = new Date().getTime();
-            const localLastPlay = parseInt(localStorage.getItem('lastGame_' + currentStudent.id) || '0');
-            const lastPlay = Math.max(currentStudent.lastGamePlayed || 0, localLastPlay);
+            const storageKey = gameType === 1 ? `lastGame1_${currentStudent.id}` : `lastGame2_${currentStudent.id}`;
+            const dbField = gameType === 1 ? (currentStudent.lastGamePlayed || 0) : (currentStudent.lastGame2Played || 0);
+            const localLastPlay = parseInt(localStorage.getItem(storageKey) || '0');
+            const lastPlay = Math.max(dbField, localLastPlay);
             const diff = now - lastPlay;
             const cooldown = 24 * 60 * 60 * 1000; 
             
@@ -1811,94 +2133,78 @@
                 const left = cooldown - diff;
                 const hours = Math.floor(left / (1000 * 60 * 60)); 
                 const mins = Math.floor((left % (1000 * 60 * 60)) / (1000 * 60));
-                alert(`Siz bugun o'yin o'ynab bo'lgansiz! ⏳ Yana ${hours} soat ${mins} daqiqadan so'ng kirishingiz mumkin.`);
+                showRewardCelebration(
+                    "Vaqt chegarasi ⏳",
+                    `${hours} soat ${mins} daq.`,
+                    "Siz bugun ushbu o'yinni o'ynab bo'lgansiz! Keyingi urinishgacha qolgan vaqt.",
+                    "🎮",
+                    false
+                );
                 return;
             }
             
-            localStorage.setItem('lastGame_' + currentStudent.id, now.toString());
-            currentStudent.lastGamePlayed = now;
+            localStorage.setItem(storageKey, now.toString());
+            if (gameType === 1) currentStudent.lastGamePlayed = now;
+            else currentStudent.lastGame2Played = now;
 
-            document.getElementById('math-game-intro').style.display = 'none';
-            document.getElementById('math-game-play').style.display = 'block';
-            
+            document.getElementById('games-hub').style.display = 'none';
             gameScore = 0; 
             isGameActive = true;
-            updateGameUI(); 
-            nextQuestion();
+
+            if (gameType === 1) {
+                document.getElementById('math-game-1-play').style.display = 'block';
+                document.getElementById('game1-score').innerText = '0';
+                nextGame1Question();
+            } else {
+                document.getElementById('math-game-2-play').style.display = 'block';
+                document.getElementById('game2-score').innerText = '0';
+                nextGame2Question();
+            }
         }
 
-        function updateGameUI() { 
-            document.getElementById('game-score').innerText = gameScore; 
-        }
-
-        // Soddalashtirilgan misollar generatori
+        // --- 1-O'YIN: TEZKOR HISOBLAGICH ---
         function generateEasyGradeQuestion(grade) {
             let qText = "";
             let ans = 0;
             let isDecimal = false;
 
             if (String(grade) === "3") {
-                // 3-sinf: Oson qo'shish/ayirish (100 ichida) va jadval ko'paytirish/bo'lish
                 const type = rand(1, 3);
                 if (type === 1) {
-                    let a = rand(15, 65);
-                    let b = rand(10, 35);
-                    qText = `${a} + ${b} = ?`;
-                    ans = a + b;
+                    let a = rand(15, 65); let b = rand(10, 35);
+                    qText = `${a} + ${b} = ?`; ans = a + b;
                 } else if (type === 2) {
-                    let a = rand(40, 95);
-                    let b = rand(10, 35);
-                    qText = `${a} - ${b} = ?`;
-                    ans = a - b;
+                    let a = rand(40, 95); let b = rand(10, 35);
+                    qText = `${a} - ${b} = ?`; ans = a - b;
                 } else {
-                    let a = rand(2, 9);
-                    let b = rand(2, 9);
-                    if (Math.random() < 0.5) {
-                        qText = `${a} × ${b} = ?`;
-                        ans = a * b;
-                    } else {
-                        qText = `${a * b} ÷ ${b} = ?`;
-                        ans = a;
-                    }
+                    let a = rand(2, 9); let b = rand(2, 9);
+                    if (Math.random() < 0.5) { qText = `${a} × ${b} = ?`; ans = a * b; }
+                    else { qText = `${a * b} ÷ ${b} = ?`; ans = a; }
                 }
             } else if (String(grade) === "4") {
-                // 4-sinf: Yuzliklar ustida oson amallar, 1 xonali songa ko'paytirish va oson tenglama
                 const type = rand(1, 3);
                 if (type === 1) {
-                    let a = rand(11, 25);
-                    let b = rand(3, 6);
-                    qText = `${a} × ${b} = ?`;
-                    ans = a * b;
+                    let a = rand(11, 25); let b = rand(3, 6);
+                    qText = `${a} × ${b} = ?`; ans = a * b;
                 } else if (type === 2) {
-                    let b = rand(3, 8);
-                    let q = rand(10, 20);
-                    qText = `${b * q} ÷ ${b} = ?`;
-                    ans = q;
+                    let b = rand(3, 8); let q = rand(10, 20);
+                    qText = `${b * q} ÷ ${b} = ?`; ans = q;
                 } else {
-                    let x = rand(10, 40);
-                    let a = rand(15, 50);
-                    qText = `x + ${a} = ${x + a}\nx = ?`;
-                    ans = x;
+                    let x = rand(10, 40); let a = rand(15, 50);
+                    qText = `x + ${a} = ${x + a}\nx = ?`; ans = x;
                 }
             } else {
-                // 5-sinf: Oson o'nli kasrlar va sodda kasr/foizlar
                 const type = rand(1, 3);
                 if (type === 1) {
                     isDecimal = true;
-                    let a = rand(10, 50) / 10;
-                    let b = rand(5, 30) / 10;
-                    qText = `${a} + ${b} = ?`;
-                    ans = Number((a + b).toFixed(1));
+                    let a = rand(10, 50) / 10; let b = rand(5, 30) / 10;
+                    qText = `${a} + ${b} = ?`; ans = Number((a + b).toFixed(1));
                 } else if (type === 2) {
                     let base = rand(1, 8) * 10;
-                    qText = `${base} ning 50% i nechaga teng?`;
-                    ans = base / 2;
+                    qText = `${base} ning 50% i nechaga teng?`; ans = base / 2;
                 } else {
-                    let den = rand(5, 12);
-                    let n1 = rand(1, den - 2);
-                    let n2 = rand(1, den - n1);
-                    qText = `${n1}/${den} + ${n2}/${den} = ?/${den}\n(Suratni toping)`;
-                    ans = n1 + n2;
+                    let den = rand(5, 12); let n1 = rand(1, den - 2); let n2 = rand(1, den - n1);
+                    qText = `${n1}/${den} + ${n2}/${den} = ?/${den}\n(Suratni toping)`; ans = n1 + n2;
                 }
             }
 
@@ -1917,99 +2223,152 @@
             };
         }
 
-        function nextQuestion() {
+        function nextGame1Question() {
             if (!isGameActive) return;
             gameTimer = 15; 
-            document.getElementById('game-timer').innerText = gameTimer;
+            document.getElementById('game1-timer').innerText = gameTimer;
             
             const qData = generateEasyGradeQuestion(currentGrade);
             currentAnswer = qData.answer;
             
-            document.getElementById('game-question').innerText = qData.question;
-            const area = document.getElementById('game-options'); 
+            document.getElementById('game1-question').innerText = qData.question;
+            const area = document.getElementById('game1-options'); 
             area.innerHTML = '';
             
             qData.options.forEach(o => {
-                area.innerHTML += `<button class="feature-btn" onclick="checkAnswer(${o})">${o}</button>`;
+                area.innerHTML += `<button class="feature-btn" onclick="checkGame1Answer(${o})">${o}</button>`;
             });
             
             clearInterval(gameInterval);
             gameInterval = setInterval(() => { 
                 gameTimer--; 
-                document.getElementById('game-timer').innerText = gameTimer; 
+                document.getElementById('game1-timer').innerText = gameTimer; 
                 if(gameTimer <= 0) { 
                     clearInterval(gameInterval);
-                    endGame("⏳ Vaqt tugadi!"); 
+                    finishActiveGame("⏳ Vaqt tugadi!"); 
                 } 
             }, 1000);
         }
 
-        function checkAnswer(chosen) { 
+        function checkGame1Answer(chosen) { 
             if (!isGameActive) return;
             clearInterval(gameInterval); 
             
             if (Number(chosen) === Number(currentAnswer)) { 
                 gameScore += (gameTimer > 7) ? 2 : 1; 
-                updateGameUI(); 
-                nextQuestion(); 
+                document.getElementById('game1-score').innerText = gameScore;
+                nextGame1Question(); 
             } else { 
-                endGame(`❌ Xato javob! (To'g'ri javob: ${currentAnswer} edi)`); 
+                finishActiveGame(`❌ Xato javob! (To'g'ri javob: ${currentAnswer} edi)`); 
             }
         }
 
-        function endGame(reasonText) {
+        // --- 2-O'YIN: TAQQOSLASH DUELI (> , = , <) ---
+        function makeSimpleExpr(grade) {
+            if (String(grade) === "3") {
+                const t = rand(1, 2);
+                if (t === 1) {
+                    let a = rand(10, 45); let b = rand(10, 40);
+                    return { text: `${a} + ${b}`, val: a + b };
+                } else {
+                    let a = rand(3, 9); let b = rand(3, 8);
+                    return { text: `${a} × ${b}`, val: a * b };
+                }
+            } else if (String(grade) === "4") {
+                const t = rand(1, 2);
+                if (t === 1) {
+                    let a = rand(12, 25); let b = rand(3, 5);
+                    return { text: `${a} × ${b}`, val: a * b };
+                } else {
+                    let a = rand(40, 95); let b = rand(15, 35);
+                    return { text: `${a} - ${b}`, val: a - b };
+                }
+            } else {
+                const t = rand(1, 2);
+                if (t === 1) {
+                    let a = rand(10, 40) / 10; let b = rand(10, 30) / 10;
+                    return { text: `${a} + ${b}`, val: Number((a + b).toFixed(1)) };
+                } else {
+                    let a = rand(4, 12); let b = rand(3, 6);
+                    return { text: `${a} × ${b}`, val: a * b };
+                }
+            }
+        }
+
+        function nextGame2Question() {
+            if (!isGameActive) return;
+            gameTimer = 15;
+            document.getElementById('game2-timer').innerText = gameTimer;
+
+            let left = makeSimpleExpr(currentGrade);
+            let right = makeSimpleExpr(currentGrade);
+
+            // Ba'zan teng chiqish ehtimolini oshiramiz
+            if (Math.random() < 0.25) {
+                let v = left.val;
+                let d = rand(2, 10);
+                right = { text: `${v + d} - ${d}`, val: v };
+            }
+
+            document.getElementById('comp-left').innerText = left.text;
+            document.getElementById('comp-right').innerText = right.text;
+
+            if (left.val > right.val) currentAnswer = '>';
+            else if (left.val < right.val) currentAnswer = '<';
+            else currentAnswer = '=';
+
+            clearInterval(gameInterval);
+            gameInterval = setInterval(() => { 
+                gameTimer--; 
+                document.getElementById('game2-timer').innerText = gameTimer; 
+                if(gameTimer <= 0) { 
+                    clearInterval(gameInterval);
+                    finishActiveGame("⏳ Vaqt tugadi!"); 
+                } 
+            }, 1000);
+        }
+
+        function checkGame2Answer(chosenSign) {
+            if (!isGameActive) return;
+            clearInterval(gameInterval);
+
+            if (chosenSign === currentAnswer) {
+                gameScore += (gameTimer > 7) ? 2 : 1;
+                document.getElementById('game2-score').innerText = gameScore;
+                nextGame2Question();
+            } else {
+                finishActiveGame(`❌ Xato! To'g'ri belgi "${currentAnswer}" edi.`);
+            }
+        }
+
+        // --- O'YIN TUGASHI VA BALLARNI SAQLASH ---
+        function finishActiveGame(reasonText) {
             isGameActive = false;
             clearInterval(gameInterval);
             
-            const earnedCoins = Math.floor(gameScore / 100);
             const nowTime = new Date().getTime();
-            localStorage.setItem('lastGame_' + currentStudent.id, nowTime.toString());
+            const storageKey = activeGameType === 1 ? `lastGame1_${currentStudent.id}` : `lastGame2_${currentStudent.id}`;
+            localStorage.setItem(storageKey, nowTime.toString());
 
-            if (earnedCoins > 0) showCoinAnimation(earnedCoins);
-
-            let msg = `${reasonText}\nO'yin tugadi! 🎮\nTo'plagan ballingiz: ${gameScore} ball.`;
-            if (earnedCoins > 0) {
-                msg += `\n🎉 Tabriklaymiz, siz +${earnedCoins} Coin yutib oldingiz!`;
-            }
-            msg += `\n\nKeyingi o'yinni 24 soatdan so'ng o'ynashingiz mumkin.`;
-            alert(msg);
+            showRewardCelebration(
+                "O'yin yakunlandi! 🎮",
+                `+${gameScore} 🎯 Ball`,
+                `${reasonText}\nYig'gan ballaringiz umumiy hisobingizga qo'shildi. 100 ball bo'lganda uni 1 Coinga almashtirib oling!`,
+                "🎯",
+                gameScore >= 20
+            );
 
             safeUpdateDB((data) => { 
                 const s = data.students[currentGrade].find(x => x.id === currentStudent.id); 
                 if(s) { 
                     s.points = (s.points || 0) + gameScore; 
-                    s.lastGamePlayed = nowTime; 
-                    if (earnedCoins > 0) {
-                        s.coins = (s.coins || 0) + earnedCoins;
-                        if(!s.history) s.history = [];
-                        s.history.push({ 
-                            type: "Matematik o'yin", 
-                            amount: earnedCoins, 
-                            reason: `O'yinda ${gameScore} ball to'pladi`, 
-                            date: new Date().toLocaleDateString() 
-                        });
-                    }
+                    if (activeGameType === 1) s.lastGamePlayed = nowTime; 
+                    else s.lastGame2Played = nowTime;
                 } 
             }).then(() => {
-                switchBottomTab('asosiy');
+                showGamesHub();
             }).catch(() => {
-                switchBottomTab('asosiy');
-            });
-        }
-
-        function renderStudentLeaderboard() {
-            const list = document.getElementById('leaderboard-list'); list.innerHTML = '';
-            let all = []; 
-            ["3", "4", "5"].forEach(g => {
-                if (platformData.students[g]) {
-                    platformData.students[g].forEach(s => all.push({name: s.name, coins: s.coins || 0, grade: g}));
-                }
-            });
-            all.sort((a,b) => b.coins - a.coins);
-            
-            all.forEach((s,i) => { 
-                let m = i === 0 ? "🥇" : (i === 1 ? "🥈" : (i === 2 ? "🥉" : `${i+1}.`)); 
-                list.innerHTML += `<li><div class="li-header"><span><strong>${m} ${s.name}</strong> (${s.grade}-sinf)</span> <span class="coin-text">${s.coins} ⭐</span></div></li>`; 
+                showGamesHub();
             });
         }
     </script>
