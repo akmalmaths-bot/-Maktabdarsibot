@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Pals Are Here! Maths (1A, 1B, 2A, 2B) — HTML Reader</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .bar-segment { transition: all 0.2s ease; }
+        .bar-segment:hover { filter: brightness(0.95); }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-sky-600 text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-3">
+            <div>
+                <h1 class="text-xl font-bold tracking-tight">📚 My Pals Are Here! Maths (3rd Edition)</h1>
+                <p class="text-xs text-sky-100">1A • 1B • 2A • 2B — Interaktiv HTML O'quv Qo'llanma va Web Reader</p>
+            </div>
+            <!-- Book Selector Tabs -->
+            <div class="flex bg-sky-800/60 p-1 rounded-xl gap-1" id="bookTabs">
+                <button onclick="selectBook('1A')" id="tab-1A" class="px-4 py-2 rounded-lg text-sm font-bold transition">Maths 1A</button>
+                <button onclick="selectBook('1B')" id="tab-1B" class="px-4 py-2 rounded-lg text-sm font-bold transition">Maths 1B</button>
+                <button onclick="selectBook('2A')" id="tab-2A" class="px-4 py-2 rounded-lg text-sm font-bold transition">Maths 2A</button>
+                <button onclick="selectBook('2B')" id="tab-2B" class="px-4 py-2 rounded-lg text-sm font-bold transition">Maths 2B</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto w-full px-4 py-6 flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Left Sidebar: Chapters List -->
+        <aside class="lg:col-span-4 bg-white rounded-2xl shadow-sm border border-slate-200 p-4 h-fit">
+            <div class="flex justify-between items-center mb-3 pb-2 border-b">
+                <h2 id="sidebarTitle" class="font-bold text-lg text-sky-700">Maths 1A Mundarijasi</h2>
+                <span id="isbnBadge" class="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded font-mono"></span>
+            </div>
+
+            <!-- Online HTML5 Flipbook Quick Links -->
+            <div class="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-xl">
+                <p class="text-xs font-semibold text-amber-900 mb-2">🌐 Skanerlangan sahifalarni HTML5 ko'rinishda ochish:</p>
+                <div class="grid grid-cols-2 gap-2" id="externalLinks"></div>
+                <div class="mt-2 pt-2 border-t border-amber-200">
+                    <label class="block text-[11px] text-amber-800 mb-1">Yoki kompyuterdagi PDF faylni shu sahifada oching:</label>
+                    <input type="file" accept="application/pdf" onchange="loadLocalPdf(event)" class="text-xs w-full text-slate-600 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-xs file:bg-amber-600 file:text-white hover:file:bg-amber-700 cursor-pointer"/>
+                </div>
+            </div>
+
+            <div id="chapterList" class="space-y-1.5 max-h-[60vh] overflow-y-auto pr-1"></div>
+        </aside>
+
+        <!-- Right Panel: HTML Lesson Content & Visual Reader -->
+        <section class="lg:col-span-8 space-y-6">
+            
+            <!-- Local PDF / Embedded Reader Container (Hidden until triggered) -->
+            <div id="pdfViewerBox" class="hidden bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="bg-slate-800 text-white px-4 py-2 flex justify-between items-center">
+                    <span class="text-sm font-medium">📖 Ichki Kitob O'qigich (Browser Reader)</span>
+                    <button onclick="closeViewer()" class="text-xs bg-red-500 hover:bg-red-600 px-2.5 py-1 rounded">Yopish ✕</button>
+                </div>
+                <iframe id="bookFrame" class="w-full h-[650px] border-0"></iframe>
+            </div>
+
+            <!-- HTML Chapter Content -->
+            <div id="lessonContent" class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6"></div>
+        </section>
+
+    </main>
+
+    <script>
+        const booksData = {
+            "1A": {
+                title: "My Pals Are Here! Maths 1A (3rd Edition)",
+                isbn: "ISBN: 978-981-01-1758-0",
+                chapters: [
+                    {
+                        num: "1-bob",
+                        name: "Numbers to 10 (10 gacha bo'lgan sonlar)",
+                        topics: ["1 dan 10 gacha sanash va yozish", "Predmetlar sonini taqqoslash (More than / Fewer than)", "Sonlar ketma-ketligi va tartibi"],
+                        cpa: "Concrete: Kubiklar -> Pictorial: Doirachalar jadvali (Ten-frame) -> Abstract: 0 dan 10 gacha raqamlar.",
+                        modelTitle: "Ten-Frame (10 lik katak) modeli:",
+                        modelHtml: `<div class="grid grid-cols-5 gap-2 w-60 bg-slate-100 p-3 rounded-lg border border-slate-300">
+                            <div class="h-8 bg-sky-500 rounded-full"></div><div class="h-8 bg-sky-500 rounded-full"></div><div class="h-8 bg-sky-500 rounded-full"></div><div class="h-8 bg-sky-500 rounded-full"></div><div class="h-8 bg-sky-500 rounded-full"></div>
+                            <div class="h-8 bg-sky-500 rounded-full"></div><div class="h-8 bg-sky-500 rounded-full"></div><div class="h-8 bg-white border border-slate-300 rounded-full"></div><div class="h-8 bg-white border border-slate-300 rounded-full"></div><div class="h-8 bg-white border border-slate-300 rounded-full"></div>
+                        </div><p class="text-xs text-slate-600 mt-1">5 va 2 bu 7 (7 is 5 and 2)</p>`,
+                        examples: [
+                            "Count and write the number: 🍎🍎🍎🍎🍎 🍎🍎 = 7",
+                            "7 is 1 more than 6. (7 soni 6 dan 1 ta ko'p)",
+                            "Complete the number pattern: 3, 4, 5, [ 6 ], 7"
+                        ]
+                    },
+                    {
+                        num: "2-bob",
+                        name: "Number Bonds (Sonlar tarkibi / Number Bonds)",
+                        topics: ["Butun va qismlar (Part-Whole) tushunchasi", "Sonni ikki qismga ajratish (Making Number Bonds)", "Bir sonning turli tarkiblarini topish"],
+                        cpa: "Singapur matematikasining poydevori: Har qanday son 'Butun' (Whole) va 'Qismlar' (Parts) bog'lamasi orqali tasvirlanadi.",
+                        modelTitle: "Number Bond (Son bog'lamasi) chizmasi:",
+                        modelHtml: `<div class="flex items-center gap-6 p-3 bg-indigo-50 rounded-xl w-fit border border-indigo-200">
+                            <div class="w-14 h-14 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold text-lg shadow">8<span class="text-[10px] block ml-1">(Butun)</span></div>
+                            <div class="flex flex-col gap-3">
+                                <div class="w-12 h-12 rounded-full bg-white border-2 border-indigo-500 flex items-center justify-center font-bold">5</div>
+                                <div class="w-12 h-12 rounded-full bg-white border-2 border-indigo-500 flex items-center justify-center font-bold">3</div>
+                            </div>
+                        </div>`,
+                        examples: [
+                            "5 and 3 make 8. (5 va 3 birgalikda 8 ni hosil qiladi)",
+                            "What is the missing part? Whole = 9, Part 1 = 4, Part 2 = [ 5 ]"
+                        ]
+                    },
+                    {
+                        num: "3-4-boblar",
+                        name: "Addition & Subtraction Within 10 (10 ichida qo'shish va ayirish)",
+                        topics: ["Sanab qo'shish (Counting on) va Number Bonds yordamida qo'shish", "Olib tashlash (Taking away), orqaga sanash (Counting back)", "Qo'shish va ayirish orasidagi bog'liqlik (Fact families)"],
+                        cpa: "Number Bond chizmasidan foydalanib bir vaqtda 4 ta tenglik tuzish: 6+4=10, 4+6=10, 10-6=4, 10-4=6.",
+                        modelTitle: "Qism + Qism = Butun:",
+                        modelHtml: `<div class="flex max-w-md rounded-lg overflow-hidden border border-slate-300 text-center text-sm font-bold">
+                            <div class="bg-emerald-500 text-white py-2" style="width:60%">6 (Qism)</div>
+                            <div class="bg-amber-400 text-slate-900 py-2" style="width:40%">4 (Qism)</div>
+                        </div><div class="max-w-md text-center text-xs font-semibold text-slate-600 mt-1">|<---------------- Jami: 10 (Butun) ---------------->|</div>`,
+                        examples: [
+                            "There are 6 red apples and 3 green apples. How many apples are there altogether? 6 + 3 = 9",
+                            "Ali has 9 balloons. 4 balloons burst. How many balloons are left? 9 - 4 = 5"
+                        ]
+                    },
+                    {
+                        num: "5-6-boblar",
+                        name: "Shapes, Patterns & Ordinal Numbers (Shakllar va Tartib sonlar)",
+                        topics: ["2D shakllar: Circle, Triangle, Square, Rectangle", "Shakl, o'lcham va rang bo'yicha qonuniyatlar (Patterns)", "Tartib sonlar: 1st (First) dan 10th (Tenth) gacha; Left / Right"],
+                        cpa: "Shakllarni burchak va tomonlar soniga ko'ra guruhlash hamda chapdan/o'ngdan tartibini aniqlash.",
+                        modelTitle: "Tartib va yo'nalish (Position):",
+                        modelHtml: `<div class="flex gap-2 items-center text-xs font-bold bg-slate-100 p-3 rounded-lg">
+                            <span class="px-2 py-1 bg-rose-500 text-white rounded">1st (First)</span>
+                            <span class="px-2 py-1 bg-sky-500 text-white rounded">2nd (Second)</span>
+                            <span class="px-2 py-1 bg-emerald-500 text-white rounded">3rd (Third)</span>
+                            <span class="px-2 py-1 bg-amber-500 text-white rounded">4th (Fourth)</span>
+                        </div>`,
+                        examples: [
+                            "Which shape has 3 sides and 3 corners? -> Triangle",
+                            "Color the 3rd car from the left."
+                        ]
+                    },
+                    {
+                        num: "7-9-boblar",
+                        name: "Numbers to 20, Add/Subtract Within 20 & Length (20 ichida amallar va Uzunlik)",
+                        topics: ["10 dan 20 gacha sonlar: 1 ta o'nlik (Ten) va birliklar (Ones)", "'Make 10' (10 ga to'ldirish) usulida qo'shish: 8 + 5 = 8 + 2 + 3 = 13", "10 dan ayirish usuli: 14 - 6 = (10 - 6) + 4 = 8", "Uzunlikni nostandart birliklar (qisqich, kubik) bilan o'lchash"],
+                        cpa: "'Make 10' strategiyasi bolani barmoq sanashdan xalos qiladi va og'zaki hisoblash (Mental Math) tezligini oshiradi.",
+                        modelTitle: "'Make 10' (10 yasash) algoritmi:",
+                        modelHtml: `<div class="bg-sky-50 border border-sky-200 p-3 rounded-lg text-sm font-mono">
+                            <div><strong>8 + 6 = ?</strong></div>
+                            <div class="text-sky-700">1-qadam: 6 ni (2 va 4) ga ajratamiz -> 8 + (2 + 4)</div>
+                            <div class="text-emerald-700">2-qadam: 8 + 2 = 10 -> 10 + 4 = <strong>14</strong></div>
+                        </div>`,
+                        examples: [
+                            "15 = 1 ten and 5 ones (1 o'nlik va 5 birlik)",
+                            "Add by making 10: 9 + 7 = 9 + 1 + 6 = 16",
+                            "The pencil is 6 paper clips long."
+                        ]
+                    }
+                ]
+            },
+            "1B": {
+                title: "My Pals Are Here! Maths 1B (3rd Edition)",
+                isbn: "ISBN: 978-981-01-1759-7",
+                chapters: [
+                    {
+                        num: "10-12-boblar",
+                        name: "Numbers, Addition & Subtraction Within 40 (40 ichida sonlar va amallar)",
+                        topics: ["O'nlik va birlik xona birliklari (Place Value Chart: Tens & Ones)", "Xona birligidan o'tmasdan va o'tib (With Regrouping) ustun shaklida qo'shish va ayirish", "Uchta sonni qo'shish (Associative & Make 10 strategies)"],
+                        cpa: "Base-10 bloklari yordamida 10 ta birlikni 1 ta o'nlikka almashtirish (Regrouping) jarayonini ko'rgazmali tushuntirish.",
+                        modelTitle: "Xona birliklari jadvali (Place Value):",
+                        modelHtml: `<div class="grid grid-cols-2 w-48 border border-slate-400 rounded overflow-hidden text-center text-sm">
+                            <div class="bg-slate-700 text-white py-1 font-bold">Tens (O'nlik)</div>
+                            <div class="bg-slate-600 text-white py-1 font-bold">Ones (Birlik)</div>
+                            <div class="py-2 font-bold text-lg bg-white border-r border-slate-300">3</div>
+                            <div class="py-2 font-bold text-lg bg-white">4</div>
+                        </div><p class="text-xs text-slate-600 mt-1">3 tens 4 ones = 30 + 4 = 34</p>`,
+                        examples: [
+                            "27 + 8 = 20 + (7 + 8) = 20 + 15 = 35",
+                            "32 - 6 = 20 + (12 - 6) = 26",
+                            "Find the sum of 7, 6 and 3 -> (7 + 3) + 6 = 16"
+                        ]
+                    },
+                    {
+                        num: "13-15-boblar",
+                        name: "Picture Graphs, Multiplication & Division (Piktogramma, Ko'paytirish va Bo'lish)",
+                        topics: ["Rasm-grafiklar (Picture Graphs)ni o'qish va tahlil qilish", "Ko'paytirish — bir xil guruhlarni qo'shish sifatida (3 groups of 4 = 3 × 4)", "Bo'lish — teng taqsimlash (Sharing equally) va teng guruhlarga ajratish"],
+                        cpa: "Ko'paytirish jadvalini yodlashdan oldin 'Equal groups' (teng guruhlar) mohiyatini rasm orqali anglash.",
+                        modelTitle: "Equal Groups (Teng guruhlar) modeli:",
+                        modelHtml: `<div class="flex gap-3">
+                            <div class="p-2 bg-amber-100 border border-amber-400 rounded-lg text-center">⭐⭐⭐</div>
+                            <div class="p-2 bg-amber-100 border border-amber-400 rounded-lg text-center">⭐⭐⭐</div>
+                            <div class="p-2 bg-amber-100 border border-amber-400 rounded-lg text-center">⭐⭐⭐</div>
+                            <div class="p-2 bg-amber-100 border border-amber-400 rounded-lg text-center">⭐⭐⭐</div>
+                        </div><p class="text-xs text-slate-600 mt-1">4 groups of 3 = 3 + 3 + 3 + 3 = 12 (4 × 3 = 12)</p>`,
+                        examples: [
+                            "There are 5 plates. Each plate has 2 cookies. 5 × 2 = 10 cookies.",
+                            "Put 12 sweets equally into 3 bags. Each bag has 4 sweets."
+                        ]
+                    },
+                    {
+                        num: "16-18-boblar",
+                        name: "Time, Numbers to 100 & Money (Vaqt, 100 ichida sonlar va Pul birliklari)",
+                        topics: ["Soatni aniqlash: To'liq soat (o'clock) va yarim soat (half past)", "100 gacha sonlarni o'nliklab sanash, qo'shish va ayirish", "Tangalar (cents) va qog'oz pullar (dollars), pulni maydalash va xarid masalalari"],
+                        cpa: "Soat strelkalarining holati va tangalarni yirikroq birlikka almashtirish (masalan, 5 ta 10¢ = 50¢).",
+                        modelTitle: "Vaqt ko'rsatkichlari:",
+                        modelHtml: `<div class="flex gap-4 text-xs font-bold">
+                            <div class="p-2.5 bg-sky-100 border border-sky-300 rounded-lg">🕒 3 o'clock (Soat 3:00)</div>
+                            <div class="p-2.5 bg-emerald-100 border border-emerald-300 rounded-lg">🕞 Half past 3 (Soat 3:30)</div>
+                        </div>`,
+                        examples: [
+                            "54 + 30 = 84 | 67 + 25 = 92",
+                            "A notebook costs $2. Ali gives the cashier $5. How much change does he get? $5 - $2 = $3"
+                        ]
+                    }
+                ]
+            },
+            "2A": {
+                title: "My Pals Are Here! Maths 2A (3rd Edition)",
+                isbn: "ISBN: 978-981-01-1934-8",
+                chapters: [
+                    {
+                        num: "1-3-boblar",
+                        name: "Numbers, Addition & Subtraction Within 1000 (1000 ichida sonlar va amallar)",
+                        topics: ["Yuzlik (Hundreds), O'nlik (Tens) va Birlik (Ones) xonalari", "1000 ichida xonadan o'tib qo'shish (Addition with Regrouping)", "1000 ichida xonadan o'tib va nollar ishtirokida ayirish (Subtracting across zeros)"],
+                        cpa: "Yuzlik plitalar, o'nlik ustunlar va birlik kubiklar yordamida 3 xonali sonlar ustida amallar.",
+                        modelTitle: "3 xonali sonning xona tarkibi:",
+                        modelHtml: `<div class="grid grid-cols-3 w-64 border border-slate-400 rounded overflow-hidden text-center text-xs">
+                            <div class="bg-indigo-700 text-white py-1 font-bold">Hundreds</div>
+                            <div class="bg-indigo-600 text-white py-1 font-bold">Tens</div>
+                            <div class="bg-indigo-500 text-white py-1 font-bold">Ones</div>
+                            <div class="py-2 font-bold text-base bg-white border-r">4 (400)</div>
+                            <div class="py-2 font-bold text-base bg-white border-r">5 (50)</div>
+                            <div class="py-2 font-bold text-base bg-white">8 (8)</div>
+                        </div>`,
+                        examples: [
+                            "400 + 50 + 8 = 458 (Four hundred and fifty-eight)",
+                            "100 more than 562 is 662 | 10 less than 340 is 330",
+                            "500 - 164 = 336 (Nollardan qarz olib ayirish)"
+                        ]
+                    },
+                    {
+                        num: "4-bob",
+                        name: "Word Problems: Addition and Subtraction (Bar-Modellar yordamida masalalar)",
+                        topics: ["Part-Whole (Butun va bo'lak) Bar-modeli", "Comparison (Taqqoslash: ko'p / kam) Bar-modeli", "Matnli masalani chizma orqali 1 amalda yechish"],
+                        cpa: "2-sinfdan boshlab rasmli (Pictorial) bosqich to'liq to'rtburchakli Bar-model chizmasiga o'tadi.",
+                        modelTitle: "Comparison (Taqqoslash) Bar-Modeli:",
+                        modelHtml: `<div class="space-y-2 text-xs font-bold max-w-md">
+                            <div class="flex items-center gap-2">
+                                <span class="w-16">Ali:</span>
+                                <div class="bg-sky-500 text-white py-2 px-4 rounded w-64 text-center">245 ta marka</div>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="w-16">Vali:</span>
+                                <div class="bg-emerald-500 text-white py-2 px-4 rounded w-40 text-center">?</div>
+                                <div class="border-2 border-dashed border-rose-400 text-rose-600 py-1.5 px-2 rounded w-24 text-center">68 ta kam</div>
+                            </div>
+                        </div>`,
+                        examples: [
+                            "Ali has 245 stamps. Vali has 68 fewer stamps than Ali. How many stamps does Vali have? 245 - 68 = 177",
+                            "There are 134 boys and 158 girls in a hall. How many children are there altogether? 134 + 158 = 292"
+                        ]
+                    },
+                    {
+                        num: "5-8-boblar",
+                        name: "Multiplication & Division Tables of 2, 3, 4, 5 and 10 (Karra jadvallari va masalalar)",
+                        topics: ["2, 5, 10 hamda 3 va 4 ga ko'paytirish va bo'lish jadvallari", "Ko'paytirish va bo'lishga doir Bar-modellar (Teng bo'lakli modellar)", "Qoldiqsiz bo'lish va ko'paytirishning o'rin almashtirish xossasi"],
+                        cpa: "Teng bo'lakli (Equal-parts) Bar-model yordamida ko'paytirish va bo'lish masalalarini chizish.",
+                        modelTitle: "Ko'paytirish Bar-Modeli (5 ta teng qism):",
+                        modelHtml: `<div class="grid grid-cols-5 max-w-md border-2 border-indigo-600 rounded overflow-hidden text-center text-xs font-bold bg-indigo-50">
+                            <div class="py-2 border-r border-indigo-400">4 kg</div>
+                            <div class="py-2 border-r border-indigo-400">4 kg</div>
+                            <div class="py-2 border-r border-indigo-400">4 kg</div>
+                            <div class="py-2 border-r border-indigo-400">4 kg</div>
+                            <div class="py-2">4 kg</div>
+                        </div><div class="max-w-md text-center text-xs text-slate-600 mt-1">5 × 4 kg = 20 kg</div>`,
+                        examples: [
+                            "A baker puts 36 cupcakes equally into 4 boxes. How many cupcakes are in each box? 36 ÷ 4 = 9",
+                            "Each bag of rice has a mass of 5 kg. What is the total mass of 7 such bags? 7 × 5 = 35 kg"
+                        ]
+                    },
+                    {
+                        num: "9-10-boblar",
+                        name: "Length (m, cm) & Mass (kg, g) (Uzunlik va Massa o'lchov birliklari)",
+                        topics: ["Metr (m) va santimetr (cm) da o'lchash va chizish", "Kilogramm (kg) va gramm (g) tarozilar ko'rsatkichini o'qish", "Uzunlik va massaga oid matnli masalalar"],
+                        cpa: "Chizg'ich va tarozi shkalasidagi bo'linmalarni (10 g, 50 g, 100 g) aniq o'qish ko'nikmasi.",
+                        modelTitle: "O'lchov birliklari bog'liqligi:",
+                        modelHtml: `<div class="flex gap-3 text-xs font-semibold">
+                            <span class="px-3 py-1.5 bg-slate-100 border rounded">📏 1 m = 100 cm</span>
+                            <span class="px-3 py-1.5 bg-slate-100 border rounded">⚖️ 1 kg = 1000 g</span>
+                        </div>`,
+                        examples: [
+                            "Ribbon A is 145 cm long. Ribbon B is 38 cm shorter than Ribbon A. Find the length of Ribbon B.",
+                            "A watermelon has a mass of 3 kg. A papaya has a mass of 450 g."
+                        ]
+                    }
+                ]
+            },
+            "2B": {
+                title: "My Pals Are Here! Maths 2B (3rd Edition)",
+                isbn: "ISBN: 978-981-01-1935-5",
+                chapters: [
+                    {
+                        num: "11-12-boblar",
+                        name: "Two-Step Word Problems & Money (Ikki amalli masalalar va Pul)",
+                        topics: ["Qo'shish va ayirishga doir 2 amalli Bar-model masalalari", "Dollar ($) va sent (¢) larni nuqta orqali yozish ($4.75)", "$1.00 = 100¢ konvertatsiyasi va xarid masalalari"],
+                        cpa: "Ikki amalli masalada har bir bosqich uchun Bar-modelda so'roq belgisini (?1 va ?2) qo'yib yechish.",
+                        modelTitle: "Ikki amalli Bar-Model:",
+                        modelHtml: `<div class="space-y-2 text-xs font-bold max-w-md bg-slate-50 p-3 rounded border">
+                            <div>1-qadam (?1): Ikkinchi miqdorni topish</div>
+                            <div>2-qadam (?2): Ikki miqdorni jamlash (Jami = ?)</div>
+                        </div>`,
+                        examples: [
+                            "Samandar has 120 marbles. He has 35 more marbles than Jasur. How many marbles do they have altogether? (1) 120 - 35 = 85; (2) 120 + 85 = 205.",
+                            "$1 = 100¢ | $3.45 = 345¢ | $10 - $6.20 = $3.80"
+                        ]
+                    },
+                    {
+                        num: "13-14-boblar",
+                        name: "2D/3D Figures & Fractions (Geometrik shakllar va Oddiy kasrlar)",
+                        topics: ["To'g'ri va egri chiziqlar, yarim doira (semicircle), chorak doira (quarter circle)", "3D jismlar: Cube, Cuboid, Cone, Cylinder, Sphere", "Oddiy kasrlar (1/2 dan 1/12 gacha), kasrlarni taqqoslash, bir xil maxrajli kasrlarni qo'shish va ayirish"],
+                        cpa: "Kasr bo'laklarini (Fraction bars / circles) vizual taqqoslash: 1/3 > 1/5 ekanligini bo'lak o'lchamidan ko'rish.",
+                        modelTitle: "Fraction Bar (Kasr chizmasi — 3/5):",
+                        modelHtml: `<div class="grid grid-cols-5 max-w-sm border-2 border-emerald-700 rounded overflow-hidden text-center text-xs font-bold">
+                            <div class="bg-emerald-500 text-white py-2 border-r border-emerald-700">1/5</div>
+                            <div class="bg-emerald-500 text-white py-2 border-r border-emerald-700">1/5</div>
+                            <div class="bg-emerald-500 text-white py-2 border-r border-emerald-700">1/5</div>
+                            <div class="bg-white py-2 border-r border-emerald-700 text-slate-400">1/5</div>
+                            <div class="bg-white py-2 text-slate-400">1/5</div>
+                        </div><p class="text-xs text-slate-600 mt-1">Bo'yalgan qism: 3/5 | Bo'yalmagan qism: 2/5 | Jami: 5/5 = 1 butun</p>`,
+                        examples: [
+                            "Arrange the fractions from smallest to greatest: 1/8, 1/3, 1/5 -> 1/8, 1/5, 1/3",
+                            "2/7 + 3/7 = 5/7 | 1 - 4/9 = 9/9 - 4/9 = 5/9"
+                        ]
+                    },
+                    {
+                        num: "15-17-boblar",
+                        name: "Time, Picture Graphs with Scales & Volume (Vaqt, Masshtabli grafiklar va Hajm)",
+                        topics: ["Soatni 5 daqiqa aniqlikda aytish, a.m. va p.m. tushunchasi", "Masshtabli piktogrammalar (masalan, 1 ta belgi = 5 ta o'quvchi)", "Suyuqlik hajmini litr (ℓ) da o'lchash va masalalar yechish"],
+                        cpa: "Menzurka (o'lchov idishi)dagi suyuqlik sathini o'qish va hajmga oid Bar-modellar tuzish.",
+                        modelTitle: "Masshtabli Piktogramma (Scale Picture Graph):",
+                        modelHtml: `<div class="p-2.5 bg-amber-50 border border-amber-300 rounded text-xs">
+                            <div>🌟 🌟 🌟 🌟 (Har bir 🌟 = 4 ta kitob)</div>
+                            <div class="font-bold mt-1 text-amber-900">Jami kitoblar: 4 × 4 = 16 ta kitob</div>
+                        </div>`,
+                        examples: [
+                            "School starts at 8:00 a.m. A math lesson lasts 1 hour. It ends at 9:00 a.m.",
+                            "Tank A contains 24 ℓ of water. It contains 3 times as much water as Tank B. How much water is in Tank B? 24 ÷ 3 = 8 ℓ"
+                        ]
+                    }
+                ]
+            }
+        };
+
+        let currentBook = "1A";
+        let currentChapterIndex = 0;
+
+        function selectBook(bookKey) {
+            currentBook = bookKey;
+            currentChapterIndex = 0;
+
+            ["1A", "1B", "2A", "2B"].forEach(k => {
+                const btn = document.getElementById("tab-" + k);
+                if (k === bookKey) {
+                    btn.className = "px-4 py-2 rounded-lg text-sm font-bold bg-white text-sky-700 shadow";
+                } else {
+                    btn.className = "px-4 py-2 rounded-lg text-sm font-bold text-sky-100 hover:bg-sky-700/60";
+                }
+            });
+
+            const book = booksData[bookKey];
+            document.getElementById("sidebarTitle").innerText = `Maths ${bookKey} Mundarijasi`;
+            document.getElementById("isbnBadge").innerText = book.isbn;
+
+            // Update quick HTML5 reader links
+            const q = encodeURIComponent(`"My Pals Are Here" "Maths ${bookKey}"`);
+            document.getElementById("externalLinks").innerHTML = `
+                <a href="https://www.scribd.com/search?query=My+Pals+Are+Here+Maths+${bookKey}" target="_blank" class="text-center text-xs bg-white border border-amber-300 hover:bg-amber-100 text-amber-900 py-1.5 px-2 rounded font-semibold">📄 Scribd HTML (${bookKey})</a>
+                <a href="https://archive.org/search?query=My+Pals+Are+Here+Maths+${bookKey}" target="_blank" class="text-center text-xs bg-white border border-amber-300 hover:bg-amber-100 text-amber-900 py-1.5 px-2 rounded font-semibold">🏛️ Archive Reader (${bookKey})</a>
+                <a href="https://www.google.com/search?q=site:anyflip.com+${q}" target="_blank" class="text-center text-xs bg-white border border-amber-300 hover:bg-amber-100 text-amber-900 py-1.5 px-2 rounded font-semibold">📖 AnyFlip HTML5 (${bookKey})</a>
+                <a href="https://www.google.com/search?q=site:fliphtml5.com+${q}" target="_blank" class="text-center text-xs bg-white border border-amber-300 hover:bg-amber-100 text-amber-900 py-1.5 px-2 rounded font-semibold">📘 FlipHTML5 (${bookKey})</a>
+            `;
+
+            renderChapterList();
+            renderLesson(0);
+        }
+
+        function renderChapterList() {
+            const listEl = document.getElementById("chapterList");
+            const chapters = booksData[currentBook].chapters;
+            listEl.innerHTML = chapters.map((ch, idx) => `
+                <button onclick="renderLesson(${idx})" class="w-full text-left p-3 rounded-xl border transition flex flex-col gap-0.5 ${idx === currentChapterIndex ? 'bg-sky-50 border-sky-400 text-sky-900 font-semibold' : 'bg-white border-slate-200 hover:bg-slate-50 text-slate-700'}">
+                    <span class="text-[11px] uppercase tracking-wider text-sky-600 font-bold">${ch.num}</span>
+                    <span class="text-sm">${ch.name}</span>
+                </button>
+            `).join("");
+        }
+
+        function renderLesson(idx) {
+            currentChapterIndex = idx;
+            renderChapterList();
+            const ch = booksData[currentBook].chapters[idx];
+            const contentEl = document.getElementById("lessonContent");
+
+            contentEl.innerHTML = `
+                <div class="border-b pb-4 mb-5">
+                    <span class="px-2.5 py-1 bg-sky-100 text-sky-800 rounded-md text-xs font-bold uppercase">${booksData[currentBook].title} • ${ch.num}</span>
+                    <h2 class="text-2xl font-bold text-slate-900 mt-2">${ch.name}</h2>
+                </div>
+
+                <div class="space-y-6">
+                    <div>
+                        <h3 class="text-sm font-bold uppercase tracking-wider text-slate-500 mb-2">📌 Asosiy mavzular (HTML matn):</h3>
+                        <ul class="list-disc list-inside space-y-1.5 text-slate-700 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                            ${ch.topics.map(t => `<li>${t}</li>`).join("")}
+                        </ul>
+                    </div>
+
+                    <div class="bg-emerald-50 border border-emerald-200 p-4 rounded-xl">
+                        <h3 class="text-sm font-bold text-emerald-900 mb-1">🧠 Singapur CPA (Concrete-Pictorial-Abstract) Yondashuvi:</h3>
+                        <p class="text-sm text-emerald-800">${ch.cpa}</p>
+                    </div>
+
+                    <div>
+                        <h3 class="text-sm font-bold uppercase tracking-wider text-slate-500 mb-2">📊 ${ch.modelTitle}</h3>
+                        <div class="p-4 bg-white border border-slate-200 rounded-xl shadow-inner">
+                            ${ch.modelHtml}
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-sm font-bold uppercase tracking-wider text-slate-500 mb-2">✏️ Kitobdagi namunaviy topshiriq va masalalar (Inglizcha/O'zbekcha):</h3>
+                        <div class="space-y-2">
+                            ${ch.examples.map((ex, i) => `
+                                <div class="p-3 bg-slate-50 border-l-4 border-sky-500 rounded-r-lg text-sm font-medium text-slate-800">
+                                    <span class="text-sky-600 font-bold mr-1">#${i + 1}.</span> ${ex}
+                                </div>
+                            `).join("")}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function loadLocalPdf(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const url = URL.createObjectURL(file);
+                document.getElementById("bookFrame").src = url;
+                document.getElementById("pdfViewerBox").classList.remove("hidden");
+            }
+        }
+
+        function closeViewer() {
+            document.getElementById("pdfViewerBox").classList.add("hidden");
+            document.getElementById("bookFrame").src = "";
+        }
+
+        // Initialize with 1A
+        selectBook("1A");
+    </script>
+</body>
+</html>
