@@ -4,39 +4,55 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Matematika Testlari</title>
+    <!-- Zamonaviy shrift (Poppins) -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #f0f4f8;
-            --card-bg: #ffffff;
-            --primary: #3b82f6;
-            --primary-hover: #2563eb;
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
             --purple: #8b5cf6;
             --success: #10b981;
-            --danger: #ef4444;
-            --text-main: #1f2937;
-            --text-muted: #6b7280;
+            --danger: #f43f5e;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.5);
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
+            font-family: 'Poppins', sans-serif;
+            /* Zamonaviy gradient orqa fon */
+            background: linear-gradient(135deg, #c3cfe2 0%, #c3cfe2 0%, #f5f7fa 100%);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
             color: var(--text-main);
             margin: 0;
-            padding: 0;
+            padding: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         .container {
-            background-color: var(--card-bg);
+            /* Glassmorphism (Shisha) effekti */
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
             width: 100%;
             max-width: 600px;
             min-height: 500px;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-            padding: 30px;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+            padding: 40px 30px;
             box-sizing: border-box;
             position: relative;
             overflow: hidden;
@@ -44,145 +60,233 @@
 
         .screen {
             display: none;
-            animation: fadeIn 0.4s ease-in-out;
+            animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .screen.active {
             display: block;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        h1, h2, h3 {
+        h1 {
+            font-size: 26px;
+            font-weight: 700;
+            text-align: center;
+            background: -webkit-linear-gradient(45deg, #4f46e5, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        h2, h3 {
             text-align: center;
             color: var(--text-main);
+            font-weight: 600;
         }
 
         .grid-menu {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 15px;
-            margin-top: 20px;
+            margin-top: 25px;
         }
 
         button {
-            background-color: var(--primary);
+            background: linear-gradient(135deg, var(--primary), #6366f1);
             color: white;
             border: none;
-            padding: 15px;
-            border-radius: 12px;
+            padding: 16px;
+            border-radius: 16px;
             font-size: 16px;
+            font-family: 'Poppins', sans-serif;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             gap: 8px;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
         }
 
         button:hover {
-            background-color: var(--primary-hover);
-            transform: translateY(-2px);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(79, 70, 229, 0.35);
+        }
+        
+        button:active {
+            transform: translateY(1px);
         }
 
-        .btn-purple { background-color: var(--purple); }
-        .btn-purple:hover { background-color: #7c3aed; }
+        .btn-purple { 
+            background: linear-gradient(135deg, var(--purple), #a855f7); 
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.2);
+        }
+        .btn-purple:hover { box-shadow: 0 8px 20px rgba(139, 92, 246, 0.35); }
         
-        .emoji-icon { font-size: 24px; }
+        .emoji-icon { font-size: 28px; margin-bottom: 4px; }
 
         .settings-group {
-            margin-bottom: 20px;
+            margin-bottom: 22px;
         }
 
         .settings-group label {
             display: block;
-            margin-bottom: 10px;
-            font-weight: 600;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-main);
+            font-size: 15px;
         }
 
         select, input[type="text"] {
             width: 100%;
-            padding: 12px;
-            border: 2px solid #e5e7eb;
-            border-radius: 10px;
-            font-size: 16px;
+            padding: 14px;
+            background: #ffffff;
+            border: 2px solid #e2e8f0;
+            border-radius: 14px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 15px;
+            color: var(--text-main);
             box-sizing: border-box;
             outline: none;
+            transition: all 0.3s;
         }
+        
         select:focus, input[type="text"]:focus {
             border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
         }
 
         /* Test Ekran Dizayni */
         #timer-bar {
             width: 100%;
-            height: 10px;
-            background-color: #e5e7eb;
-            border-radius: 5px;
-            margin-bottom: 20px;
+            height: 12px;
+            background-color: #e2e8f0;
+            border-radius: 6px;
+            margin-bottom: 25px;
             overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
         }
 
         #timer-fill {
             height: 100%;
-            background-color: var(--primary);
+            background: linear-gradient(90deg, #10b981, #34d399);
             width: 100%;
+            border-radius: 6px;
             transition: width 1s linear;
         }
 
         .question-text {
-            font-size: 32px;
-            font-weight: bold;
+            font-size: 38px;
+            font-weight: 700;
             text-align: center;
-            margin: 30px 0;
-            color: var(--purple);
+            margin: 40px 0;
+            color: var(--text-main);
         }
 
         .options-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            gap: 16px;
         }
 
         .option-btn {
-            background-color: #f8fafc;
+            background: #ffffff;
             color: var(--text-main);
-            border: 2px solid #e5e7eb;
-            font-size: 20px;
+            border: 2px solid #e2e8f0;
+            font-size: 22px;
+            font-weight: 600;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            transition: all 0.2s;
         }
 
-        .option-btn:hover { background-color: #e2e8f0; }
-        .option-btn.correct { background-color: var(--success); color: white; border-color: var(--success); }
-        .option-btn.wrong { background-color: var(--danger); color: white; border-color: var(--danger); }
+        .option-btn:hover { 
+            background: #f8fafc; 
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+        
+        .option-btn.correct { 
+            background: var(--success); 
+            color: white; 
+            border-color: var(--success); 
+            box-shadow: 0 8px 15px rgba(16, 185, 129, 0.3);
+        }
+        
+        .option-btn.wrong { 
+            background: var(--danger); 
+            color: white; 
+            border-color: var(--danger); 
+            box-shadow: 0 8px 15px rgba(244, 63, 94, 0.3);
+        }
 
-        .shake { animation: shake 0.4s; }
+        .shake { animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both; }
         @keyframes shake {
-            0% { transform: translateX(0); }
-            25% { transform: translateX(-8px); }
-            50% { transform: translateX(8px); }
-            75% { transform: translateX(-8px); }
-            100% { transform: translateX(0); }
+            10%, 90% { transform: translate3d(-2px, 0, 0); }
+            20%, 80% { transform: translate3d(4px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-6px, 0, 0); }
+            40%, 60% { transform: translate3d(6px, 0, 0); }
         }
 
         .info-box {
-            background-color: #f3f4f6;
-            padding: 20px;
-            border-radius: 12px;
-            line-height: 1.6;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 24px;
+            border-radius: 16px;
+            line-height: 1.7;
             font-size: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
         }
 
         .back-btn {
-            background-color: #6b7280;
+            background: #94a3b8;
             margin-top: 20px;
             width: 100%;
             flex-direction: row;
+            box-shadow: 0 4px 12px rgba(148, 163, 184, 0.2);
         }
+
+        .back-btn:hover {
+            background: #64748b;
+            box-shadow: 0 6px 16px rgba(148, 163, 184, 0.3);
+        }
+
+        /* Ijtimoiy tarmoq tugmalari */
+        .social-link {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 16px 20px;
+            border-radius: 16px;
+            text-decoration: none;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 12px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .social-link:hover {
+            transform: translateY(-3px);
+            filter: brightness(1.05);
+        }
+
+        .social-link img {
+            width: 28px;
+            height: 28px;
+            margin-right: 15px;
+        }
+
+        .bg-tg-bot { background: linear-gradient(135deg, #0088cc, #00aaff); box-shadow: 0 8px 20px rgba(0, 136, 204, 0.3); }
+        .bg-tg-channel { background: linear-gradient(135deg, #229ED9, #1DA1F2); box-shadow: 0 8px 20px rgba(34, 158, 217, 0.3); }
+        .bg-youtube { background: linear-gradient(135deg, #FF0000, #cc0000); box-shadow: 0 8px 20px rgba(255, 0, 0, 0.3); }
+
     </style>
 </head>
 <body>
@@ -192,7 +296,7 @@
     <!-- ASOSIY MENYU -->
     <div id="screen-main" class="screen active">
         <h1>Matematika Olamiga Xush Kelibsiz!</h1>
-        <p style="text-align:center; color: var(--text-muted);">O'zingizning sinfingizni tanlang:</p>
+        <p style="text-align:center; color: var(--text-muted); font-size: 15px;">O'zingizning sinfingizni tanlang:</p>
         <div class="grid-menu">
             <button onclick="selectGrade(1)"><span class="emoji-icon">🎒</span> 1-sinf</button>
             <button onclick="selectGrade(2)"><span class="emoji-icon">📏</span> 2-sinf</button>
@@ -201,9 +305,32 @@
             <button onclick="selectGrade(5)"><span class="emoji-icon">🔬</span> 5-sinf</button>
             <button onclick="selectGrade(6)"><span class="emoji-icon">🧭</span> 6-sinf</button>
         </div>
-        <button class="btn-purple" style="width:100%; margin-top:15px; flex-direction:row;" onclick="showScreen('screen-about')">
-            <span class="emoji-icon">👨‍🏫</span> Tizim va Tuzuvchi Haqida
+        <!-- A'ZO BO'LISH TUGMASI (Yangilangan) -->
+        <button class="btn-purple" style="width:100%; margin-top:20px; flex-direction:row; font-size: 18px;" onclick="showScreen('screen-subscribe')">
+            <span style="font-size: 24px; margin-right: 8px;">🔔</span> A'zo bo'lish
         </button>
+    </div>
+
+    <!-- A'ZO BO'LISH EKRANI (Yangi bo'lim) -->
+    <div id="screen-subscribe" class="screen">
+        <h2>📢 Bizga Qo'shiling!</h2>
+        <p style="text-align:center; color: var(--text-muted); margin-bottom: 25px; font-size: 15px;">
+            Yangi va qiziqarli matematika darslarini o'tkazib yubormaslik uchun tarmoqlarimizga obuna bo'ling:
+        </p>
+        
+        <a href="https://t.me/Maktabdarsibot" target="_blank" class="social-link bg-tg-bot">
+            <span style="font-size: 24px; margin-right: 15px;">🤖</span> Maktab darsi bot
+        </a>
+        
+        <a href="https://t.me/Matemdarsi" target="_blank" class="social-link bg-tg-channel">
+            <span style="font-size: 24px; margin-right: 15px;">📚</span> Matematika darslari
+        </a>
+        
+        <a href="https://youtube.com/@Matematikadarslar_i" target="_blank" class="social-link bg-youtube">
+            <span style="font-size: 24px; margin-right: 15px;">📺</span> Youtube kanal
+        </a>
+
+        <button onclick="showScreen('screen-main')" class="back-btn" style="margin-top:30px;">⬅️ Orqaga Qaytish</button>
     </div>
 
     <!-- SOZLAMALAR EKRANI -->
@@ -246,7 +373,7 @@
             <input type="text" id="student-name" placeholder="Masalan: Akmal...">
         </div>
 
-        <button onclick="startTest()" style="width:100%; background-color: var(--success); flex-direction: row;">
+        <button onclick="startTest()" style="width:100%; background: linear-gradient(135deg, #10b981, #059669); flex-direction: row; font-size: 18px; margin-top: 10px;">
             🚀 Boshlash
         </button>
         <button onclick="showScreen('screen-main')" class="back-btn">⬅️ Orqaga</button>
@@ -254,9 +381,9 @@
 
     <!-- TEST EKRANI -->
     <div id="screen-test" class="screen">
-        <div style="display:flex; justify-content:space-between; font-weight:bold; margin-bottom:10px;">
-            <span id="test-progress">1 / 10</span>
-            <span id="test-timer-text">30s</span>
+        <div style="display:flex; justify-content:space-between; font-weight:600; margin-bottom:12px; color: var(--text-muted);">
+            <span id="test-progress" style="background: white; padding: 4px 12px; border-radius: 20px; font-size: 14px;">1 / 10</span>
+            <span id="test-timer-text" style="background: white; padding: 4px 12px; border-radius: 20px; font-size: 14px; color: var(--danger);">30s</span>
         </div>
         <div id="timer-bar"><div id="timer-fill"></div></div>
         
@@ -270,96 +397,60 @@
     <!-- NATIJALAR EKRANI -->
     <div id="screen-results" class="screen">
         <h2>🎉 Test Yakunlandi!</h2>
-        <div class="info-box" style="text-align:center; font-size: 24px; font-weight:bold; margin-bottom: 20px;">
-            <span id="final-score" style="color:var(--primary);">0</span> / <span id="total-questions">0</span>
+        <div class="info-box" style="text-align:center; font-size: 28px; font-weight:700; margin-bottom: 24px; background: white;">
+            <span id="final-score" style="color:var(--primary);">0</span> 
+            <span style="color: #cbd5e1;">/</span> 
+            <span id="total-questions" style="color: var(--text-muted);">0</span>
         </div>
-        <div class="info-box" id="ai-feedback" style="margin-bottom: 20px; border-left: 5px solid var(--purple);">
+        <div class="info-box" id="ai-feedback" style="margin-bottom: 24px; border-left: 5px solid var(--purple); background: white;">
             <!-- Tahlil matni -->
         </div>
-        <button onclick="showScreen('screen-main')" style="width:100%; flex-direction: row;">🏠 Asosiy Menyuga Qaytish</button>
-    </div>
-
-    <!-- TIZIM HAQIDA -->
-    <div id="screen-about" class="screen">
-        <h2>👨‍🏫 Tizim Tuzuvchisi Haqida</h2>
-        <div class="info-box">
-            <p><strong>Akmaljon Jo'raqo'ziyev</strong> (1999-yilda tug'ilgan) — Amaliy matematika yo'nalishi talabasi va boshlang'ich/o'rta sinflar uchun matematika o'qituvchisi. 2021-yildan buyon ta'lim sohasida faoliyat yuritadi.</p>
-            <p>Darslarida Singapur (Bar Modeling, CPA), Yaponiya va Germaniyaning eng ilg'or ta'lim metodikalarini qo'llaydi. 2024-yildan beri YouTube va Telegram orqali ham masofaviy ta'lim berib kelmoqda.</p>
-            <p>Ushbu tizim o'quvchilarning matematik qobiliyatlarini rivojlantirish uchun HTML, CSS, JavaScript va turli xil zamonaviy web-texnologiyalar hamda AI platformalaridan foydalanib yaratilgan. Shuningdek, u turli qiziqarli Telegram botlar (masalan, <strong>@Maktabdarsibot</strong>) va dasturlar muallifi hamdir.</p>
-            <br>
-            <hr style="border: 0.5px solid #ccc;">
-            <p><strong>Bog'lanish uchun:</strong></p>
-            <p>Telegram bot: <i>@Maktabdarsibot</i></p>
-        </div>
-        <button onclick="showScreen('screen-main')" class="back-btn">⬅️ Orqaga</button>
+        <button onclick="showScreen('screen-main')" style="width:100%; flex-direction: row; font-size: 16px;">🏠 Asosiy Menyuga Qaytish</button>
     </div>
 
 </div>
 
 <script>
-    // Audio tizimi xatoliklarni oldini olish maqsadida qayta yozildi
-    let audioCtx = null;
-
-    function initAudio() {
-        if (!audioCtx) {
-            const AudioContext = window.AudioContext || window.webkitAudioContext;
-            audioCtx = new AudioContext();
-        }
-        if (audioCtx.state === 'suspended') {
-            audioCtx.resume();
-        }
-    }
+    // Audio tizimi
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    const audioCtx = new AudioContext();
 
     function playSound(type) {
-        try {
-            initAudio();
-            const osc = audioCtx.createOscillator();
-            const gainNode = audioCtx.createGain();
-            
-            osc.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
-            
-            if (type === 'click') {
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(600, audioCtx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.1);
-                gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
-                osc.start(); osc.stop(audioCtx.currentTime + 0.1);
-            } else if (type === 'correct') {
-                osc.type = 'triangle';
-                osc.frequency.setValueAtTime(440, audioCtx.currentTime);
-                osc.frequency.setValueAtTime(554.37, audioCtx.currentTime + 0.1);
-                osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.2);
-                gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
-                osc.start(); osc.stop(audioCtx.currentTime + 0.4);
-            } else if (type === 'wrong') {
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(200, audioCtx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.3);
-                gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-                osc.start(); osc.stop(audioCtx.currentTime + 0.3);
-            }
-        } catch (e) {
-            console.log("Ovoz tizimi bloklangan: ", e);
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+        
+        osc.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        
+        if (type === 'click') {
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.1);
+            gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+        } else if (type === 'correct') {
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(440, audioCtx.currentTime);
+            osc.frequency.setValueAtTime(554.37, audioCtx.currentTime + 0.1);
+            osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.2);
+            gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.4);
+        } else if (type === 'wrong') {
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(200, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.3);
+            gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.3);
         }
     }
 
-    // Holat o'zgaruvchilari
     let state = {
-        grade: 1,
-        count: 10,
-        timePerQuestion: 30,
-        difficulty: 1,
-        name: "",
-        questions: [],
-        currentIndex: 0,
-        score: 0,
-        timerInterval: null,
-        timeRemaining: 0,
-        isAnswered: false
+        grade: 1, count: 10, timePerQuestion: 30, difficulty: 1, name: "",
+        questions: [], currentIndex: 0, score: 0, timerInterval: null, timeRemaining: 0, isAnswered: false
     };
 
     window.onload = () => {
@@ -417,8 +508,7 @@
             if(wrongAns >= 0) options.add(wrongAns);
         }
 
-        let optionsArr = Array.from(options).sort(() => Math.random() - 0.5);
-        return { text: `${a} ${op} ${b} = ?`, correct: correctAns, options: optionsArr };
+        return { text: `${a} ${op} ${b} = ?`, correct: correctAns, options: Array.from(options).sort(() => Math.random() - 0.5) };
     }
 
     function startTest() {
@@ -432,8 +522,7 @@
         state.difficulty = parseInt(document.getElementById('select-difficulty').value);
         
         state.questions = Array.from({length: state.count}, generateQuestion);
-        state.currentIndex = 0;
-        state.score = 0;
+        state.currentIndex = 0; state.score = 0;
 
         showScreen('screen-test');
         loadQuestion();
@@ -447,9 +536,6 @@
         document.getElementById('test-progress').innerText = `${state.currentIndex + 1} / ${state.count}`;
         document.getElementById('question-display').innerText = q.text;
         document.getElementById('question-display').classList.remove('shake');
-        
-        // Rang to'g'rilandi
-        document.body.style.backgroundColor = '#f0f4f8';
         
         const container = document.getElementById('options-container');
         container.innerHTML = '';
@@ -472,12 +558,20 @@
         
         fill.style.width = '100%';
         fill.style.transition = 'none';
+        fill.style.background = 'linear-gradient(90deg, #10b981, #34d399)'; // Qayta yashil qilish
+        
         setTimeout(() => fill.style.transition = 'width 1s linear', 50);
 
         state.timerInterval = setInterval(() => {
             state.timeRemaining--;
             text.innerText = `${state.timeRemaining}s`;
-            fill.style.width = `${(state.timeRemaining / state.timePerQuestion) * 100}%`;
+            let percentage = (state.timeRemaining / state.timePerQuestion) * 100;
+            fill.style.width = `${percentage}%`;
+            
+            // Vaqt oz qolganda qizarishi
+            if(percentage <= 30) {
+                fill.style.background = 'linear-gradient(90deg, #f43f5e, #fb7185)';
+            }
             
             if (state.timeRemaining <= 0) {
                 clearInterval(state.timerInterval);
@@ -493,7 +587,6 @@
 
         const correctAns = state.questions[state.currentIndex].correct;
         const btns = document.querySelectorAll('.option-btn');
-        
         let isCorrect = (selectedOpt === correctAns);
 
         btns.forEach(b => {
@@ -508,22 +601,19 @@
         } else {
             playSound('wrong');
             document.getElementById('question-display').classList.add('shake');
-            document.body.style.backgroundColor = '#fecaca'; 
-            setTimeout(() => document.body.style.backgroundColor = '#f0f4f8', 400);
         }
 
         setTimeout(() => {
             state.currentIndex++;
             if (state.currentIndex < state.count) loadQuestion();
             else finishTest();
-        }, 2500);
+        }, 2000);
     }
 
     function finishTest() {
         showScreen('screen-results');
         document.getElementById('final-score').innerText = state.score;
         document.getElementById('total-questions').innerText = state.count;
-        
         analyzeResults();
     }
 
@@ -535,26 +625,16 @@
         if (history.length > 0) {
             let lastTest = history[history.length - 1];
             let lastPercentage = lastTest.score / lastTest.total;
-            
-            if (percentage > lastPercentage) {
-                message += `Siz o'tgan safargidan ko'ra yaxshiroq natija ko'rsatdingiz! O'sish bor, harakatdan to'xtamang! 📈`;
-            } else if (percentage < lastPercentage) {
-                message += `Bugun ozroq xatolar bo'ldi. Aslo taslim bo'lmang, keyingi safar albatta 100% ishlaysiz! 💪`;
-            } else {
-                message += `Natijangiz barqaror. Bilimingizni yanada oshirishda davom eting! 🎯`;
-            }
+            if (percentage > lastPercentage) message += `Siz o'tgan safargidan ko'ra yaxshiroq natija ko'rsatdingiz! O'sish bor, harakatdan to'xtamang! 📈`;
+            else if (percentage < lastPercentage) message += `Bugun ozroq xatolar bo'ldi. Aslo taslim bo'lmang, keyingi safar albatta 100% ishlaysiz! 💪`;
+            else message += `Natijangiz barqaror. Bilimingizni yanada oshirishda davom eting! 🎯`;
         } else {
             if (percentage >= 0.8) message += `Ajoyib boshlanish! Xuddi shunday davom eting. 🌟`;
             else message += `Yaxshi natija, ozgina mashq qilsangiz, bundanda zo'r bo'ladi! 📚`;
         }
         
         document.getElementById('ai-feedback').innerText = message;
-        
-        history.push({ 
-            score: state.score, 
-            total: state.count, 
-            date: new Date().toISOString() 
-        });
+        history.push({ score: state.score, total: state.count, date: new Date().toISOString() });
         localStorage.setItem('mathTestHistory', JSON.stringify(history));
     }
 </script>
