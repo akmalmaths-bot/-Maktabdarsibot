@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>O'quvchilar Uy Vazifalari</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom minimal styling to ensure spreadsheet look */
+        body {
+            background-color: #f0fdfa; /* Very light cyan to match image background */
+            font-family: Arial, sans-serif;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: #d1fae5; /* Light green-cyan base for empty cells */
+        }
+        th, td {
+            border: 1px solid #333;
+            padding: 2px 4px;
+            text-align: center;
+            height: 28px;
+        }
+        .name-col {
+            text-align: left;
+            padding-left: 8px;
+            background-color: #cffafe; /* slightly different tint for names */
+        }
+        .header-bg {
+            background-color: #a5f3fc; /* Cyan-200 for headers */
+        }
+        .grade-cell {
+            min-width: 30px;
+        }
+        /* Admin specific styles */
+        .admin-active .grade-cell:hover {
+            opacity: 0.8;
+            border: 2px solid #000;
+        }
+    </style>
+</head>
+<body class="p-2 md:p-4 text-sm text-gray-900 flex flex-col items-center">
+
+    <!-- Main Spreadsheet Container -->
+    <div class="overflow-x-auto w-full flex justify-center mb-8">
+        <table id="main-table" class="shadow-lg bg-white">
+            <thead class="header-bg">
+                <!-- Row 1: Empty columns, Title -->
+                <tr>
+                    <th class="w-8 border-none bg-transparent"></th>
+                    <th class="w-64 border-none bg-transparent"></th>
+                    <th colspan="12" class="font-bold border border-black p-2">
+                        <span id="display-month">Noyabr</span> oyi uchun o'quvchilarni uy vazifalari haqida ma'lumotlar
+                    </th>
+                </tr>
+                <!-- Row 2: #, Names Header, Lesson Numbers -->
+                <tr>
+                    <th rowspan="2" class="w-8 font-bold border border-black bg-[#a5f3fc]"></th>
+                    <th rowspan="2" class="w-64 font-bold text-2xl border border-black bg-[#a5f3fc]">O'quvchilar</th>
+                    <th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th>
+                    <th>7</th><th>8</th><th>9</th><th>10</th><th>11</th><th>12</th>
+                </tr>
+                <!-- Row 3: Dates -->
+                <tr id="dates-row" class="bg-[#cffafe]">
+                    <!-- Dates injected here -->
+                </tr>
+            </thead>
+            <tbody id="student-tbody" class="bg-[#d1fae5]">
+                <!-- Student rows injected here -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Legend -->
+    <div class="w-full max-w-[1000px] mb-8 bg-white border border-black p-2">
+        <div class="flex items-center border-b border-black">
+            <div class="w-1/2 h-8 bg-red-500 border-r border-black"></div>
+            <div class="w-1/2 h-8 pl-4 flex items-center font-bold text-xs sm:text-sm">Berilgan uy vazifani bajarmagan</div>
+        </div>
+        <div class="flex items-center border-b border-black">
+            <div class="w-1/2 h-8 bg-orange-400 border-r border-black"></div>
+            <div class="w-1/2 h-8 pl-4 flex items-center font-bold text-xs sm:text-sm">Berilgan uy vazifasini qisman bajargan</div>
+        </div>
+        <div class="flex items-center border-b border-black">
+            <div class="w-1/2 h-8 bg-green-500 border-r border-black"></div>
+            <div class="w-1/2 h-8 pl-4 flex items-center font-bold text-xs sm:text-sm">Berilgan uy vazifasini to'liq bajargan</div>
+        </div>
+        <div class="flex items-center">
+            <div class="w-1/2 h-8 bg-gray-600 border-r border-black"></div>
+            <div class="w-1/2 h-8 pl-4 flex items-center font-bold text-xs sm:text-sm">Bu kuni darsga kelmagan</div>
+        </div>
+    </div>
+
+    <!-- Payments Section -->
+    <div class="overflow-x-auto w-full flex justify-center mb-8">
+        <table id="payments-table" class="shadow-lg bg-white">
+            <thead class="header-bg">
+                <tr>
+                    <th colspan="9" class="font-bold border border-black p-2 text-lg">
+                        Oylik To'lovlar
+                    </th>
+                </tr>
+                <tr>
+                    <th class="w-8 font-bold border border-black bg-[#a5f3fc]">#</th>
+                    <th class="w-64 font-bold text-xl border border-black bg-[#a5f3fc]">O'quvchilar</th>
+                    <th class="w-20 border border-black bg-[#cffafe]">Noyabr</th>
+                    <th class="w-20 border border-black bg-[#cffafe]">Dekabr</th>
+                    <th class="w-20 border border-black bg-[#cffafe]">Yanvar</th>
+                    <th class="w-20 border border-black bg-[#cffafe]">Fevral</th>
+                    <th class="w-20 border border-black bg-[#cffafe]">Mart</th>
+                    <th class="w-20 border border-black bg-[#cffafe]">Aprel</th>
+                    <th class="w-20 border border-black bg-[#cffafe]">May</th>
+                </tr>
+            </thead>
+            <tbody id="payment-tbody" class="bg-[#d1fae5]">
+                <!-- Payment rows injected here -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Footer Promo Text -->
+    <div class="w-full max-w-[1000px] text-center font-bold text-sm bg-cyan-100 border border-black p-4 mb-16 shadow-md">
+        <p>Oyning eng yaxshi o'quvchisiga aylaning va qo'shimcha 20$ ga ega bo'ling.</p>
+        <p>Buni bajarish juda oddiy, bir oy ichida 12 ta darsda berilgan barcha uy vazifasini to'liq bajarish zarur va yetarlidir.</p>
+    </div>
+
+    <!-- ADMIN PANEL -->
+    <div class="w-full max-w-[1000px] border-t-4 border-gray-800 pt-8 mt-8 flex flex-col items-center pb-20">
+        <h2 class="text-xl font-bold mb-4 text-gray-700">Admin Panel</h2>
+        
+        <!-- Login Section -->
+        <div id="admin-login-section" class="flex flex-col items-center gap-2">
+            <input type="password" id="admin-password" placeholder="Parolni kiriting..." class="border border-gray-400 p-2 rounded w-64 text-center">
+            <button onclick="attemptLogin()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded shadow">Kirish</button>
+            <p id="login-error" class="text-red-500 text-sm hidden">Parol xato!</p>
+        </div>
+
+        <!-- Controls Section (Hidden by default) -->
+        <div id="admin-controls" class="hidden w-full bg-gray-100 p-4 rounded-lg shadow border border-gray-300 flex-col gap-6">
+            <div class="text-center bg-green-100 text-green-800 p-2 rounded border border-green-300 font-semibold">
+                Admin rejimidasiz! Jadvaldagi katakchalarni bosish orqali ranglarni o'zgartirishingiz mumkin.
+            </div>
+
+            <!-- Edit Month & Dates -->
+            <div class="bg-white p-4 rounded border border-gray-200 shadow-sm">
+                <h3 class="font-bold mb-2">Oy va Sanalarni o'zgartirish</h3>
+                <div class="flex flex-col gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">Oy nomi:</label>
+                        <input type="text" id="edit-month" class="border border-gray-300 p-1 rounded w-full max-w-xs">
+                        <button onclick="saveMonth()" class="bg-indigo-500 text-white px-3 py-1 rounded text-sm ml-2">Saqlash</button>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">Sanalar (1 dan 12 gacha):</label>
+                        <div id="edit-dates-container" class="grid grid-cols-6 sm:grid-cols-12 gap-1">
+                            <!-- Date inputs injected here -->
+                        </div>
+                        <button onclick="saveDates()" class="bg-indigo-500 text-white px-3 py-1 rounded text-sm mt-2">Sanalarni Saqlash</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add Student -->
+            <div class="bg-white p-4 rounded border border-gray-200 shadow-sm">
+                <h3 class="font-bold mb-2">O'quvchi qo'shish</h3>
+                <div class="flex flex-col sm:flex-row gap-2">
+                    <input type="text" id="new-student-name" placeholder="F.I.SH..." class="border border-gray-300 p-2 rounded flex-grow">
+                    <button onclick="addStudent()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Qo'shish</button>
+                </div>
+            </div>
+
+            <button onclick="logoutAdmin()" class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded self-center mt-4">Chiqish (Log out)</button>
+        </div>
+    </div>
+
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, onSnapshot, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Environment variables setup
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'homework-tracker-dev';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        let app, db, auth, user;
+        let isAdmin = false;
+        
+        // Define color cycle: White -> Gray -> Green -> Red -> Orange -> White
+        const COLORS = ['bg-white', 'bg-gray-600', 'bg-green-500', 'bg-red-500', 'bg-orange-400'];
+        const PAYMENT_STATES = ['', '+', '-'];
+
+        const defaultNames = ["Abdurahmonov Xayrula", "Abzalimov Sanjar", "Aminov Jo'shqin", "Asatullayeva Asalxon", "Ashiraliyev Muhammadjon", "Azamxojayeva Soliha", "Baxtiyorov Sarvar", "Botirov Abdulaziz", "Davronov Salohiddin", "Ergashov Mustafo", "Eshmurodova Muslima", "Furqatov Muhammadsolih", "Hamidova Imona", "Hamidova Shukrona", "Ilhomov Doston", "Muhammadova Dilroz", "Narimonov Ozodbek", "Nasreddinova Parizoda", "Negmatov Ibrohim", "Norboliyeva Nigora", "Olimov Jahonbek", "Po'latov Ibrohim", "Qodirjonov Abdulboriy", "Qodirjonova Roziya", "Ro'zimboyeva Sevinch", "Saidmurodov Ibrohim", "Saparboyev Begzod", "Saparboyev Sherzod", "Shoabdullayev Muhammadaziz", "Sobirjonov Yunus", "Toshpo'latova Nozima"];
+
+        // Default application state
+        let appState = {
+            month: "Noyabr",
+            dates: ["2", "4", "6", "9", "11", "13", "16", "18", "20", "23", "25", "27"],
+            students: defaultNames.map((name, i) => ({
+                id: (i + 1).toString(),
+                name: name,
+                grades: Array(12).fill('bg-white'),
+                payments: Array(7).fill('')
+            }))
+        };
+
+        // Initialize Firebase
+        try {
+            app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+        } catch (error) {
+            console.error("Firebase init error:", error);
+            // Fallback for visual preview without Firebase
+            renderApp(); 
+        }
+
+        async function initAuth() {
+            if (!auth) return;
+            try {
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                } else {
+                    await signInAnonymously(auth);
+                }
+                user = auth.currentUser;
+                setupRealtimeSync();
+            } catch (error) {
+                console.error("Auth error:", error);
+            }
+        }
+
+        function setupRealtimeSync() {
+            if (!user) return;
+            // RULE 1 Strict Path: artifacts/{appId}/public/data/{collectionName}
+            const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'trackerState', 'mainDoc');
+
+            onSnapshot(docRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    let data = docSnap.data();
+                    // Migration for missing payments array from older versions
+                    if (data.students) {
+                        data.students = data.students.map(s => ({
+                            ...s,
+                            payments: s.payments || Array(7).fill('')
+                        }));
+                    }
+                    appState = data;
+                } else {
+                    // First time initialization, save default state to Firestore
+                    saveStateToFirestore(appState);
+                }
+                renderApp();
+            }, (error) => {
+                console.error("Firestore sync error:", error);
+            });
+        }
+
+        async function saveStateToFirestore(newState) {
+            if (!user) {
+                console.warn("Cannot save: User not authenticated.");
+                return;
+            }
+            try {
+                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'trackerState', 'mainDoc');
+                await setDoc(docRef, newState);
+            } catch (error) {
+                console.error("Error saving state:", error);
+                // Create custom alert element if needed, avoiding standard alert()
+                showErrorToast("Saqlashda xatolik yuz berdi.");
+            }
+        }
+
+        // --- UI Rendering ---
+
+        function renderApp() {
+            // 1. Update Header Month
+            document.getElementById('display-month').innerText = appState.month;
+            
+            // 2. Update Header Dates
+            const datesRow = document.getElementById('dates-row');
+            let datesHtml = '';
+            for (let i = 0; i < 12; i++) {
+                datesHtml += `<th class="border border-black bg-[#cffafe] font-bold text-xs sm:text-sm">${appState.dates[i] || ''}</th>`;
+            }
+            datesRow.innerHTML = datesHtml;
+
+            // 3. Render Students
+            const tbody = document.getElementById('student-tbody');
+            let tbodyHtml = '';
+            
+            appState.students.forEach((student, index) => {
+                // Determine if we need an empty spacer row (mimicking groups in the original image loosely)
+                // For simplicity, we just list them, but let's add a slight separation every few students if it gets long.
+                // Original image groups them somewhat arbitrarily. We will stick to a flat clean list.
+                
+                tbodyHtml += `<tr class="bg-[#d1fae5]">`;
+                // Index
+                tbodyHtml += `<td class="font-bold border border-black bg-white">${index + 1}</td>`;
+                
+                // Name + Delete button (if admin)
+                tbodyHtml += `
+                    <td class="name-col border border-black font-semibold relative group bg-white">
+                        ${student.name}
+                        ${isAdmin ? `
+                            <button onclick="removeStudent('${student.id}')" 
+                                class="absolute right-1 top-1 bg-red-100 hover:bg-red-500 hover:text-white text-red-600 rounded-full w-6 h-6 flex items-center justify-center text-xs shadow">
+                                X
+                            </button>
+                        ` : ''}
+                    </td>
+                `;
+
+                // 12 Grade Cells
+                for (let i = 0; i < 12; i++) {
+                    const cellColor = student.grades[i] || 'bg-white';
+                    tbodyHtml += `
+                        <td 
+                            data-student-id="${student.id}" 
+                            data-col-index="${i}" 
+                            class="grade-cell border border-black ${cellColor} ${isAdmin ? 'cursor-pointer' : 'cursor-default'}">
+                        </td>
+                    `;
+                }
+                
+                tbodyHtml += `</tr>`;
+            });
+
+            tbody.innerHTML = tbodyHtml;
+
+            // 4. Render Payments
+            const ptbody = document.getElementById('payment-tbody');
+            let ptbodyHtml = '';
+            
+            appState.students.forEach((student, index) => {
+                ptbodyHtml += `<tr class="bg-[#d1fae5]">`;
+                ptbodyHtml += `<td class="font-bold border border-black bg-white">${index + 1}</td>`;
+                ptbodyHtml += `<td class="name-col border border-black font-semibold bg-white">${student.name}</td>`;
+                
+                // 7 Payment Cells
+                const payments = student.payments || Array(7).fill('');
+                for (let i = 0; i < 7; i++) {
+                    const payStatus = payments[i];
+                    ptbodyHtml += `
+                        <td 
+                            data-student-id="${student.id}" 
+                            data-col-index="${i}" 
+                            class="grade-cell border border-black bg-white text-center font-bold text-lg ${isAdmin ? 'cursor-pointer hover:bg-gray-100' : 'cursor-default'}">
+                            ${payStatus}
+                        </td>
+                    `;
+                }
+                ptbodyHtml += `</tr>`;
+            });
+            ptbody.innerHTML = ptbodyHtml;
+
+            // Update Admin Panel Inputs if active
+            if (isAdmin) {
+                document.getElementById('edit-month').value = appState.month;
+                const editDatesContainer = document.getElementById('edit-dates-container');
+                let inputsHtml = '';
+                for (let i = 0; i < 12; i++) {
+                    inputsHtml += `<input type="text" id="edit-date-${i}" value="${appState.dates[i] || ''}" class="border border-gray-400 p-1 text-center w-full rounded text-sm shadow-sm" placeholder="${i+1}">`;
+                }
+                editDatesContainer.innerHTML = inputsHtml;
+            }
+
+            // Apply admin hover styling class
+            const tableEl = document.getElementById('main-table');
+            const pTableEl = document.getElementById('payments-table');
+            if (isAdmin) {
+                tableEl.classList.add('admin-active');
+                pTableEl.classList.add('admin-active');
+            } else {
+                tableEl.classList.remove('admin-active');
+                pTableEl.classList.remove('admin-active');
+            }
+        }
+
+        // --- Interaction Logic ---
+
+        // Event delegation for cell clicks (to change colors)
+        document.getElementById('student-tbody').addEventListener('click', (e) => {
+            if (!isAdmin) return;
+            
+            const cell = e.target.closest('.grade-cell');
+            if (!cell) return;
+
+            const studentId = cell.getAttribute('data-student-id');
+            const colIndex = parseInt(cell.getAttribute('data-col-index'));
+
+            cycleCellColor(studentId, colIndex);
+        });
+
+        function cycleCellColor(studentId, colIndex) {
+            const studentIndex = appState.students.findIndex(s => s.id === studentId);
+            if (studentIndex === -1) return;
+
+            const currentColor = appState.students[studentIndex].grades[colIndex] || 'bg-white';
+            let nextColorIndex = COLORS.indexOf(currentColor) + 1;
+            if (nextColorIndex >= COLORS.length) nextColorIndex = 0;
+
+            const newState = JSON.parse(JSON.stringify(appState)); // deep copy
+            newState.students[studentIndex].grades[colIndex] = COLORS[nextColorIndex];
+            
+            // Optimistic UI update (optional, Firestore snapshot handles it, but this makes it snappier locally)
+            appState = newState;
+            renderApp();
+            
+            // Save to DB
+            saveStateToFirestore(newState);
+        }
+
+        // Event delegation for payment cell clicks
+        document.getElementById('payment-tbody').addEventListener('click', (e) => {
+            if (!isAdmin) return;
+            
+            const cell = e.target.closest('.grade-cell');
+            if (!cell) return;
+
+            const studentId = cell.getAttribute('data-student-id');
+            const colIndex = parseInt(cell.getAttribute('data-col-index'));
+
+            cyclePaymentCell(studentId, colIndex);
+        });
+
+        function cyclePaymentCell(studentId, colIndex) {
+            const studentIndex = appState.students.findIndex(s => s.id === studentId);
+            if (studentIndex === -1) return;
+
+            const currentStatus = appState.students[studentIndex].payments[colIndex] || '';
+            let nextIndex = PAYMENT_STATES.indexOf(currentStatus) + 1;
+            if (nextIndex >= PAYMENT_STATES.length) nextIndex = 0;
+
+            const newState = JSON.parse(JSON.stringify(appState)); // deep copy
+            newState.students[studentIndex].payments[colIndex] = PAYMENT_STATES[nextIndex];
+            
+            appState = newState;
+            renderApp();
+            saveStateToFirestore(newState);
+        }
+
+        // --- Admin Functions ---
+
+        window.attemptLogin = function() {
+            const pwd = document.getElementById('admin-password').value;
+            const errorEl = document.getElementById('login-error');
+            if (pwd === '0912') {
+                isAdmin = true;
+                errorEl.classList.add('hidden');
+                document.getElementById('admin-login-section').classList.add('hidden');
+                document.getElementById('admin-controls').classList.remove('hidden');
+                document.getElementById('admin-controls').classList.add('flex');
+                document.getElementById('admin-password').value = '';
+                renderApp();
+            } else {
+                errorEl.classList.remove('hidden');
+            }
+        }
+
+        window.logoutAdmin = function() {
+            isAdmin = false;
+            document.getElementById('admin-login-section').classList.remove('hidden');
+            document.getElementById('admin-controls').classList.add('hidden');
+            document.getElementById('admin-controls').classList.remove('flex');
+            renderApp();
+        }
+
+        window.saveMonth = function() {
+            const newMonth = document.getElementById('edit-month').value.trim();
+            if (newMonth) {
+                const newState = { ...appState, month: newMonth };
+                appState = newState;
+                renderApp();
+                saveStateToFirestore(newState);
+            }
+        }
+
+        window.saveDates = function() {
+            const newDates = [];
+            for (let i = 0; i < 12; i++) {
+                const val = document.getElementById(`edit-date-${i}`).value.trim();
+                newDates.push(val);
+            }
+            const newState = { ...appState, dates: newDates };
+            appState = newState;
+            renderApp();
+            saveStateToFirestore(newState);
+        }
+
+        window.addStudent = function() {
+            const nameInput = document.getElementById('new-student-name');
+            const name = nameInput.value.trim();
+            if (!name) return;
+
+            const newStudent = {
+                id: 'std_' + Date.now().toString(36) + Math.random().toString(36).substr(2),
+                name: name,
+                grades: Array(12).fill('bg-white'),
+                payments: Array(7).fill('')
+            };
+
+            const newState = { ...appState, students: [...appState.students, newStudent] };
+            appState = newState;
+            nameInput.value = '';
+            renderApp();
+            saveStateToFirestore(newState);
+        }
+
+        window.removeStudent = function(id) {
+            // Using a simple custom modal replacement for confirm()
+            const customModal = document.createElement('div');
+            customModal.className = "fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50";
+            customModal.innerHTML = `
+                <div class="bg-white p-6 rounded shadow-xl flex flex-col items-center">
+                    <p class="mb-4 text-lg font-bold">Rostdan ham o'chirmoqchimisiz?</p>
+                    <div class="flex gap-4">
+                        <button id="btn-cancel" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Bekor qilish</button>
+                        <button id="btn-confirm" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">O'chirish</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(customModal);
+
+            document.getElementById('btn-cancel').onclick = () => {
+                customModal.remove();
+            };
+
+            document.getElementById('btn-confirm').onclick = () => {
+                const newState = { 
+                    ...appState, 
+                    students: appState.students.filter(s => s.id !== id) 
+                };
+                appState = newState;
+                renderApp();
+                saveStateToFirestore(newState);
+                customModal.remove();
+            };
+        }
+
+        function showErrorToast(msg) {
+            const toast = document.createElement('div');
+            toast.className = "fixed bottom-4 right-4 bg-red-600 text-white px-4 py-2 rounded shadow-lg transition-opacity duration-500";
+            toast.innerText = msg;
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 500);
+            }, 3000);
+        }
+
+        // Boot the app
+        renderApp();
+        if (typeof initializeApp !== 'undefined') {
+            initAuth();
+        }
+
+    </script>
+</body>
+</html>
