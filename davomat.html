@@ -3,319 +3,406 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>O'quvchilar Uy Vazifalari</title>
+    <title>O'quvchilar Uy Vazifalari Portali</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        /* Excel spreadsheet look & mobile responsiveness */
         body {
-            background-color: #c5f6ff;
-            font-family: 'Times New Roman', Times, serif;
-            margin: 0;
-            padding: 0;
-        }
-        
-        /* Scrollable wrapper that never cuts off the left side on mobile */
-        .table-scroll-wrapper {
-            width: 100%;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-            background-color: #c5f6ff;
-            border: 1px solid #1e293b;
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        table.excel-table {
-            border-collapse: separate;
-            border-spacing: 0;
-            width: max-content;
-            min-width: 100%;
-            margin: 0;
-            background-color: #c5f6ff;
+        /* Custom subtle scrollbars */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 9999px;
         }
 
-        table.excel-table th, 
-        table.excel-table td {
-            border-right: 1px solid #1e293b;
-            border-bottom: 1px solid #1e293b;
-            padding: 4px 6px;
-            text-align: center;
-            height: 28px;
-            font-size: 14px;
-            line-height: 1.2;
-            box-sizing: border-box;
+        @keyframes modalPop {
+            0% { opacity: 0; transform: scale(0.96) translateY(8px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
         }
-
-        table.excel-table tr:first-child th,
-        table.excel-table tr:first-child td {
-            border-top: 1px solid #1e293b;
-        }
-
-        table.excel-table th:first-child,
-        table.excel-table td:first-child {
-            border-left: 1px solid #1e293b;
-        }
-
-        /* Sticky columns for mobile horizontal scrolling */
-        .sticky-num {
-            position: sticky;
-            left: 0;
-            z-index: 20;
-            width: 30px;
-            min-width: 30px;
-            max-width: 30px;
-            background-color: #b8f2ff;
-            font-weight: bold;
-        }
-
-        .sticky-name {
-            position: sticky;
-            left: 30px;
-            z-index: 20;
-            min-width: 185px;
-            max-width: 225px;
-            text-align: left !important;
-            padding-left: 8px !important;
-            padding-right: 24px !important;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            background-color: #b8f2ff;
-            font-weight: bold;
-            box-shadow: 2px 0 4px -1px rgba(0, 0, 0, 0.25);
-        }
-
-        thead .sticky-num,
-        thead .sticky-name {
-            z-index: 30;
-            background-color: #a5f3fc;
-        }
-
-        .header-bg {
-            background-color: #a5f3fc;
-        }
-
-        .sub-header-bg {
-            background-color: #b8f2ff;
-        }
-
-        .grade-cell {
-            min-width: 34px;
-            width: 38px;
-            transition: transform 0.05s ease;
-            user-select: none;
-        }
-
-        /* Exact Colors from Screenshot */
-        .cell-white { background-color: #ffffff !important; }
-        .cell-green { background-color: #00b050 !important; }
-        .cell-red { background-color: #ff2e2e !important; }
-        .cell-orange { background-color: #ffa726 !important; }
-        .cell-grey { background-color: #595959 !important; }
-
-        /* Admin active state */
-        .admin-active .grade-cell:hover {
-            outline: 2px solid #000;
-            outline-offset: -2px;
-            cursor: pointer;
-        }
-
-        @media (max-width: 640px) {
-            table.excel-table th, 
-            table.excel-table td {
-                font-size: 13px;
-                height: 26px;
-                padding: 2px 4px;
-            }
-            .sticky-num {
-                width: 26px;
-                min-width: 26px;
-                max-width: 26px;
-            }
-            .sticky-name {
-                left: 26px;
-                min-width: 165px;
-                max-width: 195px;
-                font-size: 12.5px !important;
-            }
-            .grade-cell {
-                min-width: 30px;
-                width: 30px;
-            }
+        .animate-modal {
+            animation: modalPop 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
     </style>
 </head>
-<body class="p-1.5 sm:p-4 text-gray-900 flex flex-col items-center">
+<body class="min-h-screen flex flex-col justify-between">
 
-    <div class="w-full max-w-[1050px]">
-        
-        <!-- Top Admin Active Banner (Only visible when Admin is logged in) -->
-        <div id="top-admin-toolbar" class="hidden mb-3 bg-slate-900 text-white p-3 rounded-lg shadow-lg border border-slate-700 flex-col sm:flex-row items-center justify-between gap-3 font-sans">
-            <div class="flex items-center gap-2 text-xs sm:text-sm font-semibold">
-                <span class="inline-block w-3 h-3 rounded-full bg-green-400 animate-pulse"></span>
-                <span>Admin rejimi faol! Katakchani bosib rang bering:</span>
+    <!-- MAIN CONTENT CONTAINER -->
+    <div class="w-full max-w-4xl mx-auto px-3 sm:px-6 pt-4 pb-12">
+
+        <!-- 1. MODERN HERO HEADER -->
+        <header class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-600 via-blue-600 to-violet-700 text-white p-5 sm:p-8 shadow-xl mb-5">
+            <div class="relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div>
+                    <div class="inline-flex items-center gap-2 bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-xs font-semibold mb-3">
+                        <span class="w-2 h-2 rounded-full bg-emerald-300 animate-pulse"></span>
+                        <span>Ota-onalar uchun onlayn nazorat portali</span>
+                    </div>
+                    <h1 class="text-xl sm:text-3xl font-extrabold tracking-tight leading-snug">
+                        <span id="header-month-name" class="underline decoration-amber-300 decoration-2 underline-offset-4">Noyabr</span> oyi uchun o'quvchilarni uy vazifalari haqida ma'lumotlar
+                    </h1>
+                </div>
+                <div class="flex items-center gap-3 self-start sm:self-center bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl px-4 py-3 shrink-0">
+                    <div class="text-right">
+                        <div class="text-xs text-indigo-100">Jami o'quvchilar</div>
+                        <div id="header-student-count" class="text-xl font-extrabold">31 nafar</div>
+                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center text-lg">
+                        🎓
+                    </div>
+                </div>
             </div>
-            <div class="flex flex-wrap items-center gap-1.5" id="brush-selector">
-                <button onclick="setBrush('cycle')" data-brush="cycle" class="brush-btn bg-blue-600 text-white px-2.5 py-1 rounded text-xs font-bold ring-2 ring-white">🔄 Navbat bilan</button>
-                <button onclick="setBrush('cell-green')" data-brush="cell-green" class="brush-btn bg-[#00b050] text-white px-2.5 py-1 rounded text-xs font-bold">Yashil</button>
-                <button onclick="setBrush('cell-red')" data-brush="cell-red" class="brush-btn bg-[#ff2e2e] text-white px-2.5 py-1 rounded text-xs font-bold">Qizil</button>
-                <button onclick="setBrush('cell-orange')" data-brush="cell-orange" class="brush-btn bg-[#ffa726] text-black px-2.5 py-1 rounded text-xs font-bold">Olovrang</button>
-                <button onclick="setBrush('cell-grey')" data-brush="cell-grey" class="brush-btn bg-[#595959] text-white px-2.5 py-1 rounded text-xs font-bold">Kulrang</button>
-                <button onclick="setBrush('cell-white')" data-brush="cell-white" class="brush-btn bg-white text-black px-2.5 py-1 rounded text-xs font-bold">Oq (Tozalash)</button>
+            <!-- Decorative background circles -->
+            <div class="absolute -right-10 -top-10 w-44 h-44 rounded-full bg-white/10 blur-2xl pointer-events-none"></div>
+            <div class="absolute -left-10 -bottom-10 w-44 h-44 rounded-full bg-indigo-400/20 blur-2xl pointer-events-none"></div>
+        </header>
+
+        <!-- 2. $20 MOTIVATIONAL BANNER -->
+        <section class="mb-6 rounded-2xl bg-gradient-to-r from-amber-50 via-yellow-50 to-orange-50 border border-amber-200/80 p-4 sm:p-5 shadow-sm flex items-start sm:items-center gap-3.5">
+            <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 text-white flex items-center justify-center text-xl sm:text-2xl shadow-md shrink-0">
+                🏆
+            </div>
+            <div class="text-xs sm:text-sm text-amber-950 leading-relaxed">
+                <p class="font-extrabold text-sm sm:text-base text-amber-900 mb-0.5">
+                    Oyning eng yaxshi o'quvchisiga aylaning va qo'shimcha <span class="bg-amber-200/80 px-1.5 py-0.5 rounded text-orange-800">20$</span> ga ega bo'ling!
+                </p>
+                <p class="text-amber-800/90 font-medium">
+                    Buni bajarish juda oddiy: bir oy ichida barcha darslarda berilgan uy vazifasini to'liq bajarish zarur va yetarlidir.
+                </p>
+            </div>
+        </section>
+
+        <!-- 3. INSTRUCTION & SEARCH BAR -->
+        <div class="mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+                <h2 class="text-base sm:text-lg font-bold text-slate-800 flex items-center gap-2">
+                    <span>👥 O'quvchilar ro'yxati</span>
+                    <span class="text-xs font-medium text-indigo-600 bg-indigo-50 px-2.5 py-0.5 rounded-full border border-indigo-100">Alifbo tartibida</span>
+                </h2>
+                <p class="text-xs sm:text-sm text-slate-500 mt-0.5">
+                    Farzandingizning uy vazifalari holatini ko'rish uchun <b>ism-familiyasi ustiga bosing</b>:
+                </p>
+            </div>
+
+            <!-- Search Input -->
+            <div class="relative w-full sm:w-72">
+                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 pointer-events-none">
+                    🔍
+                </span>
+                <input
+                    type="text"
+                    id="student-search"
+                    oninput="handleSearch(this.value)"
+                    placeholder="O'quvchi ismini qidiring..."
+                    class="w-full pl-10 pr-8 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-800 placeholder-slate-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                >
+                <button id="clear-search-btn" onclick="clearSearch()" class="hidden absolute inset-y-0 right-0 pr-3 items-center text-slate-400 hover:text-slate-600 text-sm font-bold">
+                    ✕
+                </button>
             </div>
         </div>
 
-        <!-- Mobile swipe hint -->
-        <div class="sm:hidden text-[11px] text-slate-700 font-sans mb-1 flex items-center justify-between px-1">
-            <span>👈 Jadvalni o'ngga-chapga surib ko'ring 👉</span>
-            <span id="student-count-badge" class="font-bold">31 o'quvchi</span>
+        <!-- 4. LEGEND PILLS -->
+        <div class="flex flex-wrap items-center gap-2 mb-4 text-xs">
+            <span class="text-slate-500 font-medium mr-1">Belgilar izohi:</span>
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-medium">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> To'liq bajargan
+            </span>
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-50 text-amber-800 border border-amber-200 font-medium">
+                <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> Qisman bajargan
+            </span>
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-rose-50 text-rose-700 border border-rose-200 font-medium">
+                <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span> Bajarmagan
+            </span>
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 border border-slate-300 font-medium">
+                <span class="w-2.5 h-2.5 rounded-full bg-slate-500"></span> Darsga kelmagan
+            </span>
         </div>
 
-        <!-- Main Homework Spreadsheet Container -->
-        <div class="table-scroll-wrapper shadow-md mb-4">
-            <table id="main-table" class="excel-table">
-                <thead>
-                    <!-- Row 1: Title -->
-                    <tr class="header-bg">
-                        <th class="sticky-num"></th>
-                        <th class="sticky-name"></th>
-                        <th id="title-colspan" colspan="12" class="font-bold text-center px-2 py-1.5 text-xs sm:text-base bg-[#b8f2ff]">
-                            <span id="display-month">Noyabr</span> oyi uchun o'quvchilarni uy vazifalari haqida ma'lumotlar
-                        </th>
-                    </tr>
-                    <!-- Row 2: #, O'quvchilar, Lesson Numbers -->
-                    <tr id="lessons-row" class="header-bg">
-                        <!-- Dynamically rendered -->
-                    </tr>
-                    <!-- Row 3: Lesson Dates -->
-                    <tr id="dates-row" class="sub-header-bg">
-                        <!-- Dynamically rendered -->
-                    </tr>
-                </thead>
-                <tbody id="student-tbody">
-                    <!-- Student rows injected here -->
-                </tbody>
-            </table>
+        <!-- 5. STUDENT CARDS GRID -->
+        <div id="students-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
+            <!-- Dynamically rendered student cards -->
         </div>
 
-        <!-- Color Legend (Matches Original Image) -->
-        <div class="w-full mb-4 bg-[#c5f6ff] border border-slate-800 shadow-sm">
-            <div class="flex items-stretch border-b border-slate-800">
-                <div class="w-2/5 sm:w-1/2 min-h-[28px] cell-red border-r border-slate-800"></div>
-                <div class="w-3/5 sm:w-1/2 px-2 py-1 flex items-center justify-center text-center font-bold text-xs sm:text-sm bg-white">Berilgan uy vazifani bajarmagan</div>
-            </div>
-            <div class="flex items-stretch border-b border-slate-800">
-                <div class="w-2/5 sm:w-1/2 min-h-[28px] cell-orange border-r border-slate-800"></div>
-                <div class="w-3/5 sm:w-1/2 px-2 py-1 flex items-center justify-center text-center font-bold text-xs sm:text-sm bg-white">Berilgan uy vazifasini qisman bajargan</div>
-            </div>
-            <div class="flex items-stretch border-b border-slate-800">
-                <div class="w-2/5 sm:w-1/2 min-h-[28px] cell-green border-r border-slate-800"></div>
-                <div class="w-3/5 sm:w-1/2 px-2 py-1 flex items-center justify-center text-center font-bold text-xs sm:text-sm bg-white">Berilgan uy vazifasini to'liq bajargan</div>
-            </div>
-            <div class="flex items-stretch">
-                <div class="w-2/5 sm:w-1/2 min-h-[28px] cell-grey border-r border-slate-800"></div>
-                <div class="w-3/5 sm:w-1/2 px-2 py-1 flex items-center justify-center text-center font-bold text-xs sm:text-sm bg-white">Bu kuni darsga kelmagan</div>
-            </div>
+        <!-- Empty Search State -->
+        <div id="empty-search-state" class="hidden text-center py-12 bg-white rounded-2xl border border-slate-200/80 p-6 my-4">
+            <div class="text-3xl mb-2">🔍</div>
+            <p class="font-bold text-slate-700">Bunday ismli o'quvchi topilmadi</p>
+            <p class="text-xs text-slate-500 mt-1">Qidiruv so'zini tekshirib ko'ring yoki barcha ro'yxatga qayting.</p>
+            <button onclick="clearSearch()" class="mt-3 px-4 py-2 bg-indigo-50 text-indigo-600 rounded-xl text-xs font-bold hover:bg-indigo-100">
+                Barcha o'quvchilarni ko'rsatish
+            </button>
         </div>
 
-        <!-- Footer Motivational Promo Text -->
-        <div class="w-full text-center font-bold text-xs sm:text-base bg-[#b8f2ff] border border-slate-800 p-3 sm:p-4 mb-10 shadow-sm leading-relaxed">
-            <p>Oyning eng yaxshi o'quvchisiga aylaning va qo'shimcha 20$ ga ega bo'ling.</p>
-            <p>Buni bajarish juda oddiy, bir oy ichida 12 ta darsda berilgan barcha uy vazifasini to'liq bajarish zarur va yetarlidir.</p>
-        </div>
-
-        <!-- ADMIN PANEL (At the very bottom, protected by 0912) -->
-        <div class="w-full border-t-2 border-slate-700 pt-6 mt-6 flex flex-col items-center pb-16 font-sans">
-            <h2 class="text-base sm:text-lg font-bold mb-3 text-slate-800">Admin Panel</h2>
+        <!-- ========================================================== -->
+        <!-- ADMIN PANEL SECTION (AT THE VERY BOTTOM, PROTECTED BY 0912) -->
+        <!-- ========================================================== -->
+        <div class="mt-14 pt-8 border-t border-slate-200">
             
-            <!-- Login Section -->
-            <div id="admin-login-section" class="flex flex-col sm:flex-row items-center gap-2">
-                <input type="password" id="admin-password" placeholder="Parolni kiriting..." onkeydown="if(event.key==='Enter') attemptLogin()" class="border border-slate-400 px-3 py-2 rounded w-56 text-center text-sm bg-white shadow-inner">
-                <button onclick="attemptLogin()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded shadow text-sm">Kirish</button>
+            <!-- Locked State -->
+            <div id="admin-lock-box" class="flex flex-col items-center justify-center bg-white border border-slate-200 rounded-2xl p-5 shadow-sm max-w-md mx-auto">
+                <div class="flex items-center gap-2 text-slate-700 font-bold text-sm mb-3">
+                    <span>🔒 O'qituvchi (Admin) bo'limi</span>
+                </div>
+                <div class="flex w-full gap-2">
+                    <input
+                        type="password"
+                        id="admin-password-input"
+                        placeholder="Admin paroli..."
+                        onkeydown="if(event.key==='Enter') loginAdmin()"
+                        class="flex-1 px-3.5 py-2.5 border border-slate-300 rounded-xl text-sm text-center focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    >
+                    <button onclick="loginAdmin()" class="bg-slate-900 hover:bg-indigo-600 text-white font-semibold px-5 py-2.5 rounded-xl text-sm transition shadow-sm">
+                        Kirish
+                    </button>
+                </div>
+                <p id="admin-error-msg" class="hidden text-rose-600 text-xs font-semibold mt-2">
+                    ❌ Parol xato! Qaytadan urinib ko'ring.
+                </p>
             </div>
-            <p id="login-error" class="text-red-600 text-xs font-bold mt-1 hidden">Parol xato!</p>
 
-            <!-- Controls Section (Hidden from parents, unlocked with 0912) -->
-            <div id="admin-controls" class="hidden w-full bg-white p-3 sm:p-5 rounded-xl shadow-lg border border-slate-300 flex-col gap-6 mt-3">
+            <!-- Unlocked Admin Dashboard -->
+            <div id="admin-dashboard" class="hidden bg-white border border-slate-200 rounded-3xl shadow-xl overflow-hidden">
                 
-                <div class="flex flex-wrap items-center justify-between gap-2 bg-emerald-50 text-emerald-900 p-3 rounded-lg border border-emerald-300 text-xs sm:text-sm">
-                    <span class="font-semibold">✅ Admin rejimidasiz! Barcha o'zgarishlar avtomatik saqlanadi.</span>
-                    <div class="flex gap-2">
-                        <button onclick="resetToDefaultData()" class="bg-amber-500 hover:bg-amber-600 text-white font-bold py-1.5 px-3 rounded text-xs shadow">
-                            🔄 Boshlang'ich holatga qaytarish
-                        </button>
-                        <button onclick="logoutAdmin()" class="bg-red-600 hover:bg-red-700 text-white font-bold py-1.5 px-3 rounded text-xs shadow">
-                            Chiqish
-                        </button>
-                    </div>
-                </div>
-
-                <!-- 1. Add Student & Sort -->
-                <div class="bg-slate-50 p-3 sm:p-4 rounded-lg border border-slate-200">
-                    <h3 class="font-bold text-sm sm:text-base mb-2 text-slate-800">1. O'quvchi qo'shish (Alifbo tartibida joylashadi)</h3>
-                    <div class="flex flex-col sm:flex-row gap-2">
-                        <input type="text" id="new-student-name" placeholder="Yangi o'quvchi F.I.SH..." onkeydown="if(event.key==='Enter') addStudent()" class="border border-slate-300 p-2 rounded flex-grow text-sm bg-white">
-                        <button onclick="addStudent()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-5 rounded text-sm shadow">+ O'quvchi qo'shish</button>
-                        <button onclick="sortStudentsAlphabetically()" class="bg-slate-600 hover:bg-slate-700 text-white font-bold py-2 px-4 rounded text-sm shadow">A-Z Saralash</button>
-                    </div>
-                </div>
-
-                <!-- 2. Edit Month, Columns & Dates -->
-                <div class="bg-slate-50 p-3 sm:p-4 rounded-lg border border-slate-200">
-                    <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
-                        <h3 class="font-bold text-sm sm:text-base text-slate-800">2. Oy, Kunlar va Qo'shimcha Kataklar</h3>
-                        <div class="flex gap-2">
-                            <button onclick="addLessonColumn()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-3 py-1.5 rounded text-xs shadow">
-                                + Qo'shimcha katak qo'shish
-                            </button>
-                            <button onclick="removeLessonColumn()" class="bg-rose-600 hover:bg-rose-700 text-white font-bold px-3 py-1.5 rounded text-xs shadow">
-                                - Oxirgi katakni o'chirish
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="flex flex-col gap-4">
-                        <div class="flex flex-wrap items-center gap-2">
-                            <label class="text-xs font-bold text-slate-700">Oy nomi:</label>
-                            <input type="text" id="edit-month" class="border border-slate-300 px-2.5 py-1.5 rounded w-48 text-sm bg-white">
-                            <button onclick="saveMonth()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-1.5 rounded text-xs shadow">Oyni Saqlash</button>
-                        </div>
+                <!-- Admin Top Bar -->
+                <div class="bg-slate-900 text-white p-4 sm:p-6 flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex items-center gap-3">
+                        <span class="w-3 h-3 rounded-full bg-emerald-400 animate-pulse"></span>
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1.5">Dars sanalari (har bir dars katagi uchun sana):</label>
-                            <div id="edit-dates-container" class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-12 gap-1.5">
-                                <!-- Date inputs injected here -->
-                            </div>
-                            <button onclick="saveDates()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2 rounded text-xs mt-3 shadow">Sanalarni Saqlash</button>
+                            <h3 class="font-extrabold text-base sm:text-lg">Boshqaruv Paneli (Admin)</h3>
+                            <p class="text-xs text-slate-400">Barcha o'zgarishlar darhol saqlanadi va ota-onalarga ko'rinadi</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button onclick="openResetModal()" class="bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-400/30 px-3 py-1.5 rounded-xl text-xs font-bold transition">
+                            🔄 Boshlang'ich holat
+                        </button>
+                        <button onclick="logoutAdmin()" class="bg-rose-600 hover:bg-rose-700 text-white px-3.5 py-1.5 rounded-xl text-xs font-bold transition">
+                            Chiqish ✕
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Admin Navigation Tabs -->
+                <div class="flex overflow-x-auto bg-slate-100 p-1.5 gap-1 border-b border-slate-200 text-xs sm:text-sm font-bold">
+                    <button onclick="switchAdminTab('tab-grade')" id="btn-tab-grade" class="admin-tab-btn flex-1 py-2.5 px-3 rounded-xl whitespace-nowrap bg-white text-indigo-600 shadow-sm">
+                        📝 Kunlik baholash
+                    </button>
+                    <button onclick="switchAdminTab('tab-schedule')" id="btn-tab-schedule" class="admin-tab-btn flex-1 py-2.5 px-3 rounded-xl whitespace-nowrap text-slate-600 hover:text-slate-900">
+                        📅 Oy va Kunlar shabloni
+                    </button>
+                    <button onclick="switchAdminTab('tab-students')" id="btn-tab-students" class="admin-tab-btn flex-1 py-2.5 px-3 rounded-xl whitespace-nowrap text-slate-600 hover:text-slate-900">
+                        👤 O'quvchilar (+/-)
+                    </button>
+                    <button onclick="switchAdminTab('tab-payments')" id="btn-tab-payments" class="admin-tab-btn flex-1 py-2.5 px-3 rounded-xl whitespace-nowrap text-slate-600 hover:text-slate-900">
+                        💳 Oylik To'lovlar
+                    </button>
+                </div>
+
+                <!-- TAB 1: KUNLIK BAHOLASH -->
+                <div id="tab-grade" class="admin-tab-content p-4 sm:p-6">
+                    
+                    <!-- Sub-mode selector: By Day vs By Student -->
+                    <div class="flex flex-wrap items-center justify-between gap-3 mb-5 pb-4 border-b border-slate-100">
+                        <div class="inline-flex bg-slate-100 p-1 rounded-xl">
+                            <button id="mode-by-day-btn" onclick="setGradingMode('day')" class="px-3.5 py-1.5 rounded-lg text-xs font-bold bg-white text-indigo-600 shadow-sm">
+                                📅 Kun bo'yicha baholash
+                            </button>
+                            <button id="mode-by-student-btn" onclick="setGradingMode('student')" class="px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-600">
+                                🎓 O'quvchi bo'yicha baholash
+                            </button>
+                        </div>
+
+                        <!-- Quick Bulk Template Fill (Visible in Day Mode) -->
+                        <div id="bulk-fill-controls" class="flex flex-wrap items-center gap-1.5 text-xs">
+                            <span class="text-slate-500 font-medium mr-1">Tayyor shablon (shu kun uchun):</span>
+                            <button onclick="applyBulkDayStatus('green', true)" class="px-2.5 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 font-semibold transition">
+                                Bo'shlariga "To'liq" qo'yish
+                            </button>
+                            <button onclick="applyBulkDayStatus('white', false)" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold transition">
+                                Shu kunni tozalash
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- MODE A: BY DAY -->
+                    <div id="grading-by-day-view">
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+                            Dars kunini tanlang:
+                        </label>
+                        <div id="admin-day-pills" class="flex overflow-x-auto gap-1.5 pb-2 mb-4">
+                            <!-- Day pills injected here -->
+                        </div>
+
+                        <div id="admin-day-students-list" class="divide-y divide-slate-100 border border-slate-200 rounded-2xl overflow-hidden">
+                            <!-- Student rows with 5 quick color buttons -->
+                        </div>
+                    </div>
+
+                    <!-- MODE B: BY STUDENT -->
+                    <div id="grading-by-student-view" class="hidden">
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+                            O'quvchini tanlang:
+                        </label>
+                        <select id="admin-student-select" onchange="renderAdminStudentGrading()" class="w-full sm:w-80 p-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-bold text-slate-800 mb-4 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <!-- Student options -->
+                        </select>
+
+                        <div class="flex flex-wrap gap-2 mb-3">
+                            <button onclick="applyBulkStudentStatus('green')" class="px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold">
+                                Barcha kuniga "To'liq bajargan"
+                            </button>
+                            <button onclick="applyBulkStudentStatus('white')" class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 text-xs font-bold">
+                                Barcha kunini tozalash
+                            </button>
+                        </div>
+
+                        <div id="admin-single-student-days" class="divide-y divide-slate-100 border border-slate-200 rounded-2xl overflow-hidden">
+                            <!-- Selected student's days -->
                         </div>
                     </div>
                 </div>
 
-                <!-- 3. OYLIK TO'LOVLAR (Strictly inside Admin Panel ONLY!) -->
-                <div class="bg-slate-50 p-3 sm:p-4 rounded-lg border border-slate-200">
-                    <div class="mb-2">
-                        <h3 class="font-bold text-sm sm:text-base text-slate-800">3. Oylik To'lovlar Bo'limi (Faqat Admin uchun ko'rinadi)</h3>
-                        <p class="text-xs text-slate-600">Katakchani bosish orqali <b>+</b> (to'lagan), <b>-</b> (to'lamagan) yoki bo'sh holatga o'zgartiring.</p>
+                <!-- TAB 2: OY VA KUNLAR SHABLONI -->
+                <div id="tab-schedule" class="admin-tab-content hidden p-4 sm:p-6 space-y-6">
+                    
+                    <!-- Month Selector & Custom Input -->
+                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                        <h4 class="font-bold text-sm text-slate-800 mb-3">1. Oyni o'zgartirish</h4>
+                        <div class="flex flex-wrap gap-1.5 mb-3">
+                            <button onclick="quickSelectMonth('Noyabr')" class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 hover:border-indigo-400 text-xs font-semibold">Noyabr</button>
+                            <button onclick="quickSelectMonth('Dekabr')" class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 hover:border-indigo-400 text-xs font-semibold">Dekabr</button>
+                            <button onclick="quickSelectMonth('Yanvar')" class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 hover:border-indigo-400 text-xs font-semibold">Yanvar</button>
+                            <button onclick="quickSelectMonth('Fevral')" class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 hover:border-indigo-400 text-xs font-semibold">Fevral</button>
+                            <button onclick="quickSelectMonth('Mart')" class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 hover:border-indigo-400 text-xs font-semibold">Mart</button>
+                            <button onclick="quickSelectMonth('Aprel')" class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 hover:border-indigo-400 text-xs font-semibold">Aprel</button>
+                            <button onclick="quickSelectMonth('May')" class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 hover:border-indigo-400 text-xs font-semibold">May</button>
+                            <button onclick="quickSelectMonth('Iyun')" class="px-3 py-1.5 rounded-lg bg-white border border-slate-200 hover:border-indigo-400 text-xs font-semibold">Iyun</button>
+                        </div>
+                        <div class="flex gap-2 max-w-sm">
+                            <input type="text" id="admin-month-input" class="flex-1 px-3 py-2 bg-white border border-slate-300 rounded-xl text-sm font-bold" placeholder="Oy nomi...">
+                            <button onclick="saveMonthName(true)" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-xs font-bold shadow-sm">
+                                Oyni saqlash
+                            </button>
+                        </div>
                     </div>
-                    <div class="table-scroll-wrapper shadow-sm">
-                        <table id="payments-table" class="excel-table admin-active">
+
+                    <!-- Ready Date Templates -->
+                    <div class="bg-indigo-50/60 p-4 rounded-2xl border border-indigo-100">
+                        <h4 class="font-bold text-sm text-indigo-950 mb-1">2. Tayyor kunlar shablonlari (1 bosishda yuklash)</h4>
+                        <p class="text-xs text-indigo-700 mb-3">Kunlarni bittalab yozib o'tirmaslik uchun tayyor shablonlardan birini tanlang:</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                            <button onclick="applyDateTemplate('november_default')" class="p-3 bg-white hover:bg-indigo-50 border border-indigo-200 rounded-xl text-left transition shadow-sm">
+                                <div class="font-bold text-xs text-indigo-900">📌 Rasmdagi shablon (12 dars)</div>
+                                <div class="text-[11px] text-slate-500 mt-0.5">2, 4, 6, 9, 11, 13, 16, 18, 20, 23, 25, 27</div>
+                            </button>
+                            <button onclick="applyDateTemplate('odd_days')" class="p-3 bg-white hover:bg-indigo-50 border border-indigo-200 rounded-xl text-left transition shadow-sm">
+                                <div class="font-bold text-xs text-indigo-900">📅 Toq kunlar shabloni</div>
+                                <div class="text-[11px] text-slate-500 mt-0.5">1, 3, 5, 8, 10, 12, 15, 17, 19, 22, 24, 26</div>
+                            </button>
+                            <button onclick="applyDateTemplate('even_days')" class="p-3 bg-white hover:bg-indigo-50 border border-indigo-200 rounded-xl text-left transition shadow-sm">
+                                <div class="font-bold text-xs text-indigo-900">📅 Juft kunlar shabloni</div>
+                                <div class="text-[11px] text-slate-500 mt-0.5">2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24</div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Individual Days Editor -->
+                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                        <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                            <div>
+                                <h4 class="font-bold text-sm text-slate-800">3. Dars sanalarini tahrirlash yoki qo'shish</h4>
+                                <p class="text-xs text-slate-500">Har bir dars sanasini o'zgartirishingiz yoki yangi kun qo'shishingiz mumkin</p>
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="addNewDay()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold shadow-sm">
+                                    + Kun qo'shish
+                                </button>
+                                <button onclick="removeLastDay()" class="bg-rose-600 hover:bg-rose-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold shadow-sm">
+                                    - Oxirgi kunni o'chirish
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="admin-dates-grid" class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-2 mb-4">
+                            <!-- Date inputs -->
+                        </div>
+
+                        <button onclick="saveAllEditedDates()" class="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-xl text-xs font-bold shadow">
+                            💾 Barcha sanalarni saqlash
+                        </button>
+                    </div>
+                </div>
+
+                <!-- TAB 3: O'QUVCHILAR BOSHQARUVI -->
+                <div id="tab-students" class="admin-tab-content hidden p-4 sm:p-6 space-y-5">
+                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                        <h4 class="font-bold text-sm text-slate-800 mb-2">Yangi o'quvchi qo'shish (Avtomatik alifbo tartibida joylashadi)</h4>
+                        <div class="flex flex-col sm:flex-row gap-2">
+                            <input
+                                type="text"
+                                id="new-student-input"
+                                onkeydown="if(event.key==='Enter') addNewStudent()"
+                                placeholder="Familiya va Ism (masalan: Jo'raqo'ziyev Akmal)..."
+                                class="flex-1 px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                            >
+                            <button onclick="addNewStudent()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-5 py-2.5 rounded-xl text-sm shadow-sm shrink-0">
+                                + O'quvchi qo'shish
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="border border-slate-200 rounded-2xl overflow-hidden">
+                        <div class="bg-slate-100 px-4 py-2.5 text-xs font-bold text-slate-600 flex justify-between items-center">
+                            <span>Barcha o'quvchilar ro'yxati</span>
+                            <button onclick="sortAllStudents()" class="text-indigo-600 hover:underline">A-Z qayta saralash</button>
+                        </div>
+                        <div id="admin-manage-students-list" class="divide-y divide-slate-100 max-h-96 overflow-y-auto">
+                            <!-- Student list with delete button -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 4: OYLIK TO'LOVLAR (STRICTLY ADMIN ONLY) -->
+                <div id="tab-payments" class="admin-tab-content hidden p-4 sm:p-6">
+                    <div class="mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        <div>
+                            <h4 class="font-bold text-sm sm:text-base text-slate-800">💳 Oylik To'lovlar Nazorati (Faqat Admin uchun)</h4>
+                            <p class="text-xs text-slate-500">Oy tugmasini bosib <b>+</b> (To'lagan), <b>-</b> (To'lamagan) yoki bo'sh holatga o'zgartiring.</p>
+                        </div>
+                        <div id="payment-summary-badges" class="flex flex-wrap gap-1.5 text-xs">
+                            <!-- Summary stats -->
+                        </div>
+                    </div>
+
+                    <div class="border border-slate-200 rounded-2xl overflow-x-auto">
+                        <table class="w-full text-left border-collapse min-w-[640px]">
                             <thead>
-                                <tr class="header-bg">
-                                    <th colspan="9" class="font-bold p-2 text-sm sm:text-base bg-[#a5f3fc]">
-                                        O'quvchilarning Oylik To'lovlari (Noyabr – May)
-                                    </th>
-                                </tr>
-                                <tr class="sub-header-bg">
-                                    <th class="sticky-num">#</th>
-                                    <th class="sticky-name">O'quvchilar</th>
-                                    <th class="w-16">Noyabr</th>
-                                    <th class="w-16">Dekabr</th>
-                                    <th class="w-16">Yanvar</th>
-                                    <th class="w-16">Fevral</th>
-                                    <th class="w-16">Mart</th>
-                                    <th class="w-16">Aprel</th>
-                                    <th class="w-16">May</th>
+                                <tr class="bg-slate-100 text-slate-700 text-xs font-bold border-b border-slate-200">
+                                    <th class="py-3 px-3 w-10 text-center">#</th>
+                                    <th class="py-3 px-3">O'quvchi F.I.Sh</th>
+                                    <th class="py-3 px-2 text-center">Noyabr</th>
+                                    <th class="py-3 px-2 text-center">Dekabr</th>
+                                    <th class="py-3 px-2 text-center">Yanvar</th>
+                                    <th class="py-3 px-2 text-center">Fevral</th>
+                                    <th class="py-3 px-2 text-center">Mart</th>
+                                    <th class="py-3 px-2 text-center">Aprel</th>
+                                    <th class="py-3 px-2 text-center">May</th>
                                 </tr>
                             </thead>
-                            <tbody id="payment-tbody">
-                                <!-- Payment rows injected here -->
+                            <tbody id="admin-payments-tbody" class="divide-y divide-slate-100 text-xs sm:text-sm">
+                                <!-- Payment rows -->
                             </tbody>
                         </table>
                     </div>
@@ -325,128 +412,235 @@
         </div>
     </div>
 
+    <!-- ========================================================== -->
+    <!-- STUDENT DETAIL MODAL (WHEN PARENT CLICKS A STUDENT NAME)   -->
+    <!-- ========================================================== -->
+    <div id="student-detail-modal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
+        <div class="animate-modal bg-white w-full sm:max-w-lg sm:rounded-3xl rounded-t-3xl shadow-2xl max-h-[90vh] flex flex-col overflow-hidden">
+            
+            <!-- Modal Header -->
+            <div class="bg-gradient-to-r from-indigo-600 to-blue-600 text-white p-5 flex items-start justify-between gap-3 shrink-0">
+                <div class="flex items-center gap-3.5">
+                    <div id="modal-student-avatar" class="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center font-extrabold text-lg border border-white/25 shrink-0">
+                        AA
+                    </div>
+                    <div>
+                        <span id="modal-month-badge" class="inline-block text-[11px] font-semibold bg-white/20 px-2.5 py-0.5 rounded-full mb-1">
+                            Noyabr oyi hisoboti
+                        </span>
+                        <h3 id="modal-student-name" class="text-lg sm:text-xl font-extrabold leading-tight">
+                            O'quvchi Ismi
+                        </h3>
+                    </div>
+                </div>
+                <button onclick="closeStudentModal()" class="w-9 h-9 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center text-lg font-bold transition shrink-0">
+                    ✕
+                </button>
+            </div>
+
+            <!-- Mini Summary Counters inside Modal -->
+            <div id="modal-stats-bar" class="grid grid-cols-4 gap-1.5 p-3 bg-slate-50 border-b border-slate-200 text-center shrink-0">
+                <!-- Dynamically filled stats -->
+            </div>
+
+            <!-- Scrollable Day-by-Day List -->
+            <div id="modal-days-list" class="p-4 overflow-y-auto space-y-2.5 flex-1">
+                <!-- E.g. 2-noyabr: Uy vazifasini to'liq bajardi -->
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="p-3.5 bg-slate-50 border-t border-slate-200 flex justify-end shrink-0">
+                <button onclick="closeStudentModal()" class="w-full sm:w-auto px-6 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm rounded-xl transition">
+                    Yopish
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CUSTOM CONFIRMATION MODAL -->
+    <div id="confirm-modal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="animate-modal bg-white rounded-2xl max-w-sm w-full p-5 shadow-2xl text-center">
+            <h4 id="confirm-title" class="font-extrabold text-base text-slate-800 mb-1.5">Tasdiqlash</h4>
+            <p id="confirm-desc" class="text-xs sm:text-sm text-slate-600 mb-5"></p>
+            <div class="flex gap-2.5 justify-center">
+                <button onclick="closeConfirmModal()" class="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs sm:text-sm">
+                    Bekor qilish
+                </button>
+                <button id="confirm-action-btn" class="flex-1 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-xs sm:text-sm">
+                    Tasdiqlash
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- APPLICATION LOGIC & FIREBASE SYNC -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        const STORAGE_KEY = 'homework_tracker_state_v2';
+        const STORAGE_KEY = 'homework_tracker_state_v3';
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'homework-tracker-dev';
         const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
         const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
 
         let app, db, auth, user;
         let isAdmin = false;
-        let currentBrush = 'cycle'; // 'cycle' or specific color class
+        let searchQuery = '';
+        let activeStudentModalId = null;
+        let selectedAdminDayIndex = 0;
+        let adminGradingMode = 'day'; // 'day' | 'student'
 
-        // Color cycle: White -> Green -> Red -> Orange -> Grey -> White
-        const COLORS = ['cell-white', 'cell-green', 'cell-red', 'cell-orange', 'cell-grey'];
-        const PAYMENT_STATES = ['', '+', '-'];
+        const PAYMENT_MONTHS = ["Noyabr", "Dekabr", "Yanvar", "Fevral", "Mart", "Aprel", "May"];
+        const PAYMENT_CYCLE = ['', '+', '-'];
 
-        // Exact 31 students sorted alphabetically with their exact Lesson 1 color from the original image
-        const INITIAL_STUDENTS_DATA = [
-            { name: "Abdurahmonov Xayrula", firstColor: "cell-green" },
-            { name: "Abzalimov Sanjar", firstColor: "cell-grey" },
-            { name: "Aminov Jo'shqin", firstColor: "cell-green" },
-            { name: "Asatullayeva Asalxon", firstColor: "cell-red" },
-            { name: "Ashiraliyev Muhammadjon", firstColor: "cell-grey" },
-            { name: "Azamxojayeva Soliha", firstColor: "cell-grey" },
-            { name: "Baxtiyorov Sarvar", firstColor: "cell-green" },
-            { name: "Botirov Abdulaziz", firstColor: "cell-red" },
-            { name: "Davronov Salohiddin", firstColor: "cell-green" },
-            { name: "Ergashov Mustafo", firstColor: "cell-red" },
-            { name: "Eshmurodova Muslima", firstColor: "cell-green" },
-            { name: "Furqatov Muhammadsolih", firstColor: "cell-grey" },
-            { name: "Hamidova Imona", firstColor: "cell-grey" },
-            { name: "Hamidova Shukrona", firstColor: "cell-grey" },
-            { name: "Ilhomov Doston", firstColor: "cell-green" },
-            { name: "Muhammadova Dilroz", firstColor: "cell-red" },
-            { name: "Narimonov Ozodbek", firstColor: "cell-green" },
-            { name: "Nasreddinova Parizoda", firstColor: "cell-green" },
-            { name: "Negmatov Ibrohim", firstColor: "cell-grey" },
-            { name: "Norboliyeva Nigora", firstColor: "cell-green" },
-            { name: "Olimov Jahonbek", firstColor: "cell-green" },
-            { name: "Po'latov Ibrohim", firstColor: "cell-green" },
-            { name: "Qodirjonov Abdulboriy", firstColor: "cell-green" },
-            { name: "Qodirjonova Roziya", firstColor: "cell-red" },
-            { name: "Ro'zimboyeva Sevinch", firstColor: "cell-green" },
-            { name: "Saidmurodov Ibrohim", firstColor: "cell-red" },
-            { name: "Saparboyev Begzod", firstColor: "cell-grey" },
-            { name: "Saparboyev Sherzod", firstColor: "cell-grey" },
-            { name: "Shoabdullayev Muhammadaziz", firstColor: "cell-grey" },
-            { name: "Sobirjonov Yunus", firstColor: "cell-green" },
-            { name: "Toshpo'latova Nozima", firstColor: "cell-orange" }
+        // Status Metadata
+        const STATUS_INFO = {
+            'green': {
+                label: "Uy vazifasini to'liq bajargan",
+                short: "To'liq",
+                dot: "bg-emerald-500",
+                badgeBg: "bg-emerald-50 text-emerald-700 border-emerald-200",
+                rowBg: "bg-emerald-50/40 border-emerald-200/80",
+                icon: "✅"
+            },
+            'orange': {
+                label: "Uy vazifasini qisman bajargan",
+                short: "Qisman",
+                dot: "bg-amber-500",
+                badgeBg: "bg-amber-50 text-amber-800 border-amber-200",
+                rowBg: "bg-amber-50/40 border-amber-200/80",
+                icon: "⚠️"
+            },
+            'red': {
+                label: "Uy vazifasini bajarmagan",
+                short: "Bajarmagan",
+                dot: "bg-rose-500",
+                badgeBg: "bg-rose-50 text-rose-700 border-rose-200",
+                rowBg: "bg-rose-50/40 border-rose-200/80",
+                icon: "❌"
+            },
+            'gray': {
+                label: "Bu kuni darsga kelmagan",
+                short: "Kelmagan",
+                dot: "bg-slate-500",
+                badgeBg: "bg-slate-100 text-slate-700 border-slate-300",
+                rowBg: "bg-slate-100/60 border-slate-200",
+                icon: "🚫"
+            },
+            'white': {
+                label: "",
+                short: "Bo'sh",
+                dot: "bg-slate-200",
+                badgeBg: "bg-white text-slate-400 border-slate-200",
+                rowBg: "bg-white border-slate-200/70",
+                icon: ""
+            }
+        };
+
+        // Initial 31 students sorted alphabetically with their Lesson 1 (2-noyabr) status
+        const INITIAL_STUDENTS = [
+            { name: "Abdurahmonov Xayrula", first: "green" },
+            { name: "Abzalimov Sanjar", first: "gray" },
+            { name: "Aminov Jo'shqin", first: "green" },
+            { name: "Asatullayeva Asalxon", first: "red" },
+            { name: "Ashiraliyev Muhammadjon", first: "gray" },
+            { name: "Azamxojayeva Soliha", first: "gray" },
+            { name: "Baxtiyorov Sarvar", first: "green" },
+            { name: "Botirov Abdulaziz", first: "red" },
+            { name: "Davronov Salohiddin", first: "green" },
+            { name: "Ergashov Mustafo", first: "red" },
+            { name: "Eshmurodova Muslima", first: "green" },
+            { name: "Furqatov Muhammadsolih", first: "gray" },
+            { name: "Hamidova Imona", first: "gray" },
+            { name: "Hamidova Shukrona", first: "gray" },
+            { name: "Ilhomov Doston", first: "green" },
+            { name: "Muhammadova Dilroz", first: "red" },
+            { name: "Narimonov Ozodbek", first: "green" },
+            { name: "Nasreddinova Parizoda", first: "green" },
+            { name: "Negmatov Ibrohim", first: "gray" },
+            { name: "Norboliyeva Nigora", first: "green" },
+            { name: "Olimov Jahonbek", first: "green" },
+            { name: "Po'latov Ibrohim", first: "green" },
+            { name: "Qodirjonov Abdulboriy", first: "green" },
+            { name: "Qodirjonova Roziya", first: "red" },
+            { name: "Ro'zimboyeva Sevinch", first: "green" },
+            { name: "Saidmurodov Ibrohim", first: "red" },
+            { name: "Saparboyev Begzod", first: "gray" },
+            { name: "Saparboyev Sherzod", first: "gray" },
+            { name: "Shoabdullayev Muhammadaziz", first: "gray" },
+            { name: "Sobirjonov Yunus", first: "green" },
+            { name: "Toshpo'latova Nozima", first: "orange" }
         ];
 
+        function normalizeStatus(val) {
+            if (!val) return 'white';
+            if (val === 'green' || val === 'cell-green' || val === 'bg-green-500') return 'green';
+            if (val === 'red' || val === 'cell-red' || val === 'bg-red-500') return 'red';
+            if (val === 'orange' || val === 'cell-orange' || val === 'bg-orange-400') return 'orange';
+            if (val === 'gray' || val === 'cell-grey' || val === 'bg-gray-600') return 'gray';
+            return 'white';
+        }
+
+        function formatDayLabel(rawDate, monthName) {
+            const clean = String(rawDate || '').trim();
+            if (!clean) return '';
+            // If it's just a number like "2", format as "2-noyabr"
+            if (/^\d+$/.test(clean)) {
+                return `${clean}-${(monthName || 'noyabr').toLowerCase()}`;
+            }
+            return clean;
+        }
+
         function buildDefaultState() {
-            const defaultDates = ["2", "4", "6", "9", "11", "13", "16", "18", "20", "23", "25", "27"];
+            const defaultNumbers = ["2", "4", "6", "9", "11", "13", "16", "18", "20", "23", "25", "27"];
             return {
                 month: "Noyabr",
-                dates: defaultDates,
-                students: INITIAL_STUDENTS_DATA.map((item, idx) => {
-                    const grades = Array(defaultDates.length).fill('cell-white');
-                    grades[0] = item.firstColor; // Lesson 1 (date 2) color from image
+                dates: defaultNumbers,
+                students: INITIAL_STUDENTS.map((item, idx) => {
+                    const grades = Array(defaultNumbers.length).fill('white');
+                    grades[0] = item.first;
                     return {
                         id: 'std_' + (idx + 1),
                         name: item.name,
-                        grades: grades,
+                        grades,
                         payments: Array(7).fill('')
                     };
                 })
             };
         }
 
-        // Convert legacy Tailwind color classes if old state was saved
-        function normalizeColor(c) {
-            if (!c || c === 'bg-white') return 'cell-white';
-            if (c === 'bg-green-500') return 'cell-green';
-            if (c === 'bg-red-500') return 'cell-red';
-            if (c === 'bg-orange-400') return 'cell-orange';
-            if (c === 'bg-gray-600') return 'cell-grey';
-            return COLORS.includes(c) ? c : 'cell-white';
-        }
-
-        function sanitizeAndUpgradeState(rawState) {
-            if (!rawState || ! Array.isArray(rawState.students) || rawState.students.length === 0) {
+        function sanitizeState(raw) {
+            if (!raw || !Array.isArray(raw.students) || raw.students.length === 0) {
                 return buildDefaultState();
             }
-
-            const dates = Array.isArray(rawState.dates) && rawState.dates.length > 0
-                ? rawState.dates
+            const month = raw.month || "Noyabr";
+            const dates = Array.isArray(raw.dates) && raw.dates.length > 0
+                ? raw.dates.map(d => String(d))
                 : ["2", "4", "6", "9", "11", "13", "16", "18", "20", "23", "25", "27"];
 
             const colCount = dates.length;
+            const defaultFirstMap = {};
+            INITIAL_STUDENTS.forEach(s => { defaultFirstMap[s.name.toLowerCase()] = s.first; });
 
-            // Check if all Lesson 1 cells are completely white/empty (bug from previous version)
-            const allLesson1Empty = rawState.students.every(s => {
-                const g0 = normalizeColor(s.grades && s.grades[0]);
-                return g0 === 'cell-white';
-            });
+            const allEmptyDay0 = raw.students.every(s => normalizeStatus(s.grades?.[0]) === 'white');
 
-            const defaultMap = {};
-            INITIAL_STUDENTS_DATA.forEach(item => {
-                defaultMap[item.name.toLowerCase()] = item.firstColor;
-            });
-
-            const upgradedStudents = rawState.students.map((s, idx) => {
-                const grades = Array(colCount).fill('cell-white');
+            const students = raw.students.map((s, idx) => {
+                const grades = Array(colCount).fill('white');
                 if (Array.isArray(s.grades)) {
                     for (let i = 0; i < colCount; i++) {
-                        grades[i] = normalizeColor(s.grades[i]);
+                        grades[i] = normalizeStatus(s.grades[i]);
                     }
                 }
-                // Restore Lesson 1 colors if previously all blank
-                if (allLesson1Empty && s.name && defaultMap[s.name.toLowerCase()]) {
-                    grades[0] = defaultMap[s.name.toLowerCase()];
+                if (allEmptyDay0 && s.name && defaultFirstMap[s.name.toLowerCase()]) {
+                    grades[0] = defaultFirstMap[s.name.toLowerCase()];
                 }
-
                 const payments = Array(7).fill('');
                 if (Array.isArray(s.payments)) {
                     for (let i = 0; i < 7; i++) {
-                        payments[i] = PAYMENT_STATES.includes(s.payments[i]) ? s.payments[i] : '';
+                        payments[i] = PAYMENT_CYCLE.includes(s.payments[i]) ? s.payments[i] : '';
                     }
                 }
-
                 return {
                     id: s.id || ('std_' + (idx + 1)),
                     name: s.name || "Noma'lum",
@@ -455,37 +649,36 @@
                 };
             });
 
-            return {
-                month: rawState.month || "Noyabr",
-                dates: dates,
-                students: upgradedStudents
-            };
+            return { month, dates, students };
         }
 
-        // Load initial state from LocalStorage or Default
+        // Load state from localStorage (supports upgrading from v2 key too)
         let appState = buildDefaultState();
         try {
-            const cached = localStorage.getItem(STORAGE_KEY);
-            if (cached) {
-                appState = sanitizeAndUpgradeState(JSON.parse(cached));
+            const v3 = localStorage.getItem(STORAGE_KEY);
+            const v2 = localStorage.getItem('homework_tracker_state_v2');
+            if (v3) {
+                appState = sanitizeState(JSON.parse(v3));
+            } else if (v2) {
+                appState = sanitizeState(JSON.parse(v2));
             }
         } catch (e) {
-            console.warn("Local storage read error:", e);
+            console.warn("Local storage load warning:", e);
         }
 
-        // Initialize Firebase if valid config is present
+        // Initialize Firebase if available
         if (firebaseConfig && Object.keys(firebaseConfig).length > 0) {
             try {
                 app = initializeApp(firebaseConfig);
                 db = getFirestore(app);
                 auth = getAuth(app);
-                initAuth();
-            } catch (error) {
-                console.warn("Firebase init fallback to local state:", error);
+                initFirebaseAuth();
+            } catch (e) {
+                console.warn("Firebase fallback to local:", e);
             }
         }
 
-        async function initAuth() {
+        async function initFirebaseAuth() {
             if (!auth) return;
             try {
                 if (initialAuthToken) {
@@ -494,416 +687,713 @@
                     await signInAnonymously(auth);
                 }
                 user = auth.currentUser;
-                setupRealtimeSync();
-            } catch (error) {
-                console.warn("Auth fallback:", error);
+                setupFirestoreListener();
+            } catch (e) {
+                console.warn("Auth fallback:", e);
             }
         }
 
-        function setupRealtimeSync() {
+        function setupFirestoreListener() {
             if (!user || !db) return;
             const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'trackerState', 'mainDoc');
-
-            onSnapshot(docRef, (docSnap) => {
-                if (docSnap.exists()) {
-                    const rawData = docSnap.data();
-                    const hadAllBlank = Array.isArray(rawData.students) && rawData.students.every(s => normalizeColor(s.grades?.[0]) === 'cell-white');
-                    appState = sanitizeAndUpgradeState(rawData);
-                    try {
-                        localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
-                    } catch (e) {}
-                    // If cloud had uninitialized blank Lesson 1 colors, sync the restored colors back
-                    if (hadAllBlank) {
-                        saveState(appState);
-                    }
+            onSnapshot(docRef, (snap) => {
+                if (snap.exists()) {
+                    appState = sanitizeState(snap.data());
+                    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(appState)); } catch (e) {}
+                    renderAll();
                 } else {
                     saveState(appState);
                 }
-                renderApp();
-            }, (error) => {
-                console.warn("Firestore sync error:", error);
+            }, (err) => {
+                console.warn("Snapshot error:", err);
             });
         }
 
         async function saveState(newState) {
             appState = newState;
-            // Always save locally for instant persistence (works on GitHub Pages too)
             try {
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(newState));
             } catch (e) {}
 
-            // Save to Firestore if connected
             if (user && db) {
                 try {
                     const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'trackerState', 'mainDoc');
                     await setDoc(docRef, newState);
-                } catch (error) {
-                    console.error("Error saving to Firestore:", error);
+                } catch (e) {
+                    console.error("Firestore save error:", e);
                 }
             }
         }
 
-        // --- UI Rendering ---
+        // Helper: Get initials from student name
+        function getInitials(name) {
+            const parts = String(name || '').trim().split(/\s+/);
+            if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+            return (parts[0]?.[0] || 'O').toUpperCase();
+        }
 
-        function renderApp() {
-            const colCount = appState.dates.length;
-
-            // 1. Update Title & Colspan
-            document.getElementById('display-month').innerText = appState.month;
-            document.getElementById('title-colspan').setAttribute('colspan', colCount);
-            const badge = document.getElementById('student-count-badge');
-            if (badge) badge.innerText = `${appState.students.length} ta o'quvchi`;
-
-            // 2. Render Lesson Numbers Row (Row 2)
-            const lessonsRow = document.getElementById('lessons-row');
-            let lessonsHtml = `
-                <th rowspan="2" class="sticky-num">#</th>
-                <th rowspan="2" class="sticky-name text-base sm:text-xl text-center">O'quvchilar</th>
-            `;
-            for (let i = 0; i < colCount; i++) {
-                lessonsHtml += `<th class="font-bold bg-[#a5f3fc]">${i + 1}</th>`;
+        // ==========================================================
+        // RENDER FUNCTIONS
+        // ==========================================================
+        function renderAll() {
+            renderHeaderAndCards();
+            if (activeStudentModalId) {
+                renderStudentDetailModal(activeStudentModalId);
             }
-            lessonsRow.innerHTML = lessonsHtml;
-
-            // 3. Render Dates Row (Row 3)
-            const datesRow = document.getElementById('dates-row');
-            let datesHtml = '';
-            for (let i = 0; i < colCount; i++) {
-                datesHtml += `<th class="font-bold bg-[#b8f2ff]">${appState.dates[i] || ''}</th>`;
-            }
-            datesRow.innerHTML = datesHtml;
-
-            // 4. Render Students Homework Rows
-            const tbody = document.getElementById('student-tbody');
-            let tbodyHtml = '';
-
-            appState.students.forEach((student, index) => {
-                tbodyHtml += `<tr>`;
-                // Sticky Index
-                tbodyHtml += `<td class="sticky-num">${index + 1}</td>`;
-                
-                // Sticky Name + Delete button (if admin)
-                tbodyHtml += `
-                    <td class="sticky-name relative" title="${student.name}">
-                        <span>${student.name}</span>
-                        ${isAdmin ? `
-                            <button onclick="removeStudent('${student.id}')" title="O'chirish"
-                                class="absolute right-1 top-1/2 -translate-y-1/2 bg-red-500 hover:bg-red-700 text-white rounded w-5 h-5 flex items-center justify-center text-[11px] font-sans font-bold shadow">
-                                ×
-                            </button>
-                        ` : ''}
-                    </td>
-                `;
-
-                // Grade Cells
-                for (let i = 0; i < colCount; i++) {
-                    const cellColor = normalizeColor(student.grades[i]);
-                    tbodyHtml += `
-                        <td 
-                            data-student-id="${student.id}" 
-                            data-col-index="${i}" 
-                            class="grade-cell ${cellColor}">
-                        </td>
-                    `;
-                }
-                tbodyHtml += `</tr>`;
-            });
-            tbody.innerHTML = tbodyHtml;
-
-            // 5. Render Admin Controls & Payments Table (Only when Admin is logged in)
-            const mainTable = document.getElementById('main-table');
-            const topToolbar = document.getElementById('top-admin-toolbar');
-
             if (isAdmin) {
-                mainTable.classList.add('admin-active');
-                topToolbar.classList.remove('hidden');
-                topToolbar.classList.add('flex');
+                renderAdminPanel();
+            }
+        }
 
-                // Render payments table inside admin panel
-                const ptbody = document.getElementById('payment-tbody');
-                let ptbodyHtml = '';
-                appState.students.forEach((student, index) => {
-                    ptbodyHtml += `<tr>`;
-                    ptbodyHtml += `<td class="sticky-num">${index + 1}</td>`;
-                    ptbodyHtml += `<td class="sticky-name" title="${student.name}">${student.name}</td>`;
-                    
-                    const payments = student.payments || Array(7).fill('');
-                    for (let i = 0; i < 7; i++) {
-                        const payStatus = payments[i] || '';
-                        let statusClass = 'bg-white text-slate-800';
-                        if (payStatus === '+') statusClass = 'bg-[#00b050] text-white';
-                        if (payStatus === '-') statusClass = 'bg-[#ff2e2e] text-white';
+        function renderHeaderAndCards() {
+            document.getElementById('header-month-name').innerText = appState.month;
+            document.getElementById('header-student-count').innerText = `${appState.students.length} nafar`;
 
-                        ptbodyHtml += `
-                            <td 
-                                data-student-id="${student.id}" 
-                                data-col-index="${i}" 
-                                class="grade-cell ${statusClass} font-sans font-extrabold text-base cursor-pointer">
-                                ${payStatus}
-                            </td>
-                        `;
-                    }
-                    ptbodyHtml += `</tr>`;
+            const grid = document.getElementById('students-grid');
+            const emptyState = document.getElementById('empty-search-state');
+            const q = searchQuery.toLowerCase().trim();
+
+            const filtered = appState.students.filter(s => s.name.toLowerCase().includes(q));
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+            emptyState.classList.add('hidden');
+
+            let html = '';
+            filtered.forEach((student) => {
+                const realIndex = appState.students.findIndex(st => st.id === student.id) + 1;
+                const initials = getInitials(student.name);
+
+                // Count completed vs filled
+                let greenCount = 0;
+                let filledDotsHtml = '';
+                appState.dates.forEach((d, idx) => {
+                    const st = normalizeStatus(student.grades[idx]);
+                    if (st === 'green') greenCount++;
+                    const dotColor = STATUS_INFO[st].dot;
+                    filledDotsHtml += `<span class="w-2 h-2 rounded-full ${dotColor}" title="${formatDayLabel(d, appState.month)}"></span>`;
                 });
-                ptbody.innerHTML = ptbodyHtml;
 
-                // Populate month and date inputs
-                document.getElementById('edit-month').value = appState.month;
-                const editDatesContainer = document.getElementById('edit-dates-container');
-                let inputsHtml = '';
-                for (let i = 0; i < colCount; i++) {
-                    inputsHtml += `
-                        <div class="flex flex-col">
-                            <span class="text-[10px] text-slate-500 font-bold text-center">${i + 1}-dars</span>
-                            <input type="text" id="edit-date-${i}" value="${appState.dates[i] || ''}" 
-                                class="border border-slate-400 p-1 text-center w-full rounded text-xs bg-white font-bold shadow-sm">
+                html += `
+                    <button
+                        onclick="openStudentModal('${student.id}')"
+                        class="group w-full text-left bg-white hover:bg-indigo-50/40 active:scale-[0.99] border border-slate-200/90 hover:border-indigo-300 rounded-2xl p-3.5 sm:p-4 shadow-sm hover:shadow-md transition-all flex items-center justify-between gap-3"
+                    >
+                        <div class="flex items-center gap-3 min-w-0">
+                            <div class="w-10 h-10 rounded-xl bg-slate-100 group-hover:bg-indigo-600 group-hover:text-white text-slate-700 font-extrabold text-xs flex items-center justify-center shrink-0 transition-colors">
+                                ${realIndex}
+                            </div>
+                            <div class="min-w-0">
+                                <div class="font-bold text-slate-900 group-hover:text-indigo-700 text-sm sm:text-base truncate transition-colors">
+                                    ${student.name}
+                                </div>
+                                <div class="flex items-center gap-1 mt-1.5 flex-wrap">
+                                    ${filledDotsHtml}
+                                </div>
+                            </div>
                         </div>
-                    `;
-                }
-                editDatesContainer.innerHTML = inputsHtml;
-            } else {
-                mainTable.classList.remove('admin-active');
-                topToolbar.classList.add('hidden');
-                topToolbar.classList.remove('flex');
-            }
-        }
 
-        // --- Interactive Event Listeners ---
-
-        // Homework table cell click
-        document.getElementById('student-tbody').addEventListener('click', (e) => {
-            if (!isAdmin) return;
-            const cell = e.target.closest('.grade-cell');
-            if (!cell) return;
-
-            const studentId = cell.getAttribute('data-student-id');
-            const colIndex = parseInt(cell.getAttribute('data-col-index'));
-            handleHomeworkCellClick(studentId, colIndex);
-        });
-
-        function handleHomeworkCellClick(studentId, colIndex) {
-            const studentIndex = appState.students.findIndex(s => s.id === studentId);
-            if (studentIndex === -1) return;
-
-            const currentColor = normalizeColor(appState.students[studentIndex].grades[colIndex]);
-            let nextColor;
-
-            if (currentBrush === 'cycle') {
-                let nextColorIndex = COLORS.indexOf(currentColor) + 1;
-                if (nextColorIndex >= COLORS.length) nextColorIndex = 0;
-                nextColor = COLORS[nextColorIndex];
-            } else {
-                // Toggle back to white if clicking with the same active brush color
-                nextColor = (currentColor === currentBrush) ? 'cell-white' : currentBrush;
-            }
-
-            const newState = JSON.parse(JSON.stringify(appState));
-            newState.students[studentIndex].grades[colIndex] = nextColor;
-            renderApp();
-            saveState(newState);
-        }
-
-        // Payments table cell click (Inside Admin Panel)
-        document.getElementById('payment-tbody').addEventListener('click', (e) => {
-            if (!isAdmin) return;
-            const cell = e.target.closest('.grade-cell');
-            if (!cell) return;
-
-            const studentId = cell.getAttribute('data-student-id');
-            const colIndex = parseInt(cell.getAttribute('data-col-index'));
-            cyclePaymentCell(studentId, colIndex);
-        });
-
-        function cyclePaymentCell(studentId, colIndex) {
-            const studentIndex = appState.students.findIndex(s => s.id === studentId);
-            if (studentIndex === -1) return;
-
-            const currentStatus = appState.students[studentIndex].payments[colIndex] || '';
-            let nextIndex = PAYMENT_STATES.indexOf(currentStatus) + 1;
-            if (nextIndex >= PAYMENT_STATES.length) nextIndex = 0;
-
-            const newState = JSON.parse(JSON.stringify(appState));
-            newState.students[studentIndex].payments[colIndex] = PAYMENT_STATES[nextIndex];
-            saveState(newState);
-            renderApp();
-        }
-
-        // --- Admin Functions ---
-
-        window.setBrush = function(brush) {
-            currentBrush = brush;
-            document.querySelectorAll('.brush-btn').forEach(btn => {
-                if (btn.getAttribute('data-brush') === brush) {
-                    btn.classList.add('ring-2', 'ring-white', 'scale-105');
-                } else {
-                    btn.classList.remove('ring-2', 'ring-white', 'scale-105');
-                }
+                        <div class="flex items-center gap-2 shrink-0">
+                            ${greenCount > 0 ? `
+                                <span class="hidden xs:inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-bold">
+                                    ✅ ${greenCount}
+                                </span>
+                            ` : ''}
+                            <div class="w-8 h-8 rounded-xl bg-slate-50 group-hover:bg-indigo-100 text-slate-400 group-hover:text-indigo-600 flex items-center justify-center font-bold transition-colors">
+                                ›
+                            </div>
+                        </div>
+                    </button>
+                `;
             });
+
+            grid.innerHTML = html;
+        }
+
+        // ==========================================================
+        // PARENT DETAIL MODAL
+        // ==========================================================
+        window.openStudentModal = function(studentId) {
+            activeStudentModalId = studentId;
+            renderStudentDetailModal(studentId);
+            const modal = document.getElementById('student-detail-modal');
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
         };
 
-        window.attemptLogin = function() {
-            const pwd = document.getElementById('admin-password').value.trim();
-            const errorEl = document.getElementById('login-error');
-            if (pwd === '0912') {
+        window.closeStudentModal = function() {
+            activeStudentModalId = null;
+            document.getElementById('student-detail-modal').classList.add('hidden');
+            document.body.style.overflow = '';
+        };
+
+        // Close modal when clicking backdrop
+        document.getElementById('student-detail-modal').addEventListener('click', (e) => {
+            if (e.target.id === 'student-detail-modal') closeStudentModal();
+        });
+
+        function renderStudentDetailModal(studentId) {
+            const student = appState.students.find(s => s.id === studentId);
+            if (!student) return;
+
+            document.getElementById('modal-student-avatar').innerText = getInitials(student.name);
+            document.getElementById('modal-student-name').innerText = student.name;
+            document.getElementById('modal-month-badge').innerText = `${appState.month} oyi hisoboti`;
+
+            let counts = { green: 0, orange: 0, red: 0, gray: 0 };
+            let listHtml = '';
+
+            appState.dates.forEach((rawDate, idx) => {
+                const st = normalizeStatus(student.grades[idx]);
+                if (counts[st] !== undefined) counts[st]++;
+
+                const info = STATUS_INFO[st];
+                const dayTitle = formatDayLabel(rawDate, appState.month) || `${idx + 1}-dars`;
+
+                listHtml += `
+                    <div class="flex items-center justify-between gap-3 p-3 rounded-2xl border ${info.rowBg} transition">
+                        <div class="flex items-center gap-2.5 shrink-0">
+                            <span class="w-6 h-6 rounded-lg bg-slate-100 text-slate-600 font-bold text-xs flex items-center justify-center">
+                                ${idx + 1}
+                            </span>
+                            <span class="font-bold text-slate-800 text-sm">
+                                ${dayTitle}:
+                            </span>
+                        </div>
+
+                        <div class="text-right">
+                            ${st === 'white' ? `
+                                <span class="text-xs text-slate-400 italic px-2 py-1">
+                                    
+                                </span>
+                            ` : `
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl border text-xs font-bold ${info.badgeBg}">
+                                    <span>${info.icon}</span>
+                                    <span>${info.label}</span>
+                                </span>
+                            `}
+                        </div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('modal-days-list').innerHTML = listHtml;
+
+            document.getElementById('modal-stats-bar').innerHTML = `
+                <div class="bg-emerald-50 border border-emerald-200/80 rounded-xl p-2">
+                    <div class="text-sm sm:text-base font-extrabold text-emerald-700">${counts.green}</div>
+                    <div class="text-[10px] font-semibold text-emerald-600">To'liq</div>
+                </div>
+                <div class="bg-amber-50 border border-amber-200/80 rounded-xl p-2">
+                    <div class="text-sm sm:text-base font-extrabold text-amber-700">${counts.orange}</div>
+                    <div class="text-[10px] font-semibold text-amber-700">Qisman</div>
+                </div>
+                <div class="bg-rose-50 border border-rose-200/80 rounded-xl p-2">
+                    <div class="text-sm sm:text-base font-extrabold text-rose-700">${counts.red}</div>
+                    <div class="text-[10px] font-semibold text-rose-600">Bajarmagan</div>
+                </div>
+                <div class="bg-slate-100 border border-slate-200 rounded-xl p-2">
+                    <div class="text-sm sm:text-base font-extrabold text-slate-700">${counts.gray}</div>
+                    <div class="text-[10px] font-semibold text-slate-600">Kelmagan</div>
+                </div>
+            `;
+        }
+
+        // ==========================================================
+        // SEARCH LOGIC
+        // ==========================================================
+        window.handleSearch = function(val) {
+            searchQuery = val;
+            const clearBtn = document.getElementById('clear-search-btn');
+            if (val.trim().length > 0) {
+                clearBtn.classList.remove('hidden');
+                clearBtn.classList.add('flex');
+            } else {
+                clearBtn.classList.add('hidden');
+                clearBtn.classList.remove('flex');
+            }
+            renderHeaderAndCards();
+        };
+
+        window.clearSearch = function() {
+            const input = document.getElementById('student-search');
+            input.value = '';
+            handleSearch('');
+        };
+
+        // ==========================================================
+        // ADMIN PANEL CONTROLS
+        // ==========================================================
+        window.loginAdmin = function() {
+            const input = document.getElementById('admin-password-input');
+            const err = document.getElementById('admin-error-msg');
+            if (input.value.trim() === '0912') {
                 isAdmin = true;
-                errorEl.classList.add('hidden');
-                document.getElementById('admin-login-section').classList.add('hidden');
-                document.getElementById('admin-controls').classList.remove('hidden');
-                document.getElementById('admin-controls').classList.add('flex');
-                document.getElementById('admin-password').value = '';
-                renderApp();
+                input.value = '';
+                err.classList.add('hidden');
+                document.getElementById('admin-lock-box').classList.add('hidden');
+                document.getElementById('admin-dashboard').classList.remove('hidden');
+                renderAdminPanel();
                 showToast("Admin paneli ochildi!", "bg-emerald-600");
             } else {
-                errorEl.classList.remove('hidden');
+                err.classList.remove('hidden');
             }
         };
 
         window.logoutAdmin = function() {
             isAdmin = false;
-            document.getElementById('admin-login-section').classList.remove('hidden');
-            document.getElementById('admin-controls').classList.add('hidden');
-            document.getElementById('admin-controls').classList.remove('flex');
-            renderApp();
+            document.getElementById('admin-dashboard').classList.add('hidden');
+            document.getElementById('admin-lock-box').classList.remove('hidden');
+            showToast("Admin panelidan chiqildi", "bg-slate-800");
         };
 
-        window.saveMonth = function() {
-            const newMonth = document.getElementById('edit-month').value.trim();
-            if (newMonth) {
-                const newState = { ...appState, month: newMonth };
-                saveState(newState);
-                renderApp();
-                showToast("Oy nomi saqlandi!", "bg-indigo-600");
-            }
-        };
+        window.switchAdminTab = function(tabId) {
+            document.querySelectorAll('.admin-tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(tabId).classList.remove('hidden');
 
-        window.saveDates = function() {
-            const colCount = appState.dates.length;
-            const newDates = [];
-            for (let i = 0; i < colCount; i++) {
-                const el = document.getElementById(`edit-date-${i}`);
-                newDates.push(el ? el.value.trim() : '');
-            }
-            const newState = { ...appState, dates: newDates };
-            saveState(newState);
-            renderApp();
-            showToast("Sanalar saqlandi!", "bg-indigo-600");
-        };
-
-        window.addLessonColumn = function() {
-            const newState = JSON.parse(JSON.stringify(appState));
-            newState.dates.push("");
-            newState.students.forEach(s => {
-                s.grades.push('cell-white');
+            document.querySelectorAll('.admin-tab-btn').forEach(btn => {
+                btn.classList.remove('bg-white', 'text-indigo-600', 'shadow-sm');
+                btn.classList.add('text-slate-600');
             });
-            saveState(newState);
-            renderApp();
-            showToast("Yangi dars ustuni qo'shildi!", "bg-blue-600");
+            const activeBtn = document.getElementById('btn-' + tabId);
+            if (activeBtn) {
+                activeBtn.classList.add('bg-white', 'text-indigo-600', 'shadow-sm');
+                activeBtn.classList.remove('text-slate-600');
+            }
+            renderAdminPanel();
         };
 
-        window.removeLessonColumn = function() {
+        window.setGradingMode = function(mode) {
+            adminGradingMode = mode;
+            const dayBtn = document.getElementById('mode-by-day-btn');
+            const stdBtn = document.getElementById('mode-by-student-btn');
+            const dayView = document.getElementById('grading-by-day-view');
+            const stdView = document.getElementById('grading-by-student-view');
+            const bulkCtrl = document.getElementById('bulk-fill-controls');
+
+            if (mode === 'day') {
+                dayBtn.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold bg-white text-indigo-600 shadow-sm";
+                stdBtn.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-600";
+                dayView.classList.remove('hidden');
+                stdView.classList.add('hidden');
+                bulkCtrl.classList.remove('hidden');
+            } else {
+                stdBtn.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold bg-white text-indigo-600 shadow-sm";
+                dayBtn.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-600";
+                stdView.classList.remove('hidden');
+                dayView.classList.add('hidden');
+                bulkCtrl.classList.add('hidden');
+            }
+            renderAdminPanel();
+        };
+
+        function renderAdminPanel() {
+            if (!isAdmin) return;
+
+            if (selectedAdminDayIndex >= appState.dates.length) {
+                selectedAdminDayIndex = 0;
+            }
+
+            // 1. Render Day Pills for Grading
+            const pillsContainer = document.getElementById('admin-day-pills');
+            let pillsHtml = '';
+            appState.dates.forEach((d, idx) => {
+                const label = formatDayLabel(d, appState.month) || `${idx + 1}-dars`;
+                const active = idx === selectedAdminDayIndex;
+                pillsHtml += `
+                    <button
+                        onclick="selectAdminDay(${idx})"
+                        class="px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition ${
+                            active
+                                ? 'bg-indigo-600 text-white shadow-sm'
+                                : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                        }"
+                    >
+                        ${idx + 1}. ${label}
+                    </button>
+                `;
+            });
+            pillsContainer.innerHTML = pillsHtml;
+
+            // 2. Render Students List for Selected Day
+            const dayStudentsList = document.getElementById('admin-day-students-list');
+            let dayRowsHtml = '';
+            appState.students.forEach((student, idx) => {
+                const currentSt = normalizeStatus(student.grades[selectedAdminDayIndex]);
+                dayRowsHtml += `
+                    <div class="p-3 bg-white hover:bg-slate-50/80 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+                        <div class="flex items-center gap-2.5">
+                            <span class="w-6 h-6 rounded-lg bg-slate-100 text-slate-600 font-bold text-xs flex items-center justify-center shrink-0">
+                                ${idx + 1}
+                            </span>
+                            <span class="font-bold text-sm text-slate-800">${student.name}</span>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-1.5">
+                            ${renderStatusButtons(student.id, selectedAdminDayIndex, currentSt)}
+                        </div>
+                    </div>
+                `;
+            });
+            dayStudentsList.innerHTML = dayRowsHtml;
+
+            // 3. Render Student Select Dropdown (Mode B)
+            const stdSelect = document.getElementById('admin-student-select');
+            const prevSelectedId = stdSelect.value || appState.students[0]?.id;
+            stdSelect.innerHTML = appState.students.map((s, i) =>
+                `<option value="${s.id}" ${s.id === prevSelectedId ? 'selected' : ''}>${i + 1}. ${s.name}</option>`
+            ).join('');
+            renderAdminStudentGrading();
+
+            // 4. Render Tab 2: Month & Date Inputs
+            document.getElementById('admin-month-input').value = appState.month;
+            const datesGrid = document.getElementById('admin-dates-grid');
+            let dateInputsHtml = '';
+            appState.dates.forEach((d, idx) => {
+                dateInputsHtml += `
+                    <div class="bg-white p-2 rounded-xl border border-slate-200">
+                        <label class="block text-[10px] font-bold text-slate-400 mb-1">${idx + 1}-dars sanasi</label>
+                        <input
+                            type="text"
+                            id="admin-date-input-${idx}"
+                            value="${d}"
+                            placeholder="Masalan: 2-noyabr"
+                            class="w-full px-2 py-1 text-xs font-bold text-slate-800 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        >
+                    </div>
+                `;
+            });
+            datesGrid.innerHTML = dateInputsHtml;
+
+            // 5. Render Tab 3: Manage Students List
+            const manageList = document.getElementById('admin-manage-students-list');
+            manageList.innerHTML = appState.students.map((s, idx) => `
+                <div class="px-4 py-2.5 bg-white flex items-center justify-between gap-2 hover:bg-slate-50">
+                    <span class="text-sm font-semibold text-slate-800">${idx + 1}. ${s.name}</span>
+                    <button onclick="confirmDeleteStudent('${s.id}')" class="px-2.5 py-1 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-lg text-xs font-bold">
+                        O'chirish
+                    </button>
+                </div>
+            `).join('');
+
+            // 6. Render Tab 4: Monthly Payments
+            renderAdminPayments();
+        }
+
+        function renderStatusButtons(studentId, dayIdx, currentSt) {
+            const buttons = [
+                { key: 'green', text: "To'liq", activeCls: 'bg-emerald-600 text-white ring-2 ring-emerald-300', idleCls: 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100' },
+                { key: 'orange', text: "Qisman", activeCls: 'bg-amber-500 text-white ring-2 ring-amber-300', idleCls: 'bg-amber-50 text-amber-800 hover:bg-amber-100' },
+                { key: 'red', text: "Bajarmagan", activeCls: 'bg-rose-600 text-white ring-2 ring-rose-300', idleCls: 'bg-rose-50 text-rose-700 hover:bg-rose-100' },
+                { key: 'gray', text: "Kelmagan", activeCls: 'bg-slate-700 text-white ring-2 ring-slate-300', idleCls: 'bg-slate-100 text-slate-700 hover:bg-slate-200' },
+                { key: 'white', text: "Bo'sh", activeCls: 'bg-slate-900 text-white', idleCls: 'bg-white border border-slate-200 text-slate-500 hover:bg-slate-50' }
+            ];
+
+            return buttons.map(b => `
+                <button
+                    onclick="setStudentDayGrade('${studentId}', ${dayIdx}, '${b.key}')"
+                    class="px-2.5 py-1.5 rounded-lg text-xs font-bold transition ${currentSt === b.key ? b.activeCls : b.idleCls}"
+                >
+                    ${b.text}
+                </button>
+            `).join('');
+        }
+
+        window.renderAdminStudentGrading = function() {
+            const stdSelect = document.getElementById('admin-student-select');
+            const studentId = stdSelect.value;
+            const student = appState.students.find(s => s.id === studentId);
+            const container = document.getElementById('admin-single-student-days');
+            if (!student || !container) return;
+
+            let html = '';
+            appState.dates.forEach((d, idx) => {
+                const currentSt = normalizeStatus(student.grades[idx]);
+                const label = formatDayLabel(d, appState.month) || `${idx + 1}-dars`;
+                html += `
+                    <div class="p-3 bg-white flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        <div class="font-bold text-sm text-slate-800">
+                            ${idx + 1}. ${label}
+                        </div>
+                        <div class="flex flex-wrap items-center gap-1.5">
+                            ${renderStatusButtons(student.id, idx, currentSt)}
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        };
+
+        window.selectAdminDay = function(idx) {
+            selectedAdminDayIndex = idx;
+            renderAdminPanel();
+        };
+
+        window.setStudentDayGrade = function(studentId, dayIdx, statusKey) {
+            const nextState = JSON.parse(JSON.stringify(appState));
+            const stIndex = nextState.students.findIndex(s => s.id === studentId);
+            if (stIndex === -1) return;
+            nextState.students[stIndex].grades[dayIdx] = statusKey;
+            saveState(nextState);
+            renderAll();
+        };
+
+        window.applyBulkDayStatus = function(statusKey, onlyEmpty) {
+            const nextState = JSON.parse(JSON.stringify(appState));
+            nextState.students.forEach(s => {
+                const cur = normalizeStatus(s.grades[selectedAdminDayIndex]);
+                if (!onlyEmpty || cur === 'white') {
+                    s.grades[selectedAdminDayIndex] = statusKey;
+                }
+            });
+            saveState(nextState);
+            renderAll();
+            showToast("Tanlangan kun uchun shablon qo'llandi!", "bg-indigo-600");
+        };
+
+        window.applyBulkStudentStatus = function(statusKey) {
+            const studentId = document.getElementById('admin-student-select').value;
+            const nextState = JSON.parse(JSON.stringify(appState));
+            const st = nextState.students.find(s => s.id === studentId);
+            if (!st) return;
+            st.grades = st.grades.map(() => statusKey);
+            saveState(nextState);
+            renderAll();
+            showToast("O'quvchining barcha kunlari yangilandi!", "bg-indigo-600");
+        };
+
+        // ==========================================================
+        // TAB 2: SCHEDULE & READY TEMPLATES
+        // ==========================================================
+        window.quickSelectMonth = function(mName) {
+            document.getElementById('admin-month-input').value = mName;
+            saveMonthName(true);
+        };
+
+        window.saveMonthName = function(showNotification) {
+            const val = document.getElementById('admin-month-input').value.trim();
+            if (!val) return;
+            const nextState = JSON.parse(JSON.stringify(appState));
+            nextState.month = val;
+            saveState(nextState);
+            renderAll();
+            if (showNotification) showToast(`Oy "${val}" ga o'zgartirildi!`, "bg-indigo-600");
+        };
+
+        window.applyDateTemplate = function(templateName) {
+            let newDates = [];
+            if (templateName === 'november_default') {
+                newDates = ["2", "4", "6", "9", "11", "13", "16", "18", "20", "23", "25", "27"];
+            } else if (templateName === 'odd_days') {
+                newDates = ["1", "3", "5", "8", "10", "12", "15", "17", "19", "22", "24", "26"];
+            } else if (templateName === 'even_days') {
+                newDates = ["2", "4", "6", "8", "10", "12", "14", "16", "18", "20", "22", "24"];
+            }
+
+            const nextState = JSON.parse(JSON.stringify(appState));
+            nextState.dates = newDates;
+            nextState.students.forEach(s => {
+                const updatedGrades = Array(newDates.length).fill('white');
+                for (let i = 0; i < Math.min(s.grades.length, newDates.length); i++) {
+                    updatedGrades[i] = normalizeStatus(s.grades[i]);
+                }
+                s.grades = updatedGrades;
+            });
+
+            saveState(nextState);
+            renderAll();
+            showToast("Kunlar shabloni yuklandi!", "bg-indigo-600");
+        };
+
+        window.saveAllEditedDates = function() {
+            const nextState = JSON.parse(JSON.stringify(appState));
+            nextState.dates = nextState.dates.map((oldVal, idx) => {
+                const el = document.getElementById(`admin-date-input-${idx}`);
+                return el ? el.value.trim() : oldVal;
+            });
+            saveState(nextState);
+            renderAll();
+            showToast("Barcha dars sanalari saqlandi!", "bg-emerald-600");
+        };
+
+        window.addNewDay = function() {
+            const nextState = JSON.parse(JSON.stringify(appState));
+            const lastNum = parseInt(nextState.dates[nextState.dates.length - 1]);
+            const nextLabel = !isNaN(lastNum) && lastNum < 29 ? String(lastNum + 2) : `${nextState.dates.length + 1}-dars`;
+            nextState.dates.push(nextLabel);
+            nextState.students.forEach(s => s.grades.push('white'));
+            saveState(nextState);
+            renderAll();
+            showToast("Yangi dars kuni qo'shildi!", "bg-emerald-600");
+        };
+
+        window.removeLastDay = function() {
             if (appState.dates.length <= 1) return;
-            const newState = JSON.parse(JSON.stringify(appState));
-            newState.dates.pop();
-            newState.students.forEach(s => {
-                s.grades.pop();
-            });
-            saveState(newState);
-            renderApp();
-            showToast("Oxirgi ustun o'chirildi!", "bg-rose-600");
+            const nextState = JSON.parse(JSON.stringify(appState));
+            nextState.dates.pop();
+            nextState.students.forEach(s => s.grades.pop());
+            saveState(nextState);
+            renderAll();
+            showToast("Oxirgi dars kuni o'chirildi", "bg-rose-600");
         };
 
-        window.addStudent = function() {
-            const nameInput = document.getElementById('new-student-name');
-            const name = nameInput.value.trim();
+        // ==========================================================
+        // TAB 3: ADD / REMOVE STUDENTS
+        // ==========================================================
+        window.addNewStudent = function() {
+            const input = document.getElementById('new-student-input');
+            const name = input.value.trim();
             if (!name) return;
 
-            const colCount = appState.dates.length;
-            const newStudent = {
-                id: 'std_' + Date.now().toString(36) + Math.random().toString(36).substring(2, 6),
-                name: name,
-                grades: Array(colCount).fill('cell-white'),
+            const nextState = JSON.parse(JSON.stringify(appState));
+            nextState.students.push({
+                id: 'std_' + Date.now().toString(36),
+                name,
+                grades: Array(nextState.dates.length).fill('white'),
                 payments: Array(7).fill('')
-            };
+            });
 
-            const updatedStudents = [...appState.students, newStudent].sort((a, b) =>
-                a.name.localeCompare(b.name, 'uz', { sensitivity: 'base' })
+            nextState.students.sort((a, b) => a.name.localeCompare(b.name, 'uz', { sensitivity: 'base' }));
+            input.value = '';
+            saveState(nextState);
+            renderAll();
+            showToast("Yangi o'quvchi alifbo tartibida qo'shildi!", "bg-emerald-600");
+        };
+
+        window.sortAllStudents = function() {
+            const nextState = JSON.parse(JSON.stringify(appState));
+            nextState.students.sort((a, b) => a.name.localeCompare(b.name, 'uz', { sensitivity: 'base' }));
+            saveState(nextState);
+            renderAll();
+            showToast("Alifbo tartibida saralandi!", "bg-indigo-600");
+        };
+
+        window.confirmDeleteStudent = function(studentId) {
+            const st = appState.students.find(s => s.id === studentId);
+            if (!st) return;
+
+            openConfirmModal(
+                "O'quvchini o'chirish",
+                `"${st.name}" ro'yxatdan butunlay o'chirilsinmi?`,
+                () => {
+                    const nextState = JSON.parse(JSON.stringify(appState));
+                    nextState.students = nextState.students.filter(s => s.id !== studentId);
+                    saveState(nextState);
+                    renderAll();
+                    showToast("O'quvchi o'chirildi", "bg-rose-600");
+                }
             );
-
-            const newState = { ...appState, students: updatedStudents };
-            nameInput.value = '';
-            saveState(newState);
-            renderApp();
-            showToast("O'quvchi alifbo tartibida qo'shildi!", "bg-emerald-600");
         };
 
-        window.sortStudentsAlphabetically = function() {
-            const sorted = [...appState.students].sort((a, b) =>
-                a.name.localeCompare(b.name, 'uz', { sensitivity: 'base' })
+        // ==========================================================
+        // TAB 4: MONTHLY PAYMENTS (ADMIN ONLY)
+        // ==========================================================
+        function renderAdminPayments() {
+            const tbody = document.getElementById('admin-payments-tbody');
+            const summaryEl = document.getElementById('payment-summary-badges');
+            if (!tbody) return;
+
+            let paidTotals = Array(7).fill(0);
+            let rowsHtml = '';
+
+            appState.students.forEach((student, idx) => {
+                const payments = student.payments || Array(7).fill('');
+                rowsHtml += `<tr class="hover:bg-slate-50">`;
+                rowsHtml += `<td class="py-2.5 px-3 text-center font-bold text-slate-400">${idx + 1}</td>`;
+                rowsHtml += `<td class="py-2.5 px-3 font-bold text-slate-800">${student.name}</td>`;
+
+                for (let m = 0; m < 7; m++) {
+                    const val = payments[m] || '';
+                    if (val === '+') paidTotals[m]++;
+
+                    let btnCls = 'bg-slate-100 text-slate-400 hover:bg-slate-200';
+                    let label = '·';
+                    if (val === '+') {
+                        btnCls = 'bg-emerald-600 text-white shadow-sm';
+                        label = '+';
+                    } else if (val === '-') {
+                        btnCls = 'bg-rose-600 text-white shadow-sm';
+                        label = '−';
+                    }
+
+                    rowsHtml += `
+                        <td class="py-2 px-1.5 text-center">
+                            <button
+                                onclick="togglePaymentCell('${student.id}', ${m})"
+                                class="w-9 h-8 rounded-lg font-extrabold text-sm transition ${btnCls}"
+                            >
+                                ${label}
+                            </button>
+                        </td>
+                    `;
+                }
+                rowsHtml += `</tr>`;
+            });
+
+            tbody.innerHTML = rowsHtml;
+
+            summaryEl.innerHTML = PAYMENT_MONTHS.map((mName, idx) => `
+                <span class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700 font-semibold">
+                    ${mName}: <b class="text-emerald-600">+${paidTotals[idx]}</b>
+                </span>
+            `).join('');
+        }
+
+        window.togglePaymentCell = function(studentId, monthIdx) {
+            const nextState = JSON.parse(JSON.stringify(appState));
+            const st = nextState.students.find(s => s.id === studentId);
+            if (!st) return;
+            if (!Array.isArray(st.payments)) st.payments = Array(7).fill('');
+
+            const cur = st.payments[monthIdx] || '';
+            const nextIdx = (PAYMENT_CYCLE.indexOf(cur) + 1) % PAYMENT_CYCLE.length;
+            st.payments[monthIdx] = PAYMENT_CYCLE[nextIdx];
+
+            saveState(nextState);
+            renderAdminPayments();
+        };
+
+        // ==========================================================
+        // MODAL & TOAST HELPERS
+        // ==========================================================
+        let pendingConfirmFn = null;
+
+        function openConfirmModal(title, desc, onConfirm) {
+            document.getElementById('confirm-title').innerText = title;
+            document.getElementById('confirm-desc').innerText = desc;
+            pendingConfirmFn = onConfirm;
+            document.getElementById('confirm-modal').classList.remove('hidden');
+        }
+
+        window.closeConfirmModal = function() {
+            pendingConfirmFn = null;
+            document.getElementById('confirm-modal').classList.add('hidden');
+        };
+
+        document.getElementById('confirm-action-btn').addEventListener('click', () => {
+            if (pendingConfirmFn) pendingConfirmFn();
+            closeConfirmModal();
+        });
+
+        window.openResetModal = function() {
+            openConfirmModal(
+                "Boshlang'ich holatga qaytarish",
+                "Jadvaldagi 31 ta o'quvchi va 2-noyabr kungi dastlabki holatlar qayta tiklansinmi?",
+                () => {
+                    const fresh = buildDefaultState();
+                    saveState(fresh);
+                    renderAll();
+                    showToast("Boshlang'ich ma'lumotlar tiklandi!", "bg-amber-600");
+                }
             );
-            const newState = { ...appState, students: sorted };
-            saveState(newState);
-            renderApp();
-            showToast("O'quvchilar alifbo tartibida saralandi!", "bg-slate-700");
         };
 
-        window.removeStudent = function(id) {
-            const student = appState.students.find(s => s.id === id);
-            const customModal = document.createElement('div');
-            customModal.className = "fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 font-sans";
-            customModal.innerHTML = `
-                <div class="bg-white p-5 rounded-xl shadow-2xl flex flex-col items-center max-w-sm w-full text-center">
-                    <p class="mb-2 text-base font-bold text-slate-800">O'quvchini o'chirish</p>
-                    <p class="mb-5 text-sm text-slate-600"><b>${student ? student.name : ''}</b> ro'yxatdan o'chirilsinmi?</p>
-                    <div class="flex gap-3 w-full justify-center">
-                        <button id="btn-cancel" class="px-4 py-2 bg-slate-200 text-slate-800 font-semibold rounded-lg hover:bg-slate-300 text-sm">Bekor qilish</button>
-                        <button id="btn-confirm" class="px-4 py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 text-sm">Ha, o'chirish</button>
-                    </div>
-                </div>
-            `;
-            document.body.appendChild(customModal);
-
-            document.getElementById('btn-cancel').onclick = () => customModal.remove();
-            document.getElementById('btn-confirm').onclick = () => {
-                const newState = {
-                    ...appState,
-                    students: appState.students.filter(s => s.id !== id)
-                };
-                saveState(newState);
-                renderApp();
-                customModal.remove();
-                showToast("O'quvchi o'chirildi", "bg-red-600");
-            };
-        };
-
-        window.resetToDefaultData = function() {
-            const customModal = document.createElement('div');
-            customModal.className = "fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 font-sans";
-            customModal.innerHTML = `
-                <div class="bg-white p-5 rounded-xl shadow-2xl flex flex-col items-center max-w-sm w-full text-center">
-                    <p class="mb-2 text-base font-bold text-slate-800">Boshlang'ich holatga qaytarish</p>
-                    <p class="mb-5 text-xs text-slate-600">Jadvaldagi 31 ta o'quvchi va 1-darsdagi dastlabki ranglar rasmda ko'rsatilgandek qayta tiklansinmi?</p>
-                    <div class="flex gap-3 w-full justify-center">
-                        <button id="btn-reset-cancel" class="px-4 py-2 bg-slate-200 text-slate-800 font-semibold rounded-lg hover:bg-slate-300 text-sm">Yo'q</button>
-                        <button id="btn-reset-confirm" class="px-4 py-2 bg-amber-500 text-white font-semibold rounded-lg hover:bg-amber-600 text-sm">Ha, tiklash</button>
-                    </div>
-                </div>
-            `;
-            document.body.appendChild(customModal);
-
-            document.getElementById('btn-reset-cancel').onclick = () => customModal.remove();
-            document.getElementById('btn-reset-confirm').onclick = () => {
-                const fresh = buildDefaultState();
-                saveState(fresh);
-                renderApp();
-                customModal.remove();
-                showToast("Boshlang'ich ma'lumotlar tiklandi!", "bg-amber-600");
-            };
-        };
-
-        function showToast(msg, bgClass = "bg-slate-800") {
+        function showToast(message, bgClass = "bg-slate-900") {
             const toast = document.createElement('div');
-            toast.className = `fixed bottom-4 right-4 ${bgClass} text-white px-4 py-2.5 rounded-lg shadow-xl text-xs sm:text-sm font-sans font-bold z-50 transition-opacity duration-300`;
-            toast.innerText = msg;
+            toast.className = `fixed bottom-5 right-5 z-50 ${bgClass} text-white px-4 py-2.5 rounded-xl shadow-xl text-xs sm:text-sm font-bold transition-all duration-300`;
+            toast.innerText = message;
             document.body.appendChild(toast);
             setTimeout(() => {
                 toast.style.opacity = '0';
@@ -911,8 +1401,8 @@
             }, 2200);
         }
 
-        // Initial render on page load
-        renderApp();
+        // Initial render
+        renderAll();
     </script>
 </body>
 </html>
