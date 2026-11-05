@@ -6,217 +6,483 @@
     <title>O'quvchilar Uy Vazifalari</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Custom minimal styling to ensure spreadsheet look */
+        /* Excel spreadsheet look & mobile responsiveness */
         body {
-            background-color: #f0fdfa; /* Very light cyan to match image background */
-            font-family: Arial, sans-serif;
+            background-color: #c5f6ff;
+            font-family: 'Times New Roman', Times, serif;
+            margin: 0;
+            padding: 0;
         }
-        table {
-            border-collapse: collapse;
+        
+        /* Scrollable wrapper that never cuts off the left side on mobile */
+        .table-scroll-wrapper {
             width: 100%;
-            max-width: 1000px;
-            margin: 0 auto;
-            background-color: #d1fae5; /* Light green-cyan base for empty cells */
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            background-color: #c5f6ff;
+            border: 1px solid #1e293b;
         }
-        th, td {
-            border: 1px solid #333;
-            padding: 2px 4px;
+
+        table.excel-table {
+            border-collapse: separate;
+            border-spacing: 0;
+            width: max-content;
+            min-width: 100%;
+            margin: 0;
+            background-color: #c5f6ff;
+        }
+
+        table.excel-table th, 
+        table.excel-table td {
+            border-right: 1px solid #1e293b;
+            border-bottom: 1px solid #1e293b;
+            padding: 4px 6px;
             text-align: center;
             height: 28px;
+            font-size: 14px;
+            line-height: 1.2;
+            box-sizing: border-box;
         }
-        .name-col {
-            text-align: left;
-            padding-left: 8px;
-            background-color: #cffafe; /* slightly different tint for names */
+
+        table.excel-table tr:first-child th,
+        table.excel-table tr:first-child td {
+            border-top: 1px solid #1e293b;
         }
-        .header-bg {
-            background-color: #a5f3fc; /* Cyan-200 for headers */
+
+        table.excel-table th:first-child,
+        table.excel-table td:first-child {
+            border-left: 1px solid #1e293b;
         }
-        .grade-cell {
+
+        /* Sticky columns for mobile horizontal scrolling */
+        .sticky-num {
+            position: sticky;
+            left: 0;
+            z-index: 20;
+            width: 30px;
             min-width: 30px;
+            max-width: 30px;
+            background-color: #b8f2ff;
+            font-weight: bold;
         }
-        /* Admin specific styles */
+
+        .sticky-name {
+            position: sticky;
+            left: 30px;
+            z-index: 20;
+            min-width: 185px;
+            max-width: 225px;
+            text-align: left !important;
+            padding-left: 8px !important;
+            padding-right: 24px !important;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            background-color: #b8f2ff;
+            font-weight: bold;
+            box-shadow: 2px 0 4px -1px rgba(0, 0, 0, 0.25);
+        }
+
+        thead .sticky-num,
+        thead .sticky-name {
+            z-index: 30;
+            background-color: #a5f3fc;
+        }
+
+        .header-bg {
+            background-color: #a5f3fc;
+        }
+
+        .sub-header-bg {
+            background-color: #b8f2ff;
+        }
+
+        .grade-cell {
+            min-width: 34px;
+            width: 38px;
+            transition: transform 0.05s ease;
+            user-select: none;
+        }
+
+        /* Exact Colors from Screenshot */
+        .cell-white { background-color: #ffffff !important; }
+        .cell-green { background-color: #00b050 !important; }
+        .cell-red { background-color: #ff2e2e !important; }
+        .cell-orange { background-color: #ffa726 !important; }
+        .cell-grey { background-color: #595959 !important; }
+
+        /* Admin active state */
         .admin-active .grade-cell:hover {
-            opacity: 0.8;
-            border: 2px solid #000;
+            outline: 2px solid #000;
+            outline-offset: -2px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 640px) {
+            table.excel-table th, 
+            table.excel-table td {
+                font-size: 13px;
+                height: 26px;
+                padding: 2px 4px;
+            }
+            .sticky-num {
+                width: 26px;
+                min-width: 26px;
+                max-width: 26px;
+            }
+            .sticky-name {
+                left: 26px;
+                min-width: 165px;
+                max-width: 195px;
+                font-size: 12.5px !important;
+            }
+            .grade-cell {
+                min-width: 30px;
+                width: 30px;
+            }
         }
     </style>
 </head>
-<body class="p-2 md:p-4 text-sm text-gray-900 flex flex-col items-center">
+<body class="p-1.5 sm:p-4 text-gray-900 flex flex-col items-center">
 
-    <!-- Main Spreadsheet Container -->
-    <div class="overflow-x-auto w-full flex justify-center mb-8">
-        <table id="main-table" class="shadow-lg bg-white">
-            <thead class="header-bg">
-                <!-- Row 1: Empty columns, Title -->
-                <tr>
-                    <th class="w-8 border-none bg-transparent"></th>
-                    <th class="w-64 border-none bg-transparent"></th>
-                    <th colspan="12" class="font-bold border border-black p-2">
-                        <span id="display-month">Noyabr</span> oyi uchun o'quvchilarni uy vazifalari haqida ma'lumotlar
-                    </th>
-                </tr>
-                <!-- Row 2: #, Names Header, Lesson Numbers -->
-                <tr>
-                    <th rowspan="2" class="w-8 font-bold border border-black bg-[#a5f3fc]"></th>
-                    <th rowspan="2" class="w-64 font-bold text-2xl border border-black bg-[#a5f3fc]">O'quvchilar</th>
-                    <th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th>
-                    <th>7</th><th>8</th><th>9</th><th>10</th><th>11</th><th>12</th>
-                </tr>
-                <!-- Row 3: Dates -->
-                <tr id="dates-row" class="bg-[#cffafe]">
-                    <!-- Dates injected here -->
-                </tr>
-            </thead>
-            <tbody id="student-tbody" class="bg-[#d1fae5]">
-                <!-- Student rows injected here -->
-            </tbody>
-        </table>
-    </div>
-
-    <!-- Legend -->
-    <div class="w-full max-w-[1000px] mb-8 bg-white border border-black p-2">
-        <div class="flex items-center border-b border-black">
-            <div class="w-1/2 h-8 bg-red-500 border-r border-black"></div>
-            <div class="w-1/2 h-8 pl-4 flex items-center font-bold text-xs sm:text-sm">Berilgan uy vazifani bajarmagan</div>
-        </div>
-        <div class="flex items-center border-b border-black">
-            <div class="w-1/2 h-8 bg-orange-400 border-r border-black"></div>
-            <div class="w-1/2 h-8 pl-4 flex items-center font-bold text-xs sm:text-sm">Berilgan uy vazifasini qisman bajargan</div>
-        </div>
-        <div class="flex items-center border-b border-black">
-            <div class="w-1/2 h-8 bg-green-500 border-r border-black"></div>
-            <div class="w-1/2 h-8 pl-4 flex items-center font-bold text-xs sm:text-sm">Berilgan uy vazifasini to'liq bajargan</div>
-        </div>
-        <div class="flex items-center">
-            <div class="w-1/2 h-8 bg-gray-600 border-r border-black"></div>
-            <div class="w-1/2 h-8 pl-4 flex items-center font-bold text-xs sm:text-sm">Bu kuni darsga kelmagan</div>
-        </div>
-    </div>
-
-    <!-- Payments Section -->
-    <div class="overflow-x-auto w-full flex justify-center mb-8">
-        <table id="payments-table" class="shadow-lg bg-white">
-            <thead class="header-bg">
-                <tr>
-                    <th colspan="9" class="font-bold border border-black p-2 text-lg">
-                        Oylik To'lovlar
-                    </th>
-                </tr>
-                <tr>
-                    <th class="w-8 font-bold border border-black bg-[#a5f3fc]">#</th>
-                    <th class="w-64 font-bold text-xl border border-black bg-[#a5f3fc]">O'quvchilar</th>
-                    <th class="w-20 border border-black bg-[#cffafe]">Noyabr</th>
-                    <th class="w-20 border border-black bg-[#cffafe]">Dekabr</th>
-                    <th class="w-20 border border-black bg-[#cffafe]">Yanvar</th>
-                    <th class="w-20 border border-black bg-[#cffafe]">Fevral</th>
-                    <th class="w-20 border border-black bg-[#cffafe]">Mart</th>
-                    <th class="w-20 border border-black bg-[#cffafe]">Aprel</th>
-                    <th class="w-20 border border-black bg-[#cffafe]">May</th>
-                </tr>
-            </thead>
-            <tbody id="payment-tbody" class="bg-[#d1fae5]">
-                <!-- Payment rows injected here -->
-            </tbody>
-        </table>
-    </div>
-
-    <!-- Footer Promo Text -->
-    <div class="w-full max-w-[1000px] text-center font-bold text-sm bg-cyan-100 border border-black p-4 mb-16 shadow-md">
-        <p>Oyning eng yaxshi o'quvchisiga aylaning va qo'shimcha 20$ ga ega bo'ling.</p>
-        <p>Buni bajarish juda oddiy, bir oy ichida 12 ta darsda berilgan barcha uy vazifasini to'liq bajarish zarur va yetarlidir.</p>
-    </div>
-
-    <!-- ADMIN PANEL -->
-    <div class="w-full max-w-[1000px] border-t-4 border-gray-800 pt-8 mt-8 flex flex-col items-center pb-20">
-        <h2 class="text-xl font-bold mb-4 text-gray-700">Admin Panel</h2>
+    <div class="w-full max-w-[1050px]">
         
-        <!-- Login Section -->
-        <div id="admin-login-section" class="flex flex-col items-center gap-2">
-            <input type="password" id="admin-password" placeholder="Parolni kiriting..." class="border border-gray-400 p-2 rounded w-64 text-center">
-            <button onclick="attemptLogin()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded shadow">Kirish</button>
-            <p id="login-error" class="text-red-500 text-sm hidden">Parol xato!</p>
+        <!-- Top Admin Active Banner (Only visible when Admin is logged in) -->
+        <div id="top-admin-toolbar" class="hidden mb-3 bg-slate-900 text-white p-3 rounded-lg shadow-lg border border-slate-700 flex-col sm:flex-row items-center justify-between gap-3 font-sans">
+            <div class="flex items-center gap-2 text-xs sm:text-sm font-semibold">
+                <span class="inline-block w-3 h-3 rounded-full bg-green-400 animate-pulse"></span>
+                <span>Admin rejimi faol! Katakchani bosib rang bering:</span>
+            </div>
+            <div class="flex flex-wrap items-center gap-1.5" id="brush-selector">
+                <button onclick="setBrush('cycle')" data-brush="cycle" class="brush-btn bg-blue-600 text-white px-2.5 py-1 rounded text-xs font-bold ring-2 ring-white">🔄 Navbat bilan</button>
+                <button onclick="setBrush('cell-green')" data-brush="cell-green" class="brush-btn bg-[#00b050] text-white px-2.5 py-1 rounded text-xs font-bold">Yashil</button>
+                <button onclick="setBrush('cell-red')" data-brush="cell-red" class="brush-btn bg-[#ff2e2e] text-white px-2.5 py-1 rounded text-xs font-bold">Qizil</button>
+                <button onclick="setBrush('cell-orange')" data-brush="cell-orange" class="brush-btn bg-[#ffa726] text-black px-2.5 py-1 rounded text-xs font-bold">Olovrang</button>
+                <button onclick="setBrush('cell-grey')" data-brush="cell-grey" class="brush-btn bg-[#595959] text-white px-2.5 py-1 rounded text-xs font-bold">Kulrang</button>
+                <button onclick="setBrush('cell-white')" data-brush="cell-white" class="brush-btn bg-white text-black px-2.5 py-1 rounded text-xs font-bold">Oq (Tozalash)</button>
+            </div>
         </div>
 
-        <!-- Controls Section (Hidden by default) -->
-        <div id="admin-controls" class="hidden w-full bg-gray-100 p-4 rounded-lg shadow border border-gray-300 flex-col gap-6">
-            <div class="text-center bg-green-100 text-green-800 p-2 rounded border border-green-300 font-semibold">
-                Admin rejimidasiz! Jadvaldagi katakchalarni bosish orqali ranglarni o'zgartirishingiz mumkin.
-            </div>
+        <!-- Mobile swipe hint -->
+        <div class="sm:hidden text-[11px] text-slate-700 font-sans mb-1 flex items-center justify-between px-1">
+            <span>👈 Jadvalni o'ngga-chapga surib ko'ring 👉</span>
+            <span id="student-count-badge" class="font-bold">31 o'quvchi</span>
+        </div>
 
-            <!-- Edit Month & Dates -->
-            <div class="bg-white p-4 rounded border border-gray-200 shadow-sm">
-                <h3 class="font-bold mb-2">Oy va Sanalarni o'zgartirish</h3>
-                <div class="flex flex-col gap-4">
-                    <div>
-                        <label class="block text-xs font-bold text-gray-700 mb-1">Oy nomi:</label>
-                        <input type="text" id="edit-month" class="border border-gray-300 p-1 rounded w-full max-w-xs">
-                        <button onclick="saveMonth()" class="bg-indigo-500 text-white px-3 py-1 rounded text-sm ml-2">Saqlash</button>
+        <!-- Main Homework Spreadsheet Container -->
+        <div class="table-scroll-wrapper shadow-md mb-4">
+            <table id="main-table" class="excel-table">
+                <thead>
+                    <!-- Row 1: Title -->
+                    <tr class="header-bg">
+                        <th class="sticky-num"></th>
+                        <th class="sticky-name"></th>
+                        <th id="title-colspan" colspan="12" class="font-bold text-center px-2 py-1.5 text-xs sm:text-base bg-[#b8f2ff]">
+                            <span id="display-month">Noyabr</span> oyi uchun o'quvchilarni uy vazifalari haqida ma'lumotlar
+                        </th>
+                    </tr>
+                    <!-- Row 2: #, O'quvchilar, Lesson Numbers -->
+                    <tr id="lessons-row" class="header-bg">
+                        <!-- Dynamically rendered -->
+                    </tr>
+                    <!-- Row 3: Lesson Dates -->
+                    <tr id="dates-row" class="sub-header-bg">
+                        <!-- Dynamically rendered -->
+                    </tr>
+                </thead>
+                <tbody id="student-tbody">
+                    <!-- Student rows injected here -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Color Legend (Matches Original Image) -->
+        <div class="w-full mb-4 bg-[#c5f6ff] border border-slate-800 shadow-sm">
+            <div class="flex items-stretch border-b border-slate-800">
+                <div class="w-2/5 sm:w-1/2 min-h-[28px] cell-red border-r border-slate-800"></div>
+                <div class="w-3/5 sm:w-1/2 px-2 py-1 flex items-center justify-center text-center font-bold text-xs sm:text-sm bg-white">Berilgan uy vazifani bajarmagan</div>
+            </div>
+            <div class="flex items-stretch border-b border-slate-800">
+                <div class="w-2/5 sm:w-1/2 min-h-[28px] cell-orange border-r border-slate-800"></div>
+                <div class="w-3/5 sm:w-1/2 px-2 py-1 flex items-center justify-center text-center font-bold text-xs sm:text-sm bg-white">Berilgan uy vazifasini qisman bajargan</div>
+            </div>
+            <div class="flex items-stretch border-b border-slate-800">
+                <div class="w-2/5 sm:w-1/2 min-h-[28px] cell-green border-r border-slate-800"></div>
+                <div class="w-3/5 sm:w-1/2 px-2 py-1 flex items-center justify-center text-center font-bold text-xs sm:text-sm bg-white">Berilgan uy vazifasini to'liq bajargan</div>
+            </div>
+            <div class="flex items-stretch">
+                <div class="w-2/5 sm:w-1/2 min-h-[28px] cell-grey border-r border-slate-800"></div>
+                <div class="w-3/5 sm:w-1/2 px-2 py-1 flex items-center justify-center text-center font-bold text-xs sm:text-sm bg-white">Bu kuni darsga kelmagan</div>
+            </div>
+        </div>
+
+        <!-- Footer Motivational Promo Text -->
+        <div class="w-full text-center font-bold text-xs sm:text-base bg-[#b8f2ff] border border-slate-800 p-3 sm:p-4 mb-10 shadow-sm leading-relaxed">
+            <p>Oyning eng yaxshi o'quvchisiga aylaning va qo'shimcha 20$ ga ega bo'ling.</p>
+            <p>Buni bajarish juda oddiy, bir oy ichida 12 ta darsda berilgan barcha uy vazifasini to'liq bajarish zarur va yetarlidir.</p>
+        </div>
+
+        <!-- ADMIN PANEL (At the very bottom, protected by 0912) -->
+        <div class="w-full border-t-2 border-slate-700 pt-6 mt-6 flex flex-col items-center pb-16 font-sans">
+            <h2 class="text-base sm:text-lg font-bold mb-3 text-slate-800">Admin Panel</h2>
+            
+            <!-- Login Section -->
+            <div id="admin-login-section" class="flex flex-col sm:flex-row items-center gap-2">
+                <input type="password" id="admin-password" placeholder="Parolni kiriting..." onkeydown="if(event.key==='Enter') attemptLogin()" class="border border-slate-400 px-3 py-2 rounded w-56 text-center text-sm bg-white shadow-inner">
+                <button onclick="attemptLogin()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded shadow text-sm">Kirish</button>
+            </div>
+            <p id="login-error" class="text-red-600 text-xs font-bold mt-1 hidden">Parol xato!</p>
+
+            <!-- Controls Section (Hidden from parents, unlocked with 0912) -->
+            <div id="admin-controls" class="hidden w-full bg-white p-3 sm:p-5 rounded-xl shadow-lg border border-slate-300 flex-col gap-6 mt-3">
+                
+                <div class="flex flex-wrap items-center justify-between gap-2 bg-emerald-50 text-emerald-900 p-3 rounded-lg border border-emerald-300 text-xs sm:text-sm">
+                    <span class="font-semibold">✅ Admin rejimidasiz! Barcha o'zgarishlar avtomatik saqlanadi.</span>
+                    <div class="flex gap-2">
+                        <button onclick="resetToDefaultData()" class="bg-amber-500 hover:bg-amber-600 text-white font-bold py-1.5 px-3 rounded text-xs shadow">
+                            🔄 Boshlang'ich holatga qaytarish
+                        </button>
+                        <button onclick="logoutAdmin()" class="bg-red-600 hover:bg-red-700 text-white font-bold py-1.5 px-3 rounded text-xs shadow">
+                            Chiqish
+                        </button>
                     </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-700 mb-1">Sanalar (1 dan 12 gacha):</label>
-                        <div id="edit-dates-container" class="grid grid-cols-6 sm:grid-cols-12 gap-1">
-                            <!-- Date inputs injected here -->
+                </div>
+
+                <!-- 1. Add Student & Sort -->
+                <div class="bg-slate-50 p-3 sm:p-4 rounded-lg border border-slate-200">
+                    <h3 class="font-bold text-sm sm:text-base mb-2 text-slate-800">1. O'quvchi qo'shish (Alifbo tartibida joylashadi)</h3>
+                    <div class="flex flex-col sm:flex-row gap-2">
+                        <input type="text" id="new-student-name" placeholder="Yangi o'quvchi F.I.SH..." onkeydown="if(event.key==='Enter') addStudent()" class="border border-slate-300 p-2 rounded flex-grow text-sm bg-white">
+                        <button onclick="addStudent()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-5 rounded text-sm shadow">+ O'quvchi qo'shish</button>
+                        <button onclick="sortStudentsAlphabetically()" class="bg-slate-600 hover:bg-slate-700 text-white font-bold py-2 px-4 rounded text-sm shadow">A-Z Saralash</button>
+                    </div>
+                </div>
+
+                <!-- 2. Edit Month, Columns & Dates -->
+                <div class="bg-slate-50 p-3 sm:p-4 rounded-lg border border-slate-200">
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                        <h3 class="font-bold text-sm sm:text-base text-slate-800">2. Oy, Kunlar va Qo'shimcha Kataklar</h3>
+                        <div class="flex gap-2">
+                            <button onclick="addLessonColumn()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-3 py-1.5 rounded text-xs shadow">
+                                + Qo'shimcha katak qo'shish
+                            </button>
+                            <button onclick="removeLessonColumn()" class="bg-rose-600 hover:bg-rose-700 text-white font-bold px-3 py-1.5 rounded text-xs shadow">
+                                - Oxirgi katakni o'chirish
+                            </button>
                         </div>
-                        <button onclick="saveDates()" class="bg-indigo-500 text-white px-3 py-1 rounded text-sm mt-2">Sanalarni Saqlash</button>
+                    </div>
+
+                    <div class="flex flex-col gap-4">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <label class="text-xs font-bold text-slate-700">Oy nomi:</label>
+                            <input type="text" id="edit-month" class="border border-slate-300 px-2.5 py-1.5 rounded w-48 text-sm bg-white">
+                            <button onclick="saveMonth()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-1.5 rounded text-xs shadow">Oyni Saqlash</button>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5">Dars sanalari (har bir dars katagi uchun sana):</label>
+                            <div id="edit-dates-container" class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-12 gap-1.5">
+                                <!-- Date inputs injected here -->
+                            </div>
+                            <button onclick="saveDates()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2 rounded text-xs mt-3 shadow">Sanalarni Saqlash</button>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Add Student -->
-            <div class="bg-white p-4 rounded border border-gray-200 shadow-sm">
-                <h3 class="font-bold mb-2">O'quvchi qo'shish</h3>
-                <div class="flex flex-col sm:flex-row gap-2">
-                    <input type="text" id="new-student-name" placeholder="F.I.SH..." class="border border-gray-300 p-2 rounded flex-grow">
-                    <button onclick="addStudent()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Qo'shish</button>
+                <!-- 3. OYLIK TO'LOVLAR (Strictly inside Admin Panel ONLY!) -->
+                <div class="bg-slate-50 p-3 sm:p-4 rounded-lg border border-slate-200">
+                    <div class="mb-2">
+                        <h3 class="font-bold text-sm sm:text-base text-slate-800">3. Oylik To'lovlar Bo'limi (Faqat Admin uchun ko'rinadi)</h3>
+                        <p class="text-xs text-slate-600">Katakchani bosish orqali <b>+</b> (to'lagan), <b>-</b> (to'lamagan) yoki bo'sh holatga o'zgartiring.</p>
+                    </div>
+                    <div class="table-scroll-wrapper shadow-sm">
+                        <table id="payments-table" class="excel-table admin-active">
+                            <thead>
+                                <tr class="header-bg">
+                                    <th colspan="9" class="font-bold p-2 text-sm sm:text-base bg-[#a5f3fc]">
+                                        O'quvchilarning Oylik To'lovlari (Noyabr – May)
+                                    </th>
+                                </tr>
+                                <tr class="sub-header-bg">
+                                    <th class="sticky-num">#</th>
+                                    <th class="sticky-name">O'quvchilar</th>
+                                    <th class="w-16">Noyabr</th>
+                                    <th class="w-16">Dekabr</th>
+                                    <th class="w-16">Yanvar</th>
+                                    <th class="w-16">Fevral</th>
+                                    <th class="w-16">Mart</th>
+                                    <th class="w-16">Aprel</th>
+                                    <th class="w-16">May</th>
+                                </tr>
+                            </thead>
+                            <tbody id="payment-tbody">
+                                <!-- Payment rows injected here -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-            </div>
 
-            <button onclick="logoutAdmin()" class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded self-center mt-4">Chiqish (Log out)</button>
+            </div>
         </div>
     </div>
-
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, onSnapshot, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Environment variables setup
+        const STORAGE_KEY = 'homework_tracker_state_v2';
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'homework-tracker-dev';
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
         const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
 
         let app, db, auth, user;
         let isAdmin = false;
-        
-        // Define color cycle: White -> Gray -> Green -> Red -> Orange -> White
-        const COLORS = ['bg-white', 'bg-gray-600', 'bg-green-500', 'bg-red-500', 'bg-orange-400'];
+        let currentBrush = 'cycle'; // 'cycle' or specific color class
+
+        // Color cycle: White -> Green -> Red -> Orange -> Grey -> White
+        const COLORS = ['cell-white', 'cell-green', 'cell-red', 'cell-orange', 'cell-grey'];
         const PAYMENT_STATES = ['', '+', '-'];
 
-        const defaultNames = ["Abdurahmonov Xayrula", "Abzalimov Sanjar", "Aminov Jo'shqin", "Asatullayeva Asalxon", "Ashiraliyev Muhammadjon", "Azamxojayeva Soliha", "Baxtiyorov Sarvar", "Botirov Abdulaziz", "Davronov Salohiddin", "Ergashov Mustafo", "Eshmurodova Muslima", "Furqatov Muhammadsolih", "Hamidova Imona", "Hamidova Shukrona", "Ilhomov Doston", "Muhammadova Dilroz", "Narimonov Ozodbek", "Nasreddinova Parizoda", "Negmatov Ibrohim", "Norboliyeva Nigora", "Olimov Jahonbek", "Po'latov Ibrohim", "Qodirjonov Abdulboriy", "Qodirjonova Roziya", "Ro'zimboyeva Sevinch", "Saidmurodov Ibrohim", "Saparboyev Begzod", "Saparboyev Sherzod", "Shoabdullayev Muhammadaziz", "Sobirjonov Yunus", "Toshpo'latova Nozima"];
+        // Exact 31 students sorted alphabetically with their exact Lesson 1 color from the original image
+        const INITIAL_STUDENTS_DATA = [
+            { name: "Abdurahmonov Xayrula", firstColor: "cell-green" },
+            { name: "Abzalimov Sanjar", firstColor: "cell-grey" },
+            { name: "Aminov Jo'shqin", firstColor: "cell-green" },
+            { name: "Asatullayeva Asalxon", firstColor: "cell-red" },
+            { name: "Ashiraliyev Muhammadjon", firstColor: "cell-grey" },
+            { name: "Azamxojayeva Soliha", firstColor: "cell-grey" },
+            { name: "Baxtiyorov Sarvar", firstColor: "cell-green" },
+            { name: "Botirov Abdulaziz", firstColor: "cell-red" },
+            { name: "Davronov Salohiddin", firstColor: "cell-green" },
+            { name: "Ergashov Mustafo", firstColor: "cell-red" },
+            { name: "Eshmurodova Muslima", firstColor: "cell-green" },
+            { name: "Furqatov Muhammadsolih", firstColor: "cell-grey" },
+            { name: "Hamidova Imona", firstColor: "cell-grey" },
+            { name: "Hamidova Shukrona", firstColor: "cell-grey" },
+            { name: "Ilhomov Doston", firstColor: "cell-green" },
+            { name: "Muhammadova Dilroz", firstColor: "cell-red" },
+            { name: "Narimonov Ozodbek", firstColor: "cell-green" },
+            { name: "Nasreddinova Parizoda", firstColor: "cell-green" },
+            { name: "Negmatov Ibrohim", firstColor: "cell-grey" },
+            { name: "Norboliyeva Nigora", firstColor: "cell-green" },
+            { name: "Olimov Jahonbek", firstColor: "cell-green" },
+            { name: "Po'latov Ibrohim", firstColor: "cell-green" },
+            { name: "Qodirjonov Abdulboriy", firstColor: "cell-green" },
+            { name: "Qodirjonova Roziya", firstColor: "cell-red" },
+            { name: "Ro'zimboyeva Sevinch", firstColor: "cell-green" },
+            { name: "Saidmurodov Ibrohim", firstColor: "cell-red" },
+            { name: "Saparboyev Begzod", firstColor: "cell-grey" },
+            { name: "Saparboyev Sherzod", firstColor: "cell-grey" },
+            { name: "Shoabdullayev Muhammadaziz", firstColor: "cell-grey" },
+            { name: "Sobirjonov Yunus", firstColor: "cell-green" },
+            { name: "Toshpo'latova Nozima", firstColor: "cell-orange" }
+        ];
 
-        // Default application state
-        let appState = {
-            month: "Noyabr",
-            dates: ["2", "4", "6", "9", "11", "13", "16", "18", "20", "23", "25", "27"],
-            students: defaultNames.map((name, i) => ({
-                id: (i + 1).toString(),
-                name: name,
-                grades: Array(12).fill('bg-white'),
-                payments: Array(7).fill('')
-            }))
-        };
+        function buildDefaultState() {
+            const defaultDates = ["2", "4", "6", "9", "11", "13", "16", "18", "20", "23", "25", "27"];
+            return {
+                month: "Noyabr",
+                dates: defaultDates,
+                students: INITIAL_STUDENTS_DATA.map((item, idx) => {
+                    const grades = Array(defaultDates.length).fill('cell-white');
+                    grades[0] = item.firstColor; // Lesson 1 (date 2) color from image
+                    return {
+                        id: 'std_' + (idx + 1),
+                        name: item.name,
+                        grades: grades,
+                        payments: Array(7).fill('')
+                    };
+                })
+            };
+        }
 
-        // Initialize Firebase
+        // Convert legacy Tailwind color classes if old state was saved
+        function normalizeColor(c) {
+            if (!c || c === 'bg-white') return 'cell-white';
+            if (c === 'bg-green-500') return 'cell-green';
+            if (c === 'bg-red-500') return 'cell-red';
+            if (c === 'bg-orange-400') return 'cell-orange';
+            if (c === 'bg-gray-600') return 'cell-grey';
+            return COLORS.includes(c) ? c : 'cell-white';
+        }
+
+        function sanitizeAndUpgradeState(rawState) {
+            if (!rawState || ! Array.isArray(rawState.students) || rawState.students.length === 0) {
+                return buildDefaultState();
+            }
+
+            const dates = Array.isArray(rawState.dates) && rawState.dates.length > 0
+                ? rawState.dates
+                : ["2", "4", "6", "9", "11", "13", "16", "18", "20", "23", "25", "27"];
+
+            const colCount = dates.length;
+
+            // Check if all Lesson 1 cells are completely white/empty (bug from previous version)
+            const allLesson1Empty = rawState.students.every(s => {
+                const g0 = normalizeColor(s.grades && s.grades[0]);
+                return g0 === 'cell-white';
+            });
+
+            const defaultMap = {};
+            INITIAL_STUDENTS_DATA.forEach(item => {
+                defaultMap[item.name.toLowerCase()] = item.firstColor;
+            });
+
+            const upgradedStudents = rawState.students.map((s, idx) => {
+                const grades = Array(colCount).fill('cell-white');
+                if (Array.isArray(s.grades)) {
+                    for (let i = 0; i < colCount; i++) {
+                        grades[i] = normalizeColor(s.grades[i]);
+                    }
+                }
+                // Restore Lesson 1 colors if previously all blank
+                if (allLesson1Empty && s.name && defaultMap[s.name.toLowerCase()]) {
+                    grades[0] = defaultMap[s.name.toLowerCase()];
+                }
+
+                const payments = Array(7).fill('');
+                if (Array.isArray(s.payments)) {
+                    for (let i = 0; i < 7; i++) {
+                        payments[i] = PAYMENT_STATES.includes(s.payments[i]) ? s.payments[i] : '';
+                    }
+                }
+
+                return {
+                    id: s.id || ('std_' + (idx + 1)),
+                    name: s.name || "Noma'lum",
+                    grades,
+                    payments
+                };
+            });
+
+            return {
+                month: rawState.month || "Noyabr",
+                dates: dates,
+                students: upgradedStudents
+            };
+        }
+
+        // Load initial state from LocalStorage or Default
+        let appState = buildDefaultState();
         try {
-            app = initializeApp(firebaseConfig);
-            db = getFirestore(app);
-            auth = getAuth(app);
-        } catch (error) {
-            console.error("Firebase init error:", error);
-            // Fallback for visual preview without Firebase
-            renderApp(); 
+            const cached = localStorage.getItem(STORAGE_KEY);
+            if (cached) {
+                appState = sanitizeAndUpgradeState(JSON.parse(cached));
+            }
+        } catch (e) {
+            console.warn("Local storage read error:", e);
+        }
+
+        // Initialize Firebase if valid config is present
+        if (firebaseConfig && Object.keys(firebaseConfig).length > 0) {
+            try {
+                app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+                initAuth();
+            } catch (error) {
+                console.warn("Firebase init fallback to local state:", error);
+            }
         }
 
         async function initAuth() {
@@ -230,201 +496,221 @@
                 user = auth.currentUser;
                 setupRealtimeSync();
             } catch (error) {
-                console.error("Auth error:", error);
+                console.warn("Auth fallback:", error);
             }
         }
 
         function setupRealtimeSync() {
-            if (!user) return;
-            // RULE 1 Strict Path: artifacts/{appId}/public/data/{collectionName}
+            if (!user || !db) return;
             const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'trackerState', 'mainDoc');
 
             onSnapshot(docRef, (docSnap) => {
                 if (docSnap.exists()) {
-                    let data = docSnap.data();
-                    // Migration for missing payments array from older versions
-                    if (data.students) {
-                        data.students = data.students.map(s => ({
-                            ...s,
-                            payments: s.payments || Array(7).fill('')
-                        }));
+                    const rawData = docSnap.data();
+                    const hadAllBlank = Array.isArray(rawData.students) && rawData.students.every(s => normalizeColor(s.grades?.[0]) === 'cell-white');
+                    appState = sanitizeAndUpgradeState(rawData);
+                    try {
+                        localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+                    } catch (e) {}
+                    // If cloud had uninitialized blank Lesson 1 colors, sync the restored colors back
+                    if (hadAllBlank) {
+                        saveState(appState);
                     }
-                    appState = data;
                 } else {
-                    // First time initialization, save default state to Firestore
-                    saveStateToFirestore(appState);
+                    saveState(appState);
                 }
                 renderApp();
             }, (error) => {
-                console.error("Firestore sync error:", error);
+                console.warn("Firestore sync error:", error);
             });
         }
 
-        async function saveStateToFirestore(newState) {
-            if (!user) {
-                console.warn("Cannot save: User not authenticated.");
-                return;
-            }
+        async function saveState(newState) {
+            appState = newState;
+            // Always save locally for instant persistence (works on GitHub Pages too)
             try {
-                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'trackerState', 'mainDoc');
-                await setDoc(docRef, newState);
-            } catch (error) {
-                console.error("Error saving state:", error);
-                // Create custom alert element if needed, avoiding standard alert()
-                showErrorToast("Saqlashda xatolik yuz berdi.");
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(newState));
+            } catch (e) {}
+
+            // Save to Firestore if connected
+            if (user && db) {
+                try {
+                    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'trackerState', 'mainDoc');
+                    await setDoc(docRef, newState);
+                } catch (error) {
+                    console.error("Error saving to Firestore:", error);
+                }
             }
         }
 
         // --- UI Rendering ---
 
         function renderApp() {
-            // 1. Update Header Month
+            const colCount = appState.dates.length;
+
+            // 1. Update Title & Colspan
             document.getElementById('display-month').innerText = appState.month;
-            
-            // 2. Update Header Dates
+            document.getElementById('title-colspan').setAttribute('colspan', colCount);
+            const badge = document.getElementById('student-count-badge');
+            if (badge) badge.innerText = `${appState.students.length} ta o'quvchi`;
+
+            // 2. Render Lesson Numbers Row (Row 2)
+            const lessonsRow = document.getElementById('lessons-row');
+            let lessonsHtml = `
+                <th rowspan="2" class="sticky-num">#</th>
+                <th rowspan="2" class="sticky-name text-base sm:text-xl text-center">O'quvchilar</th>
+            `;
+            for (let i = 0; i < colCount; i++) {
+                lessonsHtml += `<th class="font-bold bg-[#a5f3fc]">${i + 1}</th>`;
+            }
+            lessonsRow.innerHTML = lessonsHtml;
+
+            // 3. Render Dates Row (Row 3)
             const datesRow = document.getElementById('dates-row');
             let datesHtml = '';
-            for (let i = 0; i < 12; i++) {
-                datesHtml += `<th class="border border-black bg-[#cffafe] font-bold text-xs sm:text-sm">${appState.dates[i] || ''}</th>`;
+            for (let i = 0; i < colCount; i++) {
+                datesHtml += `<th class="font-bold bg-[#b8f2ff]">${appState.dates[i] || ''}</th>`;
             }
             datesRow.innerHTML = datesHtml;
 
-            // 3. Render Students
+            // 4. Render Students Homework Rows
             const tbody = document.getElementById('student-tbody');
             let tbodyHtml = '';
-            
+
             appState.students.forEach((student, index) => {
-                // Determine if we need an empty spacer row (mimicking groups in the original image loosely)
-                // For simplicity, we just list them, but let's add a slight separation every few students if it gets long.
-                // Original image groups them somewhat arbitrarily. We will stick to a flat clean list.
+                tbodyHtml += `<tr>`;
+                // Sticky Index
+                tbodyHtml += `<td class="sticky-num">${index + 1}</td>`;
                 
-                tbodyHtml += `<tr class="bg-[#d1fae5]">`;
-                // Index
-                tbodyHtml += `<td class="font-bold border border-black bg-white">${index + 1}</td>`;
-                
-                // Name + Delete button (if admin)
+                // Sticky Name + Delete button (if admin)
                 tbodyHtml += `
-                    <td class="name-col border border-black font-semibold relative group bg-white">
-                        ${student.name}
+                    <td class="sticky-name relative" title="${student.name}">
+                        <span>${student.name}</span>
                         ${isAdmin ? `
-                            <button onclick="removeStudent('${student.id}')" 
-                                class="absolute right-1 top-1 bg-red-100 hover:bg-red-500 hover:text-white text-red-600 rounded-full w-6 h-6 flex items-center justify-center text-xs shadow">
-                                X
+                            <button onclick="removeStudent('${student.id}')" title="O'chirish"
+                                class="absolute right-1 top-1/2 -translate-y-1/2 bg-red-500 hover:bg-red-700 text-white rounded w-5 h-5 flex items-center justify-center text-[11px] font-sans font-bold shadow">
+                                ×
                             </button>
                         ` : ''}
                     </td>
                 `;
 
-                // 12 Grade Cells
-                for (let i = 0; i < 12; i++) {
-                    const cellColor = student.grades[i] || 'bg-white';
+                // Grade Cells
+                for (let i = 0; i < colCount; i++) {
+                    const cellColor = normalizeColor(student.grades[i]);
                     tbodyHtml += `
                         <td 
                             data-student-id="${student.id}" 
                             data-col-index="${i}" 
-                            class="grade-cell border border-black ${cellColor} ${isAdmin ? 'cursor-pointer' : 'cursor-default'}">
+                            class="grade-cell ${cellColor}">
                         </td>
                     `;
                 }
-                
                 tbodyHtml += `</tr>`;
             });
-
             tbody.innerHTML = tbodyHtml;
 
-            // 4. Render Payments
-            const ptbody = document.getElementById('payment-tbody');
-            let ptbodyHtml = '';
-            
-            appState.students.forEach((student, index) => {
-                ptbodyHtml += `<tr class="bg-[#d1fae5]">`;
-                ptbodyHtml += `<td class="font-bold border border-black bg-white">${index + 1}</td>`;
-                ptbodyHtml += `<td class="name-col border border-black font-semibold bg-white">${student.name}</td>`;
-                
-                // 7 Payment Cells
-                const payments = student.payments || Array(7).fill('');
-                for (let i = 0; i < 7; i++) {
-                    const payStatus = payments[i];
-                    ptbodyHtml += `
-                        <td 
-                            data-student-id="${student.id}" 
-                            data-col-index="${i}" 
-                            class="grade-cell border border-black bg-white text-center font-bold text-lg ${isAdmin ? 'cursor-pointer hover:bg-gray-100' : 'cursor-default'}">
-                            ${payStatus}
-                        </td>
-                    `;
-                }
-                ptbodyHtml += `</tr>`;
-            });
-            ptbody.innerHTML = ptbodyHtml;
+            // 5. Render Admin Controls & Payments Table (Only when Admin is logged in)
+            const mainTable = document.getElementById('main-table');
+            const topToolbar = document.getElementById('top-admin-toolbar');
 
-            // Update Admin Panel Inputs if active
             if (isAdmin) {
+                mainTable.classList.add('admin-active');
+                topToolbar.classList.remove('hidden');
+                topToolbar.classList.add('flex');
+
+                // Render payments table inside admin panel
+                const ptbody = document.getElementById('payment-tbody');
+                let ptbodyHtml = '';
+                appState.students.forEach((student, index) => {
+                    ptbodyHtml += `<tr>`;
+                    ptbodyHtml += `<td class="sticky-num">${index + 1}</td>`;
+                    ptbodyHtml += `<td class="sticky-name" title="${student.name}">${student.name}</td>`;
+                    
+                    const payments = student.payments || Array(7).fill('');
+                    for (let i = 0; i < 7; i++) {
+                        const payStatus = payments[i] || '';
+                        let statusClass = 'bg-white text-slate-800';
+                        if (payStatus === '+') statusClass = 'bg-[#00b050] text-white';
+                        if (payStatus === '-') statusClass = 'bg-[#ff2e2e] text-white';
+
+                        ptbodyHtml += `
+                            <td 
+                                data-student-id="${student.id}" 
+                                data-col-index="${i}" 
+                                class="grade-cell ${statusClass} font-sans font-extrabold text-base cursor-pointer">
+                                ${payStatus}
+                            </td>
+                        `;
+                    }
+                    ptbodyHtml += `</tr>`;
+                });
+                ptbody.innerHTML = ptbodyHtml;
+
+                // Populate month and date inputs
                 document.getElementById('edit-month').value = appState.month;
                 const editDatesContainer = document.getElementById('edit-dates-container');
                 let inputsHtml = '';
-                for (let i = 0; i < 12; i++) {
-                    inputsHtml += `<input type="text" id="edit-date-${i}" value="${appState.dates[i] || ''}" class="border border-gray-400 p-1 text-center w-full rounded text-sm shadow-sm" placeholder="${i+1}">`;
+                for (let i = 0; i < colCount; i++) {
+                    inputsHtml += `
+                        <div class="flex flex-col">
+                            <span class="text-[10px] text-slate-500 font-bold text-center">${i + 1}-dars</span>
+                            <input type="text" id="edit-date-${i}" value="${appState.dates[i] || ''}" 
+                                class="border border-slate-400 p-1 text-center w-full rounded text-xs bg-white font-bold shadow-sm">
+                        </div>
+                    `;
                 }
                 editDatesContainer.innerHTML = inputsHtml;
-            }
-
-            // Apply admin hover styling class
-            const tableEl = document.getElementById('main-table');
-            const pTableEl = document.getElementById('payments-table');
-            if (isAdmin) {
-                tableEl.classList.add('admin-active');
-                pTableEl.classList.add('admin-active');
             } else {
-                tableEl.classList.remove('admin-active');
-                pTableEl.classList.remove('admin-active');
+                mainTable.classList.remove('admin-active');
+                topToolbar.classList.add('hidden');
+                topToolbar.classList.remove('flex');
             }
         }
 
-        // --- Interaction Logic ---
+        // --- Interactive Event Listeners ---
 
-        // Event delegation for cell clicks (to change colors)
+        // Homework table cell click
         document.getElementById('student-tbody').addEventListener('click', (e) => {
             if (!isAdmin) return;
-            
             const cell = e.target.closest('.grade-cell');
             if (!cell) return;
 
             const studentId = cell.getAttribute('data-student-id');
             const colIndex = parseInt(cell.getAttribute('data-col-index'));
-
-            cycleCellColor(studentId, colIndex);
+            handleHomeworkCellClick(studentId, colIndex);
         });
 
-        function cycleCellColor(studentId, colIndex) {
+        function handleHomeworkCellClick(studentId, colIndex) {
             const studentIndex = appState.students.findIndex(s => s.id === studentId);
             if (studentIndex === -1) return;
 
-            const currentColor = appState.students[studentIndex].grades[colIndex] || 'bg-white';
-            let nextColorIndex = COLORS.indexOf(currentColor) + 1;
-            if (nextColorIndex >= COLORS.length) nextColorIndex = 0;
+            const currentColor = normalizeColor(appState.students[studentIndex].grades[colIndex]);
+            let nextColor;
 
-            const newState = JSON.parse(JSON.stringify(appState)); // deep copy
-            newState.students[studentIndex].grades[colIndex] = COLORS[nextColorIndex];
-            
-            // Optimistic UI update (optional, Firestore snapshot handles it, but this makes it snappier locally)
-            appState = newState;
+            if (currentBrush === 'cycle') {
+                let nextColorIndex = COLORS.indexOf(currentColor) + 1;
+                if (nextColorIndex >= COLORS.length) nextColorIndex = 0;
+                nextColor = COLORS[nextColorIndex];
+            } else {
+                // Toggle back to white if clicking with the same active brush color
+                nextColor = (currentColor === currentBrush) ? 'cell-white' : currentBrush;
+            }
+
+            const newState = JSON.parse(JSON.stringify(appState));
+            newState.students[studentIndex].grades[colIndex] = nextColor;
             renderApp();
-            
-            // Save to DB
-            saveStateToFirestore(newState);
+            saveState(newState);
         }
 
-        // Event delegation for payment cell clicks
+        // Payments table cell click (Inside Admin Panel)
         document.getElementById('payment-tbody').addEventListener('click', (e) => {
             if (!isAdmin) return;
-            
             const cell = e.target.closest('.grade-cell');
             if (!cell) return;
 
             const studentId = cell.getAttribute('data-student-id');
             const colIndex = parseInt(cell.getAttribute('data-col-index'));
-
             cyclePaymentCell(studentId, colIndex);
         });
 
@@ -436,18 +722,27 @@
             let nextIndex = PAYMENT_STATES.indexOf(currentStatus) + 1;
             if (nextIndex >= PAYMENT_STATES.length) nextIndex = 0;
 
-            const newState = JSON.parse(JSON.stringify(appState)); // deep copy
+            const newState = JSON.parse(JSON.stringify(appState));
             newState.students[studentIndex].payments[colIndex] = PAYMENT_STATES[nextIndex];
-            
-            appState = newState;
+            saveState(newState);
             renderApp();
-            saveStateToFirestore(newState);
         }
 
         // --- Admin Functions ---
 
+        window.setBrush = function(brush) {
+            currentBrush = brush;
+            document.querySelectorAll('.brush-btn').forEach(btn => {
+                if (btn.getAttribute('data-brush') === brush) {
+                    btn.classList.add('ring-2', 'ring-white', 'scale-105');
+                } else {
+                    btn.classList.remove('ring-2', 'ring-white', 'scale-105');
+                }
+            });
+        };
+
         window.attemptLogin = function() {
-            const pwd = document.getElementById('admin-password').value;
+            const pwd = document.getElementById('admin-password').value.trim();
             const errorEl = document.getElementById('login-error');
             if (pwd === '0912') {
                 isAdmin = true;
@@ -457,10 +752,11 @@
                 document.getElementById('admin-controls').classList.add('flex');
                 document.getElementById('admin-password').value = '';
                 renderApp();
+                showToast("Admin paneli ochildi!", "bg-emerald-600");
             } else {
                 errorEl.classList.remove('hidden');
             }
-        }
+        };
 
         window.logoutAdmin = function() {
             isAdmin = false;
@@ -468,97 +764,155 @@
             document.getElementById('admin-controls').classList.add('hidden');
             document.getElementById('admin-controls').classList.remove('flex');
             renderApp();
-        }
+        };
 
         window.saveMonth = function() {
             const newMonth = document.getElementById('edit-month').value.trim();
             if (newMonth) {
                 const newState = { ...appState, month: newMonth };
-                appState = newState;
+                saveState(newState);
                 renderApp();
-                saveStateToFirestore(newState);
+                showToast("Oy nomi saqlandi!", "bg-indigo-600");
             }
-        }
+        };
 
         window.saveDates = function() {
+            const colCount = appState.dates.length;
             const newDates = [];
-            for (let i = 0; i < 12; i++) {
-                const val = document.getElementById(`edit-date-${i}`).value.trim();
-                newDates.push(val);
+            for (let i = 0; i < colCount; i++) {
+                const el = document.getElementById(`edit-date-${i}`);
+                newDates.push(el ? el.value.trim() : '');
             }
             const newState = { ...appState, dates: newDates };
-            appState = newState;
+            saveState(newState);
             renderApp();
-            saveStateToFirestore(newState);
-        }
+            showToast("Sanalar saqlandi!", "bg-indigo-600");
+        };
+
+        window.addLessonColumn = function() {
+            const newState = JSON.parse(JSON.stringify(appState));
+            newState.dates.push("");
+            newState.students.forEach(s => {
+                s.grades.push('cell-white');
+            });
+            saveState(newState);
+            renderApp();
+            showToast("Yangi dars ustuni qo'shildi!", "bg-blue-600");
+        };
+
+        window.removeLessonColumn = function() {
+            if (appState.dates.length <= 1) return;
+            const newState = JSON.parse(JSON.stringify(appState));
+            newState.dates.pop();
+            newState.students.forEach(s => {
+                s.grades.pop();
+            });
+            saveState(newState);
+            renderApp();
+            showToast("Oxirgi ustun o'chirildi!", "bg-rose-600");
+        };
 
         window.addStudent = function() {
             const nameInput = document.getElementById('new-student-name');
             const name = nameInput.value.trim();
             if (!name) return;
 
+            const colCount = appState.dates.length;
             const newStudent = {
-                id: 'std_' + Date.now().toString(36) + Math.random().toString(36).substr(2),
+                id: 'std_' + Date.now().toString(36) + Math.random().toString(36).substring(2, 6),
                 name: name,
-                grades: Array(12).fill('bg-white'),
+                grades: Array(colCount).fill('cell-white'),
                 payments: Array(7).fill('')
             };
 
-            const newState = { ...appState, students: [...appState.students, newStudent] };
-            appState = newState;
+            const updatedStudents = [...appState.students, newStudent].sort((a, b) =>
+                a.name.localeCompare(b.name, 'uz', { sensitivity: 'base' })
+            );
+
+            const newState = { ...appState, students: updatedStudents };
             nameInput.value = '';
+            saveState(newState);
             renderApp();
-            saveStateToFirestore(newState);
-        }
+            showToast("O'quvchi alifbo tartibida qo'shildi!", "bg-emerald-600");
+        };
+
+        window.sortStudentsAlphabetically = function() {
+            const sorted = [...appState.students].sort((a, b) =>
+                a.name.localeCompare(b.name, 'uz', { sensitivity: 'base' })
+            );
+            const newState = { ...appState, students: sorted };
+            saveState(newState);
+            renderApp();
+            showToast("O'quvchilar alifbo tartibida saralandi!", "bg-slate-700");
+        };
 
         window.removeStudent = function(id) {
-            // Using a simple custom modal replacement for confirm()
+            const student = appState.students.find(s => s.id === id);
             const customModal = document.createElement('div');
-            customModal.className = "fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50";
+            customModal.className = "fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 font-sans";
             customModal.innerHTML = `
-                <div class="bg-white p-6 rounded shadow-xl flex flex-col items-center">
-                    <p class="mb-4 text-lg font-bold">Rostdan ham o'chirmoqchimisiz?</p>
-                    <div class="flex gap-4">
-                        <button id="btn-cancel" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Bekor qilish</button>
-                        <button id="btn-confirm" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">O'chirish</button>
+                <div class="bg-white p-5 rounded-xl shadow-2xl flex flex-col items-center max-w-sm w-full text-center">
+                    <p class="mb-2 text-base font-bold text-slate-800">O'quvchini o'chirish</p>
+                    <p class="mb-5 text-sm text-slate-600"><b>${student ? student.name : ''}</b> ro'yxatdan o'chirilsinmi?</p>
+                    <div class="flex gap-3 w-full justify-center">
+                        <button id="btn-cancel" class="px-4 py-2 bg-slate-200 text-slate-800 font-semibold rounded-lg hover:bg-slate-300 text-sm">Bekor qilish</button>
+                        <button id="btn-confirm" class="px-4 py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 text-sm">Ha, o'chirish</button>
                     </div>
                 </div>
             `;
             document.body.appendChild(customModal);
 
-            document.getElementById('btn-cancel').onclick = () => {
-                customModal.remove();
-            };
-
+            document.getElementById('btn-cancel').onclick = () => customModal.remove();
             document.getElementById('btn-confirm').onclick = () => {
-                const newState = { 
-                    ...appState, 
-                    students: appState.students.filter(s => s.id !== id) 
+                const newState = {
+                    ...appState,
+                    students: appState.students.filter(s => s.id !== id)
                 };
-                appState = newState;
+                saveState(newState);
                 renderApp();
-                saveStateToFirestore(newState);
                 customModal.remove();
+                showToast("O'quvchi o'chirildi", "bg-red-600");
             };
-        }
+        };
 
-        function showErrorToast(msg) {
+        window.resetToDefaultData = function() {
+            const customModal = document.createElement('div');
+            customModal.className = "fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 font-sans";
+            customModal.innerHTML = `
+                <div class="bg-white p-5 rounded-xl shadow-2xl flex flex-col items-center max-w-sm w-full text-center">
+                    <p class="mb-2 text-base font-bold text-slate-800">Boshlang'ich holatga qaytarish</p>
+                    <p class="mb-5 text-xs text-slate-600">Jadvaldagi 31 ta o'quvchi va 1-darsdagi dastlabki ranglar rasmda ko'rsatilgandek qayta tiklansinmi?</p>
+                    <div class="flex gap-3 w-full justify-center">
+                        <button id="btn-reset-cancel" class="px-4 py-2 bg-slate-200 text-slate-800 font-semibold rounded-lg hover:bg-slate-300 text-sm">Yo'q</button>
+                        <button id="btn-reset-confirm" class="px-4 py-2 bg-amber-500 text-white font-semibold rounded-lg hover:bg-amber-600 text-sm">Ha, tiklash</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(customModal);
+
+            document.getElementById('btn-reset-cancel').onclick = () => customModal.remove();
+            document.getElementById('btn-reset-confirm').onclick = () => {
+                const fresh = buildDefaultState();
+                saveState(fresh);
+                renderApp();
+                customModal.remove();
+                showToast("Boshlang'ich ma'lumotlar tiklandi!", "bg-amber-600");
+            };
+        };
+
+        function showToast(msg, bgClass = "bg-slate-800") {
             const toast = document.createElement('div');
-            toast.className = "fixed bottom-4 right-4 bg-red-600 text-white px-4 py-2 rounded shadow-lg transition-opacity duration-500";
+            toast.className = `fixed bottom-4 right-4 ${bgClass} text-white px-4 py-2.5 rounded-lg shadow-xl text-xs sm:text-sm font-sans font-bold z-50 transition-opacity duration-300`;
             toast.innerText = msg;
             document.body.appendChild(toast);
             setTimeout(() => {
                 toast.style.opacity = '0';
-                setTimeout(() => toast.remove(), 500);
-            }, 3000);
+                setTimeout(() => toast.remove(), 300);
+            }, 2200);
         }
 
-        // Boot the app
+        // Initial render on page load
         renderApp();
-        if (typeof initializeApp !== 'undefined') {
-            initAuth();
-        }
-
     </script>
 </body>
 </html>
