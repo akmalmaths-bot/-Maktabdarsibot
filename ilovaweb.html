@@ -72,11 +72,9 @@
             color: #4f46e5;
         }
         
-        /* Oyna almashish animatsiyasi */
         .fade-in { animation: fadeIn 0.3s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Scrollbar yashirish */
         ::-webkit-scrollbar { display: none; }
     </style>
 </head>
@@ -84,7 +82,7 @@
 
 <div class="app-container" id="app">
 
-    <!-- ================= WELCOME SCREEN (KIRISH) ================= -->
+    <!-- ================= WELCOME SCREEN ================= -->
     <div id="welcome-screen" class="min-h-screen flex flex-col items-center justify-center p-6 fade-in">
         <div class="text-center mb-8">
             <div class="text-7xl mb-4">🎓</div>
@@ -92,7 +90,7 @@
             <p class="text-sm opacity-80 mb-4 font-medium">Ustoz: Akmaljon Jo'raqo'ziyev</p>
             
             <div class="card p-4 text-left text-sm mb-6 opacity-90 leading-relaxed">
-                Tajribali matematika o'qituvchisi. YouTube tarmog'ida 350,000+ obunachiga ega. 
+                Tajribali matematika o'qituvchisi. YouTube tarmog'ida 351,000+ obunachiga ega. 
                 Darslarni zamonaviy usullarda, o'yinli tarzda va eng asosiysi — tushunarli tilda tushuntiradi. 
                 Platformaga xush kelibsiz!
             </div>
@@ -125,7 +123,7 @@
         </form>
     </div>
 
-    <!-- ================= MAIN APP (ASOSIY SAHIFA) ================= -->
+    <!-- ================= MAIN APP ================= -->
     <div id="main-app" class="hidden flex-col h-full flex-grow relative pb-20 fade-in">
         
         <!-- Header -->
@@ -150,7 +148,6 @@
             <div id="tab-asosiy" class="tab-content fade-in">
                 <h2 class="text-2xl font-black mb-4">Salom, <span id="user-name-display">Admin</span>! 👋</h2>
                 
-                <!-- Banners -->
                 <div class="card gradient-banner p-5 mb-5 relative overflow-hidden flex justify-between items-center cursor-pointer" onclick="switchTab('liderlar')">
                     <div class="relative z-10">
                         <p class="text-indigo-200 text-xs font-bold mb-1 uppercase tracking-wider">🏆 Maktab Ligasi</p>
@@ -169,7 +166,6 @@
                     </div>
                 </div>
 
-                <!-- Sinflar -->
                 <h3 class="font-black text-lg mb-3">Sinflar bo'yicha darslar</h3>
                 <div class="grid grid-cols-2 gap-3 mb-6">
                     <div onclick="openClass('1-sinf')" class="card p-4 flex flex-col items-center justify-center cursor-pointer">
@@ -228,7 +224,6 @@
                 <p class="text-sm opacity-70 mb-5">Tayyorlov kurslari va testlari</p>
                 
                 <div class="space-y-4">
-                    <!-- 2-sinf -->
                     <div class="card p-4">
                         <div class="flex items-center gap-3 mb-3">
                             <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-xl">✌️</div>
@@ -239,7 +234,6 @@
                             <button class="py-2.5 bg-amber-50 text-amber-700 border border-amber-200 rounded-xl font-bold text-sm hover:bg-amber-100 flex justify-center items-center gap-1"><span>Pullik</span> <span class="text-xs">👑</span></button>
                         </div>
                     </div>
-                    <!-- 3-sinf -->
                     <div class="card p-4">
                         <div class="flex items-center gap-3 mb-3">
                             <div class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center text-xl">🤟</div>
@@ -250,7 +244,6 @@
                             <button class="py-2.5 bg-amber-50 text-amber-700 border border-amber-200 rounded-xl font-bold text-sm hover:bg-amber-100 flex justify-center items-center gap-1"><span>Pullik</span> <span class="text-xs">👑</span></button>
                         </div>
                     </div>
-                    <!-- 4-sinf -->
                     <div class="card p-4 border-indigo-300 shadow-md relative overflow-hidden">
                         <div class="absolute top-0 right-0 bg-indigo-500 text-white text-[10px] font-black px-2 py-1 rounded-bl-lg">AKTUAL</div>
                         <div class="flex items-center gap-3 mb-3">
@@ -387,13 +380,14 @@
                         <i class="fas fa-sign-out-alt"></i> Tizimdan chiqish
                     </button>
                     
-                    <button class="w-full card p-3 flex items-center justify-center gap-2 text-slate-400 font-bold mt-4 border-dashed" onclick="alert('Admin paneliga o\'tish (Faqat adminlar uchun)')">
+                    <!-- ADMIN PANEL TUGMASI (PAROL BILAN) -->
+                    <button class="w-full card p-3 flex items-center justify-center gap-2 text-slate-400 font-bold mt-4 border-dashed hover:bg-slate-50 dark:hover:bg-slate-800" onclick="checkAdminPassword()">
                         <i class="fas fa-cog"></i> Admin Panel (Tahrirlash)
                     </button>
                 </div>
             </div>
 
-            <!-- LIDERLAR (Ichki Oyna) -->
+            <!-- LIDERLAR -->
             <div id="tab-liderlar" class="tab-content hidden fade-in">
                 <div class="flex items-center gap-3 mb-6">
                     <button onclick="switchTab('asosiy')" class="w-10 h-10 rounded-full bg-white dark:bg-slate-800 shadow flex items-center justify-center"><i class="fas fa-arrow-left"></i></button>
@@ -430,7 +424,7 @@
                 </div>
             </div>
 
-            <!-- CHORAKLAR (Ichki Oyna - Sinf ichiga kirganda) -->
+            <!-- CHORAKLAR -->
             <div id="tab-choraklar" class="tab-content hidden fade-in">
                 <div class="flex items-center gap-3 mb-6">
                     <button onclick="switchTab('asosiy')" class="w-10 h-10 rounded-full bg-white dark:bg-slate-800 shadow flex items-center justify-center"><i class="fas fa-arrow-left"></i></button>
@@ -493,7 +487,6 @@
 </div>
 
 <script>
-    // LocalStorage dan ma'lumotlarni tekshirish
     const STORAGE_KEY = 'akmalmaths_user';
     let currentUser = JSON.parse(localStorage.getItem(STORAGE_KEY));
 
@@ -502,27 +495,21 @@
 
     function initApp() {
         if (currentUser && currentUser.name) {
-            // User bor -> To'g'ridan-to'g'ri Asosiy oynaga
             welcomeScreen.classList.add('hidden');
             mainApp.classList.remove('hidden');
             mainApp.classList.add('flex');
             
-            // UI ga ism/sinf yozish
             document.getElementById('user-name-display').textContent = currentUser.name;
             document.getElementById('user-grade-display').textContent = currentUser.grade.includes('sinf') ? currentUser.grade : 'Ota-ona';
             
-            // Profil sahifasiga ham yozish
             document.getElementById('profile-name').textContent = `${currentUser.name} ${currentUser.surname}`;
             document.getElementById('profile-grade').textContent = currentUser.grade;
-            
         } else {
-            // User yo'q -> Kirish ekrani
             welcomeScreen.classList.remove('hidden');
             mainApp.classList.add('hidden');
             mainApp.classList.remove('flex');
         }
 
-        // Tungi rejimni saqlangan holatini tekshirish
         const isDark = localStorage.getItem('akmalmaths_dark') === 'true';
         if(isDark) {
             document.body.classList.add('dark-mode');
@@ -530,7 +517,6 @@
         }
     }
 
-    // Login Form
     document.getElementById('login-form').addEventListener('submit', (e) => {
         e.preventDefault();
         const name = document.getElementById('inp-name').value.trim();
@@ -544,44 +530,50 @@
         }
     });
 
-    // Tizimdan chiqish
     function logout() {
         localStorage.removeItem(STORAGE_KEY);
         currentUser = null;
         initApp();
     }
 
-    // Bottom Navigation (Tab almashish)
+    // Parol tekshirish funksiyasi
+    function checkAdminPassword() {
+        const password = prompt("Admin parolini kiriting:");
+        
+        // Agar foydalanuvchi "Cancel" bossa yoki hech narsa yozmasa, kod to'xtaydi
+        if (password === null) return; 
+
+        if (password === "0912") {
+            alert("Parol to'g'ri! Admin paneliga xush kelibsiz (Tahrirlash oynasi ochiladi).");
+            // Kelajakda bu yerga Admin paneliga o'tish kodini yozishingiz mumkin
+            // Masalan: window.location.href = "admin.html";
+        } else {
+            alert("Parol xato! Kirish taqiqlangan.");
+        }
+    }
+
     function switchTab(tabId, btnElement = null) {
-        // Hamma tablarni yashirish
         document.querySelectorAll('.tab-content').forEach(tab => {
             tab.classList.add('hidden');
         });
         
-        // Tanlangan tabni ko'rsatish
         document.getElementById(`tab-${tabId}`).classList.remove('hidden');
 
-        // Navigatsiya rangini o'zgartirish (faqat asosiy tablar uchun)
         if(btnElement) {
             document.querySelectorAll('.nav-item').forEach(btn => {
                 btn.classList.remove('active');
             });
             btnElement.classList.add('active');
-        } else {
-            // Agar ichki sahifa bo'lsa (Liderlar, Choraklar), knopkalar aktiv holati o'zgarmasligi kerak.
         }
         
-        // Yuqoriga qaytish
         document.getElementById('content-area').scrollTo(0,0);
     }
 
-    // Sinf ichiga kirish (Choraklar)
     function openClass(className) {
         document.getElementById('selected-class-title').textContent = className;
         switchTab('choraklar');
     }
 
-    // Tungi rejim toggle
     document.getElementById('theme-toggle').addEventListener('change', (e) => {
         if(e.target.checked) {
             document.body.classList.add('dark-mode');
@@ -592,7 +584,6 @@
         }
     });
 
-    // Ishga tushirish
     initApp();
 </script>
 </body>
