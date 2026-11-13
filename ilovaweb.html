@@ -76,6 +76,19 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         ::-webkit-scrollbar { display: none; }
+        
+        /* Admin input styles */
+        .admin-input {
+            width: 100%;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.5rem;
+            margin-top: 0.25rem;
+            outline: none;
+        }
+        .admin-input:focus { border-color: #4f46e5; }
     </style>
 </head>
 <body>
@@ -99,15 +112,15 @@
         <form id="login-form" class="w-full space-y-4">
             <div>
                 <label class="block text-sm font-bold mb-1 ml-1 opacity-80">Ismingiz</label>
-                <input type="text" id="inp-name" required placeholder="Masalan: Azizbek" class="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-2xl px-4 py-3 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all">
+                <input type="text" id="inp-name" required placeholder="Masalan: Azizbek" class="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-2xl px-4 py-3 outline-none focus:border-indigo-500 transition-all text-slate-800 dark:text-white">
             </div>
             <div>
                 <label class="block text-sm font-bold mb-1 ml-1 opacity-80">Familiyangiz</label>
-                <input type="text" id="inp-surname" required placeholder="Masalan: Aliyev" class="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-2xl px-4 py-3 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all">
+                <input type="text" id="inp-surname" required placeholder="Masalan: Aliyev" class="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-2xl px-4 py-3 outline-none focus:border-indigo-500 transition-all text-slate-800 dark:text-white">
             </div>
             <div>
                 <label class="block text-sm font-bold mb-1 ml-1 opacity-80">Sinfingizni tanlang</label>
-                <select id="inp-grade" class="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-2xl px-4 py-3 outline-none focus:border-indigo-500 transition-all appearance-none">
+                <select id="inp-grade" class="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-2xl px-4 py-3 outline-none focus:border-indigo-500 transition-all appearance-none text-slate-800 dark:text-white">
                     <option value="1">1-sinf</option>
                     <option value="2">2-sinf</option>
                     <option value="3">3-sinf</option>
@@ -146,7 +159,7 @@
             
             <!-- TAB: ASOSIY -->
             <div id="tab-asosiy" class="tab-content fade-in">
-                <h2 class="text-2xl font-black mb-4">Salom, <span id="user-name-display">Admin</span>! 👋</h2>
+                <h2 class="text-2xl font-black mb-4">Salom, <span id="user-name-display">Foydalanuvchi</span>! 👋</h2>
                 
                 <div class="card gradient-banner p-5 mb-5 relative overflow-hidden flex justify-between items-center cursor-pointer" onclick="switchTab('liderlar')">
                     <div class="relative z-10">
@@ -169,28 +182,22 @@
                 <h3 class="font-black text-lg mb-3">Sinflar bo'yicha darslar</h3>
                 <div class="grid grid-cols-2 gap-3 mb-6">
                     <div onclick="openClass('1-sinf')" class="card p-4 flex flex-col items-center justify-center cursor-pointer">
-                        <span class="text-3xl mb-2">🏫</span>
-                        <span class="font-bold text-sm">1-sinf</span>
+                        <span class="text-3xl mb-2">🏫</span><span class="font-bold text-sm">1-sinf</span>
                     </div>
                     <div onclick="openClass('2-sinf')" class="card p-4 flex flex-col items-center justify-center cursor-pointer">
-                        <span class="text-3xl mb-2">🎒</span>
-                        <span class="font-bold text-sm">2-sinf</span>
+                        <span class="text-3xl mb-2">🎒</span><span class="font-bold text-sm">2-sinf</span>
                     </div>
                     <div onclick="openClass('3-sinf')" class="card p-4 flex flex-col items-center justify-center cursor-pointer">
-                        <span class="text-3xl mb-2">📚</span>
-                        <span class="font-bold text-sm">3-sinf</span>
+                        <span class="text-3xl mb-2">📚</span><span class="font-bold text-sm">3-sinf</span>
                     </div>
                     <div onclick="openClass('4-sinf')" class="card p-4 flex flex-col items-center justify-center cursor-pointer">
-                        <span class="text-3xl mb-2">📐</span>
-                        <span class="font-bold text-sm">4-sinf</span>
+                        <span class="text-3xl mb-2">📐</span><span class="font-bold text-sm">4-sinf</span>
                     </div>
                     <div onclick="openClass('5-sinf')" class="card p-4 flex flex-col items-center justify-center cursor-pointer">
-                        <span class="text-3xl mb-2">🧪</span>
-                        <span class="font-bold text-sm">5-sinf</span>
+                        <span class="text-3xl mb-2">🧪</span><span class="font-bold text-sm">5-sinf</span>
                     </div>
                     <div onclick="openClass('6-sinf')" class="card p-4 flex flex-col items-center justify-center cursor-pointer">
-                        <span class="text-3xl mb-2">🌍</span>
-                        <span class="font-bold text-sm">6-sinf</span>
+                        <span class="text-3xl mb-2">🌍</span><span class="font-bold text-sm">6-sinf</span>
                     </div>
                 </div>
             </div>
@@ -208,9 +215,9 @@
                     </div>
                     
                     <div class="space-y-3 text-sm font-medium mb-5">
-                        <div class="flex items-center gap-3"><span class="w-6 text-center">📅</span> <span><b>Qachon:</b> Har Shanba</span></div>
-                        <div class="flex items-center gap-3"><span class="w-6 text-center">⏰</span> <span><b>Vaqti:</b> 19:00 dan 22:00 gacha</span></div>
-                        <div class="flex items-center gap-3"><span class="w-6 text-center">📣</span> <span><b>Natijalar:</b> Yakshanba soat 12:00 da</span></div>
+                        <div class="flex items-center gap-3"><span class="w-6 text-center">📅</span> <span><b>Qachon:</b> <span id="ui-olim-kun">Har Shanba</span></span></div>
+                        <div class="flex items-center gap-3"><span class="w-6 text-center">⏰</span> <span><b>Vaqti:</b> <span id="ui-olim-vaqt">19:00 dan 22:00 gacha</span></span></div>
+                        <div class="flex items-center gap-3"><span class="w-6 text-center">📣</span> <span><b>Natijalar:</b> <span id="ui-olim-natija">Yakshanba soat 12:00 da</span></span></div>
                     </div>
                     <button class="w-full py-3 bg-indigo-600 text-white font-bold rounded-xl opacity-50 cursor-not-allowed">
                         Hali boshlanmadi
@@ -222,7 +229,6 @@
             <div id="tab-prezident" class="tab-content hidden fade-in">
                 <h2 class="text-2xl font-black mb-1">Prezident Maktabiga</h2>
                 <p class="text-sm opacity-70 mb-5">Tayyorlov kurslari va testlari</p>
-                
                 <div class="space-y-4">
                     <div class="card p-4">
                         <div class="flex items-center gap-3 mb-3">
@@ -234,27 +240,7 @@
                             <button class="py-2.5 bg-amber-50 text-amber-700 border border-amber-200 rounded-xl font-bold text-sm hover:bg-amber-100 flex justify-center items-center gap-1"><span>Pullik</span> <span class="text-xs">👑</span></button>
                         </div>
                     </div>
-                    <div class="card p-4">
-                        <div class="flex items-center gap-3 mb-3">
-                            <div class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center text-xl">🤟</div>
-                            <h3 class="font-bold text-lg">3-sinf uchun</h3>
-                        </div>
-                        <div class="grid grid-cols-2 gap-2">
-                            <button class="py-2.5 bg-green-50 text-green-700 border border-green-200 rounded-xl font-bold text-sm hover:bg-green-100">Bepul Bo'lim</button>
-                            <button class="py-2.5 bg-amber-50 text-amber-700 border border-amber-200 rounded-xl font-bold text-sm hover:bg-amber-100 flex justify-center items-center gap-1"><span>Pullik</span> <span class="text-xs">👑</span></button>
-                        </div>
-                    </div>
-                    <div class="card p-4 border-indigo-300 shadow-md relative overflow-hidden">
-                        <div class="absolute top-0 right-0 bg-indigo-500 text-white text-[10px] font-black px-2 py-1 rounded-bl-lg">AKTUAL</div>
-                        <div class="flex items-center gap-3 mb-3">
-                            <div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-xl">💪</div>
-                            <h3 class="font-bold text-lg">4-sinf uchun</h3>
-                        </div>
-                        <div class="grid grid-cols-2 gap-2">
-                            <button class="py-2.5 bg-green-50 text-green-700 border border-green-200 rounded-xl font-bold text-sm hover:bg-green-100">Bepul Bo'lim</button>
-                            <button class="py-2.5 bg-amber-50 text-amber-700 border border-amber-200 rounded-xl font-bold text-sm hover:bg-amber-100 flex justify-center items-center gap-1"><span>Pullik</span> <span class="text-xs">👑</span></button>
-                        </div>
-                    </div>
+                    <!-- Qo'shimcha sinflar shunday davom etadi -->
                 </div>
             </div>
 
@@ -262,38 +248,12 @@
             <div id="tab-attestatsiya" class="tab-content hidden fade-in">
                 <h2 class="text-2xl font-black mb-1">Attestatsiya</h2>
                 <p class="text-sm opacity-70 mb-5">O'qituvchilar uchun maxsus bo'lim</p>
-
                 <div class="space-y-3">
                     <div class="card p-4 flex flex-col gap-3">
                         <h4 class="font-bold text-slate-800 dark:text-slate-200">🔍 Darajani aniqlash</h4>
-                        <button class="w-full bg-slate-100 dark:bg-slate-700 py-2 rounded-lg font-bold text-sm hover:bg-slate-200 text-indigo-600">Faqat Test ishlash</button>
+                        <button class="w-full bg-slate-100 dark:bg-slate-700 py-2 rounded-lg font-bold text-sm text-indigo-600">Test ishlash</button>
                     </div>
-
-                    <div class="card p-4 flex flex-col gap-3">
-                        <h4 class="font-bold text-slate-800 dark:text-slate-200">🎓 Mutaxassis</h4>
-                        <div class="grid grid-cols-2 gap-2">
-                            <button class="bg-indigo-50 text-indigo-600 py-2 rounded-lg font-bold text-sm">Test</button>
-                            <button class="bg-emerald-50 text-emerald-600 py-2 rounded-lg font-bold text-sm">Darslar</button>
-                        </div>
-                    </div>
-
-                    <div class="card p-4 flex flex-col gap-3">
-                        <h4 class="font-bold text-slate-800 dark:text-slate-200">🥈 2-toifa</h4>
-                        <div class="grid grid-cols-2 gap-2">
-                            <button class="bg-indigo-50 text-indigo-600 py-2 rounded-lg font-bold text-sm">Test</button>
-                            <button class="bg-emerald-50 text-emerald-600 py-2 rounded-lg font-bold text-sm">Darslar</button>
-                        </div>
-                    </div>
-
-                    <div class="card p-4 flex flex-col gap-3 border-l-4 border-blue-500">
-                        <h4 class="font-bold text-slate-800 dark:text-slate-200">🥇 1-toifa</h4>
-                        <div class="grid grid-cols-2 gap-2">
-                            <button class="bg-indigo-50 text-indigo-600 py-2 rounded-lg font-bold text-sm">Test</button>
-                            <button class="bg-emerald-50 text-emerald-600 py-2 rounded-lg font-bold text-sm">Darslar</button>
-                        </div>
-                    </div>
-
-                    <div class="card p-4 flex flex-col gap-3 border-l-4 border-amber-500 bg-amber-50/30">
+                    <div class="card p-4 flex flex-col gap-3 border-l-4 border-amber-500 bg-amber-50/30 dark:bg-amber-900/20">
                         <h4 class="font-bold text-amber-700 dark:text-amber-500">⭐ Oliy toifa</h4>
                         <div class="grid grid-cols-2 gap-2">
                             <button class="bg-amber-100 text-amber-700 py-2 rounded-lg font-bold text-sm">Test</button>
@@ -307,12 +267,7 @@
             <div id="tab-profil" class="tab-content hidden fade-in">
                 <div class="flex flex-col items-center mb-6 pt-4">
                     <div class="relative mb-3">
-                        <div class="w-24 h-24 bg-indigo-100 rounded-full flex items-center justify-center text-4xl border-4 border-white dark:border-slate-800 shadow-md">
-                            👦
-                        </div>
-                        <button class="absolute bottom-0 right-0 bg-indigo-600 text-white w-8 h-8 rounded-full flex items-center justify-center shadow-lg border-2 border-white">
-                            <i class="fas fa-camera text-xs"></i>
-                        </button>
+                        <div class="w-24 h-24 bg-indigo-100 rounded-full flex items-center justify-center text-4xl border-4 border-white dark:border-slate-800 shadow-md">👦</div>
                     </div>
                     <h2 class="text-2xl font-black" id="profile-name">Ism Familiya</h2>
                     <p class="text-sm opacity-70" id="profile-grade">Sinf</p>
@@ -320,18 +275,6 @@
 
                 <div class="space-y-4">
                     <div class="card p-2 divide-y divide-slate-100 dark:divide-slate-700">
-                        
-                        <div class="flex justify-between items-center p-3">
-                            <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center"><i class="fas fa-language"></i></div>
-                                <span class="font-bold text-sm">Tilni o'zgartirish</span>
-                            </div>
-                            <select class="bg-transparent font-bold text-sm outline-none text-indigo-600">
-                                <option>Lotin</option>
-                                <option>Kiril</option>
-                            </select>
-                        </div>
-
                         <div class="flex justify-between items-center p-3">
                             <div class="flex items-center gap-3">
                                 <div class="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center"><i class="fas fa-moon"></i></div>
@@ -342,46 +285,13 @@
                                 <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
                             </label>
                         </div>
-
-                        <div class="flex justify-between items-center p-3">
-                            <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 rounded-full bg-pink-100 text-pink-600 flex items-center justify-center"><i class="fas fa-birthday-cake"></i></div>
-                                <span class="font-bold text-sm">Tug'ilgan kun</span>
-                            </div>
-                            <input type="date" class="bg-transparent font-bold text-sm outline-none text-slate-500 w-32">
-                        </div>
-                    </div>
-
-                    <div class="card p-2 divide-y divide-slate-100 dark:divide-slate-700">
-                        <a href="https://t.me/Matemdarsi" target="_blank" class="flex justify-between items-center p-3 active:bg-slate-50 dark:active:bg-slate-800 rounded-xl">
-                            <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 rounded-full bg-sky-100 text-sky-600 flex items-center justify-center"><i class="fab fa-telegram-plane"></i></div>
-                                <div>
-                                    <p class="font-bold text-sm">Telegram kanal</p>
-                                    <p class="text-xs opacity-70">@Matemdarsi</p>
-                                </div>
-                            </div>
-                            <i class="fas fa-chevron-right opacity-40 text-sm"></i>
-                        </a>
-
-                        <a href="https://t.me/Akmalmaths" target="_blank" class="flex justify-between items-center p-3 active:bg-slate-50 dark:active:bg-slate-800 rounded-xl">
-                            <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center"><i class="fas fa-school"></i></div>
-                                <div>
-                                    <p class="font-bold text-sm">Offline kurs (Toshkent)</p>
-                                    <p class="text-xs opacity-70">Bog'lanish uchun bosin</p>
-                                </div>
-                            </div>
-                            <i class="fas fa-chevron-right opacity-40 text-sm"></i>
-                        </a>
                     </div>
 
                     <button class="w-full card p-3 flex items-center justify-center gap-2 text-rose-500 font-bold active:bg-rose-50" onclick="logout()">
                         <i class="fas fa-sign-out-alt"></i> Tizimdan chiqish
                     </button>
                     
-                    <!-- ADMIN PANEL TUGMASI (PAROL BILAN) -->
-                    <button class="w-full card p-3 flex items-center justify-center gap-2 text-slate-400 font-bold mt-4 border-dashed hover:bg-slate-50 dark:hover:bg-slate-800" onclick="checkAdminPassword()">
+                    <button class="w-full card p-3 flex items-center justify-center gap-2 text-slate-500 dark:text-slate-400 font-bold mt-4 border-dashed hover:bg-slate-50 dark:hover:bg-slate-800 border-2" onclick="checkAdminPassword()">
                         <i class="fas fa-cog"></i> Admin Panel (Tahrirlash)
                     </button>
                 </div>
@@ -394,32 +304,8 @@
                     <h2 class="text-2xl font-black">Liderlar Doskasi</h2>
                 </div>
                 <div class="card p-4">
-                    <p class="text-sm mb-4 text-slate-500">Video ko'rganingiz va test ishlaganingiz uchun coinlar beriladi!</p>
-                    <div class="space-y-3">
-                        <div class="flex items-center justify-between p-3 bg-amber-50 dark:bg-amber-900/20 rounded-xl border border-amber-100">
-                            <div class="flex items-center gap-3">
-                                <span class="font-black text-amber-500 w-5">1</span>
-                                <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-xl shadow-sm">👑</div>
-                                <span class="font-bold">Aziza M.</span>
-                            </div>
-                            <span class="font-black text-amber-600">1250 🎯</span>
-                        </div>
-                        <div class="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-xl">
-                            <div class="flex items-center gap-3">
-                                <span class="font-black text-slate-400 w-5">2</span>
-                                <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-xl shadow-sm">👦</div>
-                                <span class="font-bold">Jasur K.</span>
-                            </div>
-                            <span class="font-black text-indigo-600">980 🎯</span>
-                        </div>
-                        <div class="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-xl">
-                            <div class="flex items-center gap-3">
-                                <span class="font-black text-orange-400 w-5">3</span>
-                                <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-xl shadow-sm">👧</div>
-                                <span class="font-bold">Malika R.</span>
-                            </div>
-                            <span class="font-black text-indigo-600">850 🎯</span>
-                        </div>
+                    <div class="space-y-3" id="ui-liderlar-list">
+                        <!-- JS orqali to'ldiriladi -->
                     </div>
                 </div>
             </div>
@@ -432,29 +318,94 @@
                 </div>
                 
                 <div class="grid grid-cols-1 gap-4">
-                    <div class="card p-4 cursor-pointer hover:border-indigo-400" onclick="alert('1-qism videolari va testlari ochiladi')">
+                    <div class="card p-4 cursor-pointer hover:border-indigo-400">
                         <h3 class="font-black text-lg mb-2">1-qism (1-chorak)</h3>
                         <div class="flex gap-2">
-                            <span class="bg-indigo-50 text-indigo-600 text-xs font-bold px-2 py-1 rounded">🎬 15 ta video</span>
-                            <span class="bg-emerald-50 text-emerald-600 text-xs font-bold px-2 py-1 rounded">📝 10 ta test</span>
+                            <span class="bg-indigo-50 text-indigo-600 text-xs font-bold px-2 py-1 rounded">🎬 <span id="ui-v-1">15</span> ta video</span>
+                            <span class="bg-emerald-50 text-emerald-600 text-xs font-bold px-2 py-1 rounded">📝 <span id="ui-t-1">10</span> ta test</span>
                         </div>
                     </div>
-                    <div class="card p-4 cursor-pointer hover:border-indigo-400" onclick="alert('2-qism videolari va testlari ochiladi')">
+                    <div class="card p-4 cursor-pointer hover:border-indigo-400">
                         <h3 class="font-black text-lg mb-2">2-qism (2-chorak)</h3>
                         <div class="flex gap-2">
-                            <span class="bg-indigo-50 text-indigo-600 text-xs font-bold px-2 py-1 rounded">🎬 12 ta video</span>
-                            <span class="bg-emerald-50 text-emerald-600 text-xs font-bold px-2 py-1 rounded">📝 12 ta test</span>
+                            <span class="bg-indigo-50 text-indigo-600 text-xs font-bold px-2 py-1 rounded">🎬 <span id="ui-v-2">12</span> ta video</span>
+                            <span class="bg-emerald-50 text-emerald-600 text-xs font-bold px-2 py-1 rounded">📝 <span id="ui-t-2">12</span> ta test</span>
                         </div>
                     </div>
-                    <div class="card p-4 cursor-pointer hover:border-indigo-400 opacity-70">
-                        <h3 class="font-black text-lg mb-2">3-qism (3-chorak)</h3>
-                        <p class="text-xs font-bold text-slate-400">Tez kunda...</p>
-                    </div>
-                    <div class="card p-4 cursor-pointer hover:border-indigo-400 opacity-70">
-                        <h3 class="font-black text-lg mb-2">4-qism (4-chorak)</h3>
-                        <p class="text-xs font-bold text-slate-400">Tez kunda...</p>
+                </div>
+            </div>
+
+            <!-- ================= ADMIN PANEL TAB ================= -->
+            <div id="tab-admin" class="tab-content hidden fade-in">
+                <div class="flex items-center gap-3 mb-6">
+                    <button onclick="switchTab('profil')" class="w-10 h-10 rounded-full bg-white dark:bg-slate-800 shadow flex items-center justify-center"><i class="fas fa-arrow-left"></i></button>
+                    <h2 class="text-2xl font-black text-rose-600 dark:text-rose-400">Admin Boshqaruvi</h2>
+                </div>
+
+                <!-- Olimpiada Sozlamalari -->
+                <div class="card p-4 mb-4 border-2 border-indigo-100 dark:border-indigo-900/50">
+                    <h3 class="font-bold text-lg mb-3 flex items-center gap-2"><i class="fas fa-clock text-indigo-500"></i> Olimpiada Vaqti</h3>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="text-xs font-bold opacity-70">Qachon bo'ladi?</label>
+                            <input type="text" id="admin-olim-kun" class="admin-input" placeholder="Masalan: Har Shanba">
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold opacity-70">Soat nechida?</label>
+                            <input type="text" id="admin-olim-vaqt" class="admin-input" placeholder="Masalan: 19:00 dan 22:00 gacha">
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold opacity-70">Natijalar qachon chiqadi?</label>
+                            <input type="text" id="admin-olim-natija" class="admin-input" placeholder="Masalan: Yakshanba soat 12:00 da">
+                        </div>
                     </div>
                 </div>
+
+                <!-- Darslar Sozlamalari -->
+                <div class="card p-4 mb-4 border-2 border-emerald-100 dark:border-emerald-900/50">
+                    <h3 class="font-bold text-lg mb-3 flex items-center gap-2"><i class="fas fa-video text-emerald-500"></i> Darslar miqdori (1 va 2-qism)</h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-xs font-bold opacity-70">1-qism Videolar</label>
+                            <input type="number" id="admin-v-1" class="admin-input">
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold opacity-70">1-qism Testlar</label>
+                            <input type="number" id="admin-t-1" class="admin-input">
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold opacity-70">2-qism Videolar</label>
+                            <input type="number" id="admin-v-2" class="admin-input">
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold opacity-70">2-qism Testlar</label>
+                            <input type="number" id="admin-t-2" class="admin-input">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Liderlar Sozlamalari -->
+                <div class="card p-4 mb-6 border-2 border-amber-100 dark:border-amber-900/50">
+                    <h3 class="font-bold text-lg mb-3 flex items-center gap-2"><i class="fas fa-trophy text-amber-500"></i> TOP 3 Liderlar (Coin)</h3>
+                    <div class="space-y-3">
+                        <div class="flex gap-2">
+                            <input type="text" id="admin-l1-name" class="admin-input w-2/3" placeholder="1-o'rin Ismi">
+                            <input type="number" id="admin-l1-coin" class="admin-input w-1/3" placeholder="Coin">
+                        </div>
+                        <div class="flex gap-2">
+                            <input type="text" id="admin-l2-name" class="admin-input w-2/3" placeholder="2-o'rin Ismi">
+                            <input type="number" id="admin-l2-coin" class="admin-input w-1/3" placeholder="Coin">
+                        </div>
+                        <div class="flex gap-2">
+                            <input type="text" id="admin-l3-name" class="admin-input w-2/3" placeholder="3-o'rin Ismi">
+                            <input type="number" id="admin-l3-coin" class="admin-input w-1/3" placeholder="Coin">
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="saveAdminSettings()" class="w-full bg-rose-600 text-white font-black py-4 rounded-xl shadow-lg shadow-rose-200 dark:shadow-none hover:bg-rose-700 transition-all flex justify-center items-center gap-2">
+                    <i class="fas fa-save"></i> O'zgarishlarni Saqlash
+                </button>
             </div>
 
         </main>
@@ -462,33 +413,40 @@
         <!-- Bottom Navigation Bar -->
         <nav class="nav-bar fixed bottom-0 w-full max-w-[480px] flex justify-between items-center px-6 py-3 z-30 rounded-t-3xl shadow-[0_-5px_20px_rgba(0,0,0,0.05)]">
             <button class="nav-item active flex flex-col items-center gap-1" onclick="switchTab('asosiy', this)">
-                <i class="fas fa-home text-xl"></i>
-                <span class="text-[10px] font-bold">Asosiy</span>
+                <i class="fas fa-home text-xl"></i><span class="text-[10px] font-bold">Asosiy</span>
             </button>
             <button class="nav-item flex flex-col items-center gap-1" onclick="switchTab('olimpiada', this)">
-                <i class="fas fa-trophy text-xl"></i>
-                <span class="text-[10px] font-bold">Olimpiada</span>
+                <i class="fas fa-trophy text-xl"></i><span class="text-[10px] font-bold">Olimpiada</span>
             </button>
             <button class="nav-item flex flex-col items-center gap-1" onclick="switchTab('prezident', this)">
-                <i class="fas fa-star text-xl"></i>
-                <span class="text-[10px] font-bold">Prezident</span>
+                <i class="fas fa-star text-xl"></i><span class="text-[10px] font-bold">Prezident</span>
             </button>
             <button class="nav-item flex flex-col items-center gap-1" onclick="switchTab('attestatsiya', this)">
-                <i class="fas fa-graduation-cap text-xl"></i>
-                <span class="text-[10px] font-bold">Attestatsiya</span>
+                <i class="fas fa-graduation-cap text-xl"></i><span class="text-[10px] font-bold">Attestatsiya</span>
             </button>
             <button class="nav-item flex flex-col items-center gap-1" onclick="switchTab('profil', this)">
-                <i class="fas fa-user text-xl"></i>
-                <span class="text-[10px] font-bold">Profil</span>
+                <i class="fas fa-user text-xl"></i><span class="text-[10px] font-bold">Profil</span>
             </button>
         </nav>
     </div>
-
 </div>
 
 <script>
     const STORAGE_KEY = 'akmalmaths_user';
+    const ADMIN_DATA_KEY = 'akmalmaths_admin_data';
+    
     let currentUser = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    let adminData = JSON.parse(localStorage.getItem(ADMIN_DATA_KEY)) || {
+        olimKun: "Har Shanba",
+        olimVaqt: "19:00 dan 22:00 gacha",
+        olimNatija: "Yakshanba soat 12:00 da",
+        v1: 15, t1: 10, v2: 12, t2: 12,
+        leaders: [
+            { name: "Aziza M.", coin: 1250, icon: "👑", color: "amber-500", bg: "amber-50 dark:bg-amber-900/20" },
+            { name: "Jasur K.", coin: 980, icon: "👦", color: "slate-400", bg: "slate-50 dark:bg-slate-800" },
+            { name: "Malika R.", coin: 850, icon: "👧", color: "orange-400", bg: "slate-50 dark:bg-slate-800" }
+        ]
+    };
 
     const welcomeScreen = document.getElementById('welcome-screen');
     const mainApp = document.getElementById('main-app');
@@ -501,9 +459,10 @@
             
             document.getElementById('user-name-display').textContent = currentUser.name;
             document.getElementById('user-grade-display').textContent = currentUser.grade.includes('sinf') ? currentUser.grade : 'Ota-ona';
-            
             document.getElementById('profile-name').textContent = `${currentUser.name} ${currentUser.surname}`;
             document.getElementById('profile-grade').textContent = currentUser.grade;
+            
+            applyAdminDataToUI();
         } else {
             welcomeScreen.classList.remove('hidden');
             mainApp.classList.add('hidden');
@@ -515,6 +474,73 @@
             document.body.classList.add('dark-mode');
             document.getElementById('theme-toggle').checked = true;
         }
+    }
+
+    // UI ga o'zgarishlarni yozish
+    function applyAdminDataToUI() {
+        // Olimpiada
+        document.getElementById('ui-olim-kun').textContent = adminData.olimKun;
+        document.getElementById('ui-olim-vaqt').textContent = adminData.olimVaqt;
+        document.getElementById('ui-olim-natija').textContent = adminData.olimNatija;
+
+        // Darslar
+        document.getElementById('ui-v-1').textContent = adminData.v1;
+        document.getElementById('ui-t-1').textContent = adminData.t1;
+        document.getElementById('ui-v-2').textContent = adminData.v2;
+        document.getElementById('ui-t-2').textContent = adminData.t2;
+
+        // Liderlar render
+        const liderContainer = document.getElementById('ui-liderlar-list');
+        liderContainer.innerHTML = adminData.leaders.map((l, idx) => `
+            <div class="flex items-center justify-between p-3 ${l.bg} rounded-xl border border-transparent ${idx===0 ? 'border-amber-100' : ''}">
+                <div class="flex items-center gap-3">
+                    <span class="font-black text-${l.color} w-5">${idx+1}</span>
+                    <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-xl shadow-sm dark:text-slate-800">${l.icon}</div>
+                    <span class="font-bold">${l.name}</span>
+                </div>
+                <span class="font-black text-indigo-600 dark:text-indigo-400">${l.coin} 🎯</span>
+            </div>
+        `).join('');
+
+        // Admin formalarini to'ldirish
+        document.getElementById('admin-olim-kun').value = adminData.olimKun;
+        document.getElementById('admin-olim-vaqt').value = adminData.olimVaqt;
+        document.getElementById('admin-olim-natija').value = adminData.olimNatija;
+        document.getElementById('admin-v-1').value = adminData.v1;
+        document.getElementById('admin-t-1').value = adminData.t1;
+        document.getElementById('admin-v-2').value = adminData.v2;
+        document.getElementById('admin-t-2').value = adminData.t2;
+        
+        document.getElementById('admin-l1-name').value = adminData.leaders[0].name;
+        document.getElementById('admin-l1-coin').value = adminData.leaders[0].coin;
+        document.getElementById('admin-l2-name').value = adminData.leaders[1].name;
+        document.getElementById('admin-l2-coin').value = adminData.leaders[1].coin;
+        document.getElementById('admin-l3-name').value = adminData.leaders[2].name;
+        document.getElementById('admin-l3-coin').value = adminData.leaders[2].coin;
+    }
+
+    // Admin saqlash tugmasi bosilganda
+    function saveAdminSettings() {
+        adminData.olimKun = document.getElementById('admin-olim-kun').value;
+        adminData.olimVaqt = document.getElementById('admin-olim-vaqt').value;
+        adminData.olimNatija = document.getElementById('admin-olim-natija').value;
+        
+        adminData.v1 = document.getElementById('admin-v-1').value;
+        adminData.t1 = document.getElementById('admin-t-1').value;
+        adminData.v2 = document.getElementById('admin-v-2').value;
+        adminData.t2 = document.getElementById('admin-t-2').value;
+
+        adminData.leaders[0].name = document.getElementById('admin-l1-name').value;
+        adminData.leaders[0].coin = document.getElementById('admin-l1-coin').value;
+        adminData.leaders[1].name = document.getElementById('admin-l2-name').value;
+        adminData.leaders[1].coin = document.getElementById('admin-l2-coin').value;
+        adminData.leaders[2].name = document.getElementById('admin-l3-name').value;
+        adminData.leaders[2].coin = document.getElementById('admin-l3-coin').value;
+
+        localStorage.setItem(ADMIN_DATA_KEY, JSON.stringify(adminData));
+        applyAdminDataToUI();
+        
+        alert("Ma'lumotlar saqlandi! Endi barcha sahifalarda yangi qiymatlar ko'rinadi.");
     }
 
     document.getElementById('login-form').addEventListener('submit', (e) => {
@@ -536,17 +562,12 @@
         initApp();
     }
 
-    // Parol tekshirish funksiyasi
     function checkAdminPassword() {
         const password = prompt("Admin parolini kiriting:");
-        
-        // Agar foydalanuvchi "Cancel" bossa yoki hech narsa yozmasa, kod to'xtaydi
         if (password === null) return; 
 
         if (password === "0912") {
-            alert("Parol to'g'ri! Admin paneliga xush kelibsiz (Tahrirlash oynasi ochiladi).");
-            // Kelajakda bu yerga Admin paneliga o'tish kodini yozishingiz mumkin
-            // Masalan: window.location.href = "admin.html";
+            switchTab('admin'); // Admin sahifasini ochadi
         } else {
             alert("Parol xato! Kirish taqiqlangan.");
         }
@@ -556,14 +577,14 @@
         document.querySelectorAll('.tab-content').forEach(tab => {
             tab.classList.add('hidden');
         });
-        
         document.getElementById(`tab-${tabId}`).classList.remove('hidden');
 
         if(btnElement) {
-            document.querySelectorAll('.nav-item').forEach(btn => {
-                btn.classList.remove('active');
-            });
+            document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
             btnElement.classList.add('active');
+        } else if (tabId === 'admin') {
+            // Admin panel ochilganda bottom menu ni aktiv holatini olib tashlash
+            document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
         }
         
         document.getElementById('content-area').scrollTo(0,0);
