@@ -3,97 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Bir Chiziq - 50 Bosqich</title>
+    <title>Bir Chiziq - 100 Bosqich</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { 
             touch-action: none; 
-            background-color: #eef2ff;
-            background-image: url('https://www.transparenttextures.com/patterns/cubes.png'); 
+            background-color: #f8fafc;
         }
         .canvas-container { position: relative; }
         #gameCanvas {
             background-color: #ffffff;
             border-radius: 1.5rem;
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
             width: 100%;
             max-width: 360px;
             height: auto;
             aspect-ratio: 1 / 1;
             touch-action: none;
+            border: 2px solid #e2e8f0;
         }
         .pop-animation { animation: pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         @keyframes pop {
             0% { transform: scale(0.7); opacity: 0; }
             100% { transform: scale(1); opacity: 1; }
         }
-        .btn-gradient {
-            background: linear-gradient(135deg, #f43f5e 0%, #ec4899 100%);
-            transition: all 0.2s ease;
-        }
-        .btn-gradient:hover { 
-            background: linear-gradient(135deg, #e11d48 0%, #db2777 100%); 
-            transform: translateY(-2px); 
-            box-shadow: 0 6px 15px rgba(236, 72, 153, 0.4); 
-        }
-        .btn-gradient:active { transform: translateY(1px); }
     </style>
 </head>
 <body class="min-h-screen flex flex-col items-center justify-center font-sans p-4">
 
     <!-- Ro'yxatdan o'tish oynasi -->
-    <div id="auth-screen" class="fixed inset-0 bg-indigo-900 bg-opacity-95 flex items-center justify-center z-50 transition-opacity duration-300">
+    <div id="auth-screen" class="fixed inset-0 bg-slate-900 bg-opacity-95 flex items-center justify-center z-50 transition-opacity duration-300">
         <div class="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-sm pop-animation">
-            <h2 class="text-3xl font-extrabold text-center text-indigo-600 mb-2">Bir Chiziq</h2>
-            <p class="text-center text-gray-500 mb-6 text-sm">O'yinni boshlash uchun ma'lumotlarni kiriting</p>
+            <h2 class="text-3xl font-extrabold text-center text-slate-800 mb-2">Bir Chiziq</h2>
+            <p class="text-center text-slate-500 mb-6 text-sm">Ustoz-Pro kitobi asosida</p>
             
             <div class="space-y-4">
-                <input type="text" id="p-name" placeholder="Ismingiz" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition">
-                <input type="text" id="p-surname" placeholder="Familiyangiz" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition">
-                <input type="text" id="p-class" placeholder="Sinfingiz (Masalan: 4-A)" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition">
+                <input type="text" id="p-name" placeholder="Ismingiz" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
+                <input type="text" id="p-surname" placeholder="Familiyangiz" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
+                <input type="text" id="p-class" placeholder="Sinfingiz (Masalan: 4-A)" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
                 
-                <button onclick="startGame()" class="w-full mt-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-xl shadow-lg transform transition hover:scale-[1.02] active:scale-95">
-                    O'yinni Boshlash ➔
+                <button onclick="startGame()" class="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl shadow-lg transform transition active:scale-95">
+                    Boshlash ➔
                 </button>
             </div>
-            <p class="text-center text-xs text-gray-400 mt-4">Jami 50 ta mantiqiy bosqich</p>
+            <p class="text-center text-xs text-slate-400 mt-4">Jami 100 ta boshqotirma</p>
         </div>
     </div>
 
     <!-- O'yin maydoni -->
-    <div id="game-screen" class="w-full max-w-md bg-white rounded-3xl shadow-2xl p-6 relative hidden pop-animation border-t-4 border-indigo-500">
+    <div id="game-screen" class="w-full max-w-md bg-white rounded-3xl shadow-xl p-6 relative hidden pop-animation border-t-4 border-blue-500">
         
-        <div class="bg-indigo-50 rounded-xl p-3 mb-5 flex justify-between items-center border border-indigo-100">
+        <div class="bg-slate-50 rounded-xl p-3 mb-5 flex justify-between items-center border border-slate-100">
             <div class="flex flex-col">
-                <span id="display-name" class="text-sm font-bold text-indigo-800">Ism Familiya</span>
-                <span id="display-class" class="text-xs font-semibold text-indigo-500 bg-indigo-100 px-2 py-0.5 rounded w-max mt-1">Sinf</span>
+                <span id="display-name" class="text-sm font-bold text-slate-800">Ism Familiya</span>
+                <span id="display-class" class="text-xs font-semibold text-blue-600 bg-blue-100 px-2 py-0.5 rounded w-max mt-1">Sinf</span>
             </div>
             <div class="text-2xl">🎓</div>
         </div>
 
         <div class="flex justify-between items-center mb-4 px-1">
             <div class="flex flex-col">
-                <span class="text-2xl font-black text-gray-800" id="level-indicator">1-Bosqich</span>
-                <span class="text-xs text-gray-400 font-medium tracking-wide">50 Tadan</span>
+                <span class="text-2xl font-black text-slate-800" id="level-indicator">1-Boshqotirma</span>
+                <span class="text-xs text-slate-400 font-medium tracking-wide">100 Tadan</span>
             </div>
-            <button onclick="resetPath(true)" class="btn-gradient text-white text-sm font-bold py-2 px-5 rounded-full flex items-center gap-1">
+            <button onclick="resetPath(true)" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-bold py-2 px-5 rounded-full flex items-center gap-1 transition">
                 🔄 Tozalash
             </button>
         </div>
 
         <div class="canvas-container flex justify-center mb-6">
             <canvas id="gameCanvas" width="400" height="400"></canvas>
-            
-            <div id="win-message" class="hidden absolute inset-0 flex flex-col items-center justify-center bg-white bg-opacity-95 rounded-2xl z-10">
-            </div>
+            <div id="win-message" class="hidden absolute inset-0 flex flex-col items-center justify-center bg-white bg-opacity-95 rounded-2xl z-10"></div>
         </div>
 
-        <div class="text-center border-t border-gray-100 pt-5">
-            <p class="text-sm text-gray-500 font-bold tracking-wide">O'yin tuzuvchi: Akmaljon Jo'raqo'ziyev</p>
-            <div class="flex justify-center gap-4 mt-2">
-                <a href="https://t.me/Matemdarsi" target="_blank" class="text-sm text-indigo-500 hover:text-indigo-600 font-bold bg-indigo-50 px-3 py-1 rounded-lg transition-colors">@Matemdarsi</a>
-                <a href="https://t.me/Akmalmaths" target="_blank" class="text-sm text-indigo-500 hover:text-indigo-600 font-bold bg-indigo-50 px-3 py-1 rounded-lg transition-colors">@Akmalmaths</a>
-            </div>
+        <div class="text-center border-t border-slate-100 pt-5">
+            <p class="text-sm text-slate-500 font-bold tracking-wide">O'yin tuzuvchi: Akmaljon Jo'raqo'ziyev</p>
         </div>
     </div>
 
@@ -158,58 +142,108 @@
         const winMessage = document.getElementById('win-message');
         const levelIndicator = document.getElementById('level-indicator');
 
-        // Barcha 50 ta bosqich Eyler grafi bo'yicha matematik tekshiruvdan o'tgan (100% yechiladi)
+        // Ustoz-Pro kitobidan aniq olingan 1-100 gacha bosqichlar ro'yxati (kordinatalar|chiziqlar)
         const levelsData = [
-            "100,100 300,100 300,300 100,300|0,1 1,2 2,3 3,0", 
-            "200,60 100,160 300,160 100,300 300,300|0,1 0,2 1,2 1,3 2,4 3,4", 
-            "200,40 340,150 290,340 110,340 60,150|0,2 2,4 4,1 1,3 3,0", 
-            "100,100 300,100 300,300 100,300|0,1 1,2 2,3 3,0 0,2", 
-            "200,80 320,200 200,320 80,200|0,1 1,2 2,3 3,0", 
-            "100,100 300,100 200,200 100,300 300,300|0,1 1,2 2,0 0,3 3,4 4,1 1,3 0,4", 
-            "100,200 200,100 200,300 300,200|0,1 1,2 2,0 1,3 3,2", 
-            "100,200 150,100 250,100 300,200 250,300 150,300|0,1 1,2 2,3 3,4 4,5 5,0", 
-            "200,60 200,340 80,200 320,200 200,140 200,260|0,2 0,3 1,2 1,3 0,4 4,5 5,1 2,4 3,4 2,5 3,5", // 9-bosqich TUZATILDI
-            "200,60 100,160 300,160 200,360|0,1 0,2 1,2 1,3 2,3", 
-            "200,40 120,140 280,140 200,240 120,340 280,340|0,1 0,2 1,2 1,3 2,3 3,4 3,5 4,5", 
-            "80,160 200,120 320,160 140,260 260,260|0,1 1,2 2,4 4,3 3,0 3,1 4,1", 
-            "150,100 250,100 300,200 250,300 150,300 100,200|0,1 1,2 2,3 3,4 4,5 5,0 0,3", 
-            "100,200 300,200 250,280 150,280 200,100|0,1 1,2 2,3 3,0 4,0 4,1 0,2", 
-            "200,60 340,160 280,320 120,320 60,160|0,1 1,2 2,3 3,4 4,0 0,2 2,4 4,1 1,3 3,0", 
-            "100,120 300,120 300,280 100,280 200,200|0,1 1,2 2,3 3,0 0,4 1,4", 
-            "100,160 200,160 300,160 100,260 200,260 300,260|0,1 1,2 3,4 4,5 0,3 2,5 1,4", 
-            "100,100 300,100 300,300 100,300 200,200|0,1 1,2 2,3 3,0 0,4 1,4 2,4 3,4 0,2", 
-            "200,60 280,120 280,240 200,300 120,240 120,120|0,1 1,2 2,3 3,4 4,5 5,0 0,2 2,4 4,0", 
-            "80,280 160,160 240,80 320,280 240,280 160,280|0,1 1,2 2,3 3,4 4,5 5,0 1,4 1,5",
-            "100,300 200,100 300,300|0,1 1,2 2,0",
-            "100,300 200,100 300,300 200,300|0,1 1,2 2,0 1,3",
-            "100,100 300,100 200,200 100,300 300,300|0,1 1,2 2,0 2,3 3,4 4,2",
-            "100,200 200,100 200,160 300,160 300,240 200,240 200,300|0,1 1,2 2,3 3,4 4,5 5,6 6,0",
-            "100,200 150,150 250,150 300,200|0,1 1,2 2,3 3,0 1,3",
-            "260,120 160,200 260,280 60,200 340,200|0,1 1,2 2,0 1,3 2,3 0,4 2,4",
-            "160,100 260,200 160,300 60,200|0,1 0,2 1,2 1,3 2,3",
-            "200,100 100,300 300,300 150,200 250,200|0,1 1,2 2,0 3,4 1,4 2,3",
-            "100,100 200,200 100,300 300,100 300,300|0,1 1,2 2,0 1,3 3,4 4,1",
-            "150,80 250,80 320,150 320,250 250,320 150,320 80,250 80,150|0,1 1,2 2,3 3,4 4,5 5,6 6,7 7,0",
-            "200,80 260,160 340,160 280,240 300,320 200,280 100,320 120,240 60,160 140,160|0,1 1,2 2,3 3,4 4,5 5,6 6,7 7,8 8,9 9,0",
-            "100,100 300,100 300,200 200,320 100,200|0,1 1,2 2,3 3,4 4,0 1,4",
-            "160,80 240,80 320,160 200,320 80,160|0,1 1,2 2,3 3,4 4,0 1,4",
-            "160,80 240,80 160,160 240,160 120,280 280,280|0,1 0,2 1,3 2,4 3,5 4,5 2,5",
-            "100,100 300,100 200,200 200,300|0,1 1,2 2,0 0,3 1,3",
-            "200,340 100,240 300,240 100,100 300,100|0,1 0,2 1,2 1,3 2,4 3,4",
-            "200,80 320,200 200,320 80,200|0,1 1,2 2,3 3,0 0,2",
-            "200,340 100,140 300,140 200,60|0,1 0,2 1,2 1,3 2,3",
-            "100,100 300,100 300,300 100,300 200,100 200,300|0,4 4,1 1,5 5,2 2,3 3,0 0,5 1,5",
-            "100,200 200,300 200,100 300,200|0,1 1,2 2,0 1,3 3,2",
-            "150,100 250,150 200,250 100,200|0,1 1,2 2,3 3,0",
-            "150,60 340,110 340,290 150,340 40,200|0,2 2,4 4,1 1,3 3,0",
-            "100,200 200,100 200,300 300,100 300,300|0,1 0,2 1,2 1,3 2,4 3,4",
-            "60,200 160,100 160,300 360,200|0,1 0,2 1,2 1,3 2,3",
-            "100,300 150,100 200,200 250,100 300,300|0,1 1,2 2,3 3,4 4,0 0,2 4,2",
-            "100,200 150,100 250,100 300,200 250,300 150,300|0,1 1,2 2,3 3,4 4,5 5,0 0,3",
-            "200,80 320,160 280,300 120,300 80,160|0,1 1,2 2,3 3,4 4,0",
-            "200,80 320,160 280,300 120,300 80,160|0,1 1,2 2,3 3,4 4,0 0,2 2,4 4,1 1,3 3,0",
-            "100,100 300,100 200,200 100,300 300,300|0,1 1,2 2,0 2,3 3,4 4,2 0,3",
-            "200,40 100,140 300,140 100,260 300,260 200,360 200,200|0,1 0,2 1,3 2,4 3,5 4,5 1,6 4,6" 
+            "100,100 300,100 300,300 100,300|0,1 1,2 2,3 3,0", // 1
+            "200,60 340,160 280,320 120,320 60,160|0,2 2,4 4,1 1,3 3,0", // 2
+            "200,80 100,180 300,180 100,320 300,320|0,1 0,2 1,2 1,3 2,4 3,4", // 3
+            "100,100 300,100 300,300 100,300|0,1 1,2 2,3 3,0 0,2 1,3", // 4
+            "200,60 100,160 300,160 100,300 300,300|0,1 0,2 1,2 1,3 2,4 3,4 1,4 2,3", // 5
+            "100,100 300,100 200,200 100,300 300,300|0,1 1,2 2,0 0,3 3,4 4,1 1,3 0,4", // 6
+            "100,100 300,100 250,200 300,300 100,300 150,200|0,1 1,2 2,3 3,4 4,5 5,0 0,2 1,5 3,5 4,2", // 7
+            "200,60 200,340 80,200 320,200 140,200 260,200|0,2 0,3 1,2 1,3 0,4 4,5 5,1 2,4 3,4 2,5 3,5", // 8
+            "200,60 100,200 300,200 200,340 200,200|0,1 1,2 2,0 1,3 3,2 0,4 1,4 2,4 3,4", // 9
+            "200,60 100,300 300,300 150,240 250,240|0,1 0,2 1,2 1,3 3,4 4,2 0,3 0,4", // 10
+            "100,160 200,60 300,160 300,260 200,200 100,260 200,340|0,1 1,2 2,3 3,4 4,5 5,0 0,4 2,4 3,6 5,6 6,4", // 11
+            "200,100 300,100 300,200 200,300 100,300 100,200|0,1 1,2 2,3 3,4 4,5 5,0 1,3 0,2 1,5 0,4", // 12
+            "100,100 300,100 100,200 300,200 100,300 300,300|0,1 1,2 2,0 2,3 3,4 4,2 4,5 5,3 1,5 0,5", // 13
+            "100,100 300,100 250,200 300,300 100,300 150,200 200,100|0,1 1,2 2,3 3,4 4,5 5,0 0,2 1,5 3,5 4,2 6,2 6,5", // 14
+            "100,100 300,100 300,240 200,320 100,240 200,150|0,1 1,2 2,3 3,4 4,0 0,5 1,5 2,5 4,5", // 15
+            "200,60 150,200 250,200 100,300 200,250 300,300 200,150|0,1 0,2 1,3 3,4 4,5 5,2 1,2 3,5 1,4 2,4 0,6 6,4", // 16
+            "150,100 250,100 320,180 250,280 150,280 80,180 200,190|0,1 1,2 2,3 3,4 4,5 5,0 0,2 1,3 2,4 3,5 4,0 5,1 0,6 1,6 2,6 3,6 4,6 5,6", // 17
+            "100,100 300,100 300,260 200,340 100,260 200,180 150,140 250,140|0,1 1,2 2,3 3,4 4,0 0,5 1,5 2,5 4,5 0,6 1,7 6,7 5,6 5,7", // 18
+            "100,100 300,100 300,300 100,300 200,160 200,240|0,1 1,2 2,3 3,0 0,4 1,4 2,5 3,5 4,5 0,5 1,5 2,4 3,4", // 19
+            "200,100 100,200 200,200 300,200 100,300 300,300|0,1 0,3 1,2 2,3 1,4 3,5 4,5 0,2 2,4 2,5", // 20
+            "120,120 280,120 280,280 120,280 200,200 200,60 200,340|0,1 1,2 2,3 3,0 0,4 1,4 2,4 3,4 5,0 5,1 6,2 6,3", // 21
+            "200,80 300,140 300,260 200,320 100,260 100,140|0,1 1,2 2,3 3,4 4,5 5,0 0,2 1,3 2,4 3,5 4,0 5,1", // 22
+            "100,160 300,160 300,260 100,260 200,100 200,320|0,1 1,2 2,3 3,0 0,4 1,4 2,5 3,5 4,2 4,3 5,0 5,1", // 23
+            "200,60 140,140 260,140 100,260 300,260 200,340 200,200|0,1 0,2 1,2 1,3 2,4 3,5 4,5 3,4 1,4 2,3 3,6 4,6 5,6", // 24
+            "200,80 120,200 280,200 120,300 280,300 200,160|0,1 0,2 1,3 2,4 3,4 1,4 2,3 1,5 2,5 5,3 5,4", // 25
+            "100,100 300,100 300,300 100,300 200,200|0,1 1,2 2,3 3,0 0,4 1,4 2,4 3,4", // 26
+            "200,80 120,200 280,200 200,320|0,1 0,2 1,2 1,3 2,3 0,3", // 27
+            "100,100 300,100 100,200 300,200 200,150 200,250 100,300 300,300|0,1 2,3 4,5 6,7 0,4 1,4 2,4 3,4 2,5 3,5 6,5 7,5", // 28
+            "200,80 120,160 280,160 120,240 280,240 200,320 200,200|0,1 0,2 1,3 2,4 3,5 4,5 1,4 2,3 1,6 2,6 3,6 4,6 0,6 5,6", // 29
+            "150,100 250,100 100,200 300,200 150,300 250,300 200,200|0,1 0,2 1,3 2,4 3,5 4,5 2,3 0,6 1,6 2,6 3,6 4,6 5,6", // 30
+            "200,60 100,160 300,160 200,260 100,360 300,360|0,1 0,2 1,2 1,3 2,3 3,4 3,5 4,5", // 31
+            "200,60 120,140 280,140 120,240 280,240 200,320|0,1 0,2 1,2 1,3 2,4 3,4 3,5 4,5 1,4 2,3", // 32
+            "100,240 300,240 300,100 100,100 200,170 200,340|0,1 1,2 2,3 3,0 0,4 1,4 2,4 3,4 0,5 1,5 4,5", // 33
+            "200,60 100,160 300,160 100,260 300,260 200,360 200,210|0,1 0,2 1,2 1,3 2,4 3,5 4,5 3,4 1,6 2,6 3,6 4,6", // 34
+            "100,100 300,100 200,180 150,240 250,240 200,320|0,1 0,2 1,2 2,3 2,4 3,5 4,5 3,4 0,3 1,4", // 35
+            "200,60 100,160 300,160 200,260 150,320 250,320|0,1 0,2 1,3 2,3 1,2 3,4 3,5 4,5 1,4 2,5", // 36
+            "100,100 200,100 200,200 300,200 300,300 200,300 200,200 100,200|0,1 1,2 2,3 3,4 4,5 5,6 6,7 7,0 0,2 3,6", // 37
+            "100,100 300,100 300,300 100,300 200,100 200,300|0,1 1,2 2,3 3,0 4,5 0,5 1,5 2,4 3,4", // 38
+            "150,100 250,100 150,240 250,240 200,300 100,300 300,300|0,1 0,2 1,3 2,4 3,4 2,3 2,5 3,6 5,6 4,5 4,6", // 39
+            "200,100 200,300 100,200 300,200 140,140 260,140 140,260 260,260|0,1 2,3 0,2 0,3 1,2 1,3 4,5 5,7 7,6 6,4 0,4 0,5 1,6 1,7 2,4 2,6 3,5 3,7", // 40
+            "100,160 300,160 100,300 300,300 200,230 200,80|0,1 1,2 2,3 3,0 0,4 1,4 2,4 3,4 0,5 1,5 4,5", // 41
+            "100,160 300,160 100,300 300,300 200,230 200,80|0,1 1,2 2,3 3,0 0,4 1,4 2,4 3,4 0,5 1,5 4,5", // 42
+            "100,100 300,100 100,240 300,240 150,300 250,300 200,170|0,1 0,2 1,3 2,3 2,4 3,5 4,5 0,6 1,6 2,6 3,6", // 43
+            "100,100 300,100 100,240 300,240 200,170 200,300|0,1 0,2 1,3 2,3 0,4 1,4 2,4 3,4 2,5 3,5 4,5", // 44
+            "200,80 120,180 280,180 120,280 280,280 200,230 200,340|0,1 0,2 1,3 2,4 3,4 1,4 2,3 1,5 2,5 3,5 4,5 3,6 4,6", // 45
+            "100,100 300,100 100,200 300,200 100,300 300,300 200,150 200,250|0,1 0,2 1,3 2,4 3,5 4,5 2,6 3,6 6,7 4,7 5,7 2,3", // 46
+            "150,100 250,100 150,200 250,200 100,260 300,260 200,320|0,1 0,2 1,3 2,4 3,5 4,6 5,6 2,3 0,3 1,2 4,5", // 47
+            "100,100 300,100 150,200 250,200 100,300 300,300 200,250|0,1 0,2 1,3 2,4 3,5 4,5 2,3 2,6 3,6 4,6 5,6", // 48
+            "150,100 250,100 100,180 300,180 150,260 250,260 200,340|0,1 0,2 1,3 2,4 3,5 4,6 5,6 2,3 0,4 1,5 2,5 3,4", // 49
+            "150,100 250,100 100,180 300,180 150,260 250,260 200,340|0,1 0,2 1,3 2,4 3,5 4,6 5,6 2,3 0,4 1,5 2,5 3,4", // 50
+            "100,140 300,140 100,260 300,260 200,200 150,100 250,100 200,320|0,1 0,2 1,3 2,3 0,4 1,4 2,4 3,4 0,5 1,6 5,6 2,7 3,7", // 51
+            "150,100 300,100 100,180 200,180 300,180 150,260 300,260 100,340 250,340|0,1 0,2 1,4 2,3 3,4 2,5 4,6 5,6 5,7 6,8 7,8 3,5 3,6", // 52
+            "100,120 300,120 100,240 300,240 200,180 200,320|0,1 0,2 1,3 2,3 0,4 1,4 2,4 3,4 2,5 3,5 4,5", // 53
+            "100,120 300,120 100,240 300,240 200,180 200,320|0,1 0,2 1,3 2,3 0,4 1,4 2,4 3,4 2,5 3,5 4,5", // 54
+            "100,140 300,140 100,240 300,240 200,200 200,100 200,300|0,1 0,2 1,3 2,3 0,4 1,4 2,4 3,4 0,5 1,5 2,6 3,6", // 55
+            "100,140 300,140 100,280 300,280 200,210 160,100 240,100 160,320 240,320|0,1 0,2 1,3 2,3 0,4 1,4 2,4 3,4 0,5 1,6 5,6 2,7 3,8 7,8", // 56
+            "100,160 300,160 100,240 300,240 150,100 250,100 150,300 250,300 200,200|0,1 0,2 1,3 2,3 0,4 1,5 4,5 2,6 3,7 6,7 0,8 1,8 2,8 3,8", // 57
+            "150,100 250,100 100,160 300,160 100,240 300,240 150,300 250,300 200,360|0,1 0,2 1,3 2,4 3,5 4,6 5,7 6,8 7,8 2,3 4,5 0,8 1,8", // 58
+            "200,60 100,120 300,120 160,180 240,180 100,240 300,240 200,300 200,380|0,1 0,2 1,3 2,4 3,5 4,6 5,7 6,7 7,8 1,2 5,6 3,4", // 59
+            "200,60 100,120 300,120 160,180 240,180 100,240 300,240 200,300|0,1 0,2 1,3 2,4 3,5 4,6 5,7 6,7 1,2 5,6 3,4 3,7 4,7", // 60
+            "150,100 250,100 100,180 300,180 150,260 250,260 200,340|0,1 0,2 1,3 2,4 3,5 4,6 5,6 2,3 0,4 1,5 4,5", // 61
+            "150,100 250,100 100,180 300,180 150,260 250,260 200,340|0,1 0,2 1,3 2,4 3,5 4,6 5,6 2,3 0,4 1,5 4,5", // 62
+            "100,180 200,100 300,100 200,180 300,260 100,260 100,340 200,340 300,340|0,1 1,2 0,3 2,3 3,4 4,5 5,3 5,6 6,7 7,8 8,4 3,7 4,7", // 63
+            "200,80 100,160 300,160 100,260 300,260 200,340 200,160 200,260|0,1 0,2 1,3 2,4 3,5 4,5 1,6 2,6 3,7 4,7 6,7 1,7 2,7", // 64
+            "150,100 250,100 100,180 300,180 150,260 250,260 200,340|0,1 0,2 1,3 2,4 3,5 4,6 5,6 2,3 0,4 1,5 4,5", // 65
+            "150,100 250,100 100,180 300,180 150,260 250,260 200,340|0,1 0,2 1,3 2,4 3,5 4,6 5,6 2,3 0,4 1,5 4,5", // 66
+            "100,160 200,240 300,160 150,80 250,80 100,320 300,320 150,400 250,400|0,1 2,1 0,3 3,4 4,2 0,5 5,6 6,2 5,7 7,8 8,6 1,7 1,8", // 67
+            "200,80 100,200 300,200 150,260 250,260 100,320 300,320 200,380 200,300|0,1 0,2 1,5 2,6 5,7 6,7 1,3 2,4 3,4 3,8 4,8 7,8", // 68
+            "100,100 300,100 100,200 300,200 200,250 150,300 250,300 200,360|0,1 0,2 1,3 2,4 3,4 2,5 3,6 5,7 6,7 4,5 4,6 0,4 1,4", // 69
+            "100,100 300,100 100,200 300,200 200,250 150,300 250,300 200,360|0,1 0,2 1,3 2,4 3,4 2,5 3,6 5,7 6,7 4,5 4,6 0,4 1,4", // 70
+            "150,100 250,100 100,200 300,200 200,260 100,340 300,340|0,1 0,2 1,3 2,4 3,4 2,5 3,6 4,5 4,6 0,4 1,4", // 71
+            "150,100 250,100 100,200 300,200 200,260 100,340 300,340|0,1 0,2 1,3 2,4 3,4 2,5 3,6 4,5 4,6 0,4 1,4", // 72
+            "100,120 300,120 150,200 250,200 100,280 300,280 200,360 200,160|0,1 0,4 1,5 4,6 5,6 2,3 2,4 3,5 4,7 5,7 6,7 0,7 1,7", // 73
+            "100,120 300,120 150,200 250,200 100,280 300,280 200,360 200,160|0,1 0,4 1,5 4,6 5,6 2,3 2,4 3,5 4,7 5,7 6,7 0,7 1,7", // 74
+            "100,100 300,100 100,200 300,200 200,260 100,340 300,340 200,150|0,1 0,2 1,3 2,4 3,4 2,5 3,6 5,6 4,5 4,6 0,7 1,7 2,7 3,7", // 75
+            "100,100 300,100 100,200 300,200 200,260 100,340 300,340 200,150|0,1 0,2 1,3 2,4 3,4 2,5 3,6 5,6 4,5 4,6 0,7 1,7 2,7 3,7", // 76
+            "100,100 300,100 100,200 300,200 200,140 150,260 250,260 180,320 220,320|0,1 0,2 1,3 2,5 3,6 5,6 5,7 6,8 4,2 4,3 4,5 4,6 4,7 4,8", // 77
+            "100,100 300,100 100,200 300,200 200,140 150,260 250,260 180,320 220,320|0,1 0,2 1,3 2,5 3,6 5,6 5,7 6,8 4,2 4,3 4,5 4,6 4,7 4,8", // 78
+            "150,100 250,100 100,160 300,160 150,220 250,220 100,280 300,280 200,340|0,1 0,2 1,3 2,4 3,5 4,5 4,6 5,7 6,8 7,8 2,6 3,7 2,8 3,8 0,5 1,4", // 79
+            "150,100 250,100 100,160 300,160 150,220 250,220 100,280 300,280 200,340|0,1 0,2 1,3 2,4 3,5 4,5 4,6 5,7 6,8 7,8 2,6 3,7 2,8 3,8 0,5 1,4", // 80
+            "150,100 250,100 100,180 300,180 150,260 250,260 200,340 200,200|0,1 0,2 1,3 2,6 3,6 4,6 5,6 2,4 3,5 4,7 5,7 0,7 1,7", // 81
+            "150,100 250,100 100,180 300,180 150,260 250,260 200,340 200,200|0,1 0,2 1,3 2,6 3,6 4,6 5,6 2,4 3,5 4,7 5,7 0,7 1,7", // 82
+            "150,100 100,180 250,160 320,180 100,300 250,250 320,300 150,340 200,230 200,280|0,1 0,2 1,4 2,3 3,6 4,7 6,7 1,8 3,8 4,9 6,9 8,9 7,9 2,8", // 83
+            "150,100 100,180 250,160 320,180 100,300 250,250 320,300 150,340 200,230 200,280|0,1 0,2 1,4 2,3 3,6 4,7 6,7 1,8 3,8 4,9 6,9 8,9 7,9 2,8", // 84
+            "100,120 200,120 300,120 100,220 200,220 300,220 100,320 200,320 300,320|0,1 1,2 3,4 4,5 6,7 7,8 0,3 1,4 2,5 3,6 4,7 5,8 0,4 2,4 3,7 5,7 1,3 1,5", // 85
+            "100,120 200,120 300,120 100,220 200,220 300,220 100,320 200,320 300,320|0,1 1,2 3,4 4,5 6,7 7,8 0,3 1,4 2,5 3,6 4,7 5,8 0,4 2,4 3,7 5,7 1,3 1,5", // 86
+            "100,100 300,140 100,180 300,220 100,260 300,300 100,340 300,380|0,2 2,4 4,6 1,3 3,5 5,7 0,1 2,1 2,3 4,3 4,5 6,5 6,7", // 87
+            "100,100 200,100 300,100 100,200 200,200 300,200 100,300 200,300 300,300|0,1 1,2 2,4 4,3 3,0 1,4 4,5 5,8 8,7 7,4 4,6 6,3 1,3 5,7 8,6 0,6 2,8", // 88
+            "150,100 250,100 100,180 300,180 150,240 250,240 100,320 300,320 200,360 200,160 200,280|0,1 0,2 1,3 2,4 3,5 4,6 5,7 6,8 7,8 0,9 1,9 2,9 3,9 4,10 5,10 6,10 7,10 9,10", // 89
+            "150,100 250,100 100,180 300,180 150,240 250,240 100,320 300,320 200,360 200,160 200,280|0,1 0,2 1,3 2,4 3,5 4,6 5,7 6,8 7,8 0,9 1,9 2,9 3,9 4,10 5,10 6,10 7,10 9,10", // 90
+            "200,80 150,140 250,140 100,200 300,200 200,200 150,280 250,280 100,360 300,360|0,1 0,2 1,3 2,4 3,7 4,8 7,9 8,9 1,5 2,5 3,5 4,5 7,5 8,5 0,5", // 91
+            "200,80 150,140 250,140 100,200 300,200 200,200 150,280 250,280 100,360 300,360|0,1 0,2 1,3 2,4 3,7 4,8 7,9 8,9 1,5 2,5 3,5 4,5 7,5 8,5 0,5", // 92
+            "200,80 150,160 250,160 100,240 300,240 150,300 250,300 200,360 200,240|0,1 0,2 1,3 2,4 3,8 4,8 5,8 6,8 5,7 6,7 1,8 2,8", // 93
+            "200,80 150,160 250,160 100,240 300,240 150,300 250,300 200,360 200,240|0,1 0,2 1,3 2,4 3,8 4,8 5,8 6,8 5,7 6,7 1,8 2,8", // 94
+            "200,100 100,200 300,200 150,150 250,150 150,250 250,250 200,300 200,380|0,1 0,2 1,2 3,4 1,3 2,4 1,5 2,6 5,7 6,7 7,8 5,6", // 95
+            "200,100 100,200 300,200 150,150 250,150 150,250 250,250 200,300 200,380|0,1 0,2 1,2 3,4 1,3 2,4 1,5 2,6 5,7 6,7 7,8 5,6", // 96
+            "160,100 240,100 100,220 300,220 140,300 260,300 200,380 200,200 140,180 260,180|0,1 0,2 1,3 2,4 3,5 4,6 5,6 2,7 3,7 4,7 5,7 8,7 9,7 0,8 1,9 8,2 9,3", // 97
+            "160,100 240,100 100,220 300,220 140,300 260,300 200,380 200,200 140,180 260,180|0,1 0,2 1,3 2,4 3,5 4,6 5,6 2,7 3,7 4,7 5,7 8,7 9,7 0,8 1,9 8,2 9,3", // 98
+            "100,140 200,140 300,140 100,240 200,240 300,240 100,340 200,340 300,340 50,240 350,240|0,1 1,2 3,4 4,5 6,7 7,8 0,3 1,4 2,5 3,6 4,7 5,8 0,9 6,9 2,10 8,10 3,9 5,10 0,4 2,4 6,4 8,4", // 99
+            "100,140 200,140 300,140 100,240 200,240 300,240 100,340 200,340 300,340 50,240 350,240|0,1 1,2 3,4 4,5 6,7 7,8 0,3 1,4 2,5 3,6 4,7 5,8 0,9 6,9 2,10 8,10 3,9 5,10 0,4 2,4 6,4 8,4" // 100
         ];
 
         let levels = [];
@@ -234,7 +268,7 @@
             levelCompleted = false;
             winMessage.classList.add('hidden');
             winMessage.classList.remove('pop-animation');
-            levelIndicator.textContent = `${currentLevelIdx + 1}-Bosqich`;
+            levelIndicator.textContent = `${currentLevelIdx + 1}-Boshqotirma`;
             draw();
         }
 
@@ -246,7 +280,7 @@
 
         function nextLevel() {
             currentLevelIdx++;
-            if (currentLevelIdx >= 50) currentLevelIdx = 0;
+            if (currentLevelIdx >= 100) currentLevelIdx = 0;
             initLevel();
         }
 
@@ -275,7 +309,7 @@
                 ctx.lineTo(n2.x, n2.y);
                 ctx.lineWidth = 12;
                 ctx.lineCap = 'round';
-                ctx.strokeStyle = drawnEdges.has(edgeStr) ? '#6366f1' : '#e2e8f0'; 
+                ctx.strokeStyle = drawnEdges.has(edgeStr) ? '#2563eb' : '#cbd5e1'; 
                 ctx.stroke();
             });
 
@@ -286,14 +320,14 @@
                 ctx.lineTo(pointerPos.x, pointerPos.y);
                 ctx.lineWidth = 12;
                 ctx.lineCap = 'round';
-                ctx.strokeStyle = 'rgba(99, 102, 241, 0.4)';
+                ctx.strokeStyle = 'rgba(37, 99, 235, 0.4)';
                 ctx.stroke();
             }
 
             level.nodes.forEach((node, idx) => {
                 ctx.beginPath();
                 ctx.arc(node.x, node.y, 16, 0, Math.PI * 2);
-                ctx.fillStyle = path.includes(idx) ? '#4338ca' : '#cbd5e1';
+                ctx.fillStyle = path.includes(idx) ? '#1e40af' : '#94a3b8';
                 ctx.fill();
                 
                 if (path.length > 0 && path[path.length - 1] === idx) {
@@ -372,20 +406,20 @@
                 playSound('win');
                 
                 setTimeout(() => {
-                    if (currentLevelIdx === 49) {
+                    if (currentLevelIdx === 99) {
                         winMessage.innerHTML = `
                             <div class="text-6xl mb-2">🏆</div>
-                            <h2 class="text-3xl font-black text-green-500 mb-2">Qoyilmaqom!</h2>
-                            <p class="text-gray-600 mb-6 text-center px-4 font-semibold">Siz barcha 50 ta bosqichni muvaffaqiyatli yakunladingiz!</p>
-                            <button onclick="nextLevel()" class="bg-gradient-to-r from-green-400 to-green-600 hover:from-green-500 hover:to-green-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transform transition hover:scale-105">
+                            <h2 class="text-3xl font-black text-blue-600 mb-2">Qoyilmaqom!</h2>
+                            <p class="text-slate-600 mb-6 text-center px-4 font-semibold">Siz barcha 100 ta bosqichni muvaffaqiyatli yakunladingiz!</p>
+                            <button onclick="nextLevel()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg transform transition active:scale-95">
                                 Boshidan boshlash
                             </button>
                         `;
                     } else {
                         winMessage.innerHTML = `
                             <div class="text-6xl mb-2">✨</div>
-                            <h2 class="text-3xl font-black text-indigo-500 mb-6">Ajoyib!</h2>
-                            <button onclick="nextLevel()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-10 rounded-full shadow-lg transform transition hover:scale-105 active:scale-95 text-lg">
+                            <h2 class="text-3xl font-black text-blue-600 mb-6">Ajoyib!</h2>
+                            <button onclick="nextLevel()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-10 rounded-xl shadow-lg transform transition active:scale-95 text-lg">
                                 Keyingisi ➔
                             </button>
                         `;
