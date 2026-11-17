@@ -6,7 +6,7 @@
     <title>Bir Chiziq Boshqotirmasi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { touch-action: none; /* Ekranda tortganda sahifa siljib ketmasligi uchun */ }
+        body { touch-action: none; }
         .canvas-container { position: relative; }
         #gameCanvas {
             background-color: #ffffff;
@@ -29,13 +29,11 @@
 <body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen flex flex-col items-center justify-center font-sans p-4">
 
     <div class="w-full max-w-md bg-white rounded-3xl shadow-xl p-6 relative">
-        <!-- Sarlavha -->
         <div class="text-center mb-6">
             <h1 class="text-2xl font-bold text-gray-800">Bir Chiziq ✏️</h1>
             <p class="text-gray-500 text-sm mt-1">Qo'l uzmasdan barcha nuqtalarni tutashtiring</p>
         </div>
 
-        <!-- Bosqich va holat -->
         <div class="flex justify-between items-center mb-4 px-2">
             <span class="text-lg font-bold text-indigo-600" id="level-indicator">1-Bosqich</span>
             <button onclick="resetPath()" class="text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 py-1 px-3 rounded-full transition">
@@ -43,21 +41,14 @@
             </button>
         </div>
 
-        <!-- O'yin maydoni -->
         <div class="canvas-container flex justify-center mb-6">
             <canvas id="gameCanvas" width="400" height="400"></canvas>
             
-            <!-- G'alaba xabari -->
-            <div id="win-message" class="hidden absolute inset-0 flex flex-col items-center justify-center bg-white bg-opacity-90 rounded-2xl pop-animation z-10">
-                <div class="text-5xl mb-2">🎉</div>
-                <h2 class="text-2xl font-bold text-green-500 mb-4">Ajoyib!</h2>
-                <button onclick="nextLevel()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transform transition hover:scale-105">
-                    Keyingi bosqich ➔
-                </button>
+            <div id="win-message" class="hidden absolute inset-0 flex flex-col items-center justify-center bg-white bg-opacity-95 rounded-2xl pop-animation z-10">
+                <!-- Xabar JavaScript orqali qo'shiladi -->
             </div>
         </div>
 
-        <!-- Yozuv (Mualliflik) -->
         <div class="text-center border-t pt-4">
             <p class="text-xs text-gray-400 font-medium">Test tuzuvchi: Akmaljon Jo'raqo'ziyev</p>
             <div class="flex justify-center gap-4 mt-2">
@@ -74,31 +65,55 @@
         const winMessage = document.getElementById('win-message');
         const levelIndicator = document.getElementById('level-indicator');
 
-        // Kitobdagi rasmlar asosida tuzilgan bosqichlar
+        // 20 ta turli xil murakkablikdagi bosqichlar
         const levels = [
-            { // 1. Kvadrat (Oddiy)[cite: 2]
-                nodes: [{x:100, y:100}, {x:300, y:100}, {x:300, y:300}, {x:100, y:300}],
-                edges: [[0,1], [1,2], [2,3], [3,0]]
-            },
-            { // 2. Uy shakli (05-boshqotirma)[cite: 1]
-                nodes: [{x:200, y:60}, {x:80, y:180}, {x:320, y:180}, {x:80, y:320}, {x:320, y:320}],
-                edges: [[0,1], [0,2], [1,2], [1,3], [1,4], [2,3], [2,4], [3,4]]
-            },
-            { // 3. Yulduz (02-boshqotirma)[cite: 2]
-                nodes: [{x:200, y:40}, {x:340, y:150}, {x:290, y:340}, {x:110, y:340}, {x:60, y:150}],
-                edges: [[0,2], [2,4], [4,1], [1,3], [3,0]]
-            },
-            { // 4. Olmos (09-boshqotirma uslubida)[cite: 3]
-                nodes: [{x:200, y:40}, {x:80, y:200}, {x:320, y:200}, {x:200, y:360}, {x:200, y:200}],
-                edges: [[0,1], [0,2], [1,3], [2,3], [0,4], [1,4], [2,4], [3,4]]
-            }
+            // 1. Uchburchak
+            { nodes: [{x:200, y:100}, {x:100, y:300}, {x:300, y:300}], edges: [[0,1], [1,2], [2,0]] },
+            // 2. Kvadrat
+            { nodes: [{x:100, y:100}, {x:300, y:100}, {x:300, y:300}, {x:100, y:300}], edges: [[0,1], [1,2], [2,3], [3,0]] },
+            // 3. Kvadrat va bitta diagonal
+            { nodes: [{x:100, y:100}, {x:300, y:100}, {x:300, y:300}, {x:100, y:300}], edges: [[0,1], [1,2], [2,3], [3,0], [0,2]] },
+            // 4. Qumsoat (Kapalak)
+            { nodes: [{x:100, y:120}, {x:300, y:120}, {x:200, y:200}, {x:100, y:280}, {x:300, y:280}], edges: [[0,1], [1,2], [2,0], [2,3], [3,4], [4,2]] },
+            // 5. Uy
+            { nodes: [{x:200, y:60}, {x:100, y:160}, {x:300, y:160}, {x:100, y:300}, {x:300, y:300}], edges: [[0,1], [0,2], [1,2], [1,3], [2,4], [3,4], [1,4], [2,3]] },
+            // 6. Olmos
+            { nodes: [{x:200, y:80}, {x:320, y:200}, {x:200, y:320}, {x:80, y:200}], edges: [[0,1], [1,2], [2,3], [3,0], [0,2]] },
+            // 7. Yulduz
+            { nodes: [{x:200, y:60}, {x:330, y:160}, {x:280, y:320}, {x:120, y:320}, {x:70, y:160}], edges: [[0,2], [2,4], [4,1], [1,3], [3,0]] },
+            // 8. Oltiburchak
+            { nodes: [{x:140, y:80}, {x:260, y:80}, {x:340, y:200}, {x:260, y:320}, {x:140, y:320}, {x:60, y:200}], edges: [[0,1], [1,2], [2,3], [3,4], [4,5], [5,0]] },
+            // 9. Yonma-yon kvadratlar
+            { nodes: [{x:100, y:140}, {x:200, y:140}, {x:300, y:140}, {x:100, y:260}, {x:200, y:260}, {x:300, y:260}], edges: [[0,1], [1,2], [0,3], [1,4], [2,5], [3,4], [4,5]] },
+            // 10. Uchta uchburchak
+            { nodes: [{x:200, y:80}, {x:140, y:180}, {x:260, y:180}, {x:80, y:300}, {x:320, y:300}], edges: [[0,1], [0,2], [1,2], [1,3], [2,4], [3,4]] },
+            // 11. Varrak
+            { nodes: [{x:200, y:60}, {x:100, y:160}, {x:300, y:160}, {x:200, y:340}], edges: [[0,1], [0,2], [1,2], [1,3], [2,3]] },
+            // 12. Ikkitalik olmos
+            { nodes: [{x:200, y:50}, {x:120, y:125}, {x:280, y:125}, {x:200, y:200}, {x:120, y:275}, {x:280, y:275}, {x:200, y:350}], edges: [[0,1], [0,2], [1,3], [2,3], [3,4], [3,5], [4,6], [5,6]] },
+            // 13. Ko'prik
+            { nodes: [{x:60, y:200}, {x:140, y:140}, {x:140, y:260}, {x:260, y:140}, {x:260, y:260}, {x:340, y:200}], edges: [[0,1], [0,2], [1,2], [1,3], [2,4], [1,4], [2,3], [3,4], [3,5], [4,5]] },
+            // 14. Beshburchak ichidagi yulduz
+            { nodes: [{x:200, y:60}, {x:330, y:160}, {x:280, y:320}, {x:120, y:320}, {x:70, y:160}], edges: [[0,1], [1,2], [2,3], [3,4], [4,0], [0,2], [0,3], [1,3], [1,4], [2,4]] },
+            // 15. Baliqcha
+            { nodes: [{x:260, y:120}, {x:160, y:200}, {x:260, y:280}, {x:60, y:200}, {x:340, y:200}], edges: [[0,1], [1,2], [2,0], [1,3], [2,3], [0,4], [2,4]] },
+            // 16. Toj
+            { nodes: [{x:80, y:160}, {x:160, y:240}, {x:200, y:120}, {x:240, y:240}, {x:320, y:160}, {x:80, y:280}, {x:320, y:280}], edges: [[0,1], [1,2], [2,3], [3,4], [0,5], [4,6], [5,6], [1,5], [3,6], [1,3]] },
+            // 17. Quti va Olmos
+            { nodes: [{x:100, y:100}, {x:300, y:100}, {x:300, y:300}, {x:100, y:300}, {x:200, y:100}, {x:300, y:200}, {x:200, y:300}, {x:100, y:200}], edges: [[0,4], [4,1], [1,5], [5,2], [2,6], [6,3], [3,7], [7,0], [4,5], [5,6], [6,7], [7,4]] },
+            // 18. O'rgimchak to'ri
+            { nodes: [{x:200, y:60}, {x:320, y:130}, {x:320, y:270}, {x:200, y:340}, {x:80, y:270}, {x:80, y:130}], edges: [[0,1], [1,2], [2,3], [3,4], [4,5], [5,0], [0,2], [2,4], [4,0]] },
+            // 19. Ikkitalik uy
+            { nodes: [{x:200, y:60}, {x:120, y:140}, {x:280, y:140}, {x:120, y:240}, {x:280, y:240}, {x:200, y:320}], edges: [[0,1], [0,2], [1,2], [1,3], [2,4], [1,4], [2,3], [3,4], [5,3], [5,4]] },
+            // 20. Kristal (Eng qiyin)
+            { nodes: [{x:200, y:50}, {x:100, y:150}, {x:300, y:150}, {x:200, y:200}, {x:100, y:250}, {x:300, y:250}, {x:200, y:350}], edges: [[0,1], [0,2], [1,2], [1,3], [2,3], [1,4], [2,5], [4,3], [5,3], [4,5], [4,6], [5,6]] }
         ];
 
         let currentLevelIdx = 0;
-        let path = []; // Bosib o'tilgan nuqtalar ketma-ketligi
+        let path = [];
         let isDragging = false;
         let pointerPos = null;
-        let hitRadius = 30; // Nuqtani sezish radiusi
+        let hitRadius = 30;
 
         function initLevel() {
             path = [];
@@ -117,7 +132,7 @@
         function nextLevel() {
             currentLevelIdx++;
             if (currentLevelIdx >= levels.length) {
-                currentLevelIdx = 0; // Boshiga qaytish
+                currentLevelIdx = 0;
             }
             initLevel();
         }
@@ -139,7 +154,6 @@
             const level = levels[currentLevelIdx];
             const drawnEdges = getDrawnEdges();
 
-            // Chiziqlarni chizish
             level.edges.forEach(edge => {
                 const n1 = level.nodes[edge[0]];
                 const n2 = level.nodes[edge[1]];
@@ -150,11 +164,10 @@
                 ctx.lineTo(n2.x, n2.y);
                 ctx.lineWidth = 10;
                 ctx.lineCap = 'round';
-                ctx.strokeStyle = drawnEdges.has(edgeStr) ? '#4f46e5' : '#e5e7eb'; // Chizilgani ko'k, qolgani kulrang
+                ctx.strokeStyle = drawnEdges.has(edgeStr) ? '#4f46e5' : '#e5e7eb';
                 ctx.stroke();
             });
 
-            // Sudralayotgan (qalam) chizig'ini chizish
             if (isDragging && path.length > 0 && pointerPos) {
                 const lastNode = level.nodes[path[path.length - 1]];
                 ctx.beginPath();
@@ -166,24 +179,21 @@
                 ctx.stroke();
             }
 
-            // Nuqtalarni chizish
             level.nodes.forEach((node, idx) => {
                 ctx.beginPath();
-                ctx.arc(node.x, node.y, 16, 0, Math.PI * 2);
+                ctx.arc(node.x, node.y, 14, 0, Math.PI * 2);
                 ctx.fillStyle = path.includes(idx) ? '#3730a3' : '#9ca3af';
                 ctx.fill();
                 
-                // Oxirgi turgan nuqtani ajratib ko'rsatish
                 if (path.length > 0 && path[path.length - 1] === idx) {
                     ctx.beginPath();
-                    ctx.arc(node.x, node.y, 8, 0, Math.PI * 2);
+                    ctx.arc(node.x, node.y, 6, 0, Math.PI * 2);
                     ctx.fillStyle = '#ffffff';
                     ctx.fill();
                 }
             });
         }
 
-        // Kordinatalarni Canvas o'lchamiga to'g'rilash
         function getPointerPos(evt) {
             const rect = canvas.getBoundingClientRect();
             const scaleX = canvas.width / rect.width;
@@ -216,11 +226,9 @@
 
             if (nodeIdx !== -1) {
                 isDragging = true;
-                // Agar bo'sh bo'lsa yoki oxirgi nuqta ustida bosilsa davom ettiramiz
                 if (path.length === 0) {
                     path.push(nodeIdx);
                 } else if (path[path.length - 1] !== nodeIdx) {
-                    // Agar boshqa nuqtadan boshlamoqchi bo'lsa, xato. Lekin qulaylik uchun o'sha nuqtaga ulashga harakat qilamiz
                     checkAndAddNode(nodeIdx, level);
                 }
                 pointerPos = pos;
@@ -247,28 +255,43 @@
             pointerPos = null;
             draw();
             
-            // G'alabani tekshirish
             const level = levels[currentLevelIdx];
             const drawnEdges = getDrawnEdges();
             if (drawnEdges.size === level.edges.length && drawnEdges.size > 0) {
                 setTimeout(() => {
+                    if (currentLevelIdx === levels.length - 1) {
+                        winMessage.innerHTML = `
+                            <div class="text-5xl mb-2">🏆</div>
+                            <h2 class="text-2xl font-bold text-green-500 mb-4">Qoyilmaqom!</h2>
+                            <p class="text-gray-600 mb-6 text-center px-4 font-medium">Siz barcha 20 ta bosqichni muvaffaqiyatli yakunladingiz!</p>
+                            <button onclick="nextLevel()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transform transition hover:scale-105">
+                                Boshidan boshlash
+                            </button>
+                        `;
+                    } else {
+                        winMessage.innerHTML = `
+                            <div class="text-5xl mb-2">🎉</div>
+                            <h2 class="text-2xl font-bold text-green-500 mb-4">Ajoyib!</h2>
+                            <button onclick="nextLevel()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transform transition hover:scale-105">
+                                Keyingi bosqich ➔
+                            </button>
+                        `;
+                    }
                     winMessage.classList.remove('hidden');
-                }, 100);
+                }, 150);
             }
         }
 
         function checkAndAddNode(nodeIdx, level) {
             const lastNodeIdx = path[path.length - 1];
-            if (nodeIdx === lastNodeIdx) return; // O'ziga o'zi ulash mumkin emas
+            if (nodeIdx === lastNodeIdx) return;
 
-            // Shu ikki nuqta o'rtasida chiziq borligini tekshirish
             const edgeExists = level.edges.find(e => 
                 (e[0] === nodeIdx && e[1] === lastNodeIdx) || 
                 (e[1] === nodeIdx && e[0] === lastNodeIdx)
             );
 
             if (edgeExists) {
-                // Chiziq oldin chizilmaganligini tekshirish
                 const edgeStr = getEdgeString(nodeIdx, lastNodeIdx);
                 const drawnEdges = getDrawnEdges();
                 
@@ -278,7 +301,6 @@
             }
         }
 
-        // Hodisalarni biriktirish
         canvas.addEventListener('mousedown', handlePointerDown);
         canvas.addEventListener('mousemove', handlePointerMove);
         window.addEventListener('mouseup', handlePointerUp);
@@ -287,7 +309,6 @@
         canvas.addEventListener('touchmove', handlePointerMove, {passive: false});
         window.addEventListener('touchend', handlePointerUp);
 
-        // O'yinni boshlash
         initLevel();
     </script>
 </body>
