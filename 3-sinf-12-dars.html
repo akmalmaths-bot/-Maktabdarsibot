@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3-sinf Matematika • 12-dars — Interaktiv Test</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & Nunito for bright, child-friendly readability -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 48%, #a855f7 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, .font-display {
+            font-family: 'Nunito', 'Inter', sans-serif;
+        }
+
+        /* Floating decorative math background shapes */
+        .bg-bubble {
+            position: fixed;
+            border-radius: 9999px;
+            opacity: 0.2;
+            pointer-events: none;
+            z-index: 0;
+            animation: floatSlow 9s ease-in-out infinite;
+        }
+
+        @keyframes floatSlow {
+            0%, 100% { transform: translateY(0px) scale(1); }
+            50% { transform: translateY(-22px) scale(1.07); }
+        }
+
+        /* Floating +10 ball score popup */
+        @keyframes floatUpFade {
+            0% {
+                opacity: 1;
+                transform: translate(-50%, 0) scale(0.8);
+            }
+            35% {
+                opacity: 1;
+                transform: translate(-50%, -34px) scale(1.18);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -74px) scale(1.05);
+            }
+        }
+
+        .float-score {
+            animation: floatUpFade 1s ease-out forwards;
+        }
+
+        /* Urgent timer pulse for last 15 seconds */
+        @keyframes urgentPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.75); }
+            50% { transform: scale(1.07); box-shadow: 0 0 0 12px rgba(239, 68, 68, 0); }
+        }
+
+        .timer-urgent {
+            animation: urgentPulse 0.8s infinite;
+        }
+
+        /* Smooth card entrance */
+        @keyframes popIn {
+            0% { opacity: 0; transform: translateY(16px) scale(0.97); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .animate-pop {
+            animation: popIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        /* Shake animation for form validation */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-6px); }
+            40%, 80% { transform: translateX(6px); }
+        }
+
+        .animate-shake {
+            animation: shake 0.4s ease-in-out;
+        }
+
+        /* Tactile 3D button press */
+        .btn-3d {
+            transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.2s ease;
+        }
+        .btn-3d:active:not(:disabled) {
+            transform: translateY(3px);
+        }
+    </style>
+</head>
+<body class="flex flex-col justify-between text-slate-800 antialiased selection:bg-yellow-300 selection:text-slate-900">
+
+    <!-- Decorative Floating Circles -->
+    <div class="bg-bubble w-60 h-60 bg-yellow-300 top-4 -left-16" style="animation-delay: 0s;"></div>
+    <div class="bg-bubble w-72 h-72 bg-emerald-300 bottom-16 -right-20" style="animation-delay: 2.2s;"></div>
+    <div class="bg-bubble w-44 h-44 bg-sky-200 top-1/2 left-8" style="animation-delay: 4.5s;"></div>
+
+    <!-- Confetti Canvas (for celebratory results) -->
+    <canvas id="confettiCanvas" class="fixed inset-0 w-full h-full pointer-events-none z-50 hidden"></canvas>
+
+    <!-- Main Container -->
+    <main class="relative z-10 flex-grow flex flex-col items-center justify-center w-full px-3 py-4 sm:px-6 sm:py-6">
+
+        <!-- ==================== TOP HEADER ==================== -->
+        <header id="topHeader" class="w-full max-w-4xl flex items-center justify-between mb-4 gap-2 flex-wrap">
+            <!-- Left: Channel Link -->
+            <a href="https://t.me/Matemdarsi" target="_blank" rel="noopener noreferrer"
+               class="inline-flex items-center gap-2 bg-white/95 hover:bg-yellow-50 text-sky-700 font-extrabold px-4 py-2 rounded-full shadow-lg border-2 border-sky-200 transition transform hover:scale-105 text-sm sm:text-base">
+                <svg class="w-5 h-5 text-sky-500 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.02-1.96 1.25-5.54 3.69-.52.36-1 .53-1.42.52-.47-.01-1.37-.26-2.03-.48-.82-.27-1.47-.42-1.42-.88.03-.24.35-.49.96-.75 3.78-1.65 6.31-2.74 7.58-3.27 3.61-1.51 4.35-1.77 4.84-1.78.11 0 .35.03.5.16.13.1.17.24.18.34.02.07.02.25 0 .38z"/>
+                </svg>
+                <span>@Matemdarsi</span>
+            </a>
+
+            <!-- Center: Subject & Lesson Badge -->
+            <div class="inline-flex items-center gap-2 bg-gradient-to-r from-amber-300 to-yellow-300 text-slate-900 font-black px-4 py-2 rounded-full shadow-lg border-2 border-white text-xs sm:text-base">
+                <span>📐</span>
+                <span>3-sinf Matematika • 12-dars</span>
+            </div>
+
+            <!-- Right: Sound Toggle Button -->
+            <button id="soundToggleBtn" type="button"
+                    class="inline-flex items-center gap-2 bg-white/95 hover:bg-emerald-50 text-slate-800 font-bold px-4 py-2 rounded-full shadow-lg border-2 border-emerald-200 transition transform hover:scale-105 text-sm sm:text-base cursor-pointer">
+                <span id="soundIcon" class="text-lg">🔊</span>
+                <span id="soundLabel" class="hidden sm:inline">Ovoz: Yoqilgan</span>
+            </button>
+        </header>
+
+        <!-- ==================== 1. START SCREEN (KIRISH OYNASI) ==================== -->
+        <section id="startScreen" class="w-full max-w-2xl bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl border-4 border-white p-5 sm:p-8 animate-pop">
+            <!-- Hero Section -->
+            <div class="text-center mb-6">
+                <div class="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br from-emerald-400 via-teal-500 to-sky-500 text-white text-4xl sm:text-5xl shadow-lg mb-3">
+                    🧮
+                </div>
+                <h1 class="text-2xl sm:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-sky-600 via-indigo-600 to-purple-600 leading-tight">
+                    Uch xonali sonni bir xonali songa ko'paytirish
+                </h1>
+                <p class="text-slate-600 font-bold text-sm sm:text-lg mt-2">
+                    Guruh bo'lib ishlash testi — 20 ta savol, 90 sekund
+                </p>
+            </div>
+
+            <!-- Quick Info Cards -->
+            <div class="grid grid-cols-3 gap-2 sm:gap-3 mb-6">
+                <div class="bg-gradient-to-br from-sky-50 to-sky-100 border-2 border-sky-200 rounded-2xl p-3 text-center">
+                    <div class="text-2xl sm:text-3xl mb-1">📝</div>
+                    <div class="font-extrabold text-sky-900 text-xs sm:text-base">20 ta savol</div>
+                </div>
+                <div class="bg-gradient-to-br from-amber-50 to-amber-100 border-2 border-amber-200 rounded-2xl p-3 text-center">
+                    <div class="text-2xl sm:text-3xl mb-1">⏱️</div>
+                    <div class="font-extrabold text-amber-900 text-xs sm:text-base">90 sekund</div>
+                </div>
+                <div class="bg-gradient-to-br from-emerald-50 to-emerald-100 border-2 border-emerald-200 rounded-2xl p-3 text-center">
+                    <div class="text-2xl sm:text-3xl mb-1">⭐</div>
+                    <div class="font-extrabold text-emerald-900 text-xs sm:text-base">200 ballgacha</div>
+                </div>
+            </div>
+
+            <!-- Setup Form -->
+            <div class="space-y-5">
+                <!-- Teacher Name Input -->
+                <div>
+                    <label for="teacherNameInput" class="block text-slate-800 font-extrabold text-base sm:text-lg mb-2">
+                        👩‍🏫 Ustozning ismi:
+                    </label>
+                    <input type="text" id="teacherNameInput" autocomplete="off"
+                           placeholder="Masalan: Nilufar opa"
+                           class="w-full px-4 py-3.5 text-base sm:text-lg font-bold rounded-2xl border-2 border-sky-300 bg-sky-50/60 focus:bg-white focus:border-sky-500 focus:ring-4 focus:ring-sky-200 outline-none transition">
+                </div>
+
+                <!-- Class Selection Section -->
+                <div>
+                    <label for="classInput" class="block text-slate-800 font-extrabold text-base sm:text-lg mb-2">
+                        🏫 Sinfni tanlang:
+                    </label>
+                    <!-- Quick Select Buttons for 3rd Grade -->
+                    <div id="classQuickButtons" class="grid grid-cols-3 sm:grid-cols-6 gap-2 mb-3">
+                        <button type="button" data-class="3-A" class="class-chip btn-3d py-2.5 px-2 rounded-xl font-black text-base bg-sky-100 hover:bg-sky-200 text-sky-900 border-2 border-sky-300 shadow-sm cursor-pointer">3-A</button>
+                        <button type="button" data-class="3-B" class="class-chip btn-3d py-2.5 px-2 rounded-xl font-black text-base bg-emerald-100 hover:bg-emerald-200 text-emerald-900 border-2 border-emerald-300 shadow-sm cursor-pointer">3-B</button>
+                        <button type="button" data-class="3-V" class="class-chip btn-3d py-2.5 px-2 rounded-xl font-black text-base bg-amber-100 hover:bg-amber-200 text-amber-900 border-2 border-amber-300 shadow-sm cursor-pointer">3-V</button>
+                        <button type="button" data-class="3-G" class="class-chip btn-3d py-2.5 px-2 rounded-xl font-black text-base bg-pink-100 hover:bg-pink-200 text-pink-900 border-2 border-pink-300 shadow-sm cursor-pointer">3-G</button>
+                        <button type="button" data-class="3-D" class="class-chip btn-3d py-2.5 px-2 rounded-xl font-black text-base bg-purple-100 hover:bg-purple-200 text-purple-900 border-2 border-purple-300 shadow-sm cursor-pointer">3-D</button>
+                        <button type="button" data-class="3-E" class="class-chip btn-3d py-2.5 px-2 rounded-xl font-black text-base bg-orange-100 hover:bg-orange-200 text-orange-900 border-2 border-orange-300 shadow-sm cursor-pointer">3-E</button>
+                    </div>
+                    <input type="text" id="classInput" autocomplete="off"
+                           placeholder="Yoki sinf nomini yozing (masalan: 3-A, 3-J)..."
+                           class="w-full px-4 py-3.5 text-base sm:text-lg font-bold rounded-2xl border-2 border-purple-300 bg-purple-50/50 focus:bg-white focus:border-purple-500 focus:ring-4 focus:ring-purple-200 outline-none transition">
+                </div>
+
+                <!-- Inline Validation Warning -->
+                <div id="validationBox" class="hidden rounded-2xl bg-rose-100 border-2 border-rose-300 text-rose-800 px-4 py-3 font-bold text-sm sm:text-base flex items-center gap-2">
+                    <span class="text-xl">⚠️</span>
+                    <span id="validationText">Iltimos, ustozning ismini va sinfni kiriting!</span>
+                </div>
+
+                <!-- Start Button -->
+                <button id="startQuizBtn" type="button"
+                        class="btn-3d w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-500 to-sky-500 hover:from-emerald-600 hover:to-sky-600 text-white font-black text-xl sm:text-2xl shadow-xl border-b-4 border-teal-700 cursor-pointer flex items-center justify-center gap-3">
+                    <span>🚀 Testni boshlash</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- ==================== 2. QUIZ SCREEN (TEST JARAYONI) ==================== -->
+        <section id="quizScreen" class="hidden w-full max-w-4xl animate-pop">
+            <!-- Top Live Dashboard -->
+            <div class="bg-white/95 backdrop-blur-md rounded-3xl shadow-xl border-4 border-white p-4 sm:p-5 mb-4">
+                <div class="flex flex-wrap items-center justify-between gap-2.5 sm:gap-3 mb-3.5">
+                    <!-- Teacher & Class -->
+                    <div class="inline-flex items-center gap-2 bg-indigo-100 text-indigo-900 font-extrabold px-3.5 py-2 rounded-2xl border-2 border-indigo-200 text-sm sm:text-base">
+                        <span>👩‍🏫</span>
+                        <span id="displayTeacherClass">Ustoz: ... | Sinf: ...</span>
+                    </div>
+
+                    <!-- Question Counter -->
+                    <div id="questionCounter" class="px-4 py-2 rounded-2xl font-black text-sm sm:text-base bg-sky-100 text-sky-900 border-2 border-sky-300">
+                        Savol: 1 / 20
+                    </div>
+
+                    <!-- Score & Countdown Timer -->
+                    <div class="flex items-center gap-2 sm:gap-3">
+                        <div class="px-4 py-2 rounded-2xl bg-amber-100 text-amber-900 border-2 border-amber-300 font-black text-base sm:text-lg flex items-center gap-1.5">
+                            <span>⭐</span>
+                            <span>Ball: <span id="scoreDisplay">0</span></span>
+                        </div>
+                        <div id="timerBox" class="px-4 py-2 rounded-2xl bg-emerald-500 text-white font-black text-base sm:text-lg shadow-md flex items-center gap-1.5 transition-colors">
+                            <span>⏱️</span>
+                            <span><span id="timerDisplay">90</span>s</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Question Completion Progress Bar -->
+                <div class="flex items-center gap-3">
+                    <span class="text-xs font-extrabold text-slate-500 whitespace-nowrap">Jarayon:</span>
+                    <div class="w-full h-3.5 bg-slate-200 rounded-full overflow-hidden border border-slate-300">
+                        <div id="questionProgressBar" class="h-full bg-gradient-to-r from-emerald-400 via-sky-400 to-purple-500 rounded-full transition-all duration-300" style="width: 5%;"></div>
+                    </div>
+                    <span id="progressPercentText" class="text-xs font-black text-indigo-700 whitespace-nowrap">1/20</span>
+                </div>
+            </div>
+
+            <!-- Question & Options Card -->
+            <div class="relative bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl border-4 border-white p-5 sm:p-8">
+                <!-- Floating +10 Ball Animation Anchor -->
+                <div id="floatingScoreContainer" class="pointer-events-none absolute top-4 left-1/2 z-30"></div>
+
+                <!-- Question Number Pill & Text -->
+                <div class="text-center mb-6 sm:mb-8">
+                    <span id="questionNumberPill" class="inline-block px-3.5 py-1 rounded-full bg-purple-100 text-purple-800 font-black text-xs sm:text-sm border border-purple-300 mb-3">
+                        1-SAVOL
+                    </span>
+                    <h2 id="questionText" class="text-xl sm:text-3xl font-black text-slate-800 leading-snug">
+                        Savol matni bu yerda ko'rinadi...
+                    </h2>
+                </div>
+
+                <!-- 4 Colorful Option Buttons (A, B, C, D) -->
+                <div id="optionsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+                    <!-- Rendered dynamically -->
+                </div>
+
+                <!-- Instant Feedback Bar -->
+                <div class="mt-5 min-h-[36px] flex items-center justify-center">
+                    <div id="feedbackMessage" class="font-extrabold text-base sm:text-xl text-center"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== 3. RESULT SCREEN (NATIJA OYNASI) ==================== -->
+        <section id="resultScreen" class="hidden w-full max-w-2xl bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl border-4 border-white p-5 sm:p-8 animate-pop text-center">
+            <!-- Result Emoji -->
+            <div id="resultEmoji" class="text-6xl sm:text-7xl mb-2">🏆</div>
+
+            <!-- Teacher & Class Info -->
+            <h2 id="resultTeamTitle" class="text-2xl sm:text-3xl font-black text-indigo-900 mb-1">
+                3-A sinf jamoasi — Ustoz: ...
+            </h2>
+            <p id="resultSubReason" class="text-slate-500 font-bold text-sm sm:text-base mb-5">
+                Barcha 20 ta savol yakunlandi!
+            </p>
+
+            <!-- Performance Evaluation Banner -->
+            <div id="evaluationBox" class="rounded-2xl p-4 sm:p-5 mb-6 border-2 font-extrabold text-base sm:text-xl leading-relaxed">
+                <!-- Dynamic evaluation text -->
+            </div>
+
+            <!-- Statistics Grid -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+                <div class="bg-amber-50 border-2 border-amber-200 rounded-2xl p-3">
+                    <div class="text-xs sm:text-sm font-bold text-amber-700">Umumiy ball</div>
+                    <div id="finalScoreStat" class="text-xl sm:text-2xl font-black text-amber-900 mt-1">0 / 200</div>
+                </div>
+                <div class="bg-emerald-50 border-2 border-emerald-200 rounded-2xl p-3">
+                    <div class="text-xs sm:text-sm font-bold text-emerald-700">To'g'ri javob</div>
+                    <div id="finalCorrectStat" class="text-xl sm:text-2xl font-black text-emerald-900 mt-1">0 / 20</div>
+                </div>
+                <div class="bg-sky-50 border-2 border-sky-200 rounded-2xl p-3">
+                    <div class="text-xs sm:text-sm font-bold text-sky-700">Natija foizi</div>
+                    <div id="finalPercentStat" class="text-xl sm:text-2xl font-black text-sky-900 mt-1">0%</div>
+                </div>
+                <div class="bg-purple-50 border-2 border-purple-200 rounded-2xl p-3">
+                    <div class="text-xs sm:text-sm font-bold text-purple-700">Sarflangan vaqt</div>
+                    <div id="finalTimeStat" class="text-xl sm:text-2xl font-black text-purple-900 mt-1">0 s</div>
+                </div>
+            </div>
+
+            <!-- Restart Button -->
+            <div class="mb-6">
+                <button id="restartBtn" type="button"
+                        class="btn-3d w-full sm:w-auto px-8 py-4 rounded-2xl bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-white font-black text-lg sm:text-xl shadow-lg border-b-4 border-orange-700 cursor-pointer inline-flex items-center justify-center gap-2">
+                    <span>🔄 Qayta o'ynash</span>
+                </button>
+            </div>
+
+            <!-- Telegram Subscription Block (At the very end of the test result) -->
+            <div class="rounded-3xl bg-gradient-to-r from-sky-500 via-blue-600 to-indigo-600 p-5 sm:p-6 text-white shadow-xl border-2 border-sky-300">
+                <div class="text-3xl mb-2">📢</div>
+                <p class="font-extrabold text-base sm:text-lg mb-4 leading-snug">
+                    Yangi interaktiv testlar va qiziqarli matematika darslari uchun Telegram botimizga obuna bo'ling!
+                </p>
+                <a href="https://t.me/maktabdarsibot" target="_blank" rel="noopener noreferrer"
+                   class="btn-3d inline-flex items-center justify-center gap-2.5 bg-white hover:bg-sky-50 text-blue-700 font-black text-base sm:text-lg px-6 py-3.5 rounded-2xl shadow-lg border-b-4 border-sky-200 transition">
+                    <svg class="w-6 h-6 text-sky-500 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.02-1.96 1.25-5.54 3.69-.52.36-1 .53-1.42.52-.47-.01-1.37-.26-2.03-.48-.82-.27-1.47-.42-1.42-.88.03-.24.35-.49.96-.75 3.78-1.65 6.31-2.74 7.58-3.27 3.61-1.51 4.35-1.77 4.84-1.78.11 0 .35.03.5.16.13.1.17.24.18.34.02.07.02.25 0 .38z"/>
+                    </svg>
+                    <span>@maktabdarsibot ga obuna bo'lish</span>
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <!-- ==================== PERMANENT FOOTER (ALWAYS VISIBLE) ==================== -->
+    <footer class="relative z-10 w-full bg-slate-900/90 backdrop-blur-md text-white py-3.5 px-4 text-center border-t-2 border-white/20">
+        <div class="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-4 text-xs sm:text-sm font-bold">
+            <span class="text-amber-300">Tuzuvchi va yaratuvchi: Akmaljon Jo'raqo'ziyev</span>
+            <span class="hidden sm:inline text-slate-500">|</span>
+            <span class="flex items-center gap-2 flex-wrap justify-center">
+                <span class="text-slate-300">Telegram:</span>
+                <a href="https://t.me/Akmalmaths" target="_blank" rel="noopener noreferrer" class="text-sky-300 hover:text-sky-200 underline decoration-sky-400/60">
+                    @Akmalmaths
+                </a>
+                <span class="text-slate-500">|</span>
+                <a href="https://t.me/Maktabdarsibot" target="_blank" rel="noopener noreferrer" class="text-emerald-300 hover:text-emerald-200 underline decoration-emerald-400/60">
+                    @Maktabdarsibot
+                </a>
+            </span>
+        </div>
+    </footer>
+
+    <!-- ==================== JAVASCRIPT LOGIC ==================== -->
+    <script>
+        // =========================================================================
+        // 1. QUIZ DATA — 20 Questions (3-sinf Matematika, 12-dars)
+        // =========================================================================
+        const BASE_QUESTIONS = [
+            {
+                question: "140 sonini 2 marta orttiring.",
+                correct: "280",
+                distractors: ["260", "142", "240"]
+            },
+            {
+                question: "230 sonini 2 marta orttiring.",
+                correct: "460",
+                distractors: ["430", "232", "360"]
+            },
+            {
+                question: "4000 sonini 2 marta orttiring.",
+                correct: "8000",
+                distractors: ["6000", "4002", "2000"]
+            },
+            {
+                question: "382 · 6 ko'paytmasining qiymatini toping.",
+                correct: "2292",
+                distractors: ["2192", "2282", "1892"]
+            },
+            {
+                question: "Ko'paytirishni bajaring: 234 · 2",
+                correct: "468",
+                distractors: ["458", "466", "478"]
+            },
+            {
+                question: "Ko'paytirishni bajaring: 156 · 4",
+                correct: "624",
+                distractors: ["604", "524", "644"]
+            },
+            {
+                question: "Ko'paytirishni bajaring: 561 · 7",
+                correct: "3927",
+                distractors: ["3827", "3917", "3527"]
+            },
+            {
+                question: "Ko'paytirishni bajaring: 727 · 8",
+                correct: "5816",
+                distractors: ["5716", "5806", "5616"]
+            },
+            {
+                question: "Ko'paytirishni bajaring: 123 · 3",
+                correct: "369",
+                distractors: ["366", "359", "379"]
+            },
+            {
+                question: "Bir kunda bitta chumchuq 315 ta, bitta chittak esa 376 ta zararli hasharotni yo'q qiladi. Bir haftada chittak chumchuqqa nisbatan nechta ko'p hasharotni yo'q qiladi?",
+                correct: "427 ta",
+                distractors: ["417 ta", "366 ta", "487 ta"]
+            },
+            {
+                question: "Santimetrga aylantiring va hisoblang: 7 m 1 dm 8 cm · 3",
+                correct: "2154 cm",
+                distractors: ["2144 cm", "2054 cm", "2254 cm"]
+            },
+            {
+                question: "Agar x = 5 bo'lsa, 167 · x + 245 ifodaning qiymatini toping.",
+                correct: "1080",
+                distractors: ["1070", "980", "1180"]
+            },
+            {
+                question: "Agar y = 743 bo'lsa, y · 3 − 529 ifodaning qiymatini toping.",
+                correct: "1700",
+                distractors: ["1600", "1710", "1800"]
+            },
+            {
+                question: "589 va 397 sonlari ayirmasini 4 ga ko'paytiring.",
+                correct: "768",
+                distractors: ["758", "748", "868"]
+            },
+            {
+                question: "Tomonlari 160 m, 55 m, 77 m, 58 m, 83 m va 113 m bo'lgan yer maydoni perimetri bo'ylab o'rnatiladigan panjara uzunligini toping.",
+                correct: "546 m",
+                distractors: ["536 m", "556 m", "446 m"]
+            },
+            {
+                question: "Kaptarlar to'dasida 24 ta kulrang va oq kaptar bor. Kulrang kaptarlar oq kaptarlardan 3 marta ko'p. Kulrang kaptarlar oq kaptarlardan nechta ko'p?",
+                correct: "12 ta",
+                distractors: ["18 ta", "6 ta", "16 ta"]
+            },
+            {
+                question: "Ko'paytirishni bajaring: 141 · 4",
+                correct: "564",
+                distractors: ["544", "584", "464"]
+            },
+            {
+                question: "Ko'paytirishni bajaring: 648 · 3",
+                correct: "1944",
+                distractors: ["1924", "1844", "1934"]
+            },
+            {
+                question: "Ko'paytirishni bajaring: 116 · 5",
+                correct: "580",
+                distractors: ["560", "550", "680"]
+            },
+            {
+                question: "Qaldirg'ochlar bir kunda 575 km masofani bosib o'tishdi. Agar ular har kuni bir xil masofani bosib o'tsa, 4 kunda necha kilometr masofani bosib o'tadi?",
+                correct: "2300 km",
+                distractors: ["2200 km", "2400 km", "2100 km"]
+            }
+        ];
+
+        const OPTION_LABELS = ["A", "B", "C", "D"];
+        const OPTION_STYLES = [
+            { bg: "bg-sky-100 hover:bg-sky-200", border: "border-sky-300 border-b-4 border-b-sky-400", badge: "bg-sky-500 text-white", text: "text-sky-950" },
+            { bg: "bg-amber-100 hover:bg-amber-200", border: "border-amber-300 border-b-4 border-b-amber-400", badge: "bg-amber-500 text-white", text: "text-amber-950" },
+            { bg: "bg-emerald-100 hover:bg-emerald-200", border: "border-emerald-300 border-b-4 border-b-emerald-400", badge: "bg-emerald-500 text-white", text: "text-emerald-950" },
+            { bg: "bg-purple-100 hover:bg-purple-200", border: "border-purple-300 border-b-4 border-b-purple-400", badge: "bg-purple-500 text-white", text: "text-purple-950" }
+        ];
+
+        // =========================================================================
+        // 2. WEB AUDIO API SOUND ENGINE (No external audio files needed)
+        // =========================================================================
+        const SoundEngine = {
+            ctx: null,
+            enabled: true,
+
+            init() {
+                try {
+                    if (!this.ctx) {
+                        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                        if (AudioCtx) {
+                            this.ctx = new AudioCtx();
+                        }
+                    }
+                    if (this.ctx && this.ctx.state === "suspended") {
+                        this.ctx.resume();
+                    }
+                } catch (e) {
+                    // Safely ignore audio initialization errors
+                }
+            },
+
+            playTone(freq, duration, type = "sine", volume = 0.18, delay = 0) {
+                if (!this.enabled) return;
+                try {
+                    this.init();
+                    if (!this.ctx) return;
+
+                    const now = this.ctx.currentTime + delay;
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+
+                    osc.type = type;
+                    osc.frequency.setValueAtTime(freq, now);
+
+                    gain.gain.setValueAtTime(0.001, now);
+                    gain.gain.exponentialRampToValueAtTime(volume, now + 0.02);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+
+                    osc.start(now);
+                    osc.stop(now + duration + 0.02);
+                } catch (e) {
+                    // Safely ignore playback errors
+                }
+            },
+
+            // Soft button click sound
+            click() {
+                this.playTone(560, 0.065, "triangle", 0.12);
+            },
+
+            // Cheerful chime for correct answers
+            correct() {
+                this.playTone(523.25, 0.14, "triangle", 0.22, 0);      // C5
+                this.playTone(659.25, 0.14, "triangle", 0.22, 0.08);   // E5
+                this.playTone(783.99, 0.22, "triangle", 0.24, 0.16);   // G5
+                this.playTone(1046.5, 0.30, "sine", 0.20, 0.24);       // C6
+            },
+
+            // Soft warning tone for wrong answers
+            wrong() {
+                this.playTone(240, 0.16, "sawtooth", 0.11, 0);
+                this.playTone(180, 0.26, "sawtooth", 0.11, 0.13);
+            },
+
+            // Tick-tock sound in the final 15 seconds
+            tick(isEven) {
+                const freq = isEven ? 920 : 720;
+                this.playTone(freq, 0.055, "sine", 0.12, 0);
+            },
+
+            // Celebratory victory fanfare (for >= 70%)
+            victoryFanfare() {
+                const notes = [
+                    { f: 523.25, d: 0.14, t: 0.00 },
+                    { f: 659.25, d: 0.14, t: 0.12 },
+                    { f: 783.99, d: 0.14, t: 0.24 },
+                    { f: 1046.5, d: 0.42, t: 0.38 },
+                    { f: 783.99, d: 0.14, t: 0.54 },
+                    { f: 1046.5, d: 0.52, t: 0.68 }
+                ];
+                notes.forEach(n => this.playTone(n.f, n.d, "triangle", 0.22, n.t));
+            },
+
+            // Gentle closing melody (for < 70%)
+            closingTone() {
+                const notes = [
+                    { f: 440.00, d: 0.18, t: 0.00 },
+                    { f: 392.00, d: 0.18, t: 0.18 },
+                    { f: 349.23, d: 0.22, t: 0.36 },
+                    { f: 329.63, d: 0.38, t: 0.58 }
+                ];
+                notes.forEach(n => this.playTone(n.f, n.d, "sine", 0.18, n.t));
+            }
+        };
+
+        // =========================================================================
+        // 3. STATE & DOM ELEMENTS
+        // =========================================================================
+        const TOTAL_TIME = 90;
+        const POINTS_PER_QUESTION = 10;
+        const AUTO_ADVANCE_MS = 900;
+
+        let state = {
+            teacherName: "",
+            className: "",
+            questions: [],
+            currentIndex: 0,
+            score: 0,
+            correctCount: 0,
+            timeLeft: TOTAL_TIME,
+            timerInterval: null,
+            autoAdvanceTimeout: null,
+            answeredCurrent: false,
+            isFinished: false
+        };
+
+        // Screens
+        const startScreen = document.getElementById("startScreen");
+        const quizScreen = document.getElementById("quizScreen");
+        const resultScreen = document.getElementById("resultScreen");
+
+        // Header sound controls
+        const soundToggleBtn = document.getElementById("soundToggleBtn");
+        const soundIcon = document.getElementById("soundIcon");
+        const soundLabel = document.getElementById("soundLabel");
+
+        // Start screen controls
+        const teacherNameInput = document.getElementById("teacherNameInput");
+        const classInput = document.getElementById("classInput");
+        const classQuickButtons = document.querySelectorAll(".class-chip");
+        const validationBox = document.getElementById("validationBox");
+        const validationText = document.getElementById("validationText");
+        const startQuizBtn = document.getElementById("startQuizBtn");
+
+        // Quiz screen elements
+        const displayTeacherClass = document.getElementById("displayTeacherClass");
+        const questionCounter = document.getElementById("questionCounter");
+        const scoreDisplay = document.getElementById("scoreDisplay");
+        const timerBox = document.getElementById("timerBox");
+        const timerDisplay = document.getElementById("timerDisplay");
+        const questionProgressBar = document.getElementById("questionProgressBar");
+        const progressPercentText = document.getElementById("progressPercentText");
+        const questionNumberPill = document.getElementById("questionNumberPill");
+        const questionText = document.getElementById("questionText");
+        const optionsGrid = document.getElementById("optionsGrid");
+        const feedbackMessage = document.getElementById("feedbackMessage");
+        const floatingScoreContainer = document.getElementById("floatingScoreContainer");
+
+        // Result screen elements
+        const resultEmoji = document.getElementById("resultEmoji");
+        const resultTeamTitle = document.getElementById("resultTeamTitle");
+        const resultSubReason = document.getElementById("resultSubReason");
+        const evaluationBox = document.getElementById("evaluationBox");
+        const finalScoreStat = document.getElementById("finalScoreStat");
+        const finalCorrectStat = document.getElementById("finalCorrectStat");
+        const finalPercentStat = document.getElementById("finalPercentStat");
+        const finalTimeStat = document.getElementById("finalTimeStat");
+        const restartBtn = document.getElementById("restartBtn");
+
+        // =========================================================================
+        // 4. HELPER: FISHER-YATES SHUFFLE FOR OPTIONS
+        // =========================================================================
+        function shuffleArray(arr) {
+            const copy = [...arr];
+            for (let i = copy.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [copy[i], copy[j]] = [copy[j], copy[i]];
+            }
+            return copy;
+        }
+
+        function prepareQuizQuestions() {
+            return BASE_QUESTIONS.map(item => {
+                const combinedOptions = shuffleArray([item.correct, ...item.distractors]);
+                return {
+                    question: item.question,
+                    options: combinedOptions,
+                    correctIndex: combinedOptions.indexOf(item.correct)
+                };
+            });
+        }
+
+        // =========================================================================
+        // 5. EVENT LISTENERS
+        // =========================================================================
+        soundToggleBtn.addEventListener("click", () => {
+            SoundEngine.enabled = !SoundEngine.enabled;
+            if (SoundEngine.enabled) {
+                soundIcon.textContent = "🔊";
+                soundLabel.textContent = "Ovoz: Yoqilgan";
+                SoundEngine.click();
+            } else {
+                soundIcon.textContent = "🔇";
+                soundLabel.textContent = "Ovoz: O'chirilgan";
+            }
+        });
+
+        classQuickButtons.forEach(btn => {
+            btn.addEventListener("click", () => {
+                SoundEngine.click();
+                const selectedClass = btn.getAttribute("data-class");
+                classInput.value = selectedClass;
+
+                classQuickButtons.forEach(b => b.classList.remove("ring-4", "ring-indigo-500", "scale-105"));
+                btn.classList.add("ring-4", "ring-indigo-500", "scale-105");
+                hideValidation();
+            });
+        });
+
+        classInput.addEventListener("input", () => {
+            const val = classInput.value.trim().toUpperCase();
+            classQuickButtons.forEach(b => {
+                if (b.getAttribute("data-class").toUpperCase() === val) {
+                    b.classList.add("ring-4", "ring-indigo-500", "scale-105");
+                } else {
+                    b.classList.remove("ring-4", "ring-indigo-500", "scale-105");
+                }
+            });
+            hideValidation();
+        });
+
+        teacherNameInput.addEventListener("input", hideValidation);
+
+        [teacherNameInput, classInput].forEach(inp => {
+            inp.addEventListener("keydown", (e) => {
+                if (e.key === "Enter") {
+                    startQuiz();
+                }
+            });
+        });
+
+        startQuizBtn.addEventListener("click", startQuiz);
+
+        restartBtn.addEventListener("click", () => {
+            SoundEngine.click();
+            stopConfetti();
+            resetToStartScreen();
+        });
+
+        // =========================================================================
+        // 6. CORE QUIZ FLOW
+        // =========================================================================
+        function showValidation(message) {
+            validationText.textContent = message;
+            validationBox.classList.remove("hidden", "animate-shake");
+            void validationBox.offsetWidth;
+            validationBox.classList.add("animate-shake");
+        }
+
+        function hideValidation() {
+            validationBox.classList.add("hidden");
+        }
+
+        function startQuiz() {
+            const teacher = teacherNameInput.value.trim();
+            const cls = classInput.value.trim();
+
+            if (!teacher && !cls) {
+                SoundEngine.wrong();
+                showValidation("Iltimos, ustozning ismini va sinfni kiriting!");
+                teacherNameInput.focus();
+                return;
+            }
+            if (!teacher) {
+                SoundEngine.wrong();
+                showValidation("Iltimos, ustozning ismini kiriting!");
+                teacherNameInput.focus();
+                return;
+            }
+            if (!cls) {
+                SoundEngine.wrong();
+                showValidation("Iltimos, sinfni tanlang yoki yozing (masalan: 3-A)!");
+                classInput.focus();
+                return;
+            }
+
+            SoundEngine.init();
+            SoundEngine.click();
+
+            // Initialize state with shuffled options for every question
+            state.teacherName = teacher;
+            state.className = cls;
+            state.questions = prepareQuizQuestions();
+            state.currentIndex = 0;
+            state.score = 0;
+            state.correctCount = 0;
+            state.timeLeft = TOTAL_TIME;
+            state.answeredCurrent = false;
+            state.isFinished = false;
+
+            // Update dashboard
+            displayTeacherClass.textContent = `Ustoz: ${state.teacherName} | Sinf: ${state.className}`;
+            scoreDisplay.textContent = "0";
+            updateTimerUI();
+
+            // Show quiz screen
+            startScreen.classList.add("hidden");
+            resultScreen.classList.add("hidden");
+            quizScreen.classList.remove("hidden");
+
+            renderQuestion();
+            startTimer();
+        }
+
+        function startTimer() {
+            clearInterval(state.timerInterval);
+            state.timerInterval = setInterval(() => {
+                if (state.isFinished) {
+                    clearInterval(state.timerInterval);
+                    return;
+                }
+
+                state.timeLeft--;
+                updateTimerUI();
+
+                // Tick-tock warning sound in the last 15 seconds
+                if (state.timeLeft <= 15 && state.timeLeft > 0) {
+                    SoundEngine.tick(state.timeLeft % 2 === 0);
+                }
+
+                if (state.timeLeft <= 0) {
+                    clearInterval(state.timerInterval);
+                    clearTimeout(state.autoAdvanceTimeout);
+                    finishQuiz(true);
+                }
+            }, 1000);
+        }
+
+        function updateTimerUI() {
+            timerDisplay.textContent = Math.max(0, state.timeLeft);
+
+            if (state.timeLeft <= 15) {
+                timerBox.classList.remove("bg-emerald-500", "bg-amber-500");
+                timerBox.classList.add("bg-rose-600", "timer-urgent");
+            } else if (state.timeLeft <= 35) {
+                timerBox.classList.remove("bg-emerald-500", "bg-rose-600", "timer-urgent");
+                timerBox.classList.add("bg-amber-500");
+            } else {
+                timerBox.classList.remove("bg-amber-500", "bg-rose-600", "timer-urgent");
+                timerBox.classList.add("bg-emerald-500");
+            }
+        }
+
+        function renderQuestion() {
+            const q = state.questions[state.currentIndex];
+            const total = state.questions.length;
+            state.answeredCurrent = false;
+
+            // Update counters and progress bar
+            questionCounter.textContent = `Savol: ${state.currentIndex + 1} / ${total}`;
+            questionNumberPill.textContent = `${state.currentIndex + 1}-SAVOL`;
+            const progressPercent = Math.round(((state.currentIndex + 1) / total) * 100);
+            questionProgressBar.style.width = `${progressPercent}%`;
+            progressPercentText.textContent = `${state.currentIndex + 1}/${total}`;
+
+            // Render question text
+            questionText.textContent = q.question;
+
+            // Reset feedback
+            feedbackMessage.textContent = "";
+            feedbackMessage.className = "font-extrabold text-base sm:text-xl text-center";
+
+            // Render 4 shuffled options
+            optionsGrid.innerHTML = "";
+            q.options.forEach((optionText, idx) => {
+                const style = OPTION_STYLES[idx];
+                const btn = document.createElement("button");
+                btn.type = "button";
+                btn.className = `option-btn btn-3d w-full text-left p-4 sm:p-5 rounded-2xl border-2 ${style.bg} ${style.border} ${style.text} font-extrabold text-lg sm:text-2xl flex items-center gap-3.5 shadow-sm cursor-pointer transition-all`;
+
+                btn.innerHTML = `
+                    <span class="option-letter flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-xl ${style.badge} font-black text-lg sm:text-xl flex items-center justify-center shadow-sm">
+                        ${OPTION_LABELS[idx]}
+                    </span>
+                    <span class="flex-grow leading-snug">${optionText}</span>
+                    <span class="option-status text-2xl flex-shrink-0"></span>
+                `;
+
+                btn.addEventListener("click", () => handleOptionSelect(idx));
+                optionsGrid.appendChild(btn);
+            });
+        }
+
+        function handleOptionSelect(selectedIndex) {
+            if (state.answeredCurrent || state.isFinished) return;
+            state.answeredCurrent = true;
+
+            const q = state.questions[state.currentIndex];
+            const buttons = optionsGrid.querySelectorAll(".option-btn");
+            const isCorrect = selectedIndex === q.correctIndex;
+
+            buttons.forEach((btn, idx) => {
+                btn.disabled = true;
+                btn.classList.remove("cursor-pointer", "hover:bg-sky-200", "hover:bg-amber-200", "hover:bg-emerald-200", "hover:bg-purple-200");
+                const statusEl = btn.querySelector(".option-status");
+
+                if (idx === q.correctIndex) {
+                    btn.className = "option-btn w-full text-left p-4 sm:p-5 rounded-2xl border-2 border-emerald-600 border-b-4 bg-emerald-500 text-white font-black text-lg sm:text-2xl flex items-center gap-3.5 shadow-lg scale-[1.01] transition-all";
+                    btn.querySelector(".option-letter").className = "option-letter flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-white text-emerald-600 font-black text-lg sm:text-xl flex items-center justify-center shadow-sm";
+                    statusEl.textContent = "✅";
+                } else if (idx === selectedIndex && !isCorrect) {
+                    btn.className = "option-btn w-full text-left p-4 sm:p-5 rounded-2xl border-2 border-rose-600 border-b-4 bg-rose-500 text-white font-black text-lg sm:text-2xl flex items-center gap-3.5 shadow-lg transition-all";
+                    btn.querySelector(".option-letter").className = "option-letter flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-white text-rose-600 font-black text-lg sm:text-xl flex items-center justify-center shadow-sm";
+                    statusEl.textContent = "❌";
+                } else {
+                    btn.classList.add("opacity-50");
+                }
+            });
+
+            if (isCorrect) {
+                state.score += POINTS_PER_QUESTION;
+                state.correctCount++;
+                scoreDisplay.textContent = state.score;
+                SoundEngine.correct();
+                spawnFloatingScore("+10 ball! ⭐");
+                feedbackMessage.textContent = "🎉 Barakalla! To'g'ri javob (+10 ball)";
+                feedbackMessage.classList.add("text-emerald-600");
+            } else {
+                SoundEngine.wrong();
+                feedbackMessage.textContent = `💡 Noto'g'ri! To'g'ri javob: ${OPTION_LABELS[q.correctIndex]} (${q.options[q.correctIndex]})`;
+                feedbackMessage.classList.add("text-rose-600");
+            }
+
+            // Automatic transition to the next question after 900 ms
+            clearTimeout(state.autoAdvanceTimeout);
+            state.autoAdvanceTimeout = setTimeout(() => {
+                goToNextQuestion();
+            }, AUTO_ADVANCE_MS);
+        }
+
+        function spawnFloatingScore(text) {
+            const el = document.createElement("div");
+            el.className = "float-score whitespace-nowrap bg-emerald-500 text-white font-black text-xl sm:text-2xl px-4 py-1.5 rounded-full shadow-xl border-2 border-white";
+            el.textContent = text;
+            floatingScoreContainer.appendChild(el);
+            setTimeout(() => el.remove(), 1050);
+        }
+
+        function goToNextQuestion() {
+            if (state.isFinished) return;
+            if (state.currentIndex < state.questions.length - 1) {
+                state.currentIndex++;
+                renderQuestion();
+            } else {
+                finishQuiz(false);
+            }
+        }
+
+        function finishQuiz(timeExpired) {
+            if (state.isFinished) return;
+            state.isFinished = true;
+            clearInterval(state.timerInterval);
+            clearTimeout(state.autoAdvanceTimeout);
+
+            const totalQuestions = state.questions.length;
+            const maxScore = totalQuestions * POINTS_PER_QUESTION;
+            const percent = Math.round((state.correctCount / totalQuestions) * 100);
+            const timeUsed = Math.min(TOTAL_TIME, TOTAL_TIME - Math.max(0, state.timeLeft));
+
+            // Switch to result screen
+            quizScreen.classList.add("hidden");
+            resultScreen.classList.remove("hidden");
+
+            // Populate header & stats
+            resultTeamTitle.textContent = `${state.className} sinf jamoasi — Ustoz: ${state.teacherName}`;
+            resultSubReason.textContent = timeExpired
+                ? "⏱️ Ajratilgan 90 sekund vaqt tugadi!"
+                : "✅ Barcha 20 ta savol yakunlandi!";
+
+            finalScoreStat.textContent = `${state.score} / ${maxScore}`;
+            finalCorrectStat.textContent = `${state.correctCount} / ${totalQuestions}`;
+            finalPercentStat.textContent = `${percent}%`;
+            finalTimeStat.textContent = `${timeUsed} s`;
+
+            // Performance-based evaluation, sound, and confetti
+            let evalText = "";
+            let evalClasses = "";
+            let emoji = "🏆";
+
+            if (percent >= 90) {
+                emoji = "🏆";
+                evalText = "Barakalla! A'lo darajada ishladingiz! Sizlar haqiqiy matematika bilimdonisiz!";
+                evalClasses = "bg-emerald-100 border-emerald-400 text-emerald-900";
+                SoundEngine.victoryFanfare();
+                startConfetti();
+            } else if (percent >= 70) {
+                emoji = "🎉";
+                evalText = "Yaxshi ishladingiz! Natijangiz quvonarli, biroz mashq qilsangiz yanada zo'r bo'ladi!";
+                evalClasses = "bg-sky-100 border-sky-400 text-sky-900";
+                SoundEngine.victoryFanfare();
+                startConfetti();
+            } else if (percent >= 50) {
+                emoji = "📖";
+                evalText = "O'rtacha natija! Yaxshi emas, mavzuni yana bir bor takrorlab, ko'proq misollar yechishingiz kerak!";
+                evalClasses = "bg-amber-100 border-amber-400 text-amber-900";
+                SoundEngine.closingTone();
+            } else {
+                emoji = "💡";
+                evalText = "Natija yaxshi emas! Ustun ko'rinishida ko'paytirishni qayta o'qib, yana ko'proq mashq qilishingiz kerak!";
+                evalClasses = "bg-rose-100 border-rose-300 text-rose-900";
+                SoundEngine.closingTone();
+            }
+
+            resultEmoji.textContent = emoji;
+            evaluationBox.className = `rounded-2xl p-4 sm:p-5 mb-6 border-2 font-extrabold text-base sm:text-xl leading-relaxed ${evalClasses}`;
+            evaluationBox.textContent = evalText;
+        }
+
+        function resetToStartScreen() {
+            clearInterval(state.timerInterval);
+            clearTimeout(state.autoAdvanceTimeout);
+            state.isFinished = false;
+
+            resultScreen.classList.add("hidden");
+            quizScreen.classList.add("hidden");
+            startScreen.classList.remove("hidden");
+            hideValidation();
+        }
+
+        // =========================================================================
+        // 7. CONFETTI CELEBRATION ANIMATION (Responsive Canvas)
+        // =========================================================================
+        const confettiCanvas = document.getElementById("confettiCanvas");
+        const confettiCtx = confettiCanvas.getContext("2d");
+        let confettiParticles = [];
+        let confettiAnimId = null;
+
+        function resizeConfettiCanvas() {
+            confettiCanvas.width = window.innerWidth;
+            confettiCanvas.height = window.innerHeight;
+        }
+
+        window.addEventListener("resize", resizeConfettiCanvas);
+
+        function startConfetti() {
+            resizeConfettiCanvas();
+            confettiCanvas.classList.remove("hidden");
+            confettiParticles = [];
+
+            const colors = ["#38bdf8", "#facc15", "#34d399", "#f472b6", "#a78bfa", "#fb923c"];
+            for (let i = 0; i < 120; i++) {
+                confettiParticles.push({
+                    x: Math.random() * confettiCanvas.width,
+                    y: Math.random() * -confettiCanvas.height,
+                    w: Math.random() * 10 + 6,
+                    h: Math.random() * 6 + 4,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    vy: Math.random() * 3.5 + 2.2,
+                    vx: (Math.random() - 0.5) * 2.5,
+                    angle: Math.random() * 360,
+                    spin: (Math.random() - 0.5) * 8
+                });
+            }
+
+            if (confettiAnimId) cancelAnimationFrame(confettiAnimId);
+            animateConfetti();
+        }
+
+        function animateConfetti() {
+            confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+
+            confettiParticles.forEach(p => {
+                p.y += p.vy;
+                p.x += p.vx;
+                p.angle += p.spin;
+
+                if (p.y > confettiCanvas.height + 20) {
+                    p.y = -20;
+                    p.x = Math.random() * confettiCanvas.width;
+                }
+
+                confettiCtx.save();
+                confettiCtx.translate(p.x, p.y);
+                confettiCtx.rotate((p.angle * Math.PI) / 180);
+                confettiCtx.fillStyle = p.color;
+                confettiCtx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+                confettiCtx.restore();
+            });
+
+            confettiAnimId = requestAnimationFrame(animateConfetti);
+        }
+
+        function stopConfetti() {
+            if (confettiAnimId) {
+                cancelAnimationFrame(confettiAnimId);
+                confettiAnimId = null;
+            }
+            confettiCanvas.classList.add("hidden");
+            confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+        }
+    </script>
+</body>
+</html>
