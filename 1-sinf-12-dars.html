@@ -167,11 +167,11 @@
 
                 <!-- Group Play Info Pill -->
                 <div class="mt-4 inline-flex flex-wrap items-center justify-center gap-2 bg-gradient-to-r from-amber-100 to-pink-100 text-pink-900 border-2 border-pink-300 font-extrabold px-4 py-2 rounded-full text-xs sm:text-sm shadow-sm">
-                    <span>👥 Guruh bo'lib ishlash uchun</span>
+                    <span>👥 Guruh bo'lib ishlash</span>
                     <span class="text-pink-400">•</span>
                     <span>🖼️ 15 ta rasmli savol</span>
                     <span class="text-pink-400">•</span>
-                    <span>⏱️ 90 sekund</span>
+                    <span>⏱️ Har bir savolga 90 sekund</span>
                 </div>
             </div>
 
@@ -214,7 +214,7 @@
                 <!-- Big Colorful Start Button -->
                 <button id="startQuizBtn" type="button"
                         class="btn-3d w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-emerald-500 via-sky-500 to-pink-500 hover:from-emerald-600 hover:to-pink-600 text-white font-display font-bold text-2xl sm:text-3xl shadow-xl border-b-4 border-sky-700 cursor-pointer flex items-center justify-center gap-3">
-                    <span>Boshlash 🚀</span>
+                    <span>Testni boshlash 🚀</span>
                 </button>
             </div>
         </section>
@@ -232,19 +232,27 @@
 
                     <!-- Question Counter -->
                     <div id="questionCounter" class="px-4 py-2 rounded-2xl font-black text-sm sm:text-lg bg-pink-100 text-pink-900 border-2 border-pink-300">
-                        1 / 15
+                        Savol 1 / 15
                     </div>
 
-                    <!-- Score & 90s Countdown Timer -->
+                    <!-- Score & Per-Question 90s Countdown Timer -->
                     <div class="flex items-center gap-2 sm:gap-3">
                         <div class="px-4 py-2 rounded-2xl bg-amber-100 text-amber-900 border-2 border-amber-300 font-black text-base sm:text-lg flex items-center gap-1.5">
                             <span>⭐</span>
                             <span><span id="scoreDisplay">0</span> ball</span>
                         </div>
                         <div id="timerBox" class="px-4 py-2 rounded-2xl bg-emerald-500 text-white font-black text-base sm:text-lg shadow-md flex items-center gap-1.5 transition-colors tabular-nums">
-                            <span>⏱️</span>
-                            <span id="timerDisplay">90s</span>
+                            <span>⏱</span>
+                            <span id="timerDisplay">90 s</span>
                         </div>
+                    </div>
+                </div>
+
+                <!-- Per-Question Timer Visual Countdown Bar -->
+                <div class="flex items-center gap-3 mb-2">
+                    <span class="text-xs sm:text-sm font-extrabold text-slate-600 whitespace-nowrap">⏱ Vaqt:</span>
+                    <div class="w-full h-3 bg-slate-200 rounded-full overflow-hidden border border-slate-300">
+                        <div id="timerProgressBar" class="h-full bg-gradient-to-r from-emerald-400 via-sky-400 to-emerald-500 rounded-full transition-all duration-1000 ease-linear" style="width: 100%;"></div>
                     </div>
                 </div>
 
@@ -346,14 +354,11 @@
                     </svg>
                 </div>
                 <p class="font-extrabold text-base sm:text-lg mb-4 leading-snug">
-                    Yana ko'plab rasmli testlar va qiziqarli darslar uchun Telegram kanalimizga obuna bo'ling!
+                    Yana ko'plab rasmli testlar va qiziqarli darslar uchun <strong>@maktabdarsibot</strong> Telegram kanaliga obuna bo'ling!
                 </p>
                 <a href="https://t.me/maktabdarsibot" target="_blank" rel="noopener noreferrer"
                    class="btn-3d inline-flex items-center justify-center gap-2.5 bg-white hover:bg-sky-50 text-blue-700 font-black text-base sm:text-lg px-6 py-3.5 rounded-2xl shadow-lg border-b-4 border-sky-200 transition">
-                    <svg class="w-6 h-6 text-sky-500 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.02-1.96 1.25-5.54 3.69-.52.36-1 .53-1.42.52-.47-.01-1.37-.26-2.03-.48-.82-.27-1.47-.42-1.42-.88.03-.24.35-.49.96-.75 3.78-1.65 6.31-2.74 7.58-3.27 3.61-1.51 4.35-1.77 4.84-1.78.11 0 .35.03.5.16.13.1.17.24.18.34.02.07.02.25 0 .38z"/>
-                    </svg>
-                    <span>@maktabdarsibot ga obuna bo'lish</span>
+                    <span>Obuna bo'lish ✈️</span>
                 </a>
             </div>
         </section>
@@ -497,6 +502,38 @@
             `;
         }
 
+        /** Renders a colorful math flashcard with visual dot/block/star/apple helpers */
+        function renderFlashcardVisual(cfg) {
+            const buildDots = (count, renderItem) => {
+                let html = "";
+                for (let i = 0; i < count; i++) {
+                    html += `<span class="inline-flex items-center justify-center">${renderItem(i)}</span>`;
+                }
+                return html;
+            };
+
+            return `
+                <div class="w-full max-w-xl bg-gradient-to-br ${cfg.cardBg} border-4 ${cfg.cardBorder} rounded-3xl p-4 sm:p-5 shadow-lg">
+                    <div class="text-center mb-3">
+                        <span class="inline-block bg-white px-6 py-2 rounded-2xl shadow-sm border-2 ${cfg.cardBorder} font-display font-bold text-3xl sm:text-4xl text-slate-800 tracking-wide">
+                            ${cfg.equation}
+                        </span>
+                    </div>
+                    <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+                        <div class="flex-1 w-full bg-white/90 rounded-2xl p-3 border-2 ${cfg.leftBorder} flex flex-wrap items-center justify-center gap-1.5 min-h-[60px]">
+                            ${buildDots(cfg.leftCount, cfg.renderLeft)}
+                        </div>
+                        <div class="w-10 h-10 flex-shrink-0 rounded-full bg-amber-400 text-white font-display font-bold text-2xl flex items-center justify-center shadow border-2 border-white">
+                            +
+                        </div>
+                        <div class="flex-1 w-full bg-white/90 rounded-2xl p-3 border-2 ${cfg.rightBorder} flex flex-wrap items-center justify-center gap-1.5 min-h-[60px]">
+                            ${buildDots(cfg.rightCount, cfg.renderRight)}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
         /** Renders a cheerful visual story card for Q11, Q12, Q13 */
         function renderStoryCardVisual(cfg) {
             return `
@@ -584,7 +621,7 @@
             {
                 question: "Rasmdagi palma daraxtlari jami nechta?",
                 correct: "13",
-                options: ["12", "13", "14", "15"],
+                options: ["13", "12", "14", "11"],
                 renderVisual: () => renderGroupAdditionVisual({
                     leftCount: 6,
                     rightCount: 7,
@@ -598,9 +635,9 @@
             },
             // Q2: 8 sailboats + 3 sailboats = 11
             {
-                question: "Barcha yelkanli qayiqlar soni nechta?",
+                question: "Rasmdagi yelkanli qayiqlar jami nechta?",
                 correct: "11",
-                options: ["10", "11", "12", "13"],
+                options: ["11", "10", "12", "13"],
                 renderVisual: () => renderGroupAdditionVisual({
                     leftCount: 8,
                     rightCount: 3,
@@ -614,9 +651,9 @@
             },
             // Q3: 7 basketballs + 4 basketballs = 11
             {
-                question: "Rasmdagi basketbol to'plari jami nechta?",
+                question: "Basketbol to'plari jami nechta?",
                 correct: "11",
-                options: ["10", "11", "12", "13"],
+                options: ["11", "12", "10", "13"],
                 renderVisual: () => renderGroupAdditionVisual({
                     leftCount: 7,
                     rightCount: 4,
@@ -628,27 +665,11 @@
                     renderRight: () => `<span class="text-3xl sm:text-4xl">🏀</span>`
                 })
             },
-            // Q4: 8 soccer balls + 4 soccer balls = 12
+            // Q4: 6 colorful beach balls + 6 colorful beach balls = 12
             {
-                question: "Jami nechta futbol to'pi bor?",
+                question: "Rangli to'plar jami nechta?",
                 correct: "12",
-                options: ["11", "12", "13", "14"],
-                renderVisual: () => renderGroupAdditionVisual({
-                    leftCount: 8,
-                    rightCount: 4,
-                    leftBg: "bg-emerald-100",
-                    leftBorder: "border-emerald-300",
-                    rightBg: "bg-teal-100",
-                    rightBorder: "border-teal-300",
-                    renderLeft: () => `<span class="text-3xl sm:text-4xl">⚽</span>`,
-                    renderRight: () => `<span class="text-3xl sm:text-4xl">⚽</span>`
-                })
-            },
-            // Q5: 6 SVG beach balls + 6 SVG beach balls = 12
-            {
-                question: "Rangli to'plar hammasi bo'lib nechta?",
-                correct: "12",
-                options: ["10", "11", "12", "13"],
+                options: ["12", "11", "13", "14"],
                 renderVisual: () => renderGroupAdditionVisual({
                     leftCount: 6,
                     rightCount: 6,
@@ -660,11 +681,27 @@
                     renderRight: () => createBeachBallSVG()
                 })
             },
+            // Q5: 8 soccer balls + 4 soccer balls = 12
+            {
+                question: "Futbol to'plari jami nechta?",
+                correct: "12",
+                options: ["12", "11", "13", "10"],
+                renderVisual: () => renderGroupAdditionVisual({
+                    leftCount: 8,
+                    rightCount: 4,
+                    leftBg: "bg-emerald-100",
+                    leftBorder: "border-emerald-300",
+                    rightBg: "bg-teal-100",
+                    rightBorder: "border-teal-300",
+                    renderLeft: () => `<span class="text-3xl sm:text-4xl">⚽</span>`,
+                    renderRight: () => `<span class="text-3xl sm:text-4xl">⚽</span>`
+                })
+            },
             // Q6: 7 motorcycles + 7 motorcycles = 14
             {
-                question: "Rasmdagi mototsikllar jami nechta?",
+                question: "Mototsikllar jami nechta?",
                 correct: "14",
-                options: ["12", "13", "14", "15"],
+                options: ["14", "13", "15", "12"],
                 renderVisual: () => renderGroupAdditionVisual({
                     leftCount: 7,
                     rightCount: 7,
@@ -676,68 +713,79 @@
                     renderRight: () => `<span class="text-3xl sm:text-4xl">🏍️</span>`
                 })
             },
-            // Q7: 9 blue SVG stars + 7 yellow SVG stars in 10-frame grids = 16
+            // Q7: Flashcard 7 + 5 = ? with dot helpers
             {
-                question: "9 + 7 yig'indisi nechaga teng?",
-                correct: "16",
-                options: ["15", "16", "17", "18"],
-                renderVisual: () => renderTenFrameStarsVisual()
-            },
-            // Q8: 8 red apples + 8 green apples = 16
-            {
-                question: "Savatda jami nechta olma bor? (8 + 8)",
-                correct: "16",
-                options: ["14", "15", "16", "17"],
-                renderVisual: () => renderGroupAdditionVisual({
-                    leftCount: 8,
-                    rightCount: 8,
-                    leftBg: "bg-rose-100",
-                    leftBorder: "border-rose-300",
-                    rightBg: "bg-lime-100",
-                    rightBorder: "border-lime-300",
-                    renderLeft: () => `<span class="text-3xl sm:text-4xl">🍎</span>`,
-                    renderRight: () => `<span class="text-3xl sm:text-4xl">🍏</span>`
+                question: "Yig'indini toping: 7 + 5",
+                correct: "12",
+                options: ["12", "11", "13", "14"],
+                renderVisual: () => renderFlashcardVisual({
+                    equation: "7 + 5 = ?",
+                    cardBg: "from-sky-100 to-indigo-100",
+                    cardBorder: "border-sky-300",
+                    leftBorder: "border-sky-200",
+                    rightBorder: "border-pink-200",
+                    leftCount: 7,
+                    rightCount: 5,
+                    renderLeft: () => `<span class="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-sky-500 border-2 border-sky-700 inline-block shadow-sm"></span>`,
+                    renderRight: () => `<span class="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-pink-500 border-2 border-pink-700 inline-block shadow-sm"></span>`
                 })
             },
-            // Q9: 9 red balloons + 9 blue/yellow SVG balloons = 18
+            // Q8: Flashcard 9 + 7 = ? with visual blocks/dots
             {
-                question: "Havo sharlari jami nechta? (9 + 9)",
+                question: "Yig'indini toping: 9 + 7",
+                correct: "16",
+                options: ["16", "15", "17", "14"],
+                renderVisual: () => renderFlashcardVisual({
+                    equation: "9 + 7 = ?",
+                    cardBg: "from-emerald-100 to-amber-100",
+                    cardBorder: "border-emerald-300",
+                    leftBorder: "border-emerald-200",
+                    rightBorder: "border-amber-200",
+                    leftCount: 9,
+                    rightCount: 7,
+                    renderLeft: () => `<span class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-emerald-500 border-2 border-emerald-700 inline-block shadow-sm"></span>`,
+                    renderRight: () => `<span class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-amber-400 border-2 border-amber-600 inline-block shadow-sm"></span>`
+                })
+            },
+            // Q9: Flashcard 9 + 9 = ? with stars
+            {
+                question: "Yig'indini toping: 9 + 9",
                 correct: "18",
-                options: ["16", "17", "18", "19"],
-                renderVisual: () => renderGroupAdditionVisual({
+                options: ["18", "17", "19", "16"],
+                renderVisual: () => renderFlashcardVisual({
+                    equation: "9 + 9 = ?",
+                    cardBg: "from-yellow-100 to-sky-100",
+                    cardBorder: "border-amber-300",
+                    leftBorder: "border-sky-200",
+                    rightBorder: "border-amber-200",
                     leftCount: 9,
                     rightCount: 9,
-                    leftBg: "bg-pink-100",
-                    leftBorder: "border-pink-300",
-                    rightBg: "bg-sky-100",
-                    rightBorder: "border-sky-300",
-                    renderLeft: () => `<span class="text-3xl sm:text-4xl">🎈</span>`,
-                    renderRight: (i) => i % 2 === 0
-                        ? createBalloonSVG("#38bdf8", "#e0f2fe", "#0284c7")
-                        : createBalloonSVG("#facc15", "#fef9c3", "#ca8a04")
+                    renderLeft: () => createStarSVG("#38bdf8", "#0284c7"),
+                    renderRight: () => createStarSVG("#facc15", "#ca8a04")
                 })
             },
-            // Q10: 8 pencils + 7 pencils = 15
+            // Q10: Flashcard 8 + 7 = ? with apples
             {
-                question: "Barcha qalamlar sonini toping (8 + 7):",
+                question: "Yig'indini toping: 8 + 7",
                 correct: "15",
-                options: ["13", "14", "15", "16"],
-                renderVisual: () => renderGroupAdditionVisual({
+                options: ["15", "14", "16", "13"],
+                renderVisual: () => renderFlashcardVisual({
+                    equation: "8 + 7 = ?",
+                    cardBg: "from-rose-100 to-lime-100",
+                    cardBorder: "border-rose-300",
+                    leftBorder: "border-rose-200",
+                    rightBorder: "border-lime-200",
                     leftCount: 8,
                     rightCount: 7,
-                    leftBg: "bg-amber-100",
-                    leftBorder: "border-amber-300",
-                    rightBg: "bg-purple-100",
-                    rightBorder: "border-purple-300",
-                    renderLeft: () => `<span class="text-3xl sm:text-4xl">✏️</span>`,
-                    renderRight: () => `<span class="text-3xl sm:text-4xl">✏️</span>`
+                    renderLeft: () => `<span class="text-2xl sm:text-3xl">🍎</span>`,
+                    renderRight: () => `<span class="text-2xl sm:text-3xl">🍏</span>`
                 })
             },
             // Q11: Story Card — Bus (6 soat) + Bike (5 soat) = 11 soat
             {
-                question: "Sayyohlar mehmonxonagacha avval 6 soat avtobusda, so'ng yana 5 soat velosipedda yurishdi. Sayyohlar yo'lga jami necha soat sarflashdi?",
+                question: "Sayyohlar avval 6 soat avtobusda, so'ng yana 5 soat velosipedda yurishdi. Ular yo'lga jami necha soat sarflashdi?",
                 correct: "11 soat",
-                options: ["10 soat", "11 soat", "12 soat", "13 soat"],
+                options: ["11 soat", "10 soat", "12 soat", "13 soat"],
                 renderVisual: () => renderStoryCardVisual({
                     wrapperGradient: "from-sky-100 via-yellow-50 to-emerald-100",
                     wrapperBorder: "border-sky-300",
@@ -755,9 +803,9 @@
             },
             // Q12: Story Card — Mountain up (7 soat) + Mountain down (4 soat) = 11 soat
             {
-                question: "Sayyohlarga Katta Chimyon tog'iga chiqish uchun 7 soat, tog'dan tushish uchun 4 soat kerak bo'ldi. Ular necha soatdan so'ng qaytadilar?",
+                question: "Sayyohlarga Katta Chimyon tog'iga chiqish uchun 7 soat, tushish uchun 4 soat kerak bo'ldi. Ular jami necha soatda qaytadilar?",
                 correct: "11 soat",
-                options: ["9 soat", "10 soat", "11 soat", "12 soat"],
+                options: ["11 soat", "12 soat", "10 soat", "13 soat"],
                 renderVisual: () => renderStoryCardVisual({
                     wrapperGradient: "from-emerald-100 via-sky-50 to-amber-100",
                     wrapperBorder: "border-emerald-300",
@@ -777,7 +825,7 @@
             {
                 question: "Sayyohning ryukzagida 8 kg kiyim-kechak va 6 kg yegulik bor. Ryukzakdagi buyumlar jami necha kilogramm?",
                 correct: "14 kg",
-                options: ["12 kg", "13 kg", "14 kg", "15 kg"],
+                options: ["14 kg", "13 kg", "15 kg", "12 kg"],
                 renderVisual: () => renderStoryCardVisual({
                     wrapperGradient: "from-pink-100 via-amber-50 to-orange-100",
                     wrapperBorder: "border-pink-300",
@@ -793,35 +841,35 @@
                     badge2: "bg-orange-100 text-orange-900"
                 })
             },
-            // Q14: SVG Bar Chart — Sayyohlar yo'lda sarflagan soatlar (6 + 7 = 13 soat)
+            // Q14: SVG Bar Chart — Savatdagi mevalar (Olma=9, Nok=6, Banan=5 -> 15 ta)
             {
-                question: "Diagrammaga qarang. Sayyohlar 1-kun va 2-kun jami necha soat yo'l yurishgan?",
-                correct: "13 soat",
-                options: ["11 soat", "12 soat", "13 soat", "14 soat"],
+                question: "Diagrammaga qarang. Olma va nok jami nechta?",
+                correct: "15 ta",
+                options: ["15 ta", "14 ta", "16 ta", "11 ta"],
                 renderVisual: () => renderBarChartSVG({
-                    title: "Sayyohlar yo'lda sarflagan soatlar",
-                    maxVal: 8,
-                    step: 2,
-                    bars: [
-                        { label: "1-kun", value: 6, valueLabel: "6 soat", fill: "#38bdf8", stroke: "#0284c7", textColor: "#0369a1" },
-                        { label: "2-kun", value: 7, valueLabel: "7 soat", fill: "#facc15", stroke: "#ca8a04", textColor: "#a16207" },
-                        { label: "3-kun", value: 5, valueLabel: "5 soat", fill: "#34d399", stroke: "#059669", textColor: "#047857" }
-                    ]
-                })
-            },
-            // Q15: SVG Bar Chart — Sinfdagi sport to'plari soni (8 + 6 = 14 ta)
-            {
-                question: "Diagrammaga qarang. Futbol va basketbol to'plari jami nechta?",
-                correct: "14 ta",
-                options: ["12 ta", "13 ta", "14 ta", "15 ta"],
-                renderVisual: () => renderBarChartSVG({
-                    title: "Sinfdagi sport to'plari soni",
+                    title: "Savatdagi mevalar",
                     maxVal: 10,
                     step: 2,
                     bars: [
-                        { label: "Futbol ⚽", value: 8, valueLabel: "8 ta", fill: "#22c55e", stroke: "#15803d", textColor: "#15803d" },
-                        { label: "Basketbol 🏀", value: 6, valueLabel: "6 ta", fill: "#fb923c", stroke: "#ea580c", textColor: "#c2410c" },
-                        { label: "Voleybol 🏐", value: 5, valueLabel: "5 ta", fill: "#f472b6", stroke: "#db2777", textColor: "#be185d" }
+                        { label: "Olma 🍎", value: 9, valueLabel: "9", fill: "#f43f5e", stroke: "#e11d48", textColor: "#be123c" },
+                        { label: "Nok 🍐", value: 6, valueLabel: "6", fill: "#22c55e", stroke: "#15803d", textColor: "#15803d" },
+                        { label: "Banan 🍌", value: 5, valueLabel: "5", fill: "#facc15", stroke: "#ca8a04", textColor: "#a16207" }
+                    ]
+                })
+            },
+            // Q15: SVG Bar Chart — Sayohat yo'li (soatlarda) (6 + 7 + 5 = 18 soat)
+            {
+                question: "Diagrammaga qarang. Sayyohlar uchala qismda jami necha soat yo'l yurgan?",
+                correct: "18 soat",
+                options: ["18 soat", "17 soat", "19 soat", "16 soat"],
+                renderVisual: () => renderBarChartSVG({
+                    title: "Sayohat yo'li (soatlarda)",
+                    maxVal: 8,
+                    step: 2,
+                    bars: [
+                        { label: "1-qism", value: 6, valueLabel: "6", fill: "#38bdf8", stroke: "#0284c7", textColor: "#0369a1" },
+                        { label: "2-qism", value: 7, valueLabel: "7", fill: "#fb923c", stroke: "#ea580c", textColor: "#c2410c" },
+                        { label: "3-qism", value: 5, valueLabel: "5", fill: "#34d399", stroke: "#059669", textColor: "#047857" }
                     ]
                 })
             }
@@ -908,6 +956,13 @@
                 this.playTone(freq, 0.05, "sine", 0.12, 0);
             },
 
+            timeUp() {
+                // Distinct gentle time-up chime
+                this.playTone(587.33, 0.16, "triangle", 0.20, 0);
+                this.playTone(440.00, 0.16, "triangle", 0.20, 0.15);
+                this.playTone(349.23, 0.32, "sine", 0.20, 0.30);
+            },
+
             victoryFanfare() {
                 const notes = [
                     { f: 523.25, d: 0.14, t: 0.00 },
@@ -934,9 +989,10 @@
         // =========================================================================
         // 4. APPLICATION STATE & DOM REFERENCES
         // =========================================================================
-        const TOTAL_TIME = 90;
+        const QUESTION_TIME = 90;       // 90 seconds per individual question
         const POINTS_PER_QUESTION = 10;
-        const AUTO_ADVANCE_MS = 900;
+        const AUTO_ADVANCE_MS = 1000;
+        const TIME_UP_ADVANCE_MS = 1200;
 
         let state = {
             teacherName: "",
@@ -945,7 +1001,8 @@
             currentIndex: 0,
             score: 0,
             correctCount: 0,
-            timeLeft: TOTAL_TIME,
+            timeLeft: QUESTION_TIME,
+            quizStartTime: 0,
             timerInterval: null,
             autoAdvanceTimeout: null,
             answeredCurrent: false,
@@ -976,6 +1033,7 @@
         const scoreDisplay = document.getElementById("scoreDisplay");
         const timerBox = document.getElementById("timerBox");
         const timerDisplay = document.getElementById("timerDisplay");
+        const timerProgressBar = document.getElementById("timerProgressBar");
         const questionProgressBar = document.getElementById("questionProgressBar");
         const progressPercentLabel = document.getElementById("progressPercentLabel");
         const questionNumberPill = document.getElementById("questionNumberPill");
@@ -1124,14 +1182,14 @@
             state.currentIndex = 0;
             state.score = 0;
             state.correctCount = 0;
-            state.timeLeft = TOTAL_TIME;
+            state.timeLeft = QUESTION_TIME;
+            state.quizStartTime = Date.now();
             state.answeredCurrent = false;
             state.isFinished = false;
 
             // Update dashboard
             displayTeacherClass.textContent = `Ustoz: ${state.teacherName} | Sinf: ${state.className}`;
             scoreDisplay.textContent = "0";
-            updateTimerUI();
 
             // Switch to quiz screen
             startScreen.classList.add("hidden");
@@ -1139,13 +1197,15 @@
             quizScreen.classList.remove("hidden");
 
             renderQuestion();
-            startTimer();
         }
 
-        function startTimer() {
+        function startQuestionTimer() {
             clearInterval(state.timerInterval);
+            state.timeLeft = QUESTION_TIME;
+            updateTimerUI();
+
             state.timerInterval = setInterval(() => {
-                if (state.isFinished) {
+                if (state.isFinished || state.answeredCurrent) {
                     clearInterval(state.timerInterval);
                     return;
                 }
@@ -1153,35 +1213,129 @@
                 state.timeLeft--;
                 updateTimerUI();
 
-                // Tick-tock sound in the final 15 seconds
+                // Tick-tock sound in the final 15 seconds of each question
                 if (state.timeLeft <= 15 && state.timeLeft > 0) {
                     SoundEngine.tick(state.timeLeft % 2 === 0);
                 }
 
                 if (state.timeLeft <= 0) {
                     clearInterval(state.timerInterval);
-                    clearTimeout(state.autoAdvanceTimeout);
-                    finishQuiz(true);
+                    handleTimeUp();
                 }
             }, 1000);
         }
 
         function updateTimerUI() {
-            timerDisplay.textContent = `${Math.max(0, state.timeLeft)}s`;
+            const safeTime = Math.max(0, state.timeLeft);
+            timerDisplay.textContent = `${safeTime} s`;
+            const timerPercent = Math.round((safeTime / QUESTION_TIME) * 100);
+            timerProgressBar.style.width = `${timerPercent}%`;
 
-            if (state.timeLeft <= 15) {
+            if (safeTime <= 15) {
                 timerBox.classList.remove("bg-emerald-500", "bg-amber-500");
                 timerBox.classList.add("bg-rose-600", "timer-urgent");
-            } else if (state.timeLeft <= 35) {
+                timerProgressBar.className = "h-full bg-gradient-to-r from-rose-500 to-red-600 rounded-full transition-all duration-1000 ease-linear";
+            } else if (safeTime <= 35) {
                 timerBox.classList.remove("bg-emerald-500", "bg-rose-600", "timer-urgent");
                 timerBox.classList.add("bg-amber-500");
+                timerProgressBar.className = "h-full bg-gradient-to-r from-amber-400 to-orange-500 rounded-full transition-all duration-1000 ease-linear";
             } else {
                 timerBox.classList.remove("bg-amber-500", "bg-rose-600", "timer-urgent");
                 timerBox.classList.add("bg-emerald-500");
+                timerProgressBar.className = "h-full bg-gradient-to-r from-emerald-400 via-sky-400 to-emerald-500 rounded-full transition-all duration-1000 ease-linear";
             }
         }
 
         function renderQuestion() {
+            const q = state.questions[state.currentIndex];
+            const total = state.questions.length;
+            state.answeredCurrent = false;
+
+            // Update counters and progress bar
+            questionCounter.textContent = `Savol ${state.currentIndex + 1} / ${total}`;
+            questionNumberPill.textContent = `${state.currentIndex + 1}-SAVOL`;
+            const progressPercent = Math.round((state.currentIndex / total) * 100);
+            questionProgressBar.style.width = `${progressPercent}%`;
+            progressPercentLabel.textContent = `${progressPercent}%`;
+
+            // Render custom visual illustration for this question
+            visualStage.innerHTML = q.renderVisual();
+
+            // Render question text
+            questionText.textContent = q.question;
+
+            // Clear previous feedback
+            feedbackMessage.textContent = "";
+            feedbackMessage.className = "font-extrabold text-base sm:text-xl text-center";
+
+            // Render 4 big, cheerful answer buttons
+            optionsGrid.innerHTML = "";
+            q.options.forEach((optionText, idx) => {
+                const style = OPTION_STYLES[idx];
+                const btn = document.createElement("button");
+                btn.type = "button";
+                btn.className = `option-btn btn-3d w-full text-left p-3.5 sm:p-5 rounded-2xl border-2 ${style.bg} ${style.border} ${style.text} font-black text-xl sm:text-3xl flex items-center gap-3 shadow-sm cursor-pointer transition-all`;
+
+                btn.innerHTML = `
+                    <span class="option-letter flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-xl ${style.badge} font-display font-bold text-lg sm:text-2xl flex items-center justify-center shadow-sm">
+                        ${OPTION_LABELS[idx]}
+                    </span>
+                    <span class="flex-grow leading-tight">${optionText}</span>
+                    <span class="option-status text-2xl flex-shrink-0"></span>
+                `;
+
+                btn.addEventListener("click", () => handleOptionSelect(idx));
+                optionsGrid.appendChild(btn);
+            });
+
+            // Reset and start the 90-second timer for this question
+            startQuestionTimer();
+        }
+
+        function handleTimeUp() {
+            if (state.answeredCurrent || state.isFinished) return;
+            state.answeredCurrent = true;
+            clearInterval(state.timerInterval);
+
+            const q = state.questions[state.currentIndex];
+            const buttons = optionsGrid.querySelectorAll(".option-btn");
+
+            // Update progress bar
+            const answeredPercent = Math.round(((state.currentIndex + 1) / state.questions.length) * 100);
+            questionProgressBar.style.width = `${answeredPercent}%`;
+            progressPercentLabel.textContent = `${answeredPercent}%`;
+
+            // Highlight correct answer and disable buttons
+            buttons.forEach((btn, idx) => {
+                btn.disabled = true;
+                btn.classList.remove("cursor-pointer", "hover:bg-sky-200", "hover:bg-amber-200", "hover:bg-emerald-200", "hover:bg-pink-200");
+                const statusEl = btn.querySelector(".option-status");
+
+                if (idx === q.correctIndex) {
+                    btn.className = "option-btn w-full text-left p-3.5 sm:p-5 rounded-2xl border-2 border-emerald-600 border-b-4 bg-emerald-500 text-white font-black text-xl sm:text-3xl flex items-center gap-3 shadow-lg ring-4 ring-emerald-200 scale-[1.02] transition-all";
+                    btn.querySelector(".option-letter").className = "option-letter flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-white text-emerald-600 font-display font-bold text-lg sm:text-2xl flex items-center justify-center shadow-sm";
+                    statusEl.textContent = "✅";
+                } else {
+                    btn.classList.add("opacity-50");
+                }
+            });
+
+            SoundEngine.timeUp();
+            feedbackMessage.textContent = `Vaqt tugadi! ⏰ To'g'ri javob: ${OPTION_LABELS[q.correctIndex]} (${q.options[q.correctIndex]})`;
+            feedbackMessage.classList.add("text-rose-600");
+
+            // Automatically move to next question after 1.2s
+            clearTimeout(state.autoAdvanceTimeout);
+            state.autoAdvanceTimeout = setTimeout(() => {
+                goToNextQuestion();
+            }, TIME_UP_ADVANCE_MS);
+        }
+
+        function handleOptionSelect(selectedIndex) {
+            if (state.answeredCurrent || state.isFinished) return;
+            state.answeredCurrent = true;
+            clearInterval(state.timerInterval);
+
             const q = state.questions[state.currentIndex];
             const total = state.questions.length;
             state.answeredCurrent = false;
@@ -1269,7 +1423,7 @@
                 feedbackMessage.classList.add("text-rose-600");
             }
 
-            // Auto-advance after 900 ms
+            // Auto-advance after 1000 ms
             clearTimeout(state.autoAdvanceTimeout);
             state.autoAdvanceTimeout = setTimeout(() => {
                 goToNextQuestion();
@@ -1290,11 +1444,13 @@
                 state.currentIndex++;
                 renderQuestion();
             } else {
-                finishQuiz(false);
-            }
+        function formatTotalTime(totalSeconds) {
+            const mins = Math.floor(totalSeconds / 60);
+            const secs = totalSeconds % 60;
+            return `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
         }
 
-        function finishQuiz(timeExpired) {
+        function finishQuiz() {
             if (state.isFinished) return;
             state.isFinished = true;
             clearInterval(state.timerInterval);
@@ -1303,7 +1459,7 @@
             const totalQuestions = state.questions.length;
             const maxScore = totalQuestions * POINTS_PER_QUESTION;
             const percent = Math.round((state.correctCount / totalQuestions) * 100);
-            const timeUsed = Math.min(TOTAL_TIME, TOTAL_TIME - Math.max(0, state.timeLeft));
+            const totalElapsedSec = Math.max(1, Math.round((Date.now() - state.quizStartTime) / 1000));
 
             // Switch to result screen
             quizScreen.classList.add("hidden");
@@ -1311,14 +1467,12 @@
 
             // Populate header & stats
             resultTeamTitle.textContent = `${state.className} sinf jamoasi — Ustoz: ${state.teacherName}`;
-            resultSubReason.textContent = timeExpired
-                ? "⏱️ Ajratilgan 90 sekund vaqt tugadi!"
-                : "✅ Barcha 15 ta savol yakunlandi!";
+            resultSubReason.textContent = "✅ Barcha 15 ta savol yakunlandi!";
 
-            finalScoreStat.textContent = `${state.score} / ${maxScore}`;
+            finalScoreStat.textContent = `${state.score} / ${maxScore} ball`;
             finalCorrectStat.textContent = `${state.correctCount} / ${totalQuestions}`;
             finalPercentStat.textContent = `${percent}%`;
-            finalTimeStat.textContent = `${timeUsed} s`;
+            finalTimeStat.textContent = formatTotalTime(totalElapsedSec);
 
             // Encouraging evaluation message, sound & confetti
             let evalText = "";
@@ -1327,24 +1481,24 @@
 
             if (percent >= 90) {
                 emoji = "🏆";
-                evalText = "Barakalla! A'lo natija! Siz haqiqiy bilimdonlarsiz! 🏆";
+                evalText = "A'lo darajada ishladingiz! Siz haqiqiy bilimdon jamoasiz! 🏆🌟";
                 evalClasses = "bg-emerald-100 border-emerald-400 text-emerald-900";
                 SoundEngine.victoryFanfare();
                 startConfetti();
             } else if (percent >= 70) {
-                emoji = "🌟";
-                evalText = "Juda yaxshi ishladingiz! Yana ozgina harakat qilsangiz, a'lo bo'ladi! 🌟";
+                emoji = "🎉";
+                evalText = "Juda yaxshi ishladingiz! Barakalla, shunday davom eting! 👏🎉";
                 evalClasses = "bg-sky-100 border-sky-400 text-sky-900";
                 SoundEngine.victoryFanfare();
                 startConfetti();
             } else if (percent >= 50) {
                 emoji = "💪";
-                evalText = "Yaxshi harakat! Mavzuni yana bir bor takrorlab oling! 💪";
+                evalText = "Yaxshi harakat! Biroz ko'proq mashq qilsangiz, yanada a'lo bo'ladi! 💪";
                 evalClasses = "bg-amber-100 border-amber-400 text-amber-900";
                 SoundEngine.closingTone();
             } else {
                 emoji = "📚";
-                evalText = "Hali ko'proq mashq qilish kerak! Yana o'qib, qayta urinib ko'ring! 📚";
+                evalText = "Hozircha natija unchalik yaxshi emas. Mavzuni yana bir bor o'qib, qayta urinib ko'ring! 📚";
                 evalClasses = "bg-rose-100 border-rose-300 text-rose-900";
                 SoundEngine.closingTone();
             }
