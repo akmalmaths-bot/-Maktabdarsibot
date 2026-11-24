@@ -158,7 +158,7 @@
                     <span class="text-amber-400">|</span>
                     <span>📝 20 ta savol</span>
                     <span class="text-amber-400">|</span>
-                    <span>⏱️ 90 sekund</span>
+                    <span>⏱️ Har savolga 90 sekund</span>
                 </div>
             </div>
 
@@ -357,7 +357,7 @@
                 </div>
                 <div class="bg-orange-50 border-2 border-orange-200 rounded-2xl p-3">
                     <div class="text-xs sm:text-sm font-bold text-orange-700">Sarflangan vaqt</div>
-                    <div id="finalTimeStat" class="text-lg sm:text-xl font-black text-orange-900 mt-1">0 sekund</div>
+                    <div id="finalTimeStat" class="text-lg sm:text-xl font-black text-orange-900 mt-1">00:00</div>
                 </div>
             </div>
 
@@ -626,9 +626,10 @@
         // =========================================================================
         // 3. STATE & DOM REFERENCES
         // =========================================================================
-        const TOTAL_TIME = 90;
+        const QUESTION_TIME = 90;
         const POINTS_PER_QUESTION = 10;
         const AUTO_ADVANCE_MS = 900;
+        const TIMEOUT_ADVANCE_MS = 1200;
 
         let state = {
             teacherName: "",
@@ -637,7 +638,8 @@
             currentIndex: 0,
             score: 0,
             correctCount: 0,
-            timeLeft: TOTAL_TIME,
+            timeLeft: QUESTION_TIME,
+            totalElapsedSeconds: 0,
             timerInterval: null,
             autoAdvanceTimeout: null,
             answeredCurrent: false,
@@ -823,14 +825,14 @@
             state.currentIndex = 0;
             state.score = 0;
             state.correctCount = 0;
-            state.timeLeft = TOTAL_TIME;
+            state.timeLeft = QUESTION_TIME;
+            state.totalElapsedSeconds = 0;
             state.answeredCurrent = false;
             state.isFinished = false;
 
             // Update dashboard
             displayTeacherClass.textContent = `Ustoz: ${state.teacherName} | Sinf: ${state.className}`;
             scoreDisplay.textContent = "0";
-            updateTimerUI();
 
             // Switch to quiz screen
             startScreen.classList.add("hidden");
@@ -838,18 +840,18 @@
             quizScreen.classList.remove("hidden");
 
             renderQuestion();
-            startTimer();
         }
 
         function startTimer() {
             clearInterval(state.timerInterval);
             state.timerInterval = setInterval(() => {
-                if (state.isFinished) {
+                if (state.isFinished || state.answeredCurrent) {
                     clearInterval(state.timerInterval);
                     return;
                 }
 
                 state.timeLeft--;
+                state.totalElapsedSeconds++;
                 updateTimerUI();
 
                 // Subtle tick sound during last 15 seconds
@@ -859,8 +861,7 @@
 
                 if (state.timeLeft <= 0) {
                     clearInterval(state.timerInterval);
-                    clearTimeout(state.autoAdvanceTimeout);
-                    finishQuiz(true);
+                    handleQuestionTimeout();
                 }
             }, 1000);
         }
@@ -884,6 +885,11 @@
             const q = state.questions[state.currentIndex];
             const total = state.questions.length;
             state.answeredCurrent = false;
+
+            // Reset individual 90-second timer for this question
+            state.timeLeft = QUESTION_TIME;
+            updateTimerUI();
+            startTimer();
 
             // Update counters and smooth progress bar (0% at Q1 start -> 100% upon completion)
             questionCounter.textContent = `${state.currentIndex + 1} / ${total}`;
@@ -927,9 +933,46 @@
             });
         }
 
+        function handleQuestionTimeout() {
+            if (state.answeredCurrent || state.isFinished) return;
+            state.answeredCurrent = true;
+
+            const q = state.questions[state.currentIndex];
+            const buttons = optionsGrid.querySelectorAll(".option-btn");
+
+            // Advance progress bar smoothly on timeout
+            const answeredPercent = Math.round(((state.currentIndex + 1) / state.questions.length) * 100);
+            questionProgressBar.style.width = `${answeredPercent}%`;
+            progressPercentLabel.textContent = `${answeredPercent}%`;
+
+            buttons.forEach((btn, idx) => {
+                btn.disabled = true;
+                btn.classList.remove("cursor-pointer", "hover:bg-sky-200", "hover:bg-amber-200", "hover:bg-emerald-200", "hover:bg-orange-200");
+                const statusEl = btn.querySelector(".option-status");
+
+                if (idx === q.correctIndex) {
+                    btn.className = "option-btn w-full text-left p-4 sm:p-5 rounded-2xl border-2 border-emerald-600 border-b-4 bg-emerald-500 text-white font-black text-lg sm:text-2xl flex items-center gap-3.5 shadow-lg ring-4 ring-emerald-200 scale-[1.01] transition-all";
+                    btn.querySelector(".option-letter").className = "option-letter flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-white text-emerald-600 font-black text-lg sm:text-xl flex items-center justify-center shadow-sm";
+                    statusEl.textContent = "✅";
+                } else {
+                    btn.classList.add("opacity-50");
+                }
+            });
+
+            SoundEngine.wrong();
+            feedbackMessage.textContent = `⏰ Vaqt tugadi! To'g'ri javob: ${OPTION_LABELS[q.correctIndex]} (${q.options[q.correctIndex]})`;
+            feedbackMessage.classList.add("text-rose-600");
+
+            clearTimeout(state.autoAdvanceTimeout);
+            state.autoAdvanceTimeout = setTimeout(() => {
+                goToNextQuestion();
+            }, TIMEOUT_ADVANCE_MS);
+        }
+
         function handleOptionSelect(selectedIndex) {
             if (state.answeredCurrent || state.isFinished) return;
             state.answeredCurrent = true;
+            clearInterval(state.timerInterval);
 
             const q = state.questions[state.currentIndex];
             const buttons = optionsGrid.querySelectorAll(".option-btn");
@@ -993,11 +1036,11 @@
                 state.currentIndex++;
                 renderQuestion();
             } else {
-                finishQuiz(false);
+                finishQuiz();
             }
         }
 
-        function finishQuiz(timeExpired) {
+        function finishQuiz() {
             if (state.isFinished) return;
             state.isFinished = true;
             clearInterval(state.timerInterval);
@@ -1006,7 +1049,6 @@
             const totalQuestions = state.questions.length;
             const maxScore = totalQuestions * POINTS_PER_QUESTION;
             const percent = Math.round((state.correctCount / totalQuestions) * 100);
-            const timeUsed = Math.min(TOTAL_TIME, TOTAL_TIME - Math.max(0, state.timeLeft));
 
             // Switch to results screen
             quizScreen.classList.add("hidden");
@@ -1014,14 +1056,12 @@
 
             // Populate header & stats
             resultTeamTitle.textContent = `${state.className} sinf jamoasi — Ustoz: ${state.teacherName}`;
-            resultSubReason.textContent = timeExpired
-                ? "⏱️ Ajratilgan 90 sekund vaqt tugadi!"
-                : "✅ Barcha 20 ta savol yakunlandi!";
+            resultSubReason.textContent = "✅ Barcha 20 ta savol yakunlandi!";
 
             finalScoreStat.textContent = `${state.score} / ${maxScore} ball`;
             finalCorrectStat.textContent = `${state.correctCount} / ${totalQuestions}`;
             finalPercentStat.textContent = `${percent}%`;
-            finalTimeStat.textContent = `${timeUsed} sekund`;
+            finalTimeStat.textContent = formatTimer(state.totalElapsedSeconds);
 
             // Performance feedback based on percentage
             let evalText = "";
