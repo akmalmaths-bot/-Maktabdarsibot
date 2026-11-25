@@ -1,0 +1,1326 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2-sinf Matematika • 13-dars: 1000 gacha bo'lgan sonlarni ayirish</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Nunito & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #38bdf8 0%, #10b981 48%, #f59e0b 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, .font-display {
+            font-family: 'Nunito', 'Inter', sans-serif;
+        }
+
+        /* Floating sunny ambient circles */
+        .bg-bubble {
+            position: fixed;
+            border-radius: 9999px;
+            opacity: 0.24;
+            pointer-events: none;
+            z-index: 0;
+            animation: floatSlow 9s ease-in-out infinite;
+        }
+
+        @keyframes floatSlow {
+            0%, 100% { transform: translateY(0px) scale(1); }
+            50% { transform: translateY(-20px) scale(1.06); }
+        }
+
+        /* Floating +10 ball popup animation */
+        @keyframes floatUpFade {
+            0% {
+                opacity: 1;
+                transform: translate(-50%, 0) scale(0.8);
+            }
+            35% {
+                opacity: 1;
+                transform: translate(-50%, -34px) scale(1.18);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -74px) scale(1.05);
+            }
+        }
+
+        .float-score {
+            animation: floatUpFade 1s ease-out forwards;
+        }
+
+        /* Urgent timer pulse for the last 15 seconds */
+        @keyframes urgentPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.8); }
+            50% { transform: scale(1.07); box-shadow: 0 0 0 12px rgba(239, 68, 68, 0); }
+        }
+
+        .timer-urgent {
+            animation: urgentPulse 0.8s infinite;
+        }
+
+        /* Smooth card pop-in entrance */
+        @keyframes popIn {
+            0% { opacity: 0; transform: translateY(16px) scale(0.97); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .animate-pop {
+            animation: popIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        /* Shake animation for validation warning and wrong answer */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-7px); }
+            40%, 80% { transform: translateX(7px); }
+        }
+
+        .animate-shake {
+            animation: shake 0.4s ease-in-out;
+        }
+
+        /* Tactile 3D button press */
+        .btn-3d {
+            transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.2s ease;
+        }
+        .btn-3d:active:not(:disabled) {
+            transform: translateY(3px);
+        }
+    </style>
+</head>
+<body class="flex flex-col justify-between text-slate-800 antialiased selection:bg-amber-300 selection:text-slate-900">
+
+    <!-- Decorative Floating Circles -->
+    <div class="bg-bubble w-64 h-64 bg-yellow-200 top-6 -left-16" style="animation-delay: 0s;"></div>
+    <div class="bg-bubble w-72 h-72 bg-emerald-200 bottom-16 -right-20" style="animation-delay: 2.2s;"></div>
+    <div class="bg-bubble w-44 h-44 bg-sky-200 top-1/2 left-8" style="animation-delay: 4.5s;"></div>
+
+    <!-- Confetti Canvas (Celebration for >= 70%) -->
+    <canvas id="confettiCanvas" class="fixed inset-0 w-full h-full pointer-events-none z-50 hidden"></canvas>
+
+    <!-- Main Content Container -->
+    <main class="relative z-10 flex-grow flex flex-col items-center justify-center w-full px-3 py-4 sm:px-6 sm:py-6">
+
+        <!-- ==================== 1. TOP HEADER ==================== -->
+        <header id="topHeader" class="w-full max-w-4xl flex items-center justify-between mb-4 gap-2 flex-wrap">
+            <!-- Left: @Matemdarsi Channel Link -->
+            <a href="https://t.me/Matemdarsi" target="_blank" rel="noopener noreferrer"
+               class="inline-flex items-center gap-2 bg-white/95 hover:bg-amber-50 text-sky-700 font-extrabold px-4 py-2 rounded-full shadow-lg border-2 border-sky-200 transition transform hover:scale-105 text-sm sm:text-base">
+                <svg class="w-5 h-5 text-sky-500 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.02-1.96 1.25-5.54 3.69-.52.36-1 .53-1.42.52-.47-.01-1.37-.26-2.03-.48-.82-.27-1.47-.42-1.42-.88.03-.24.35-.49.96-.75 3.78-1.65 6.31-2.74 7.58-3.27 3.61-1.51 4.35-1.77 4.84-1.78.11 0 .35.03.5.16.13.1.17.24.18.34.02.07.02.25 0 .38z"/>
+                </svg>
+                <span>@Matemdarsi</span>
+            </a>
+
+            <!-- Center: Lesson Badge -->
+            <div class="inline-flex items-center gap-2 bg-gradient-to-r from-amber-300 via-yellow-300 to-lime-300 text-slate-900 font-black px-4 py-2 rounded-full shadow-lg border-2 border-white text-xs sm:text-base">
+                <span>🧮</span>
+                <span>2-sinf Matematika • 13-dars</span>
+            </div>
+
+            <!-- Right: Global Sound Toggle Button (ON by default) -->
+            <button id="soundToggleBtn" type="button"
+                    class="inline-flex items-center gap-2 bg-white/95 hover:bg-emerald-50 text-slate-800 font-bold px-4 py-2 rounded-full shadow-lg border-2 border-emerald-200 transition transform hover:scale-105 text-sm sm:text-base cursor-pointer">
+                <span id="soundIcon" class="text-lg">🔊</span>
+                <span id="soundLabel">Ovoz: Yoqilgan</span>
+            </button>
+        </header>
+
+        <!-- ==================== 2. START SCREEN (KIRISH OYNASI) ==================== -->
+        <section id="startScreen" class="w-full max-w-2xl bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl border-4 border-white p-5 sm:p-8 animate-pop">
+            <!-- Hero Header -->
+            <div class="text-center mb-6">
+                <div class="inline-flex items-center justify-center gap-2.5 px-5 py-3 rounded-2xl bg-gradient-to-r from-sky-400 via-emerald-400 to-amber-400 text-white text-3xl sm:text-4xl shadow-lg mb-3">
+                    <span>🧮</span>
+                    <span>➖</span>
+                    <span>🏭</span>
+                </div>
+                <h1 class="text-3xl sm:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-sky-600 via-emerald-600 to-amber-600 leading-tight">
+                    2-sinf Matematika
+                </h1>
+                <p class="text-slate-700 font-extrabold text-base sm:text-xl mt-1.5">
+                    13-dars. 1000 gacha bo'lgan sonlarni ayirish
+                </p>
+
+                <!-- 4 Info Badges -->
+                <div class="flex flex-wrap items-center justify-center gap-2 mt-4">
+                    <span class="px-3.5 py-1.5 rounded-full bg-sky-100 text-sky-900 font-extrabold text-xs sm:text-sm border border-sky-300">👥 Guruh bo'lib ishlash</span>
+                    <span class="px-3.5 py-1.5 rounded-full bg-emerald-100 text-emerald-900 font-extrabold text-xs sm:text-sm border border-emerald-300">📝 15 ta savol</span>
+                    <span class="px-3.5 py-1.5 rounded-full bg-amber-100 text-amber-900 font-extrabold text-xs sm:text-sm border border-amber-300">⏱️ Har savolga 90 sekund</span>
+                    <span class="px-3.5 py-1.5 rounded-full bg-orange-100 text-orange-900 font-extrabold text-xs sm:text-sm border border-orange-300">⭐ 150 ballgacha</span>
+                </div>
+            </div>
+
+            <!-- Setup Form -->
+            <div class="space-y-5">
+                <!-- Input 1: Teacher Name -->
+                <div>
+                    <label for="teacherNameInput" class="block text-slate-800 font-extrabold text-base sm:text-lg mb-2">
+                        👩‍🏫 Ustozning ismi:
+                    </label>
+                    <input type="text" id="teacherNameInput" autocomplete="off"
+                           placeholder="Masalan: Dilnoza opa"
+                           class="w-full px-4 py-3.5 text-base sm:text-lg font-bold rounded-2xl border-2 border-sky-300 bg-sky-50/60 focus:bg-white focus:border-sky-500 focus:ring-4 focus:ring-sky-200 outline-none transition">
+                </div>
+
+                <!-- Input 2: Class Selection Pills + Custom Input -->
+                <div>
+                    <label for="classInput" class="block text-slate-800 font-extrabold text-base sm:text-lg mb-2">
+                        🏫 Sinfni tanlang yoki yozing:
+                    </label>
+                    <div id="classQuickButtons" class="grid grid-cols-3 sm:grid-cols-6 gap-2 mb-3">
+                        <button type="button" data-class="2-A" class="class-chip btn-3d py-2.5 px-2 rounded-full font-black text-base bg-sky-100 hover:bg-sky-200 text-sky-900 border-2 border-sky-300 shadow-sm cursor-pointer">2-A</button>
+                        <button type="button" data-class="2-B" class="class-chip btn-3d py-2.5 px-2 rounded-full font-black text-base bg-emerald-100 hover:bg-emerald-200 text-emerald-900 border-2 border-emerald-300 shadow-sm cursor-pointer">2-B</button>
+                        <button type="button" data-class="2-V" class="class-chip btn-3d py-2.5 px-2 rounded-full font-black text-base bg-amber-100 hover:bg-amber-200 text-amber-900 border-2 border-amber-300 shadow-sm cursor-pointer">2-V</button>
+                        <button type="button" data-class="2-G" class="class-chip btn-3d py-2.5 px-2 rounded-full font-black text-base bg-orange-100 hover:bg-orange-200 text-orange-900 border-2 border-orange-300 shadow-sm cursor-pointer">2-G</button>
+                        <button type="button" data-class="2-D" class="class-chip btn-3d py-2.5 px-2 rounded-full font-black text-base bg-teal-100 hover:bg-teal-200 text-teal-900 border-2 border-teal-300 shadow-sm cursor-pointer">2-D</button>
+                        <button type="button" data-class="2-E" class="class-chip btn-3d py-2.5 px-2 rounded-full font-black text-base bg-lime-100 hover:bg-lime-200 text-lime-900 border-2 border-lime-300 shadow-sm cursor-pointer">2-E</button>
+                    </div>
+                    <input type="text" id="classInput" autocomplete="off"
+                           placeholder="Yoki boshqa sinf nomini yozing (masalan: 2-J)..."
+                           class="w-full px-4 py-3.5 text-base sm:text-lg font-bold rounded-2xl border-2 border-emerald-300 bg-emerald-50/50 focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-200 outline-none transition">
+                </div>
+
+                <!-- Inline Validation Warning Banner (No browser alert()) -->
+                <div id="validationBox" class="hidden rounded-2xl bg-rose-100 border-2 border-rose-300 text-rose-800 px-4 py-3 font-bold text-sm sm:text-base flex items-center gap-2">
+                    <span class="text-xl">⚠️</span>
+                    <span id="validationText">Iltimos, ustozning ismini va sinfni kiriting!</span>
+                </div>
+
+                <!-- Start Button -->
+                <button id="startQuizBtn" type="button"
+                        class="btn-3d w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-500 to-sky-500 hover:from-emerald-600 hover:to-sky-600 text-white font-black text-xl sm:text-2xl shadow-xl border-b-4 border-teal-700 cursor-pointer flex items-center justify-center gap-3">
+                    <span>🚀 Testni boshlash</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- ==================== 3. QUIZ SCREEN (TEST JARAYONI) ==================== -->
+        <section id="quizScreen" class="hidden w-full max-w-4xl animate-pop">
+            <!-- Top Live Dashboard -->
+            <div class="bg-white/95 backdrop-blur-md rounded-3xl shadow-xl border-4 border-white p-4 sm:p-5 mb-4">
+                <div class="flex flex-wrap items-center justify-between gap-2.5 sm:gap-3 mb-3">
+                    <!-- Teacher & Class Badge -->
+                    <div class="inline-flex items-center gap-2 bg-sky-100 text-sky-900 font-extrabold px-3.5 py-2 rounded-2xl border-2 border-sky-200 text-sm sm:text-base">
+                        <span>👩‍🏫</span>
+                        <span id="displayTeacherClass">Ustoz: ... | Sinf: ...</span>
+                    </div>
+
+                    <!-- Question Counter -->
+                    <div id="questionCounter" class="px-4 py-2 rounded-2xl font-black text-sm sm:text-base bg-emerald-100 text-emerald-900 border-2 border-emerald-300">
+                        Savol: 1 / 15
+                    </div>
+
+                    <!-- Score & Per-Question 90s Timer -->
+                    <div class="flex items-center gap-2 sm:gap-3">
+                        <div class="px-4 py-2 rounded-2xl bg-amber-100 text-amber-900 border-2 border-amber-300 font-black text-base sm:text-lg flex items-center gap-1.5">
+                            <span>⭐</span>
+                            <span><span id="scoreDisplay">0</span> ball</span>
+                        </div>
+                        <div id="timerBox" class="px-4 py-2 rounded-2xl bg-emerald-500 text-white font-black text-base sm:text-lg shadow-md flex items-center gap-1.5 transition-colors tabular-nums">
+                            <span>⏱️</span>
+                            <span id="timerDisplay">90s</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Thin Visual Timer Bar (100% -> 0% per question) -->
+                <div class="flex items-center gap-3 mb-2">
+                    <span class="text-xs font-extrabold text-slate-500 whitespace-nowrap w-14">⏱️ Vaqt:</span>
+                    <div class="w-full h-2.5 bg-slate-200 rounded-full overflow-hidden">
+                        <div id="timerProgressBar" class="h-full bg-gradient-to-r from-emerald-400 via-sky-400 to-teal-500 rounded-full transition-all duration-1000 ease-linear" style="width: 100%;"></div>
+                    </div>
+                </div>
+
+                <!-- Smooth Question Progress Bar (0% -> 100%) -->
+                <div class="flex items-center gap-3">
+                    <span class="text-xs font-extrabold text-slate-500 whitespace-nowrap w-14">📊 Jarayon:</span>
+                    <div class="w-full h-3.5 bg-slate-200 rounded-full overflow-hidden border border-slate-300">
+                        <div id="questionProgressBar" class="h-full bg-gradient-to-r from-emerald-400 via-sky-400 to-amber-400 rounded-full transition-all duration-300" style="width: 0%;"></div>
+                    </div>
+                    <span id="progressPercentLabel" class="text-xs sm:text-sm font-black text-emerald-700 whitespace-nowrap">0%</span>
+                </div>
+            </div>
+
+            <!-- Question, Visual Stage & Options Card -->
+            <div class="relative bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl border-4 border-white p-5 sm:p-8">
+                <!-- Floating +10 Ball Animation Anchor -->
+                <div id="floatingScoreContainer" class="pointer-events-none absolute top-4 left-1/2 z-30"></div>
+
+                <!-- Question Pill & Text -->
+                <div class="text-center mb-5 sm:mb-6">
+                    <span id="questionNumberPill" class="inline-block px-4 py-1 rounded-full bg-orange-100 text-orange-800 font-black text-xs sm:text-sm border border-orange-300 mb-3">
+                        1-SAVOL
+                    </span>
+                    <h2 id="questionText" class="text-xl sm:text-3xl font-black text-slate-800 leading-snug">
+                        Savol matni bu yerda ko'rinadi...
+                    </h2>
+                </div>
+
+                <!-- Visual Stage Container (Shown only for questions with an SVG visual) -->
+                <div id="visualStage" class="hidden mb-6 flex justify-center w-full"></div>
+
+                <!-- 4 Colorful Option Buttons (A, B, C, D) -->
+                <div id="optionsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4"></div>
+
+                <!-- Instant Feedback Line -->
+                <div class="mt-5 min-h-[36px] flex items-center justify-center">
+                    <div id="feedbackMessage" class="font-extrabold text-base sm:text-xl text-center"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== 4. RESULT SCREEN (NATIJA OYNASI) ==================== -->
+        <section id="resultScreen" class="hidden w-full max-w-2xl bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl border-4 border-white p-5 sm:p-8 animate-pop text-center">
+            <!-- Trophy / Emoji -->
+            <div id="resultEmoji" class="text-6xl sm:text-7xl mb-2">🏆</div>
+
+            <!-- Team & Teacher Header -->
+            <h2 id="resultTeamTitle" class="text-2xl sm:text-3xl font-black text-sky-900 mb-1">
+                2-A sinf jamoasi — Ustoz: ...
+            </h2>
+            <p id="resultSubReason" class="text-slate-500 font-bold text-sm sm:text-base mb-5">
+                ✅ Barcha 15 ta savol yakunlandi!
+            </p>
+
+            <!-- Performance Evaluation Banner -->
+            <div id="evaluationBox" class="rounded-2xl p-4 sm:p-5 mb-6 border-2 font-extrabold text-base sm:text-xl leading-relaxed"></div>
+
+            <!-- 4 Stats Cards -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+                <div class="bg-amber-50 border-2 border-amber-200 rounded-2xl p-3">
+                    <div class="text-xs sm:text-sm font-bold text-amber-700">Jami ball</div>
+                    <div id="finalScoreStat" class="text-lg sm:text-xl font-black text-amber-900 mt-1">0 / 150</div>
+                </div>
+                <div class="bg-emerald-50 border-2 border-emerald-200 rounded-2xl p-3">
+                    <div class="text-xs sm:text-sm font-bold text-emerald-700">To'g'ri javob</div>
+                    <div id="finalCorrectStat" class="text-lg sm:text-xl font-black text-emerald-900 mt-1">0 / 15</div>
+                </div>
+                <div class="bg-sky-50 border-2 border-sky-200 rounded-2xl p-3">
+                    <div class="text-xs sm:text-sm font-bold text-sky-700">Natija foizi</div>
+                    <div id="finalPercentStat" class="text-lg sm:text-xl font-black text-sky-900 mt-1">0%</div>
+                </div>
+                <div class="bg-orange-50 border-2 border-orange-200 rounded-2xl p-3">
+                    <div class="text-xs sm:text-sm font-bold text-orange-700">Umumiy vaqt</div>
+                    <div id="finalTimeStat" class="text-lg sm:text-xl font-black text-orange-900 mt-1">00:00</div>
+                </div>
+            </div>
+
+            <!-- Play Again Button -->
+            <div class="mb-6">
+                <button id="restartBtn" type="button"
+                        class="btn-3d w-full sm:w-auto px-8 py-4 rounded-2xl bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-white font-black text-lg sm:text-xl shadow-lg border-b-4 border-orange-700 cursor-pointer inline-flex items-center justify-center gap-2">
+                    <span>🔄 Qayta o'ynash</span>
+                </button>
+            </div>
+
+            <!-- Prominent Telegram CTA Card (At the very end of the result screen) -->
+            <div class="rounded-3xl bg-gradient-to-r from-sky-500 via-blue-600 to-indigo-600 p-5 sm:p-6 text-white shadow-xl border-2 border-sky-300">
+                <div class="text-3xl mb-2">📢</div>
+                <p class="font-extrabold text-base sm:text-xl mb-4 leading-snug">
+                    14-darsni testini bajarish uchun @Maktabdarsibot ga qo'shiling!
+                </p>
+                <a href="https://t.me/Maktabdarsibot" target="_blank" rel="noopener noreferrer"
+                   class="btn-3d inline-flex items-center justify-center gap-2.5 bg-white hover:bg-sky-50 text-blue-700 font-black text-base sm:text-lg px-6 py-3.5 rounded-2xl shadow-lg border-b-4 border-sky-200 transition">
+                    <svg class="w-6 h-6 text-sky-500 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.02-1.96 1.25-5.54 3.69-.52.36-1 .53-1.42.52-.47-.01-1.37-.26-2.03-.48-.82-.27-1.47-.42-1.42-.88.03-.24.35-.49.96-.75 3.78-1.65 6.31-2.74 7.58-3.27 3.61-1.51 4.35-1.77 4.84-1.78.11 0 .35.03.5.16.13.1.17.24.18.34.02.07.02.25 0 .38z"/>
+                    </svg>
+                    <span>@Maktabdarsibot ga qo'shilish</span>
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <!-- ==================== 5. PERMANENT FOOTER (VISIBLE ON ALL SCREENS) ==================== -->
+    <footer class="relative z-10 w-full bg-slate-900/90 backdrop-blur-md text-white py-3.5 px-4 text-center border-t-2 border-white/20">
+        <div class="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-4 text-xs sm:text-sm font-bold">
+            <span class="text-amber-300">Tuzuvchi va yaratuvchi: Akmaljon Jo'raqo'ziyev</span>
+            <span class="hidden sm:inline text-slate-500">|</span>
+            <span class="flex items-center gap-2 flex-wrap justify-center">
+                <span class="text-slate-300">Telegram:</span>
+                <a href="https://t.me/Akmalmaths" target="_blank" rel="noopener noreferrer" class="text-sky-300 hover:text-sky-200 underline decoration-sky-400/60">
+                    @Akmalmaths
+                </a>
+                <span class="text-slate-500">|</span>
+                <a href="https://t.me/Maktabdarsibot" target="_blank" rel="noopener noreferrer" class="text-emerald-300 hover:text-emerald-200 underline decoration-emerald-400/60">
+                    @Maktabdarsibot
+                </a>
+            </span>
+        </div>
+    </footer>
+
+    <!-- ==================== JAVASCRIPT LOGIC ==================== -->
+    <script>
+        (function () {
+            "use strict";
+
+            // =========================================================================
+            // 1. INLINE SVG VISUAL GENERATORS (1 Picture Problem + 2 Bar Charts)
+            // =========================================================================
+
+            /** Helper to draw a single colorful factory wire spool */
+            function buildSpoolGroup(cx, wireFill, wireStroke, wireLine, title, meters) {
+                return (
+                    '<g>' +
+                        '<!-- Bottom flange -->' +
+                        '<ellipse cx="' + cx + '" cy="116" rx="40" ry="12" fill="#334155" stroke="#0f172a" stroke-width="2" />' +
+                        '<ellipse cx="' + cx + '" cy="111" rx="40" ry="11" fill="#475569" stroke="#0f172a" stroke-width="2" />' +
+                        '<!-- Wire cylinder -->' +
+                        '<rect x="' + (cx - 31) + '" y="46" width="62" height="64" rx="4" fill="' + wireFill + '" stroke="' + wireStroke + '" stroke-width="2" />' +
+                        '<!-- Wound wire texture lines -->' +
+                        '<line x1="' + (cx - 30) + '" y1="58" x2="' + (cx + 30) + '" y2="58" stroke="' + wireLine + '" stroke-width="2" opacity="0.65" />' +
+                        '<line x1="' + (cx - 30) + '" y1="68" x2="' + (cx + 30) + '" y2="68" stroke="' + wireLine + '" stroke-width="2" opacity="0.65" />' +
+                        '<line x1="' + (cx - 30) + '" y1="78" x2="' + (cx + 30) + '" y2="78" stroke="' + wireLine + '" stroke-width="2" opacity="0.65" />' +
+                        '<line x1="' + (cx - 30) + '" y1="88" x2="' + (cx + 30) + '" y2="88" stroke="' + wireLine + '" stroke-width="2" opacity="0.65" />' +
+                        '<line x1="' + (cx - 30) + '" y1="98" x2="' + (cx + 30) + '" y2="98" stroke="' + wireLine + '" stroke-width="2" opacity="0.65" />' +
+                        '<!-- Loose wire tail -->' +
+                        '<path d="M' + (cx + 31) + ',102 Q' + (cx + 46) + ',104 ' + (cx + 50) + ',117" fill="none" stroke="' + wireStroke + '" stroke-width="3" stroke-linecap="round" />' +
+                        '<!-- Top flange -->' +
+                        '<ellipse cx="' + cx + '" cy="46" rx="40" ry="12" fill="#334155" stroke="#0f172a" stroke-width="2" />' +
+                        '<ellipse cx="' + cx + '" cy="42" rx="40" ry="11" fill="#475569" stroke="#0f172a" stroke-width="2" />' +
+                        '<ellipse cx="' + cx + '" cy="42" rx="15" ry="4.5" fill="#1e293b" />' +
+                        '<!-- Labels -->' +
+                        '<text x="' + cx + '" y="148" text-anchor="middle" fill="#1e293b" font-size="15" font-weight="900" font-family="Nunito, Inter, sans-serif">' + title + '</text>' +
+                        '<rect x="' + (cx - 34) + '" y="156" width="68" height="24" rx="12" fill="#ffffff" stroke="' + wireStroke + '" stroke-width="2" />' +
+                        '<text x="' + cx + '" y="173" text-anchor="middle" fill="#0f172a" font-size="14" font-weight="900" font-family="Nunito, Inter, sans-serif">' + meters + '</text>' +
+                    '</g>'
+                );
+            }
+
+            /** Illustrated Word Problem: 4 Factory Wire Spools */
+            function renderWireSpoolsSVG() {
+                return (
+                    '<div class="w-full max-w-2xl bg-gradient-to-b from-amber-50 to-sky-50/80 rounded-2xl border-2 border-amber-200 p-3.5 sm:p-4 shadow-inner">' +
+                        '<div class="text-center font-display font-black text-slate-800 text-sm sm:text-base mb-2">' +
+                            "🧵 Zavodda tayyorlangan sim g'altaklari" +
+                        '</div>' +
+                        '<svg viewBox="0 0 520 190" class="w-full h-auto" role="img" aria-label="4 ta rangli sim g&#39;altagi: Ko&#39;k 126 m, Sariq 115 m, Yashil 134 m, To&#39;q sariq 128 m">' +
+                            buildSpoolGroup(70, "#3b82f6", "#1d4ed8", "#93c5fd", "Ko'k", "126 m") +
+                            buildSpoolGroup(195, "#facc15", "#ca8a04", "#fef08a", "Sariq", "115 m") +
+                            buildSpoolGroup(320, "#22c55e", "#15803d", "#86efac", "Yashil", "134 m") +
+                            buildSpoolGroup(445, "#f97316", "#c2410c", "#fdba74", "To'q sariq", "128 m") +
+                        '</svg>' +
+                    '</div>'
+                );
+            }
+
+            /** Diagram 1: Workers in Factory Workshops (1-sex: 232, 2-sex: 313, 3-sex: 442) */
+            function renderWorkersDiagramSVG() {
+                return (
+                    '<div class="w-full max-w-xl bg-gradient-to-b from-sky-50 to-emerald-50/70 rounded-2xl border-2 border-sky-200 p-3.5 sm:p-4 shadow-inner">' +
+                        '<div class="text-center font-display font-black text-sky-900 text-sm sm:text-base mb-2">' +
+                            "📊 Zavod sexlaridagi ishchilar soni" +
+                        '</div>' +
+                        '<svg viewBox="0 0 440 236" class="w-full h-auto" role="img" aria-label="Zavod sexlaridagi ishchilar soni diagrammasi">' +
+                            '<!-- Y-axis gridlines (0 to 500, step 100) -->' +
+                            '<line x1="56" y1="30" x2="420" y2="30" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="5 4" />' +
+                            '<text x="48" y="35" text-anchor="end" fill="#475569" font-size="13" font-weight="800">500</text>' +
+
+                            '<line x1="56" y1="63" x2="420" y2="63" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="5 4" />' +
+                            '<text x="48" y="68" text-anchor="end" fill="#475569" font-size="13" font-weight="800">400</text>' +
+
+                            '<line x1="56" y1="96" x2="420" y2="96" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="5 4" />' +
+                            '<text x="48" y="101" text-anchor="end" fill="#475569" font-size="13" font-weight="800">300</text>' +
+
+                            '<line x1="56" y1="129" x2="420" y2="129" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="5 4" />' +
+                            '<text x="48" y="134" text-anchor="end" fill="#475569" font-size="13" font-weight="800">200</text>' +
+
+                            '<line x1="56" y1="162" x2="420" y2="162" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="5 4" />' +
+                            '<text x="48" y="167" text-anchor="end" fill="#475569" font-size="13" font-weight="800">100</text>' +
+
+                            '<text x="48" y="200" text-anchor="end" fill="#475569" font-size="13" font-weight="800">0</text>' +
+
+                            '<!-- Axes -->' +
+                            '<line x1="56" y1="20" x2="56" y2="195" stroke="#334155" stroke-width="2.5" stroke-linecap="round" />' +
+                            '<line x1="56" y1="195" x2="424" y2="195" stroke="#334155" stroke-width="2.5" stroke-linecap="round" />' +
+
+                            '<!-- Bar 1: 1-sex (232) -->' +
+                            '<rect x="92" y="118.4" width="68" height="76.6" rx="9" fill="#38bdf8" stroke="#0284c7" stroke-width="2" />' +
+                            '<text x="126" y="110" text-anchor="middle" fill="#0369a1" font-size="16" font-weight="900">232</text>' +
+                            '<text x="126" y="218" text-anchor="middle" fill="#1e293b" font-size="14" font-weight="800">1-sex</text>' +
+
+                            '<!-- Bar 2: 2-sex (313) -->' +
+                            '<rect x="206" y="91.7" width="68" height="103.3" rx="9" fill="#facc15" stroke="#ca8a04" stroke-width="2" />' +
+                            '<text x="240" y="83" text-anchor="middle" fill="#a16207" font-size="16" font-weight="900">313</text>' +
+                            '<text x="240" y="218" text-anchor="middle" fill="#1e293b" font-size="14" font-weight="800">2-sex</text>' +
+
+                            '<!-- Bar 3: 3-sex (442) -->' +
+                            '<rect x="320" y="49.1" width="68" height="145.9" rx="9" fill="#10b981" stroke="#047857" stroke-width="2" />' +
+                            '<text x="354" y="41" text-anchor="middle" fill="#047857" font-size="16" font-weight="900">442</text>' +
+                            '<text x="354" y="218" text-anchor="middle" fill="#1e293b" font-size="14" font-weight="800">3-sex</text>' +
+                        '</svg>' +
+                    '</div>'
+                );
+            }
+
+            /** Diagram 2: Parts in Boxes (1-yashik: 345, 2-yashik: 221, 3-yashik: 468) */
+            function renderBoxesDiagramSVG() {
+                return (
+                    '<div class="w-full max-w-xl bg-gradient-to-b from-amber-50 to-orange-50/70 rounded-2xl border-2 border-amber-200 p-3.5 sm:p-4 shadow-inner">' +
+                        '<div class="text-center font-display font-black text-amber-900 text-sm sm:text-base mb-2">' +
+                            "📊 Yashiklardagi detallar soni" +
+                        '</div>' +
+                        '<svg viewBox="0 0 440 236" class="w-full h-auto" role="img" aria-label="Yashiklardagi detallar soni diagrammasi">' +
+                            '<!-- Y-axis gridlines (0 to 500, step 100) -->' +
+                            '<line x1="56" y1="30" x2="420" y2="30" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="5 4" />' +
+                            '<text x="48" y="35" text-anchor="end" fill="#475569" font-size="13" font-weight="800">500</text>' +
+
+                            '<line x1="56" y1="63" x2="420" y2="63" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="5 4" />' +
+                            '<text x="48" y="68" text-anchor="end" fill="#475569" font-size="13" font-weight="800">400</text>' +
+
+                            '<line x1="56" y1="96" x2="420" y2="96" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="5 4" />' +
+                            '<text x="48" y="101" text-anchor="end" fill="#475569" font-size="13" font-weight="800">300</text>' +
+
+                            '<line x1="56" y1="129" x2="420" y2="129" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="5 4" />' +
+                            '<text x="48" y="134" text-anchor="end" fill="#475569" font-size="13" font-weight="800">200</text>' +
+
+                            '<line x1="56" y1="162" x2="420" y2="162" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="5 4" />' +
+                            '<text x="48" y="167" text-anchor="end" fill="#475569" font-size="13" font-weight="800">100</text>' +
+
+                            '<text x="48" y="200" text-anchor="end" fill="#475569" font-size="13" font-weight="800">0</text>' +
+
+                            '<!-- Axes -->' +
+                            '<line x1="56" y1="20" x2="56" y2="195" stroke="#334155" stroke-width="2.5" stroke-linecap="round" />' +
+                            '<line x1="56" y1="195" x2="424" y2="195" stroke="#334155" stroke-width="2.5" stroke-linecap="round" />' +
+
+                            '<!-- Bar 1: 1-yashik (345) -->' +
+                            '<rect x="92" y="81.2" width="68" height="113.8" rx="9" fill="#fb923c" stroke="#c2410c" stroke-width="2" />' +
+                            '<text x="126" y="73" text-anchor="middle" fill="#c2410c" font-size="16" font-weight="900">345</text>' +
+                            '<text x="126" y="218" text-anchor="middle" fill="#1e293b" font-size="14" font-weight="800">1-yashik</text>' +
+
+                            '<!-- Bar 2: 2-yashik (221) -->' +
+                            '<rect x="206" y="122.1" width="68" height="72.9" rx="9" fill="#f43f5e" stroke="#be123c" stroke-width="2" />' +
+                            '<text x="240" y="114" text-anchor="middle" fill="#be123c" font-size="16" font-weight="900">221</text>' +
+                            '<text x="240" y="218" text-anchor="middle" fill="#1e293b" font-size="14" font-weight="800">2-yashik</text>' +
+
+                            '<!-- Bar 3: 3-yashik (468) -->' +
+                            '<rect x="320" y="40.6" width="68" height="154.4" rx="9" fill="#0ea5e9" stroke="#0369a1" stroke-width="2" />' +
+                            '<text x="354" y="33" text-anchor="middle" fill="#0369a1" font-size="16" font-weight="900">468</text>' +
+                            '<text x="354" y="218" text-anchor="middle" fill="#1e293b" font-size="14" font-weight="800">3-yashik</text>' +
+                        '</svg>' +
+                    '</div>'
+                );
+            }
+
+            // =========================================================================
+            // 2. EXACT 15 VERIFIED QUESTIONS (2-sinf Matematika, 13-dars)
+            // =========================================================================
+            const BASE_QUESTIONS = [
+                {
+                    question: "Ustun ko'rinishida hisoblang: 349 − 235 = ?",
+                    correct: "114",
+                    options: ["114", "104", "124", "214"]
+                },
+                {
+                    question: "Ustun ko'rinishida hisoblang: 444 − 142 = ?",
+                    correct: "302",
+                    options: ["302", "312", "202", "304"]
+                },
+                {
+                    question: "Ayirmani toping: 768 − 354 = ?",
+                    correct: "414",
+                    options: ["414", "404", "424", "314"]
+                },
+                {
+                    question: "Ayirmani toping: 379 − 126 = ?",
+                    correct: "253",
+                    options: ["253", "243", "263", "153"]
+                },
+                {
+                    question: "Ayirmani toping: 828 − 117 = ?",
+                    correct: "711",
+                    options: ["711", "701", "721", "611"]
+                },
+                {
+                    question: "Ayirmani toping: 952 − 310 = ?",
+                    correct: "642",
+                    options: ["642", "632", "652", "542"]
+                },
+                {
+                    question: "Ayirmani toping: 448 − 125 = ?",
+                    correct: "323",
+                    options: ["323", "313", "333", "223"]
+                },
+                {
+                    question: "Ayirmani toping: 683 − 502 = ?",
+                    correct: "181",
+                    options: ["181", "171", "191", "281"]
+                },
+                {
+                    question: "Ayirmani toping: 587 − 282 = ?",
+                    correct: "305",
+                    options: ["305", "315", "295", "205"]
+                },
+                {
+                    question: "Ayirmani toping: 583 − 431 = ?",
+                    correct: "152",
+                    options: ["152", "142", "162", "252"]
+                },
+                {
+                    question: "Birinchi sexda 232 nafar, ikkinchisida 313 nafar ishchi ishlaydi. Agar uchta sexda jami 987 nafar ishchi ishlasa, uchinchi sexda necha nafar ishchi ishlaydi?",
+                    correct: "442 nafar",
+                    options: ["442 nafar", "432 nafar", "452 nafar", "545 nafar"]
+                },
+                {
+                    question: "Birinchi yashikda 345 ta, ikkinchisida esa undan 124 ta kam detal bor. Ikkala yashikda jami nechta detal bor?",
+                    correct: "566 ta",
+                    options: ["566 ta", "221 ta", "556 ta", "576 ta"]
+                },
+                {
+                    question: "Rasmdagi sim g'altaklariga qarang. To'q sariq sim sariq simdan necha metr uzun?",
+                    correct: "13 metr",
+                    options: ["13 metr", "11 metr", "15 metr", "19 metr"],
+                    renderVisual: renderWireSpoolsSVG
+                },
+                {
+                    question: "Diagrammaga qarang. 3-sexda 1-sexga qaraganda necha nafar ko'p ishchi ishlaydi?",
+                    correct: "210 nafar",
+                    options: ["210 nafar", "200 nafar", "220 nafar", "129 nafar"],
+                    renderVisual: renderWorkersDiagramSVG
+                },
+                {
+                    question: "Diagrammaga qarang. 3-yashikda 1-yashikka qaraganda nechta ko'p detal bor?",
+                    correct: "123 ta",
+                    options: ["123 ta", "113 ta", "133 ta", "247 ta"],
+                    renderVisual: renderBoxesDiagramSVG
+                }
+            ];
+
+            const OPTION_LABELS = ["A", "B", "C", "D"];
+            const OPTION_STYLES = [
+                { bg: "bg-sky-100 hover:bg-sky-200", border: "border-sky-300 border-b-4 border-b-sky-400", badge: "bg-sky-500 text-white", text: "text-sky-950" },
+                { bg: "bg-amber-100 hover:bg-amber-200", border: "border-amber-300 border-b-4 border-b-amber-400", badge: "bg-amber-500 text-white", text: "text-amber-950" },
+                { bg: "bg-emerald-100 hover:bg-emerald-200", border: "border-emerald-300 border-b-4 border-b-emerald-400", badge: "bg-emerald-500 text-white", text: "text-emerald-950" },
+                { bg: "bg-orange-100 hover:bg-orange-200", border: "border-orange-300 border-b-4 border-b-orange-400", badge: "bg-orange-500 text-white", text: "text-orange-950" }
+            ];
+
+            // =========================================================================
+            // 3. WEB AUDIO API SOUND ENGINE (Synthesized sounds, zero external URLs)
+            // =========================================================================
+            const SoundEngine = {
+                ctx: null,
+                enabled: true,
+
+                init: function () {
+                    try {
+                        if (!this.ctx) {
+                            const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                            if (AudioCtx) {
+                                this.ctx = new AudioCtx();
+                            }
+                        }
+                        if (this.ctx && this.ctx.state === "suspended") {
+                            this.ctx.resume();
+                        }
+                    } catch (err) {
+                        // Safely ignore audio initialization errors
+                    }
+                },
+
+                playTone: function (freq, duration, type, volume, delay) {
+                    if (!this.enabled) return;
+                    const waveType = type || "sine";
+                    const vol = typeof volume === "number" ? volume : 0.18;
+                    const startDelay = typeof delay === "number" ? delay : 0;
+
+                    try {
+                        this.init();
+                        if (!this.ctx) return;
+
+                        const now = this.ctx.currentTime + startDelay;
+                        const osc = this.ctx.createOscillator();
+                        const gain = this.ctx.createGain();
+
+                        osc.type = waveType;
+                        osc.frequency.setValueAtTime(freq, now);
+
+                        gain.gain.setValueAtTime(0.001, now);
+                        gain.gain.exponentialRampToValueAtTime(vol, now + 0.02);
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+                        osc.connect(gain);
+                        gain.connect(this.ctx.destination);
+
+                        osc.start(now);
+                        osc.stop(now + duration + 0.02);
+                    } catch (err) {
+                        // Safely ignore playback errors
+                    }
+                },
+
+                click: function () {
+                    this.playTone(580, 0.065, "triangle", 0.12, 0);
+                },
+
+                correct: function () {
+                    // Cheerful ascending arpeggio
+                    this.playTone(523.25, 0.14, "triangle", 0.22, 0);      // C5
+                    this.playTone(659.25, 0.14, "triangle", 0.22, 0.08);   // E5
+                    this.playTone(783.99, 0.22, "triangle", 0.24, 0.16);   // G5
+                    this.playTone(1046.5, 0.30, "sine", 0.20, 0.24);       // C6
+                },
+
+                wrong: function () {
+                    // Soft low two-tone buzz
+                    this.playTone(235, 0.16, "sawtooth", 0.10, 0);
+                    this.playTone(175, 0.26, "sawtooth", 0.10, 0.13);
+                },
+
+                tick: function (isEven) {
+                    // Last-15s tick-tock
+                    const freq = isEven ? 920 : 740;
+                    this.playTone(freq, 0.055, "sine", 0.12, 0);
+                },
+
+                timeout: function () {
+                    // Gentle descending timeout tone
+                    this.playTone(587.33, 0.16, "triangle", 0.20, 0);
+                    this.playTone(440.00, 0.16, "triangle", 0.20, 0.15);
+                    this.playTone(349.23, 0.32, "sine", 0.20, 0.30);
+                },
+
+                victoryFanfare: function () {
+                    const notes = [
+                        { f: 523.25, d: 0.14, t: 0.00 },
+                        { f: 659.25, d: 0.14, t: 0.12 },
+                        { f: 783.99, d: 0.14, t: 0.24 },
+                        { f: 1046.5, d: 0.42, t: 0.38 },
+                        { f: 783.99, d: 0.14, t: 0.54 },
+                        { f: 1046.5, d: 0.52, t: 0.68 }
+                    ];
+                    for (let i = 0; i < notes.length; i++) {
+                        this.playTone(notes[i].f, notes[i].d, "triangle", 0.22, notes[i].t);
+                    }
+                },
+
+                closingTone: function () {
+                    const notes = [
+                        { f: 440.00, d: 0.18, t: 0.00 },
+                        { f: 392.00, d: 0.18, t: 0.18 },
+                        { f: 349.23, d: 0.22, t: 0.36 },
+                        { f: 329.63, d: 0.38, t: 0.58 }
+                    ];
+                    for (let i = 0; i < notes.length; i++) {
+                        this.playTone(notes[i].f, notes[i].d, "sine", 0.18, notes[i].t);
+                    }
+                }
+            };
+
+            // =========================================================================
+            // 4. APPLICATION STATE & DOM REFERENCES
+            // =========================================================================
+            const TIME_PER_QUESTION = 90;
+            const POINTS_PER_QUESTION = 10;
+            const AUTO_ADVANCE_MS = 900;
+            const TIMEOUT_ADVANCE_MS = 1200;
+
+            const state = {
+                teacherName: "",
+                className: "",
+                questions: [],
+                currentIndex: 0,
+                score: 0,
+                correctCount: 0,
+                timeLeft: TIME_PER_QUESTION,
+                totalElapsedSeconds: 0,
+                timerInterval: null,
+                autoAdvanceTimeout: null,
+                answeredCurrent: false,
+                isFinished: false
+            };
+
+            // Screens
+            const startScreen = document.getElementById("startScreen");
+            const quizScreen = document.getElementById("quizScreen");
+            const resultScreen = document.getElementById("resultScreen");
+
+            // Sound controls
+            const soundToggleBtn = document.getElementById("soundToggleBtn");
+            const soundIcon = document.getElementById("soundIcon");
+            const soundLabel = document.getElementById("soundLabel");
+
+            // Start screen elements
+            const teacherNameInput = document.getElementById("teacherNameInput");
+            const classInput = document.getElementById("classInput");
+            const classQuickButtons = document.querySelectorAll(".class-chip");
+            const validationBox = document.getElementById("validationBox");
+            const validationText = document.getElementById("validationText");
+            const startQuizBtn = document.getElementById("startQuizBtn");
+
+            // Quiz screen elements
+            const displayTeacherClass = document.getElementById("displayTeacherClass");
+            const questionCounter = document.getElementById("questionCounter");
+            const scoreDisplay = document.getElementById("scoreDisplay");
+            const timerBox = document.getElementById("timerBox");
+            const timerDisplay = document.getElementById("timerDisplay");
+            const timerProgressBar = document.getElementById("timerProgressBar");
+            const questionProgressBar = document.getElementById("questionProgressBar");
+            const progressPercentLabel = document.getElementById("progressPercentLabel");
+            const questionNumberPill = document.getElementById("questionNumberPill");
+            const questionText = document.getElementById("questionText");
+            const visualStage = document.getElementById("visualStage");
+            const optionsGrid = document.getElementById("optionsGrid");
+            const feedbackMessage = document.getElementById("feedbackMessage");
+            const floatingScoreContainer = document.getElementById("floatingScoreContainer");
+
+            // Result screen elements
+            const resultEmoji = document.getElementById("resultEmoji");
+            const resultTeamTitle = document.getElementById("resultTeamTitle");
+            const resultSubReason = document.getElementById("resultSubReason");
+            const evaluationBox = document.getElementById("evaluationBox");
+            const finalScoreStat = document.getElementById("finalScoreStat");
+            const finalCorrectStat = document.getElementById("finalCorrectStat");
+            const finalPercentStat = document.getElementById("finalPercentStat");
+            const finalTimeStat = document.getElementById("finalTimeStat");
+            const restartBtn = document.getElementById("restartBtn");
+
+            // =========================================================================
+            // 5. UTILITIES (Fisher-Yates Shuffle & MM:SS Formatter)
+            // =========================================================================
+            function shuffleArray(arr) {
+                const copy = arr.slice();
+                for (let i = copy.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    const temp = copy[i];
+                    copy[i] = copy[j];
+                    copy[j] = temp;
+                }
+                return copy;
+            }
+
+            function prepareQuizQuestions() {
+                const shuffledQuestions = shuffleArray(BASE_QUESTIONS);
+                return shuffledQuestions.map(function (item) {
+                    const shuffledOptions = shuffleArray(item.options);
+                    return {
+                        question: item.question,
+                        options: shuffledOptions,
+                        correctIndex: shuffledOptions.indexOf(item.correct),
+                        renderVisual: item.renderVisual || null
+                    };
+                });
+            }
+
+            function formatDuration(totalSeconds) {
+                const safeSec = Math.max(0, totalSeconds);
+                const mins = Math.floor(safeSec / 60);
+                const secs = safeSec % 60;
+                const mm = mins < 10 ? "0" + mins : "" + mins;
+                const ss = secs < 10 ? "0" + secs : "" + secs;
+                return mm + ":" + ss;
+            }
+
+            // =========================================================================
+            // 6. EVENT LISTENERS
+            // =========================================================================
+            soundToggleBtn.addEventListener("click", function () {
+                SoundEngine.enabled = !SoundEngine.enabled;
+                if (SoundEngine.enabled) {
+                    soundIcon.textContent = "🔊";
+                    soundLabel.textContent = "Ovoz: Yoqilgan";
+                    SoundEngine.click();
+                } else {
+                    soundIcon.textContent = "🔇";
+                    soundLabel.textContent = "Ovoz: O'chirilgan";
+                }
+            });
+
+            classQuickButtons.forEach(function (btn) {
+                btn.addEventListener("click", function () {
+                    SoundEngine.click();
+                    const selectedClass = btn.getAttribute("data-class");
+                    classInput.value = selectedClass;
+
+                    classQuickButtons.forEach(function (b) {
+                        b.classList.remove("ring-4", "ring-sky-500", "scale-105");
+                    });
+                    btn.classList.add("ring-4", "ring-sky-500", "scale-105");
+                    hideValidation();
+                });
+            });
+
+            classInput.addEventListener("input", function () {
+                const val = classInput.value.trim().toUpperCase();
+                classQuickButtons.forEach(function (b) {
+                    if (b.getAttribute("data-class").toUpperCase() === val) {
+                        b.classList.add("ring-4", "ring-sky-500", "scale-105");
+                    } else {
+                        b.classList.remove("ring-4", "ring-sky-500", "scale-105");
+                    }
+                });
+                hideValidation();
+            });
+
+            teacherNameInput.addEventListener("input", hideValidation);
+
+            teacherNameInput.addEventListener("keydown", function (e) {
+                if (e.key === "Enter") {
+                    startQuiz();
+                }
+            });
+
+            classInput.addEventListener("keydown", function (e) {
+                if (e.key === "Enter") {
+                    startQuiz();
+                }
+            });
+
+            startQuizBtn.addEventListener("click", startQuiz);
+
+            restartBtn.addEventListener("click", function () {
+                SoundEngine.click();
+                stopConfetti();
+                resetToStartScreen();
+            });
+
+            // =========================================================================
+            // 7. CORE QUIZ FLOW
+            // =========================================================================
+            function showValidation(message) {
+                validationText.textContent = message;
+                validationBox.classList.remove("hidden", "animate-shake");
+                void validationBox.offsetWidth;
+                validationBox.classList.add("animate-shake");
+            }
+
+            function hideValidation() {
+                validationBox.classList.add("hidden");
+            }
+
+            function startQuiz() {
+                const teacher = teacherNameInput.value.trim();
+                const cls = classInput.value.trim();
+
+                if (!teacher && !cls) {
+                    SoundEngine.wrong();
+                    showValidation("Iltimos, ustozning ismini va sinfni kiriting!");
+                    teacherNameInput.focus();
+                    return;
+                }
+                if (!teacher) {
+                    SoundEngine.wrong();
+                    showValidation("Iltimos, ustozning ismini kiriting!");
+                    teacherNameInput.focus();
+                    return;
+                }
+                if (!cls) {
+                    SoundEngine.wrong();
+                    showValidation("Iltimos, sinfni tanlang yoki yozing (masalan: 2-A)!");
+                    classInput.focus();
+                    return;
+                }
+
+                SoundEngine.init();
+                SoundEngine.click();
+
+                // Reset state and shuffle all 15 questions & options
+                state.teacherName = teacher;
+                state.className = cls;
+                state.questions = prepareQuizQuestions();
+                state.currentIndex = 0;
+                state.score = 0;
+                state.correctCount = 0;
+                state.timeLeft = TIME_PER_QUESTION;
+                state.totalElapsedSeconds = 0;
+                state.answeredCurrent = false;
+                state.isFinished = false;
+
+                displayTeacherClass.textContent = "Ustoz: " + state.teacherName + " | Sinf: " + state.className;
+                scoreDisplay.textContent = "0";
+
+                startScreen.classList.add("hidden");
+                resultScreen.classList.add("hidden");
+                quizScreen.classList.remove("hidden");
+
+                renderQuestion();
+            }
+
+            function startQuestionTimer() {
+                clearInterval(state.timerInterval);
+                state.timeLeft = TIME_PER_QUESTION;
+                updateTimerUI(true);
+
+                state.timerInterval = setInterval(function () {
+                    if (state.isFinished || state.answeredCurrent) {
+                        clearInterval(state.timerInterval);
+                        return;
+                    }
+
+                    state.timeLeft -= 1;
+                    updateTimerUI(false);
+
+                    // Final 15 seconds tick-tock warning
+                    if (state.timeLeft <= 15 && state.timeLeft > 0) {
+                        SoundEngine.tick(state.timeLeft % 2 === 0);
+                    }
+
+                    if (state.timeLeft <= 0) {
+                        clearInterval(state.timerInterval);
+                        handleQuestionTimeout();
+                    }
+                }, 1000);
+            }
+
+            function updateTimerUI(instantReset) {
+                const safeTime = Math.max(0, state.timeLeft);
+                timerDisplay.textContent = safeTime + "s";
+
+                const pct = (safeTime / TIME_PER_QUESTION) * 100;
+                if (instantReset) {
+                    timerProgressBar.style.transition = "none";
+                    timerProgressBar.style.width = "100%";
+                    void timerProgressBar.offsetWidth;
+                    timerProgressBar.style.transition = "width 1s linear";
+                } else {
+                    timerProgressBar.style.width = pct + "%";
+                }
+
+                if (safeTime <= 15) {
+                    timerBox.classList.remove("bg-emerald-500", "bg-amber-500");
+                    timerBox.classList.add("bg-rose-600", "timer-urgent");
+                    timerProgressBar.className = "h-full bg-gradient-to-r from-rose-500 to-red-600 rounded-full";
+                } else if (safeTime <= 35) {
+                    timerBox.classList.remove("bg-emerald-500", "bg-rose-600", "timer-urgent");
+                    timerBox.classList.add("bg-amber-500");
+                    timerProgressBar.className = "h-full bg-gradient-to-r from-amber-400 to-orange-500 rounded-full";
+                } else {
+                    timerBox.classList.remove("bg-amber-500", "bg-rose-600", "timer-urgent");
+                    timerBox.classList.add("bg-emerald-500");
+                    timerProgressBar.className = "h-full bg-gradient-to-r from-emerald-400 via-sky-400 to-teal-500 rounded-full";
+                }
+            }
+
+            function renderQuestion() {
+                const q = state.questions[state.currentIndex];
+                const total = state.questions.length;
+                state.answeredCurrent = false;
+
+                // Update counters and smooth question progress bar (0% at Q1 start)
+                questionCounter.textContent = "Savol: " + (state.currentIndex + 1) + " / " + total;
+                questionNumberPill.textContent = (state.currentIndex + 1) + "-SAVOL";
+                const progressPercent = Math.round((state.currentIndex / total) * 100);
+                questionProgressBar.style.width = progressPercent + "%";
+                progressPercentLabel.textContent = progressPercent + "%";
+
+                // Render question text
+                questionText.textContent = q.question;
+
+                // Show visual stage only for questions with an SVG visual
+                if (typeof q.renderVisual === "function") {
+                    visualStage.innerHTML = q.renderVisual();
+                    visualStage.classList.remove("hidden");
+                } else {
+                    visualStage.innerHTML = "";
+                    visualStage.classList.add("hidden");
+                }
+
+                // Clear previous feedback
+                feedbackMessage.textContent = "";
+                feedbackMessage.className = "font-extrabold text-base sm:text-xl text-center";
+
+                // Render 4 colorful option buttons
+                optionsGrid.innerHTML = "";
+                q.options.forEach(function (optionText, idx) {
+                    const style = OPTION_STYLES[idx];
+                    const btn = document.createElement("button");
+                    btn.type = "button";
+                    btn.className = "option-btn btn-3d w-full text-left p-4 sm:p-5 rounded-2xl border-2 " +
+                        style.bg + " " + style.border + " " + style.text +
+                        " font-extrabold text-lg sm:text-2xl flex items-center gap-3.5 shadow-sm cursor-pointer transition-all";
+
+                    const letterSpan = document.createElement("span");
+                    letterSpan.className = "option-letter flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-xl " +
+                        style.badge + " font-black text-lg sm:text-xl flex items-center justify-center shadow-sm";
+                    letterSpan.textContent = OPTION_LABELS[idx];
+
+                    const textSpan = document.createElement("span");
+                    textSpan.className = "flex-grow leading-snug";
+                    textSpan.textContent = optionText;
+
+                    const statusSpan = document.createElement("span");
+                    statusSpan.className = "option-status text-2xl flex-shrink-0";
+
+                    btn.appendChild(letterSpan);
+                    btn.appendChild(textSpan);
+                    btn.appendChild(statusSpan);
+
+                    btn.addEventListener("click", function () {
+                        handleOptionSelect(idx);
+                    });
+
+                    optionsGrid.appendChild(btn);
+                });
+
+                // Start fresh 90-second countdown for this question
+                startQuestionTimer();
+            }
+
+            function handleQuestionTimeout() {
+                if (state.answeredCurrent || state.isFinished) return;
+                state.answeredCurrent = true;
+                clearInterval(state.timerInterval);
+
+                // Add full 90 seconds spent on this question
+                state.totalElapsedSeconds += TIME_PER_QUESTION;
+
+                const q = state.questions[state.currentIndex];
+                const buttons = optionsGrid.querySelectorAll(".option-btn");
+
+                // Advance question progress bar
+                const answeredPercent = Math.round(((state.currentIndex + 1) / state.questions.length) * 100);
+                questionProgressBar.style.width = answeredPercent + "%";
+                progressPercentLabel.textContent = answeredPercent + "%";
+
+                buttons.forEach(function (btn, idx) {
+                    btn.disabled = true;
+                    btn.classList.remove("cursor-pointer", "hover:bg-sky-200", "hover:bg-amber-200", "hover:bg-emerald-200", "hover:bg-orange-200");
+                    const statusEl = btn.querySelector(".option-status");
+                    const letterEl = btn.querySelector(".option-letter");
+
+                    if (idx === q.correctIndex) {
+                        btn.className = "option-btn w-full text-left p-4 sm:p-5 rounded-2xl border-2 border-emerald-600 border-b-4 bg-emerald-500 text-white font-black text-lg sm:text-2xl flex items-center gap-3.5 shadow-lg ring-4 ring-emerald-200 scale-[1.01] transition-all";
+                        letterEl.className = "option-letter flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-white text-emerald-600 font-black text-lg sm:text-xl flex items-center justify-center shadow-sm";
+                        statusEl.textContent = "✅";
+                    } else {
+                        btn.classList.add("opacity-50");
+                    }
+                });
+
+                SoundEngine.timeout();
+                feedbackMessage.textContent = "⏰ Vaqt tugadi! To'g'ri javob: " + OPTION_LABELS[q.correctIndex] + " (" + q.options[q.correctIndex] + ")";
+                feedbackMessage.classList.add("text-rose-600");
+
+                clearTimeout(state.autoAdvanceTimeout);
+                state.autoAdvanceTimeout = setTimeout(function () {
+                    goToNextQuestion();
+                }, TIMEOUT_ADVANCE_MS);
+            }
+
+            function handleOptionSelect(selectedIndex) {
+                if (state.answeredCurrent || state.isFinished) return;
+                state.answeredCurrent = true;
+                clearInterval(state.timerInterval);
+
+                // Track elapsed seconds for this question (90 - timeLeft)
+                state.totalElapsedSeconds += (TIME_PER_QUESTION - state.timeLeft);
+
+                const q = state.questions[state.currentIndex];
+                const buttons = optionsGrid.querySelectorAll(".option-btn");
+                const isCorrect = selectedIndex === q.correctIndex;
+
+                // Advance question progress bar
+                const answeredPercent = Math.round(((state.currentIndex + 1) / state.questions.length) * 100);
+                questionProgressBar.style.width = answeredPercent + "%";
+                progressPercentLabel.textContent = answeredPercent + "%";
+
+                buttons.forEach(function (btn, idx) {
+                    btn.disabled = true;
+                    btn.classList.remove("cursor-pointer", "hover:bg-sky-200", "hover:bg-amber-200", "hover:bg-emerald-200", "hover:bg-orange-200");
+                    const statusEl = btn.querySelector(".option-status");
+                    const letterEl = btn.querySelector(".option-letter");
+
+                    if (idx === q.correctIndex) {
+                        btn.className = "option-btn w-full text-left p-4 sm:p-5 rounded-2xl border-2 border-emerald-600 border-b-4 bg-emerald-500 text-white font-black text-lg sm:text-2xl flex items-center gap-3.5 shadow-lg ring-4 ring-emerald-200 scale-[1.01] transition-all";
+                        letterEl.className = "option-letter flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-white text-emerald-600 font-black text-lg sm:text-xl flex items-center justify-center shadow-sm";
+                        statusEl.textContent = "✅";
+                    } else if (idx === selectedIndex && !isCorrect) {
+                        btn.className = "option-btn animate-shake w-full text-left p-4 sm:p-5 rounded-2xl border-2 border-rose-600 border-b-4 bg-rose-500 text-white font-black text-lg sm:text-2xl flex items-center gap-3.5 shadow-lg transition-all";
+                        letterEl.className = "option-letter flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-white text-rose-600 font-black text-lg sm:text-xl flex items-center justify-center shadow-sm";
+                        statusEl.textContent = "❌";
+                    } else {
+                        btn.classList.add("opacity-50");
+                    }
+                });
+
+                if (isCorrect) {
+                    state.score += POINTS_PER_QUESTION;
+                    state.correctCount += 1;
+                    scoreDisplay.textContent = String(state.score);
+                    SoundEngine.correct();
+                    spawnFloatingScore("+10 ball! ⭐");
+                    feedbackMessage.textContent = "🎉 Barakalla! To'g'ri javob (+10 ball)";
+                    feedbackMessage.classList.add("text-emerald-600");
+                } else {
+                    SoundEngine.wrong();
+                    feedbackMessage.textContent = "💡 Noto'g'ri! To'g'ri javob: " + OPTION_LABELS[q.correctIndex] + " (" + q.options[q.correctIndex] + ")";
+                    feedbackMessage.classList.add("text-rose-600");
+                }
+
+                clearTimeout(state.autoAdvanceTimeout);
+                state.autoAdvanceTimeout = setTimeout(function () {
+                    goToNextQuestion();
+                }, AUTO_ADVANCE_MS);
+            }
+
+            function spawnFloatingScore(text) {
+                const el = document.createElement("div");
+                el.className = "float-score whitespace-nowrap bg-emerald-500 text-white font-black text-xl sm:text-2xl px-4 py-1.5 rounded-full shadow-xl border-2 border-white";
+                el.textContent = text;
+                floatingScoreContainer.appendChild(el);
+                setTimeout(function () {
+                    if (el.parentNode) {
+                        el.parentNode.removeChild(el);
+                    }
+                }, 1050);
+            }
+
+            function goToNextQuestion() {
+                if (state.isFinished) return;
+                if (state.currentIndex < state.questions.length - 1) {
+                    state.currentIndex += 1;
+                    renderQuestion();
+                } else {
+                    finishQuiz();
+                }
+            }
+
+            function finishQuiz() {
+                if (state.isFinished) return;
+                state.isFinished = true;
+                clearInterval(state.timerInterval);
+                clearTimeout(state.autoAdvanceTimeout);
+
+                const totalQuestions = state.questions.length;
+                const maxScore = totalQuestions * POINTS_PER_QUESTION;
+                const percent = Math.round((state.correctCount / totalQuestions) * 100);
+
+                quizScreen.classList.add("hidden");
+                resultScreen.classList.remove("hidden");
+
+                resultTeamTitle.textContent = state.className + " sinf jamoasi — Ustoz: " + state.teacherName;
+                resultSubReason.textContent = "✅ Barcha 15 ta savol yakunlandi!";
+
+                finalScoreStat.textContent = state.score + " / " + maxScore;
+                finalCorrectStat.textContent = state.correctCount + " / " + totalQuestions;
+                finalPercentStat.textContent = percent + "%";
+                finalTimeStat.textContent = formatDuration(state.totalElapsedSeconds);
+
+                let evalText = "";
+                let evalClasses = "";
+                let emoji = "🏆";
+
+                if (percent >= 90) {
+                    emoji = "🏆";
+                    evalText = "🏆 A'lo! Barakalla, jamoa! 1000 gacha sonlarni ayirishni juda zo'r o'zlashtiribsizlar!";
+                    evalClasses = "bg-emerald-100 border-emerald-400 text-emerald-900";
+                    SoundEngine.victoryFanfare();
+                    startConfetti();
+                } else if (percent >= 70) {
+                    emoji = "🎉";
+                    evalText = "🎉 Juda yaxshi ishladingiz! Yana biroz mashq qilsangiz, 100% natijaga erishasiz!";
+                    evalClasses = "bg-sky-100 border-sky-400 text-sky-900";
+                    SoundEngine.victoryFanfare();
+                    startConfetti();
+                } else if (percent >= 50) {
+                    emoji = "📖";
+                    evalText = "📖 Yaxshi harakat! Lekin ba'zi misollarni yana bir bor takrorlab, mashq qilish kerak.";
+                    evalClasses = "bg-amber-100 border-amber-400 text-amber-900";
+                    SoundEngine.closingTone();
+                } else {
+                    emoji = "💡";
+                    evalText = "💡 Hali natija yaxshi emas. Xafa bo'lmang, mavzuni yana yaxshilab o'qib, qayta urinib ko'ring!";
+                    evalClasses = "bg-rose-100 border-rose-300 text-rose-900";
+                    SoundEngine.closingTone();
+                }
+
+                resultEmoji.textContent = emoji;
+                evaluationBox.className = "rounded-2xl p-4 sm:p-5 mb-6 border-2 font-extrabold text-base sm:text-xl leading-relaxed " + evalClasses;
+                evaluationBox.textContent = evalText;
+            }
+
+            function resetToStartScreen() {
+                clearInterval(state.timerInterval);
+                clearTimeout(state.autoAdvanceTimeout);
+                state.isFinished = false;
+
+                resultScreen.classList.add("hidden");
+                quizScreen.classList.add("hidden");
+                startScreen.classList.remove("hidden");
+                hideValidation();
+            }
+
+            // =========================================================================
+            // 8. CONFETTI CELEBRATION ANIMATION (Responsive Canvas)
+            // =========================================================================
+            const confettiCanvas = document.getElementById("confettiCanvas");
+            const confettiCtx = confettiCanvas.getContext("2d");
+            let confettiParticles = [];
+            let confettiAnimId = null;
+
+            function resizeConfettiCanvas() {
+                confettiCanvas.width = window.innerWidth;
+                confettiCanvas.height = window.innerHeight;
+            }
+
+            window.addEventListener("resize", resizeConfettiCanvas);
+
+            function startConfetti() {
+                resizeConfettiCanvas();
+                confettiCanvas.classList.remove("hidden");
+                confettiParticles = [];
+
+                const colors = ["#38bdf8", "#facc15", "#10b981", "#f43f5e", "#fb923c", "#a78bfa"];
+                for (let i = 0; i < 120; i++) {
+                    confettiParticles.push({
+                        x: Math.random() * confettiCanvas.width,
+                        y: Math.random() * -confettiCanvas.height,
+                        w: Math.random() * 10 + 6,
+                        h: Math.random() * 6 + 4,
+                        color: colors[Math.floor(Math.random() * colors.length)],
+                        vy: Math.random() * 3.5 + 2.2,
+                        vx: (Math.random() - 0.5) * 2.5,
+                        angle: Math.random() * 360,
+                        spin: (Math.random() - 0.5) * 8
+                    });
+                }
+
+                if (confettiAnimId) cancelAnimationFrame(confettiAnimId);
+                animateConfetti();
+            }
+
+            function animateConfetti() {
+                confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+
+                for (let i = 0; i < confettiParticles.length; i++) {
+                    const p = confettiParticles[i];
+                    p.y += p.vy;
+                    p.x += p.vx;
+                    p.angle += p.spin;
+
+                    if (p.y > confettiCanvas.height + 20) {
+                        p.y = -20;
+                        p.x = Math.random() * confettiCanvas.width;
+                    }
+
+                    confettiCtx.save();
+                    confettiCtx.translate(p.x, p.y);
+                    confettiCtx.rotate((p.angle * Math.PI) / 180);
+                    confettiCtx.fillStyle = p.color;
+                    confettiCtx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+                    confettiCtx.restore();
+                }
+
+                confettiAnimId = requestAnimationFrame(animateConfetti);
+            }
+
+            function stopConfetti() {
+                if (confettiAnimId) {
+                    cancelAnimationFrame(confettiAnimId);
+                    confettiAnimId = null;
+                }
+                confettiCanvas.classList.add("hidden");
+                confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+            }
+        })();
+    </script>
+</body>
+</html>
