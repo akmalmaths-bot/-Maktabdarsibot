@@ -11,6 +11,28 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
 
+        :root {
+            --bg-main: #f4f6fa;
+            --bg-card: #ffffff;
+            --bg-subtle: #f1f5f9;
+            --bg-input: #f8fafc;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --shadow-card: 0 4px 15px rgba(0,0,0,0.04);
+        }
+
+        body.dark-mode {
+            --bg-main: #0f172a;
+            --bg-card: #1e293b;
+            --bg-subtle: #334155;
+            --bg-input: #0f172a;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --shadow-card: 0 4px 18px rgba(0,0,0,0.35);
+        }
+
         * {
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
@@ -18,195 +40,170 @@
 
         body { 
             font-family: 'Nunito', sans-serif; 
-            background-color: #f4f6fa; 
+            background-color: var(--bg-main); 
             margin: 0; 
             padding: 0; 
-            color: #2c3e50; 
+            color: var(--text-main); 
             overflow-x: hidden;
+            transition: background-color 0.25s, color 0.25s;
         }
 
         /* --- UMUMIY KONTEYNERLAR --- */
         .auth-container { 
             max-width: 480px; 
-            margin: 30px auto; 
-            background: #ffffff; 
-            padding: 30px 24px; 
+            margin: 24px auto; 
+            background: var(--bg-card); 
+            padding: 28px 22px; 
             border-radius: 28px; 
-            box-shadow: 0 12px 30px rgba(0,0,0,0.06); 
+            box-shadow: var(--shadow-card); 
             text-align: center;
+            position: relative;
         }
 
         .app-shell {
             max-width: 480px;
             margin: 0 auto;
             min-height: 100vh;
-            background: #f4f6fa;
+            background: var(--bg-main);
             padding-bottom: 95px;
             position: relative;
         }
 
-        h1 { color: #1e293b; font-weight: 900; font-size: 26px; margin-bottom: 20px; }
-        h2 { color: #1e293b; font-weight: 800; font-size: 20px; margin: 15px 0 10px; }
-        h3 { color: #0ea5e9; font-weight: 800; font-size: 20px; margin-bottom: 15px; }
+        h1 { color: var(--text-main); font-weight: 900; font-size: 25px; margin-bottom: 18px; }
+        h2 { color: var(--text-main); font-weight: 800; font-size: 20px; margin: 15px 0 10px; }
+        h3 { color: #0ea5e9; font-weight: 800; font-size: 19px; margin-bottom: 14px; }
 
         /* --- ANIMATSIYALAR --- */
         @keyframes fadeInSlide {
             from { opacity: 0; transform: translateY(12px); }
             to { opacity: 1; transform: translateY(0); }
         }
-
         @keyframes pulseGlow {
             0% { transform: scale(1); }
-            50% { transform: scale(1.04); }
+            50% { transform: scale(1.03); }
             100% { transform: scale(1); }
         }
-
         @keyframes popScale {
             0% { transform: scale(0.4); opacity: 0; }
-            70% { transform: scale(1.08); opacity: 1; }
+            70% { transform: scale(1.06); opacity: 1; }
             100% { transform: scale(1); opacity: 1; }
         }
-
         @keyframes chestBounce {
             0%, 100% { transform: translateY(0) rotate(0deg); }
-            25% { transform: translateY(-10px) rotate(-6deg); }
-            75% { transform: translateY(-6px) rotate(6deg); }
+            25% { transform: translateY(-8px) rotate(-5deg); }
+            75% { transform: translateY(-5px) rotate(5deg); }
         }
-
         @keyframes coinFall {
             0% { transform: translateY(-10vh) rotate(0deg) scale(0.8); opacity: 1; }
             100% { transform: translateY(105vh) rotate(720deg) scale(1.1); opacity: 0; }
         }
 
-        .tab-view {
-            display: none;
-            padding: 16px;
-            animation: fadeInSlide 0.25s ease-out;
-        }
-        .tab-view.active {
-            display: block;
-        }
+        .tab-view { display: none; padding: 16px; animation: fadeInSlide 0.25s ease-out; }
+        .tab-view.active { display: block; }
 
         /* --- YUQORI PANEL (TOP HEADER) --- */
         .app-topbar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 14px 18px;
-            background: #ffffff;
+            padding: 12px 14px;
+            background: var(--bg-card);
             position: sticky;
             top: 0;
             z-index: 100;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-bottom: 1px solid var(--border-color);
         }
 
-        .topbar-left {
+        .topbar-left, .topbar-right {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         .grade-pill {
-            background: #f1f5f9;
-            padding: 6px 12px;
+            background: var(--bg-subtle);
+            padding: 5px 10px;
             border-radius: 20px;
             font-weight: 800;
-            font-size: 14px;
-            color: #334155;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .pro-badge {
-            background: linear-gradient(135deg, #fcd34d, #f59e0b);
-            color: #ffffff;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-weight: 900;
             font-size: 13px;
-            letter-spacing: 0.5px;
-            box-shadow: 0 3px 8px rgba(245, 158, 11, 0.3);
-        }
-
-        .topbar-right {
+            color: var(--text-main);
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 5px;
+        }
+
+        .icon-circle-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--bg-subtle);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 17px;
+            cursor: pointer;
+            padding: 0;
+            box-shadow: none;
+            position: relative;
+        }
+        .icon-circle-btn:active { transform: scale(0.92); }
+
+        .notif-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: #ef4444;
+            color: #fff;
+            font-size: 11px;
+            font-weight: 900;
+            min-width: 18px;
+            height: 18px;
+            border-radius: 10px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 0 4px;
         }
 
         .stat-badge {
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 4px;
             font-weight: 800;
-            font-size: 15px;
-            color: #1e293b;
-            background: #f8fafc;
-            padding: 6px 12px;
+            font-size: 14px;
+            color: var(--text-main);
+            background: var(--bg-subtle);
+            padding: 5px 10px;
             border-radius: 20px;
-            border: 1px solid #e2e8f0;
+            border: 1px solid var(--border-color);
         }
 
-        /* --- ASOSIY SAHIFA KARTOCHKALARI (BENTO GRID) --- */
-        .top-cards-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 14px;
-            margin-bottom: 16px;
-        }
+        /* --- ASOSIY SAHIFA KARTOCHKALARI --- */
+        .top-cards-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px; }
 
         .bento-card {
-            background: #ffffff;
+            background: var(--bg-card);
             border-radius: 22px;
             padding: 18px;
             text-align: left;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+            box-shadow: var(--shadow-card);
             position: relative;
             cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            transition: transform 0.2s ease;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            min-height: 125px;
+            min-height: 120px;
+            border: 1px solid var(--border-color);
         }
         .bento-card:active { transform: scale(0.97); }
+        .bento-icon { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; margin-bottom: 10px; }
+        .bento-title { font-weight: 800; font-size: 17px; color: var(--text-main); line-height: 1.25; }
+        .bento-arrow { position: absolute; right: 14px; bottom: 14px; width: 28px; height: 28px; border-radius: 50%; background: var(--bg-subtle); display: flex; align-items: center; justify-content: center; font-weight: 800; color: var(--text-muted); font-size: 14px; }
 
-        .bento-icon {
-            width: 42px;
-            height: 42px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
-            margin-bottom: 12px;
-        }
-
-        .bento-title {
-            font-weight: 800;
-            font-size: 17px;
-            color: #1e293b;
-            line-height: 1.25;
-        }
-
-        .bento-arrow {
-            position: absolute;
-            right: 16px;
-            bottom: 16px;
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            background: #f1f5f9;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 800;
-            color: #64748b;
-            font-size: 14px;
-        }
-
-        /* --- BANNER --- */
         .league-banner {
             background: linear-gradient(135deg, #1e1b4b, #312e81, #4338ca);
             border-radius: 22px;
@@ -220,52 +217,17 @@
             cursor: pointer;
         }
         .league-banner h4 { margin: 0 0 4px; color: #fbbf24; font-size: 14px; font-weight: 800; }
-        .league-banner .big-prize { font-size: 22px; font-weight: 900; margin-bottom: 6px; }
+        .league-banner .big-prize { font-size: 21px; font-weight: 900; margin-bottom: 6px; }
         .league-banner p { margin: 0; font-size: 13px; color: #e0e7ff; font-weight: 600; }
-        .league-banner .trophy-decor {
-            position: absolute;
-            right: 15px;
-            bottom: -5px;
-            font-size: 64px;
-            opacity: 0.9;
-        }
+        .league-banner .trophy-decor { position: absolute; right: 15px; bottom: -5px; font-size: 62px; opacity: 0.9; }
 
-        /* --- TEZKOR MENYU IKONKALARI (3 USTUN) --- */
-        .quick-grid-3 {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            margin-bottom: 16px;
-        }
-
-        .quick-item {
-            background: #ffffff;
-            border-radius: 20px;
-            padding: 16px 10px;
-            text-align: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
+        .quick-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
+        .quick-item { background: var(--bg-card); border-radius: 20px; padding: 14px 8px; text-align: center; box-shadow: var(--shadow-card); cursor: pointer; border: 1px solid var(--border-color); }
         .quick-item:active { transform: scale(0.95); }
+        .quick-circle { width: 50px; height: 50px; border-radius: 50%; margin: 0 auto 8px; display: flex; align-items: center; justify-content: center; font-size: 24px; }
+        .quick-label { font-weight: 800; font-size: 13px; color: var(--text-main); }
 
-        .quick-circle {
-            width: 54px;
-            height: 54px;
-            border-radius: 50%;
-            margin: 0 auto 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 26px;
-        }
-        .quick-label {
-            font-weight: 800;
-            font-size: 14px;
-            color: #334155;
-        }
-
-        /* --- PASTKI NAVIGATSIYA (BOTTOM BAR) --- */
+        /* --- PASTKI NAVIGATSIYA --- */
         .bottom-navbar {
             position: fixed;
             bottom: 0;
@@ -273,55 +235,32 @@
             transform: translateX(-50%);
             width: 100%;
             max-width: 480px;
-            background: #ffffff;
+            background: var(--bg-card);
             display: flex;
             justify-content: space-around;
             align-items: center;
             padding: 8px 6px 12px;
-            border-top: 1px solid #e2e8f0;
-            box-shadow: 0 -4px 20px rgba(0,0,0,0.05);
+            border-top: 1px solid var(--border-color);
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.06);
             z-index: 200;
         }
 
         .nav-tab {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: #94a3b8;
-            font-size: 12px;
-            font-weight: 700;
-            cursor: pointer;
-            padding: 4px 10px;
-            border-radius: 12px;
-            transition: all 0.2s ease;
-            background: none;
-            border: none;
-            box-shadow: none;
-            width: auto;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: var(--text-muted); font-size: 12px; font-weight: 700; cursor: pointer;
+            padding: 4px 8px; border-radius: 12px; background: none; border: none; box-shadow: none; width: auto;
         }
-        .nav-tab svg {
-            width: 24px;
-            height: 24px;
-            margin-bottom: 4px;
-            fill: currentColor;
-            transition: transform 0.2s ease;
-        }
-        .nav-tab.active {
-            color: #f59e0b;
-            font-weight: 800;
-        }
-        .nav-tab.active svg {
-            transform: translateY(-2px) scale(1.08);
-        }
+        .nav-tab svg { width: 24px; height: 24px; margin-bottom: 4px; fill: currentColor; transition: transform 0.2s; }
+        .nav-tab.active { color: #f59e0b; font-weight: 800; }
+        .nav-tab.active svg { transform: translateY(-2px) scale(1.08); }
 
         /* --- TUGMALAR VA GRIDLAR --- */
         .btn-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 16px; }
         .grid-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
-        .grid-3col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+        .grid-3col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 16px; }
         
         button { 
-            padding: 14px 18px; font-size: 17px; font-weight: 800; font-family: 'Nunito', sans-serif; 
+            padding: 14px 16px; font-size: 16px; font-weight: 800; font-family: 'Nunito', sans-serif; 
             color: white; border: none; border-radius: 16px; cursor: pointer; 
             transition: transform 0.15s, box-shadow 0.15s; width: 100%; 
             box-shadow: 0 4px 0 rgba(0,0,0,0.12); 
@@ -332,167 +271,157 @@
         .admin-btn { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #1e293b; }
         .feature-btn { background: linear-gradient(135deg, #10b981, #059669); }
         .gift-btn { background: linear-gradient(135deg, #3b82f6, #2563eb); }
-        .back-btn { background: #cbd5e1; color: #334155; margin-top: 12px; box-shadow: 0 3px 0 #94a3b8; }
+        .back-btn { background: var(--bg-subtle); color: var(--text-main); margin-top: 12px; box-shadow: 0 3px 0 var(--border-color); }
         .danger-btn { background: #ef4444; font-size: 13px; padding: 6px 12px; width: auto; border-radius: 10px; box-shadow: none; }
         .add-btn { background: #8b5cf6; margin-bottom: 12px; }
         .refresh-btn { background: #06b6d4; font-size: 14px; padding: 8px 14px; width: auto; border-radius: 12px; box-shadow: none; }
 
-        /* --- OYLAR VA DARSLAR UCHUN 3 XIL RANG TIZIMI --- */
-        .state-gray {
-            background: #94a3b8 !important;
-            color: #ffffff !important;
-            box-shadow: 0 4px 0 #64748b !important;
-        }
-        .state-green {
-            background: #10b981 !important;
-            color: #ffffff !important;
-            box-shadow: 0 4px 0 #059669 !important;
-            animation: pulseGlow 2s infinite;
-        }
-        .state-red {
-            background: #ef4444 !important;
-            color: #ffffff !important;
-            box-shadow: 0 4px 0 #dc2626 !important;
-            opacity: 0.92;
-        }
+        /* --- 3 XIL RANG TIZIMI --- */
+        .state-gray { background: #94a3b8 !important; color: #fff !important; box-shadow: 0 4px 0 #64748b !important; }
+        .state-green { background: #10b981 !important; color: #fff !important; box-shadow: 0 4px 0 #059669 !important; animation: pulseGlow 2s infinite; }
+        .state-red { background: #ef4444 !important; color: #fff !important; box-shadow: 0 4px 0 #dc2626 !important; opacity: 0.92; }
 
-        .lesson-card-btn {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 16px 10px;
-            border-radius: 18px;
-            font-size: 16px;
-            font-weight: 800;
-            position: relative;
-        }
-        .lesson-card-btn small {
-            font-size: 11px;
-            font-weight: 700;
-            opacity: 0.92;
-            margin-top: 4px;
-        }
+        .lesson-card-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px 10px; border-radius: 18px; font-size: 16px; font-weight: 800; }
+        .lesson-card-btn small { font-size: 11px; font-weight: 700; opacity: 0.92; margin-top: 4px; }
 
         /* --- RO'YXATLAR VA FORMALAR --- */
         .panel-section { display: none; margin-top: 10px; }
         ul { list-style: none; padding: 0; text-align: left; margin: 0; }
         li { 
-            background: #ffffff; padding: 14px 16px; border-radius: 16px; margin-bottom: 10px; 
-            font-size: 16px; display: flex; flex-direction: column; gap: 8px; 
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04); border: 1px solid #f1f5f9;
+            background: var(--bg-card); padding: 13px 15px; border-radius: 16px; margin-bottom: 10px; 
+            font-size: 15px; display: flex; flex-direction: column; gap: 8px; 
+            box-shadow: var(--shadow-card); border: 1px solid var(--border-color); color: var(--text-main);
         }
-        .li-header { display: flex; justify-content: space-between; align-items: center; width: 100%; }
-        .li-actions { display: flex; gap: 10px; justify-content: flex-end; align-items: center; }
+        .li-header { display: flex; justify-content: space-between; align-items: center; width: 100%; gap: 8px; }
+        .li-actions { display: flex; gap: 8px; justify-content: flex-end; align-items: center; flex-wrap: wrap; }
         
-        input[type="text"], input[type="password"], input[type="number"], input[type="datetime-local"], select { 
-            padding: 12px 15px; font-size: 16px; font-family: 'Nunito', sans-serif; font-weight: 700;
-            width: 100%; margin-bottom: 12px; border: 2px solid #e2e8f0; border-radius: 14px; 
-            outline: none; background-color: #f8fafc; color: #1e293b;
+        input[type="text"], input[type="password"], input[type="number"], input[type="datetime-local"], input[type="date"], select { 
+            padding: 11px 14px; font-size: 15px; font-family: 'Nunito', sans-serif; font-weight: 700;
+            width: 100%; margin-bottom: 10px; border: 2px solid var(--border-color); border-radius: 14px; 
+            outline: none; background-color: var(--bg-input); color: var(--text-main);
         }
-        input:focus, select:focus { border-color: #3b82f6; background-color: #ffffff; }
+        input:focus, select:focus { border-color: #3b82f6; }
+
+        /* --- REYTING AVATARI --- */
+        .lb-user { display: flex; align-items: center; gap: 10px; }
+        .lb-avatar {
+            width: 38px; height: 38px; border-radius: 50%; object-fit: cover;
+            background: var(--bg-subtle); display: flex; align-items: center; justify-content: center;
+            font-size: 20px; border: 2px solid #fbbf24; flex-shrink: 0; overflow: hidden;
+        }
+        .lb-avatar img { width: 100%; height: 100%; object-fit: cover; }
 
         /* --- PROFIL SAHIFASI --- */
         .profile-card {
-            background: #ffffff;
+            background: var(--bg-card);
             border-radius: 24px;
-            padding: 22px 18px;
+            padding: 20px 16px;
             text-align: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+            box-shadow: var(--shadow-card);
             margin-bottom: 16px;
+            border: 1px solid var(--border-color);
         }
 
         .avatar-wrapper {
-            width: 96px;
-            height: 96px;
-            border-radius: 50%;
-            margin: 0 auto 12px;
-            position: relative;
-            border: 4px solid #f59e0b;
-            overflow: hidden;
-            background: #e2e8f0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 40px;
-            cursor: pointer;
+            width: 96px; height: 96px; border-radius: 50%; margin: 0 auto 10px;
+            position: relative; border: 4px solid #f59e0b; overflow: hidden;
+            background: var(--bg-subtle); display: flex; align-items: center; justify-content: center;
+            font-size: 40px; cursor: pointer;
         }
-        .avatar-wrapper img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+        .avatar-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+        .avatar-edit-badge { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.6); color: #fff; font-size: 11px; padding: 3px 0; font-weight: 800; }
+
+        .bday-box {
+            background: linear-gradient(135deg, #fdf2f8, #fce7f3);
+            border: 2px solid #f9a8d4;
+            border-radius: 18px;
+            padding: 16px;
+            margin-bottom: 16px;
+            text-align: left;
+            color: #831843;
         }
-        .avatar-edit-badge {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(0,0,0,0.6);
-            color: #fff;
-            font-size: 11px;
-            padding: 3px 0;
-            font-weight: 800;
+        body.dark-mode .bday-box {
+            background: linear-gradient(135deg, #500724, #831843);
+            border-color: #db2777;
+            color: #fce7f3;
+        }
+
+        .social-link-btn {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 12px 16px; border-radius: 14px; text-decoration: none;
+            color: #fff; font-weight: 800; font-size: 15px; margin-bottom: 10px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
         }
 
         /* --- UY VAZIFA VA O'YIN --- */
-        .hw-item { background: #fffbeb; padding: 14px; border-radius: 16px; margin-bottom: 12px; border: 1px solid #fde68a; }
-        .student-hw-item { background: #ffffff; padding: 16px; border-radius: 16px; margin-bottom: 12px; text-align: left; box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
-        .hw-result-item { padding: 12px; margin-bottom: 10px; border-radius: 12px; text-align: left; font-size: 16px; }
+        .hw-item { background: var(--bg-subtle); padding: 14px; border-radius: 16px; margin-bottom: 12px; border: 1px solid var(--border-color); text-align: left; }
+        .student-hw-item { background: var(--bg-card); padding: 16px; border-radius: 16px; margin-bottom: 12px; text-align: left; box-shadow: var(--shadow-card); border: 1px solid var(--border-color); }
+        .hw-result-item { padding: 12px; margin-bottom: 10px; border-radius: 12px; text-align: left; font-size: 15px; }
         .hw-correct { background-color: #dcfce7; border: 1px solid #86efac; color: #166534; }
         .hw-incorrect { background-color: #fee2e2; border: 1px solid #fca5a5; color: #991b1b; }
 
-        .score-board { font-size: 18px; margin-bottom: 15px; display: flex; justify-content: space-between; background: #fef3c7; padding: 14px 18px; border-radius: 16px; border: 1px solid #fde68a; }
+        .test-opt-btn {
+            background: var(--bg-subtle); color: var(--text-main); border: 2px solid var(--border-color);
+            padding: 10px 14px; border-radius: 12px; text-align: left; font-size: 15px;
+            margin-bottom: 8px; box-shadow: none; width: 100%; font-weight: 700;
+        }
+        .test-opt-btn.selected {
+            background: #dbeafe; border-color: #2563eb; color: #1e40af;
+        }
+        body.dark-mode .test-opt-btn.selected {
+            background: #1e3a8a; border-color: #60a5fa; color: #eff6ff;
+        }
+
+        .score-board { font-size: 17px; margin-bottom: 14px; display: flex; justify-content: space-between; background: #fef3c7; color: #1e293b; padding: 12px 16px; border-radius: 16px; border: 1px solid #fde68a; }
         .coin-text { color: #d97706; font-weight: 900; } 
         .point-text { color: #2563eb; font-weight: 900; }
-        .warning-text { color: #dc2626; font-weight: 800; font-size: 16px; }
+        .warning-text { color: #dc2626; font-weight: 800; font-size: 15px; }
         
-        .timer { font-size: 24px; color: #ea580c; margin-bottom: 15px; font-weight: 900; background: #ffedd5; padding: 8px 20px; border-radius: 14px; display: inline-block; }
-        .question { font-size: 26px; margin-bottom: 20px; font-weight: 900; color: #1e293b; background: #ffffff; padding: 22px 15px; border-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); white-space: pre-line; }
+        .timer { font-size: 22px; color: #ea580c; margin-bottom: 14px; font-weight: 900; background: #ffedd5; padding: 8px 18px; border-radius: 14px; display: inline-block; }
+        .question { font-size: 21px; margin-bottom: 18px; font-weight: 800; color: var(--text-main); background: var(--bg-card); padding: 20px 14px; border-radius: 20px; box-shadow: var(--shadow-card); border: 1px solid var(--border-color); white-space: pre-line; line-height: 1.4; }
         .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
-        .compare-box {
+        .emoji-game-grid {
             display: grid;
-            grid-template-columns: 1fr auto 1fr;
-            align-items: center;
-            gap: 10px;
-            background: #ffffff;
-            padding: 20px 14px;
-            border-radius: 20px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
-            margin-bottom: 20px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 10px;
         }
-        .compare-side {
-            background: #f1f5f9;
-            padding: 16px 8px;
-            border-radius: 14px;
-            font-size: 22px;
-            font-weight: 900;
-            color: #1e293b;
-        }
-        .compare-vs {
-            font-size: 24px;
-            font-weight: 900;
-            color: #f59e0b;
-            background: #fef3c7;
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .emoji-cell-btn {
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            font-size: 38px;
+            padding: 18px 10px;
+            border-radius: 18px;
+            box-shadow: var(--shadow-card);
         }
 
-        .student-status { font-size: 13px; padding: 5px 10px; border-radius: 10px; color: white; cursor: pointer; font-weight: 800; }
+        .compare-box { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 10px; background: var(--bg-card); padding: 18px 12px; border-radius: 20px; box-shadow: var(--shadow-card); margin-bottom: 18px; border: 1px solid var(--border-color); }
+        .compare-side { background: var(--bg-subtle); padding: 14px 8px; border-radius: 14px; font-size: 20px; font-weight: 900; color: var(--text-main); }
+        .compare-vs { font-size: 22px; font-weight: 900; color: #f59e0b; background: #fef3c7; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+
+        .student-status { font-size: 12px; padding: 5px 10px; border-radius: 10px; color: white; cursor: pointer; font-weight: 800; }
         .status-active { background-color: #10b981; } 
         .status-blocked { background-color: #ef4444; }
-        .add-student-form { background: #eff6ff; padding: 16px; border-radius: 18px; margin-bottom: 18px; border: 1px solid #bfdbfe; }
-        .deadline-warning { color: #b91c1c; font-weight: 800; font-size: 15px; margin-bottom: 14px; background: #fee2e2; padding: 12px; border-radius: 12px; }
+        .add-student-form { background: var(--bg-subtle); padding: 14px; border-radius: 18px; margin-bottom: 16px; border: 1px solid var(--border-color); }
+        .deadline-warning { color: #b91c1c; font-weight: 800; font-size: 14px; margin-bottom: 12px; background: #fee2e2; padding: 10px; border-radius: 12px; }
 
-        .target-tag { display: inline-block; background: #8b5cf6; color: white; padding: 5px 10px; border-radius: 10px; margin: 4px; font-size: 14px; font-weight: 700; }
+        .target-tag { display: inline-block; background: #8b5cf6; color: white; padding: 5px 10px; border-radius: 10px; margin: 4px; font-size: 13px; font-weight: 700; }
         .target-tag span { cursor: pointer; margin-left: 8px; font-weight: 900; }
 
-        /* --- MODAL VA ANIMATSIYA QATLAMLARI --- */
-        #loading-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #ffffff; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 2000; font-size: 20px; color: #f43f5e; font-weight: 900; }
+        .existing-uploads-box {
+            background: var(--bg-subtle);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 12px;
+            margin-bottom: 14px;
+            text-align: left;
+            max-height: 220px;
+            overflow-y: auto;
+        }
+
+        /* --- MODALLAR --- */
+        #loading-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-main); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 2000; font-size: 20px; color: #f43f5e; font-weight: 900; }
         
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -501,60 +430,25 @@
             z-index: 1500; padding: 20px;
         }
         .modal-card {
-            background: #ffffff; width: 100%; max-width: 440px; border-radius: 26px;
-            padding: 24px; max-height: 82vh; overflow-y: auto; text-align: left;
-            animation: popScale 0.3s ease-out;
-            position: relative;
+            background: var(--bg-card); color: var(--text-main); width: 100%; max-width: 440px; border-radius: 26px;
+            padding: 22px; max-height: 82vh; overflow-y: auto; text-align: left;
+            animation: popScale 0.28s ease-out; position: relative; border: 1px solid var(--border-color);
         }
 
-        /* --- SOVG'A / COIN ANIMATSIYA MODALI --- */
         .reward-modal-card {
             background: linear-gradient(180deg, #ffffff 0%, #fffbeb 100%);
             border: 4px solid #fcd34d;
             text-align: center;
-            padding: 30px 22px;
+            padding: 28px 20px;
+            color: #1e293b;
             box-shadow: 0 20px 50px rgba(245, 158, 11, 0.35);
         }
-        .reward-chest-icon {
-            font-size: 76px;
-            display: inline-block;
-            margin-bottom: 10px;
-            animation: chestBounce 1.2s infinite ease-in-out;
-            filter: drop-shadow(0 8px 16px rgba(245, 158, 11, 0.4));
-        }
-        .reward-title {
-            font-size: 24px;
-            font-weight: 900;
-            color: #b45309;
-            margin: 5px 0 8px;
-        }
-        .reward-amount-pill {
-            display: inline-block;
-            background: linear-gradient(135deg, #fbbf24, #d97706);
-            color: #ffffff;
-            font-size: 26px;
-            font-weight: 900;
-            padding: 8px 24px;
-            border-radius: 30px;
-            margin: 8px 0 14px;
-            box-shadow: 0 6px 15px rgba(217, 119, 6, 0.35);
-        }
-        .reward-subtext {
-            font-size: 16px;
-            font-weight: 700;
-            color: #475569;
-            margin-bottom: 20px;
-            line-height: 1.4;
-        }
+        .reward-chest-icon { font-size: 72px; display: inline-block; margin-bottom: 8px; animation: chestBounce 1.2s infinite ease-in-out; }
+        .reward-title { font-size: 23px; font-weight: 900; color: #b45309; margin: 5px 0 8px; }
+        .reward-amount-pill { display: inline-block; background: linear-gradient(135deg, #fbbf24, #d97706); color: #fff; font-size: 24px; font-weight: 900; padding: 8px 22px; border-radius: 30px; margin: 8px 0 14px; }
+        .reward-subtext { font-size: 15px; font-weight: 700; color: #475569; margin-bottom: 18px; line-height: 1.45; white-space: pre-line; }
 
-        .falling-coin {
-            position: fixed;
-            top: -50px;
-            font-size: 28px;
-            z-index: 2500;
-            pointer-events: none;
-            animation: coinFall linear forwards;
-        }
+        .falling-coin { position: fixed; top: -50px; font-size: 28px; z-index: 2500; pointer-events: none; animation: coinFall linear forwards; }
     </style>
 </head>
 <body>
@@ -563,41 +457,64 @@
         <div>Platforma yuklanmoqda... ⏳</div>
     </div>
 
-    <!-- 🎁 YANGI ANIMATSIYALI SOVG'A VA BONUS OYNASI (Alert o'rniga!) -->
+    <!-- 🎁 SOVG'A VA XABAR MODALI -->
     <div id="reward-modal" class="modal-overlay" onclick="closeRewardModal()">
         <div class="modal-card reward-modal-card" onclick="event.stopPropagation()">
             <div id="reward-icon" class="reward-chest-icon">🎁</div>
             <div id="reward-title" class="reward-title">Tabriklaymiz!</div>
             <div id="reward-badge" class="reward-amount-pill">+1 ⭐ Coin</div>
             <div id="reward-desc" class="reward-subtext">Kunlik faollik bonusi hisobingizga qo'shildi!</div>
-            <button class="admin-btn" onclick="closeRewardModal()" style="font-size:18px; color:#fff; background:linear-gradient(135deg, #10b981, #059669);">Ajoyib! 🚀</button>
+            <button class="feature-btn" onclick="closeRewardModal()">Ajoyib! 🚀</button>
         </div>
     </div>
 
-    <!-- 🏆 O'QUVCHILAR UCHUN CHEMPIONLAR REYTINGI MODALI -->
+    <!-- 🔔 XABARNOMALAR MODALI -->
+    <div id="notif-modal" class="modal-overlay" onclick="closeNotifModal()">
+        <div class="modal-card" onclick="event.stopPropagation()">
+            <h2 style="margin-top:0; text-align:center;">🔔 Yangi xabarlar</h2>
+            <ul id="notif-list"></ul>
+            <button class="back-btn" onclick="closeNotifModal()">Yopish</button>
+        </div>
+    </div>
+
+    <!-- 🖼️ RASM KO'RISH MODALI -->
+    <div id="photo-modal" class="modal-overlay" onclick="document.getElementById('photo-modal').style.display='none'">
+        <div class="modal-card" onclick="event.stopPropagation()" style="text-align:center;">
+            <h3 style="margin-top:0;">📷 O'quvchi yuborgan rasm</h3>
+            <img id="photo-modal-img" src="" style="width:100%; border-radius:14px; margin-bottom:12px;">
+            <button class="back-btn" onclick="document.getElementById('photo-modal').style.display='none'">Yopish</button>
+        </div>
+    </div>
+
+    <!-- 🏆 O'QUVCHILAR REYTINGI MODALI -->
     <div id="student-leaderboard-modal" class="modal-overlay" onclick="closeStudentLeaderboardModal()">
         <div class="modal-card" onclick="event.stopPropagation()">
             <h2 style="margin-top:0; text-align:center; color:#d97706;">🏆 Chempionlar Ro'yxati</h2>
-            <p style="text-align:center; font-size:13px; color:#64748b; margin-top:-8px; margin-bottom:15px;">3, 4 va 5-sinflar bo'yicha eng faol o'quvchilar</p>
+            <p style="text-align:center; font-size:13px; color:var(--text-muted); margin-top:-8px; margin-bottom:14px;">2, 3, 4 va 5-sinflar bo'yicha eng faol o'quvchilar</p>
             <ul id="leaderboard-list"></ul>
             <button class="back-btn" onclick="closeStudentLeaderboardModal()">Yopish</button>
         </div>
     </div>
 
-    <!-- 📜 ADMIN UCHUN O'QUVCHI COIN TARIXI MODALI -->
+    <!-- 📜 ADMIN: O'QUVCHI COIN TARIXI MODALI -->
     <div id="history-modal" class="modal-overlay" onclick="closeHistoryModal()">
         <div class="modal-card" onclick="event.stopPropagation()">
             <h3 id="modal-student-name" style="margin-top:0;">O'quvchi tarixi</h3>
+            <div id="modal-student-info" style="font-size:13px; color:var(--text-muted); margin-bottom:12px; line-height:1.5;"></div>
             <ul id="modal-history-list"></ul>
             <button class="back-btn" onclick="closeHistoryModal()">Yopish</button>
         </div>
     </div>
 
-    <!-- 1. SINF TANLASH MENYUSI -->
+    <!-- 1. SINF TANLASH MENYUSI (2, 3, 4, 5-SINF) -->
     <div class="auth-container" id="class-selection" style="display:none;">
+        <div style="display:flex; justify-content:flex-end; margin-bottom:6px;">
+            <button class="icon-circle-btn" onclick="toggleTheme()" title="Kun/Tun rejimi">🌙</button>
+        </div>
         <h1>🌟 Matematika Platformasi</h1>
-        <p style="color:#64748b; font-weight:700; margin-bottom:20px;">Sinfingizni tanlang va bilimlar olamiga kiring!</p>
+        <p style="color:var(--text-muted); font-weight:700; margin-bottom:20px;">Sinfingizni tanlang va bilimlar olamiga kiring!</p>
         <div class="btn-grid">
+            <button class="class-btn" onclick="openStudentLogin('2')">🎒 2-sinf</button>
             <button class="class-btn" onclick="openStudentLogin('3')">📚 3-sinf</button>
             <button class="class-btn" onclick="openStudentLogin('4')">🚀 4-sinf</button>
             <button class="class-btn" onclick="openStudentLogin('5')">🎓 5-sinf</button>
@@ -614,18 +531,29 @@
     </div>
 
     <!-- 3. ADMIN PANEL -->
-    <div class="auth-container" id="admin-panel" style="display:none; max-width: 550px;">
-        <h1>👑 Ustoz Paneli</h1>
-        <button class="refresh-btn" onclick="manualRefreshData()" style="margin-bottom:15px;">🔄 Bazani yangilash</button>
+    <div class="auth-container" id="admin-panel" style="display:none; max-width: 560px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <button class="refresh-btn" onclick="manualRefreshData()">🔄 Yangilash</button>
+            <button class="icon-circle-btn" onclick="toggleTheme()" title="Kun/Tun rejimi">🌙</button>
+        </div>
+        <h1 style="margin-top:0;">👑 Ustoz Paneli</h1>
         
         <div id="admin-menu" class="btn-grid">
             <button class="feature-btn" onclick="showAdminSection('students-management')">👥 O'quvchilar ro'yxati</button>
-            <button class="feature-btn" onclick="showAdminSection('homework-upload')">📝 Uyga vazifa yuklash (10 oy)</button>
-            <button class="feature-btn" onclick="showAdminSection('video-upload')">🎬 Video dars yuklash (10 oy)</button>
+            <button class="admin-btn" id="admin-bday-req-btn" onclick="showAdminSection('bday-requests-panel')">🎂 Tug'ilgan kun so'rovlari (0)</button>
+            <button class="feature-btn" onclick="showAdminSection('homework-upload')">📝 Uyga vazifa yuklash / o'chirish</button>
+            <button class="feature-btn" onclick="showAdminSection('video-upload')">🎬 Video yuklash / o'chirish</button>
             <button class="feature-btn" onclick="showAdminSection('coin-management')">⭐ Coin berish / olish</button>
             <button class="feature-btn" onclick="showAdminSection('hw-status-panel')">📊 Uy vazifasi nazorati</button>
             <button class="feature-btn" onclick="openAdminLeaderboard()">🏆 Umumiy Reyting (Tarix bilan)</button>
             <button class="back-btn" onclick="goBack('class-selection')">Chiqish</button>
+        </div>
+
+        <!-- 3.0 Tug'ilgan kun tasdiqlash so'rovlari -->
+        <div id="bday-requests-panel" class="panel-section">
+            <h3>🎂 Tug'ilgan kunni tasdiqlash</h3>
+            <ul id="bday-requests-list"></ul>
+            <button class="back-btn" onclick="closeAdminSection()">Ortga</button>
         </div>
 
         <!-- 3.1 O'quvchilarni boshqarish -->
@@ -635,6 +563,7 @@
                 <input type="text" id="new-std-name" placeholder="Ism va familiya...">
                 <select id="new-std-grade">
                     <option value="">Sinfni tanlang</option>
+                    <option value="2">2-sinf</option>
                     <option value="3">3-sinf</option>
                     <option value="4">4-sinf</option> 
                     <option value="5">5-sinf</option>
@@ -646,13 +575,14 @@
             <button class="back-btn" onclick="closeAdminSection()">Ortga</button>
         </div>
 
-        <!-- 3.2 Uyga vazifa yuklash -->
+        <!-- 3.2 Uyga vazifa yuklash (Variantlar + Rasm + Mavjudlarini ko'rish/o'chirish) -->
         <div id="homework-upload" class="panel-section">
             <h3>📝 Uyga vazifa yuklash</h3>
-            <div style="background: #f3e8ff; padding: 15px; border-radius: 16px; margin-bottom: 15px;">
+            <div style="background: var(--bg-subtle); padding: 14px; border-radius: 16px; margin-bottom: 14px; border: 1px solid var(--border-color);">
                 <h4 style="margin:0 0 10px;">Sinf, Oy va Darsni tanlang:</h4>
-                <select id="hw-target-grade">
+                <select id="hw-target-grade" onchange="renderAdminExistingUploads('homework')">
                     <option value="">Sinfni tanlang...</option>
+                    <option value="2">2-sinf</option>
                     <option value="3">3-sinf</option>
                     <option value="4">4-sinf</option>
                     <option value="5">5-sinf</option>
@@ -662,30 +592,32 @@
                     <select id="hw-target-lesson"></select>
                 </div>
                 <button class="add-btn" onclick="addHwTarget()">➕ Ro'yxatga qo'shish</button>
-                <div id="hw-targets-display" style="text-align: left; margin-top: 8px;"></div>
+                <div id="hw-targets-display" style="text-align: left; margin-top: 6px;"></div>
             </div>
 
-            <h4 style="margin:10px 0 6px; text-align:left;">Muddat (Deadline - shu vaqtdan keyin coin berilmaydi):</h4>
+            <!-- Oldin yuklangan uy vazifalari ro'yxati -->
+            <div id="admin-hw-existing-wrap" style="display:none;">
+                <h4 style="margin:0 0 6px; text-align:left; font-size:14px;">📂 Ushbu sinfga oldin yuklangan vazifalar:</h4>
+                <div id="admin-hw-existing-list" class="existing-uploads-box"></div>
+            </div>
+
+            <h4 style="margin:10px 0 6px; text-align:left; font-size:14px;">⏳ Muddat (Deadline - shu vaqtdan keyin coin berilmaydi):</h4>
             <input type="datetime-local" id="hw-deadline">
             
-            <div id="hw-questions-container">
-                <div class="hw-item">
-                    <input type="text" class="hw-q" placeholder="Savol yoki masala...">
-                    <input type="text" class="hw-a" placeholder="To'g'ri javob...">
-                </div>
-            </div>
+            <div id="hw-questions-container"></div>
             <button class="add-btn" onclick="addHwQuestionField()">➕ Yana savol qo'shish</button>
             <button class="feature-btn" onclick="uploadHomework()">✅ Barchasiga yuklash</button>
             <button class="back-btn" onclick="closeAdminSection()">Ortga</button>
         </div>
 
-        <!-- 3.3 Video yuklash -->
+        <!-- 3.3 Video yuklash (Mavjudlarini ko'rish/o'chirish) -->
         <div id="video-upload" class="panel-section">
             <h3>🎬 Video dars yuklash</h3>
-            <div style="background: #f3e8ff; padding: 15px; border-radius: 16px; margin-bottom: 15px;">
+            <div style="background: var(--bg-subtle); padding: 14px; border-radius: 16px; margin-bottom: 14px; border: 1px solid var(--border-color);">
                 <h4 style="margin:0 0 10px;">Sinf, Oy va Darsni tanlang:</h4>
-                <select id="vid-target-grade">
+                <select id="vid-target-grade" onchange="renderAdminExistingUploads('video')">
                     <option value="">Sinfni tanlang...</option>
+                    <option value="2">2-sinf</option>
                     <option value="3">3-sinf</option>
                     <option value="4">4-sinf</option>
                     <option value="5">5-sinf</option>
@@ -695,7 +627,13 @@
                     <select id="vid-target-lesson"></select>
                 </div>
                 <button class="add-btn" onclick="addVidTarget()">➕ Ro'yxatga qo'shish</button>
-                <div id="vid-targets-display" style="text-align: left; margin-top: 8px;"></div>
+                <div id="vid-targets-display" style="text-align: left; margin-top: 6px;"></div>
+            </div>
+
+            <!-- Oldin yuklangan videolar ro'yxati -->
+            <div id="admin-vid-existing-wrap" style="display:none;">
+                <h4 style="margin:0 0 6px; text-align:left; font-size:14px;">📂 Ushbu sinfga oldin yuklangan videolar:</h4>
+                <div id="admin-vid-existing-list" class="existing-uploads-box"></div>
             </div>
 
             <input type="text" id="vid-link" placeholder="YouTube video havolasi...">
@@ -708,6 +646,7 @@
             <h3>⭐ Coin berish / olish</h3>
             <select id="coin-grade-select" onchange="loadStudentsForCoinAdmin()">
                 <option value="">Sinfni tanlang</option>
+                <option value="2">2-sinf</option>
                 <option value="3">3-sinf</option>
                 <option value="4">4-sinf</option> 
                 <option value="5">5-sinf</option>
@@ -728,6 +667,7 @@
             <h3>📊 Uy vazifasini tekshirish</h3>
             <select id="status-grade-select">
                 <option value="">Sinfni tanlang</option>
+                <option value="2">2-sinf</option>
                 <option value="3">3-sinf</option>
                 <option value="4">4-sinf</option> 
                 <option value="5">5-sinf</option>
@@ -745,7 +685,7 @@
     <!-- 4. ADMIN UMUMIY REYTING -->
     <div class="auth-container" id="admin-leaderboard-panel" style="display:none; max-width: 550px;">
         <h1>🏆 Umumiy Reyting</h1>
-        <p style="font-size:14px; color:#64748b; margin-top:-10px;">O'quvchining coin tarixini ko'rish uchun ustiga bosing</p>
+        <p style="font-size:13px; color:var(--text-muted); margin-top:-10px;">O'quvchining profili va coin tarixini ko'rish uchun ustiga bosing</p>
         <ul id="admin-leaderboard-list"></ul>
         <button class="back-btn" onclick="switchToView('admin-panel')">Ortga</button>
     </div>
@@ -771,7 +711,11 @@
         <div class="app-topbar">
             <div class="topbar-left">
                 <div class="grade-pill">🎓 <span id="top-grade-label">4-sinf</span></div>
-                <div class="pro-badge">PRO</div>
+                <button class="icon-circle-btn" onclick="toggleTheme()" id="theme-toggle-btn" title="Kun/Tun">🌙</button>
+                <button class="icon-circle-btn" onclick="openNotifModal()" title="Xabarlar">
+                    🔔
+                    <span id="notif-badge-count" class="notif-badge">0</span>
+                </button>
             </div>
             <div class="topbar-right">
                 <div class="stat-badge" title="O'yin ballari">🎯 <span id="top-points">0</span></div>
@@ -781,7 +725,12 @@
 
         <!-- TAB 1: ASOSIY (HOME) -->
         <div id="tab-asosiy" class="tab-view active">
-            <h2 id="welcome-msg" style="margin-top: 4px; margin-bottom: 16px;">Salom! 👋</h2>
+            <h2 id="welcome-msg" style="margin-top: 4px; margin-bottom: 14px;">Salom! 👋</h2>
+
+            <!-- Yangi dars/vazifa xabarnoma banneri (agar yangi xabar bo'lsa chiqadi) -->
+            <div id="home-notif-banner" style="display:none; background:linear-gradient(135deg, #0ea5e9, #2563eb); color:#fff; padding:12px 16px; border-radius:16px; margin-bottom:14px; cursor:pointer; font-weight:800; font-size:14px; text-align:left;" onclick="openNotifModal()">
+                🔔 <span id="home-notif-text">Yangi dars yuklandi!</span>
+            </div>
 
             <!-- 2 ta yuqori kartochka -->
             <div class="top-cards-grid">
@@ -805,18 +754,18 @@
                 <div class="trophy-decor">🏆</div>
             </div>
 
-            <!-- Kunlik Bonus Sandig'i Kartochkasi -->
-            <div class="bento-card" style="min-height: auto; margin-bottom: 20px; background: linear-gradient(135deg, #fffbeb, #fef3c7); border: 2px solid #fbbf24;" onclick="claimDailyCoin(true)">
+            <!-- Kunlik Bonus Sandig'i -->
+            <div class="bento-card" style="min-height: auto; margin-bottom: 18px; background: linear-gradient(135deg, #fffbeb, #fef3c7); border: 2px solid #fbbf24;" onclick="claimDailyCoin(true)">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <div>
                         <div style="font-weight:900; font-size:17px; color:#b45309;">🎁 Kunlik Xazina Sandig'i</div>
                         <div id="daily-bonus-status" style="font-size:13px; font-weight:700; color:#92400e; margin-top:4px;">Sandiqni oching va +1 Coin oling!</div>
                     </div>
-                    <div id="daily-chest-emoji" style="font-size:38px; animation: chestBounce 2s infinite;">🎁</div>
+                    <div id="daily-chest-emoji" style="font-size:36px; animation: chestBounce 2s infinite;">🎁</div>
                 </div>
             </div>
 
-            <!-- Qo'shimcha Bo'limlar (3 ustunli) -->
+            <!-- Qo'shimcha Bo'limlar -->
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
                 <h2 style="margin:0; font-size:18px;">Qo'shimcha bo'limlar</h2>
             </div>
@@ -836,58 +785,58 @@
             </div>
         </div>
 
-        <!-- TAB 2: MISSIYA (FAQAT UYGA VAZIFALAR - 10 OY, 120 DARS) -->
+        <!-- TAB 2: MISSIYA (UYGA VAZIFALAR - 10 OY, 120 DARS) -->
         <div id="tab-missiya" class="tab-view">
-            <!-- 10 ta Oy Gridi -->
             <div id="hw-months-box">
                 <h3 style="margin-top:0; color:#d97706;">📝 Uyga vazifa — Oyni tanlang</h3>
-                <p style="font-size:13px; color:#64748b; margin-top:-10px; margin-bottom:14px;">
+                <p style="font-size:13px; color:var(--text-muted); margin-top:-10px; margin-bottom:14px;">
                     ⬜ Kulrang: Tugallangan | 🟩 Yashil: Joriy oy | 🟥 Qizil: Yuklanmagan
                 </p>
                 <div id="hw-months-grid" class="grid-2col"></div>
             </div>
 
-            <!-- Tanlangan oyning 12 ta darsi Gridi -->
             <div id="hw-lessons-box" style="display:none;">
                 <h3 id="hw-lessons-title" style="margin-top:0; color:#d97706;">1-oy vazifalari</h3>
-                <p style="font-size:13px; color:#64748b; margin-top:-10px; margin-bottom:14px;">
+                <p style="font-size:13px; color:var(--text-muted); margin-top:-10px; margin-bottom:14px;">
                     ⬜ O'tilgan | 🟩 Yangi vazifa | 🟥 Yuklanmagan
                 </p>
                 <div id="hw-lessons-grid" class="grid-2col"></div>
                 <button class="back-btn" onclick="showHwMonthsView()">⬅️ Oylar ro'yxatiga qaytish</button>
             </div>
 
-            <!-- Uy vazifa yechish maydoni -->
             <div id="homework-work-box" style="display:none;">
                 <h3 id="hw-current-title" style="color:#d97706;">📝 Uyga vazifa</h3>
                 <div id="homework-questions-area"></div>
+                <!-- O'quvchi uchun rasm biriktirish (ixtiyoriy) -->
+                <div id="student-hw-photo-box" style="display:none; background:var(--bg-card); padding:14px; border-radius:16px; margin-bottom:14px; border:1px dashed #3b82f6; text-align:left;">
+                    <label style="font-weight:800; font-size:14px; display:block; margin-bottom:8px;">📷 Daftaringiz rasmini biriktirish (ixtiyoriy):</label>
+                    <input type="file" id="student-hw-photo-input" accept="image/*" onchange="handleStudentHwPhoto(event)" style="font-size:13px;">
+                    <img id="student-hw-photo-preview" src="" style="display:none; width:100%; border-radius:12px; margin-top:8px;">
+                </div>
                 <button class="feature-btn" id="submit-hw-btn" style="display:none;" onclick="submitHomework()">✅ Javoblarni jo'natish</button>
                 <button class="back-btn" onclick="openHwMonthLessons(selectedHwMonth)">⬅️ Darslarga qaytish</button>
             </div>
         </div>
 
-        <!-- TAB 3: O'RGANISH (FAQAT VIDEO DARSLAR - 10 OY, 120 DARS) -->
+        <!-- TAB 3: O'RGANISH (VIDEO DARSLAR - 10 OY, 120 DARS) -->
         <div id="tab-organish" class="tab-view">
-            <!-- 10 ta Oy Gridi -->
             <div id="vid-months-box">
                 <h3 style="margin-top:0; color:#7c3aed;">🎬 Video darslar — Oyni tanlang</h3>
-                <p style="font-size:13px; color:#64748b; margin-top:-10px; margin-bottom:14px;">
+                <p style="font-size:13px; color:var(--text-muted); margin-top:-10px; margin-bottom:14px;">
                     ⬜ Kulrang: Tugallangan | 🟩 Yashil: Joriy oy | 🟥 Qizil: Yuklanmagan
                 </p>
                 <div id="vid-months-grid" class="grid-2col"></div>
             </div>
 
-            <!-- Tanlangan oyning 12 ta video darsi Gridi -->
             <div id="vid-lessons-box" style="display:none;">
                 <h3 id="vid-lessons-title" style="margin-top:0; color:#7c3aed;">1-oy video darslari</h3>
-                <p style="font-size:13px; color:#64748b; margin-top:-10px; margin-bottom:14px;">
+                <p style="font-size:13px; color:var(--text-muted); margin-top:-10px; margin-bottom:14px;">
                     ⬜ O'tilgan | 🟩 Yangi dars | 🟥 Yuklanmagan
                 </p>
                 <div id="vid-lessons-grid" class="grid-2col"></div>
                 <button class="back-btn" onclick="showVidMonthsView()">⬅️ Oylar ro'yxatiga qaytish</button>
             </div>
 
-            <!-- Video ko'rish maydoni -->
             <div id="video-work-box" style="display:none;">
                 <h3 id="video-current-title" style="color:#7c3aed;">🎬 Video dars</h3>
                 <div id="video-embed-container"></div>
@@ -895,49 +844,59 @@
             </div>
         </div>
 
-        <!-- TAB 4: O'YINLAR (2 TA O'YIN + 100 BALLNI 1 COINGA ALMASHTIRISH) -->
+        <!-- TAB 4: O'YINLAR (3 TA O'YIN + 100 BALL KONVERTOR) -->
         <div id="tab-oyinlar" class="tab-view">
-            
-            <!-- O'yinlar Asosiy Menyusi -->
             <div id="games-hub">
-                <h2 style="margin-top:0;">🎮 Matematik O'yinlar</h2>
+                <h2 style="margin-top:0;">🎮 Qiziqarli O'yinlar</h2>
 
-                <!-- Ballni Coinga almashtirish Konvertori -->
-                <div class="profile-card" style="background: linear-gradient(135deg, #eff6ff, #dbeafe); border: 2px solid #93c5fd; padding: 18px; margin-bottom: 18px;">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                <!-- Konvertor -->
+                <div class="profile-card" style="background: linear-gradient(135deg, #eff6ff, #dbeafe); border: 2px solid #93c5fd; padding: 16px; margin-bottom: 16px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
                         <div style="text-align:left;">
-                            <div style="font-size:13px; font-weight:800; color:#1e40af;">SIZNING O'YIN BALLARINGIZ</div>
-                            <div style="font-size:26px; font-weight:900; color:#1d4ed8;">🎯 <span id="hub-points-display">0</span> ball</div>
+                            <div style="font-size:12px; font-weight:800; color:#1e40af;">SIZNING O'YIN BALLARINGIZ</div>
+                            <div style="font-size:24px; font-weight:900; color:#1d4ed8;">🎯 <span id="hub-points-display">0</span> ball</div>
                         </div>
-                        <div style="background:#ffffff; padding:8px 14px; border-radius:14px; font-weight:900; color:#d97706; font-size:15px; box-shadow:0 2px 6px rgba(0,0,0,0.05);">
+                        <div style="background:#ffffff; padding:8px 12px; border-radius:14px; font-weight:900; color:#d97706; font-size:14px;">
                             100 ball = 1 ⭐
                         </div>
                     </div>
-                    <button class="gift-btn" onclick="exchangePointsToCoins()" style="padding:12px; font-size:16px;">🔄 100 ballni 1 Coinga almashtirish</button>
+                    <button class="gift-btn" onclick="exchangePointsToCoins()" style="padding:12px; font-size:15px;">🔄 100 ballni 1 Coinga almashtirish</button>
                 </div>
 
-                <!-- 1-O'YIN KARTOCHKASI -->
+                <!-- 1-O'YIN -->
                 <div class="profile-card" style="text-align:left; display:flex; flex-direction:column; gap:10px;">
                     <div style="display:flex; align-items:center; gap:12px;">
-                        <div style="font-size:38px; background:#dcfce7; width:60px; height:60px; border-radius:16px; display:flex; align-items:center; justify-content:center;">🧮</div>
+                        <div style="font-size:34px; background:#dcfce7; width:56px; height:56px; border-radius:16px; display:flex; align-items:center; justify-content:center;">🧮</div>
                         <div>
-                            <h3 style="margin:0; color:#1e293b; font-size:18px;">1. Tezkor Hisoblagich</h3>
-                            <div style="font-size:13px; color:#64748b; font-weight:700;">4 ta variantdan to'g'risini toping (15s)</div>
+                            <h3 style="margin:0; color:var(--text-main); font-size:17px;">1. Misol va Masalalar</h3>
+                            <div style="font-size:13px; color:var(--text-muted); font-weight:700;">Osonlashtirilgan misol va sodda masalalar (Maks: 100 ball)</div>
                         </div>
                     </div>
-                    <button class="feature-btn" onclick="checkAndStartGame(1)">▶️ O'ynash (Kuniga 1 marta)</button>
+                    <button class="feature-btn" onclick="checkAndStartGame(1)">▶️ O'ynash (24 soatda 1 marta)</button>
                 </div>
 
-                <!-- 2-O'YIN KARTOCHKASI -->
+                <!-- 2-O'YIN -->
                 <div class="profile-card" style="text-align:left; display:flex; flex-direction:column; gap:10px;">
                     <div style="display:flex; align-items:center; gap:12px;">
-                        <div style="font-size:38px; background:#fef3c7; width:60px; height:60px; border-radius:16px; display:flex; align-items:center; justify-content:center;">⚖️</div>
+                        <div style="font-size:34px; background:#fef3c7; width:56px; height:56px; border-radius:16px; display:flex; align-items:center; justify-content:center;">⚖️</div>
                         <div>
-                            <h3 style="margin:0; color:#1e293b; font-size:18px;">2. Taqqoslash Dueli ( &gt; = &lt; )</h3>
-                            <div style="font-size:13px; color:#64748b; font-weight:700;">Qaysi ifoda kattaligini toping (15s)</div>
+                            <h3 style="margin:0; color:var(--text-main); font-size:17px;">2. Taqqoslash Dueli ( &gt; = &lt; )</h3>
+                            <div style="font-size:13px; color:var(--text-muted); font-weight:700;">Qaysi tomon kattaligini toping (Maks: 100 ball)</div>
                         </div>
                     </div>
-                    <button class="admin-btn" onclick="checkAndStartGame(2)" style="color:#fff; background:linear-gradient(135deg, #f59e0b, #d97706);">▶️ O'ynash (Kuniga 1 marta)</button>
+                    <button class="admin-btn" onclick="checkAndStartGame(2)" style="color:#fff; background:linear-gradient(135deg, #f59e0b, #d97706);">▶️ O'ynash (24 soatda 1 marta)</button>
+                </div>
+
+                <!-- 3-O'YIN (MATEMATIKAGA OID EMAS: DIQQAT O'YINI) -->
+                <div class="profile-card" style="text-align:left; display:flex; flex-direction:column; gap:10px;">
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <div style="font-size:34px; background:#fce7f3; width:56px; height:56px; border-radius:16px; display:flex; align-items:center; justify-content:center;">🔍</div>
+                        <div>
+                            <h3 style="margin:0; color:var(--text-main); font-size:17px;">3. Farqli Emojini Top!</h3>
+                            <div style="font-size:13px; color:var(--text-muted); font-weight:700;">Diqqat va tezlik o'yini! Boshqasidan farqli rasmni bosing</div>
+                        </div>
+                    </div>
+                    <button class="class-btn" onclick="checkAndStartGame(3)">▶️ O'ynash (24 soatda 1 marta)</button>
                 </div>
             </div>
 
@@ -945,21 +904,21 @@
             <div id="math-game-1-play" style="display:none;">
                 <div class="score-board">
                     <span class="warning-text">⚡ Xatosiz rejim!</span>
-                    <span class="point-text">🎯 Ball: <span id="game1-score">0</span></span>
+                    <span class="point-text">🎯 Ball: <span id="game1-score">0</span> / 100</span>
                 </div>
-                <div class="timer">⏳ <span id="game1-timer">15</span> s</div>
+                <div class="timer">⏳ <span id="game1-timer">25</span> s</div>
                 <div class="question" id="game1-question"></div>
                 <div class="options-grid" id="game1-options"></div>
             </div>
 
-            <!-- 2-O'YIN MAYDONI (TAQQOSLASH) -->
+            <!-- 2-O'YIN MAYDONI -->
             <div id="math-game-2-play" style="display:none;">
                 <div class="score-board">
                     <span class="warning-text">⚖️ Taqqoslash!</span>
-                    <span class="point-text">🎯 Ball: <span id="game2-score">0</span></span>
+                    <span class="point-text">🎯 Ball: <span id="game2-score">0</span> / 100</span>
                 </div>
-                <div class="timer">⏳ <span id="game2-timer">15</span> s</div>
-                <p style="font-weight:800; color:#475569; margin-top:0;">O'rtadagi "?" o'rniga mos belgini tanlang:</p>
+                <div class="timer">⏳ <span id="game2-timer">25</span> s</div>
+                <p style="font-weight:800; color:var(--text-muted); margin-top:0;">Mos belgini tanlang:</p>
                 <div class="compare-box">
                     <div id="comp-left" class="compare-side">12 + 5</div>
                     <div class="compare-vs">?</div>
@@ -972,6 +931,16 @@
                 </div>
             </div>
 
+            <!-- 3-O'YIN MAYDONI (EMOJI DIQQAT O'YINI) -->
+            <div id="math-game-3-play" style="display:none;">
+                <div class="score-board">
+                    <span class="warning-text">🔍 Diqqat!</span>
+                    <span class="point-text">🎯 Ball: <span id="game3-score">0</span> / 100</span>
+                </div>
+                <div class="timer">⏳ <span id="game3-timer">15</span> s</div>
+                <p style="font-weight:800; color:var(--text-muted); margin-top:0;">Boshqalardan farq qiladigan 1 ta rasmni topib bosing!</p>
+                <div id="emoji-game-grid" class="emoji-game-grid"></div>
+            </div>
         </div>
 
         <!-- TAB 5: SHAXSIY PROFIL -->
@@ -984,20 +953,64 @@
                     <div class="avatar-edit-badge">📷 Rasm</div>
                 </div>
                 <h2 id="profile-name" style="margin:6px 0 2px;">O'quvchi Ismi</h2>
-                <div id="profile-grade" style="color:#64748b; font-weight:700; font-size:14px; margin-bottom:16px;">4-sinf o'quvchisi</div>
+                <div id="profile-grade" style="color:var(--text-muted); font-weight:700; font-size:14px; margin-bottom:14px;">4-sinf o'quvchisi</div>
 
                 <div class="grid-2col" style="margin-bottom:10px;">
                     <div style="background:#fef3c7; padding:12px; border-radius:16px;">
-                        <div style="font-size:13px; color:#92400e; font-weight:700;">Jami Coinlar</div>
+                        <div style="font-size:12px; color:#92400e; font-weight:800;">Jami Coinlar</div>
                         <div style="font-size:22px; font-weight:900; color:#d97706;">⭐ <span id="profile-coins">0</span></div>
                     </div>
                     <div style="background:#dbeafe; padding:12px; border-radius:16px;">
-                        <div style="font-size:13px; color:#1e40af; font-weight:700;">O'yin Ballari</div>
+                        <div style="font-size:12px; color:#1e40af; font-weight:800;">O'yin Ballari</div>
                         <div style="font-size:22px; font-weight:900; color:#2563eb;">🎯 <span id="profile-points">0</span></div>
                     </div>
                 </div>
 
-                <button class="refresh-btn" onclick="manualRefreshData()" style="width:100%; margin-top:6px;">🔄 Ma'lumotlarni yangilash</button>
+                <button class="refresh-btn" onclick="manualRefreshData()" style="width:100%; margin-top:4px;">🔄 Ma'lumotlarni yangilash</button>
+            </div>
+
+            <!-- TUG'ILGAN KUN BO'LIMI -->
+            <div class="bday-box">
+                <div style="font-size:18px; font-weight:900; margin-bottom:6px;">🎂 Tug'ilgan kunim</div>
+                <div id="bday-current-text" style="font-size:15px; font-weight:800; margin-bottom:4px;">Sana: 01.01.2011</div>
+                <div id="bday-countdown-text" style="font-size:14px; font-weight:700; margin-bottom:8px;">⏳ Qolgan kunlar: ...</div>
+                <div style="font-size:13px; font-weight:800; background:rgba(255,255,255,0.45); color:#831843; padding:8px 10px; border-radius:10px; margin-bottom:10px;">
+                    🎁 Tug'ilgan kuningizda ustoz tomonidan avtomatik <strong>30 $ (30 Coin)</strong> sovg'a beriladi!
+                </div>
+                <div id="bday-edit-area">
+                    <input type="date" id="student-bday-input" style="margin-bottom:8px;">
+                    <button class="class-btn" onclick="requestBirthdayConfirm()" style="padding:10px; font-size:14px;">📩 Ustoz tasdiqlashiga yuborish</button>
+                </div>
+                <div id="bday-status-note" style="font-size:13px; font-weight:800; margin-top:6px;"></div>
+            </div>
+
+            <!-- SHAXSIY MA'LUMOTLAR -->
+            <div class="profile-card" style="text-align:left;">
+                <h3 style="margin-top:0;">📋 Shaxsiy ma'lumotlarim</h3>
+                <input type="text" id="prof-region" placeholder="Viloyat (masalan: Toshkent sh.)">
+                <input type="text" id="prof-district" placeholder="Tuman (masalan: Uchtepa tumani)">
+                <input type="text" id="prof-school" placeholder="Maktab (masalan: 283-maktab)">
+                <input type="text" id="prof-class-letter" placeholder="Sinf (masalan: 3-A, 4-B...)">
+                <input type="text" id="prof-father" placeholder="Otasining ismi">
+                <input type="text" id="prof-mother" placeholder="Onasining ismi">
+                <button class="feature-btn" onclick="saveStudentProfileInfo()" style="padding:12px;">💾 Ma'lumotlarni saqlash</button>
+            </div>
+
+            <!-- OBUNA BO'LISH VA ALOQA TUGMALARI -->
+            <div class="profile-card" style="text-align:left;">
+                <h3 style="margin-top:0;">📢 Obuna bo'ling va Bog'laning</h3>
+                <a href="https://t.me/Matemdarsi" target="_blank" class="social-link-btn" style="background:linear-gradient(135deg, #229ED9, #0088cc);">
+                    <span>✈️ Telegram kanal (@Matemdarsi)</span><span>❯</span>
+                </a>
+                <a href="https://t.me/Maktabdarsibot" target="_blank" class="social-link-btn" style="background:linear-gradient(135deg, #38bdf8, #0284c7);">
+                    <span>🤖 Telegram bot (@Maktabdarsibot)</span><span>❯</span>
+                </a>
+                <a href="https://youtube.com/@Matematikadarslar_i" target="_blank" class="social-link-btn" style="background:linear-gradient(135deg, #ef4444, #dc2626);">
+                    <span>▶️ YouTube (@Matematikadarslar_i)</span><span>❯</span>
+                </a>
+                <a href="tel:+998994620140" class="social-link-btn" style="background:linear-gradient(135deg, #10b981, #059669); margin-bottom:0;">
+                    <span>📞 Ustoz raqami: +998 99 462 01 40</span><span>❯</span>
+                </a>
             </div>
 
             <h3>📜 Coinlar olganlik tarixi</h3>
@@ -1006,7 +1019,7 @@
             <button class="back-btn" onclick="logoutStudent()" style="margin-top:20px; background:#fee2e2; color:#b91c1c; box-shadow:none;">🚪 Profildan chiqish</button>
         </div>
 
-        <!-- PASTKI NAVIGATSIYA PANELI (ASOSIY | MISSIYA | O'RGANISH | O'YINLAR | PROFIL) -->
+        <!-- PASTKI NAVIGATSIYA: ASOSIY | MISSIYA | O'RGANISH | O'YINLAR | PROFIL -->
         <div class="bottom-navbar">
             <button class="nav-tab active" data-tab="asosiy" onclick="switchBottomTab('asosiy')">
                 <svg viewBox="0 0 24 24"><path d="M12 3L4 9v12h5v-7h6v7h5V9z"/></svg>
@@ -1033,7 +1046,7 @@
     </div>
 
     <script>
-        // --- 1. FIREBASE ULASH ---
+        // --- 1. FIREBASE ULASH (BAZA O'ZGARMASDAN SAQLANGAN) ---
         const firebaseConfig = {
             apiKey: "AIzaSyAkEt0HxuL62v832nMpH8D36bR28FU7dhk",
             authDomain: "maktab-darslari.firebaseapp.com",
@@ -1047,6 +1060,23 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
+        const ALL_GRADES = ["2", "3", "4", "5"];
+
+        // --- KUN VA TUN REJIMI ---
+        function applySavedTheme() {
+            const mode = localStorage.getItem('themeMode') || 'light';
+            document.body.classList.toggle('dark-mode', mode === 'dark');
+            document.querySelectorAll('.icon-circle-btn[title="Kun/Tun rejimi"], #theme-toggle-btn').forEach(b => {
+                b.innerText = mode === 'dark' ? '☀️' : '🌙';
+            });
+        }
+        function toggleTheme() {
+            const isDark = document.body.classList.toggle('dark-mode');
+            localStorage.setItem('themeMode', isDark ? 'dark' : 'light');
+            applySavedTheme();
+        }
+        applySavedTheme();
+
         // --- OVOZ VA ANIMATSIYA EFFEKTLARI ---
         function playPopSound(freq = 600) {
             try {
@@ -1058,7 +1088,7 @@
                 osc.type = 'sine'; 
                 osc.frequency.setValueAtTime(freq, audioCtx.currentTime); 
                 osc.frequency.exponentialRampToValueAtTime(220, audioCtx.currentTime + 0.1);
-                gainNode.gain.setValueAtTime(0.18, audioCtx.currentTime); 
+                gainNode.gain.setValueAtTime(0.16, audioCtx.currentTime); 
                 gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
                 osc.connect(gainNode); gainNode.connect(audioCtx.destination); 
                 osc.start(); osc.stop(audioCtx.currentTime + 0.1);
@@ -1078,8 +1108,7 @@
                     osc.frequency.setValueAtTime(freq, ctx.currentTime + idx * 0.09);
                     gain.gain.setValueAtTime(0.22, ctx.currentTime + idx * 0.09);
                     gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + idx * 0.09 + 0.35);
-                    osc.connect(gain);
-                    gain.connect(ctx.destination);
+                    osc.connect(gain); gain.connect(ctx.destination);
                     osc.start(ctx.currentTime + idx * 0.09);
                     osc.stop(ctx.currentTime + idx * 0.09 + 0.35);
                 });
@@ -1092,7 +1121,6 @@
             }
         });
 
-        // Tanga yomg'iri va 3D Sovg'a Oynasi
         function triggerCoinShower() {
             const emojis = ['🪙', '⭐', '✨', '🎉', '💰'];
             for (let i = 0; i < 24; i++) {
@@ -1113,23 +1141,17 @@
             document.getElementById('reward-badge').innerText = badgeText;
             document.getElementById('reward-desc').innerText = descText;
             document.getElementById('reward-modal').style.display = 'flex';
-            if (withShower) {
-                playRewardFanfare();
-                triggerCoinShower();
-            } else {
-                playPopSound(450);
-            }
+            if (withShower) { playRewardFanfare(); triggerCoinShower(); }
+            else { playPopSound(450); }
         }
+        function closeRewardModal() { document.getElementById('reward-modal').style.display = 'none'; }
 
-        function closeRewardModal() {
-            document.getElementById('reward-modal').style.display = 'none';
-        }
-
-        // --- 10 OY VA 120 TA DARS TIZIMI ---
+        // --- MA'LUMOTLAR STRUKTURASI ---
         let platformData = { 
-            students: { "3": [], "4": [], "5": [] }, 
+            students: { "2": [], "3": [], "4": [], "5": [] }, 
             homeworks: {}, 
-            videos: {} 
+            videos: {},
+            notifications: []
         };
         let docRef = db.collection("platformData").doc("mainDocument");
 
@@ -1138,6 +1160,7 @@
         let selectedHwMonth = 1;
         let selectedVidMonth = 1;
         let activeLessonIndex = null;
+        let pendingStudentHwPhoto = "";
 
         let uploadHwTargets = [];
         let uploadVidTargets = [];
@@ -1145,9 +1168,7 @@
         function initAdminMonthSelects() {
             document.querySelectorAll('.dynamic-month-select').forEach(sel => {
                 sel.innerHTML = '<option value="">Oyni tanlang...</option>';
-                for(let m = 1; m <= 10; m++) {
-                    sel.innerHTML += `<option value="${m}">${m}-oy</option>`;
-                }
+                for(let m = 1; m <= 10; m++) sel.innerHTML += `<option value="${m}">${m}-oy</option>`;
             });
         }
         initAdminMonthSelects();
@@ -1169,16 +1190,54 @@
             return `${m}-oy, ${d}-dars`;
         }
 
-        // --- BAZADAN MA'LUMOT YUKLASH ---
+        function formatDateUZ(isoStr) {
+            if (!isoStr || isoStr.indexOf('-') === -1) return "01.01.2011";
+            const p = isoStr.split('-');
+            return `${p[2]}.${p[1]}.${p[0]}`;
+        }
+
+        function getDaysUntilBirthday(isoStr) {
+            if (!isoStr || isoStr.indexOf('-') === -1) isoStr = "2011-01-01";
+            const p = isoStr.split('-');
+            const month = parseInt(p[1], 10) - 1;
+            const day = parseInt(p[2], 10);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            let nextB = new Date(today.getFullYear(), month, day);
+            if (nextB < today) nextB = new Date(today.getFullYear() + 1, month, day);
+            return Math.round((nextB.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+        }
+
+        // --- RASMNI SIQISH YORDAMCHISI ---
+        function compressImageFile(file, maxSize, quality, callback) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    let w = img.width, h = img.height;
+                    if (w > h) { if (w > maxSize) { h *= maxSize / w; w = maxSize; } }
+                    else { if (h > maxSize) { w *= maxSize / h; h = maxSize; } }
+                    canvas.width = w; canvas.height = h;
+                    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                    callback(canvas.toDataURL('image/jpeg', quality));
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // --- BAZADAN YUKLASH VA XAVFSIZ SAQLASH ---
         async function loadInitialData(isManual = false) {
             try {
                 const doc = await docRef.get();
                 if (doc.exists) {
                     platformData = doc.data();
-                    if(!platformData.students) platformData.students = { "3": [], "4": [], "5": [] };
-                    ["3", "4", "5"].forEach(g => { if(!platformData.students[g]) platformData.students[g] = []; });
+                    if(!platformData.students) platformData.students = {};
+                    ALL_GRADES.forEach(g => { if(!platformData.students[g]) platformData.students[g] = []; });
                     if(!platformData.homeworks) platformData.homeworks = {};
                     if(!platformData.videos) platformData.videos = {};
+                    if(!platformData.notifications) platformData.notifications = [];
                     localStorage.setItem('cachedPlatformData', JSON.stringify(platformData));
                 }
                 if (isManual) showRewardCelebration("Yangilandi!", "✅ Tayyor", "Barcha ma'lumotlar muvaffaqiyatli yangilandi.", "🔄", false);
@@ -1189,6 +1248,7 @@
             }
 
             document.getElementById('loading-screen').style.display = 'none';
+            updateAdminBdayBadge();
 
             if (currentGrade && currentStudent) {
                 const updatedStudent = platformData.students[currentGrade]?.find(s => s.id === currentStudent.id);
@@ -1202,10 +1262,14 @@
             }
 
             if (document.getElementById('students-management').style.display === 'block') renderAdminStudentsList();
+            if (document.getElementById('bday-requests-panel').style.display === 'block') renderBdayRequests();
         }
 
         function manualRefreshData() { loadInitialData(true); }
-        window.onload = () => loadInitialData(false);
+        window.onload = () => {
+            resetHwQuestionContainer();
+            loadInitialData(false);
+        };
 
         async function safeUpdateDB(updateCallback) {
             try {
@@ -1213,23 +1277,31 @@
                 let serverData = doc.exists ? doc.data() : platformData;
                 
                 if(!serverData.students) serverData.students = {};
-                ["3", "4", "5"].forEach(g => { if(!serverData.students[g]) serverData.students[g] = []; });
+                ALL_GRADES.forEach(g => { if(!serverData.students[g]) serverData.students[g] = []; });
                 if(!serverData.homeworks) serverData.homeworks = {};
                 if(!serverData.videos) serverData.videos = {};
+                if(!serverData.notifications) serverData.notifications = [];
 
                 updateCallback(serverData);
                 
+                // Oxirgi 25 ta xabarnomani saqlab qolamiz (baza kichik turishi uchun)
+                if (serverData.notifications.length > 25) {
+                    serverData.notifications = serverData.notifications.slice(-25);
+                }
+
                 const cleanData = JSON.parse(JSON.stringify(serverData));
                 await docRef.set(cleanData);
                 
                 platformData = cleanData;
                 localStorage.setItem('cachedPlatformData', JSON.stringify(cleanData));
+                updateAdminBdayBadge();
                 
                 if (currentGrade && currentStudent) {
                     currentStudent = platformData.students[currentGrade].find(s => s.id === currentStudent.id) || currentStudent;
                     updateStudentUI();
                 }
                 if (document.getElementById('students-management').style.display === 'block') renderAdminStudentsList();
+                if (document.getElementById('bday-requests-panel').style.display === 'block') renderBdayRequests();
             } catch (e) { 
                 console.error("Xatolik:", e); 
                 alert("Saqlashda xatolik: internet yoki Firebase limitini tekshiring.");
@@ -1239,25 +1311,17 @@
 
         // --- NAVIGATSIYA ---
         function switchToView(showId) {
-            const allMainContainers = [
-                'class-selection', 'admin-login', 'admin-panel', 
-                'admin-leaderboard-panel', 'student-selection', 'student-login', 
-                'student-panel'
-            ];
-            allMainContainers.forEach(id => { 
-                const el = document.getElementById(id); 
-                if (el) el.style.display = 'none'; 
-            });
+            const allMain = ['class-selection', 'admin-login', 'admin-panel', 'admin-leaderboard-panel', 'student-selection', 'student-login', 'student-panel'];
+            allMain.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
             document.getElementById(showId).style.display = 'block';
         }
-
         function goBack(sectionId) { switchToView(sectionId); }
 
         function checkAutoLogin() {
             const savedSession = localStorage.getItem('loggedInStudent');
             if(savedSession) {
                 const sessionData = JSON.parse(savedSession);
-                if (!["3", "4", "5"].includes(String(sessionData.grade))) {
+                if (!ALL_GRADES.includes(String(sessionData.grade))) {
                     localStorage.removeItem('loggedInStudent');
                     switchToView('class-selection');
                     return;
@@ -1273,10 +1337,10 @@
 
         // --- ADMIN PANEL FUNKSIYALARI ---
         function openAdminLogin() { switchToView('admin-login'); }
-        
         function verifyAdminPassword() {
             if (document.getElementById('admin-password').value === "admin0912") {
                 closeAdminSection(); switchToView('admin-panel'); document.getElementById('admin-password').value = "";
+                updateAdminBdayBadge();
             } else { alert("Parol noto'g'ri!"); }
         }
 
@@ -1285,13 +1349,67 @@
             document.querySelectorAll('#admin-panel .panel-section').forEach(sec => sec.style.display = 'none');
             document.getElementById(sectionId).style.display = 'block';
             if (sectionId === 'students-management') renderAdminStudentsList();
+            if (sectionId === 'bday-requests-panel') renderBdayRequests();
+            if (sectionId === 'homework-upload') renderAdminExistingUploads('homework');
+            if (sectionId === 'video-upload') renderAdminExistingUploads('video');
         }
-
         function closeAdminSection() {
             document.querySelectorAll('#admin-panel .panel-section').forEach(sec => sec.style.display = 'none');
             document.getElementById('admin-menu').style.display = 'grid'; 
         }
 
+        // Tug'ilgan kun so'rovlarini sanash va tasdiqlash
+        function updateAdminBdayBadge() {
+            let count = 0;
+            ALL_GRADES.forEach(g => {
+                (platformData.students[g] || []).forEach(s => { if (s.pendingBirthday) count++; });
+            });
+            const btn = document.getElementById('admin-bday-req-btn');
+            if (btn) btn.innerText = `🎂 Tug'ilgan kun so'rovlari (${count})`;
+        }
+
+        function renderBdayRequests() {
+            const list = document.getElementById('bday-requests-list');
+            list.innerHTML = '';
+            let found = false;
+            ALL_GRADES.forEach(g => {
+                (platformData.students[g] || []).forEach(s => {
+                    if (s.pendingBirthday) {
+                        found = true;
+                        list.innerHTML += `
+                            <li>
+                                <div class="li-header">
+                                    <strong>${s.name} (${g}-sinf)</strong>
+                                    <span style="color:#db2777; font-weight:900;">🎂 ${formatDateUZ(s.pendingBirthday)}</span>
+                                </div>
+                                <div class="li-actions">
+                                    <button class="feature-btn" style="width:auto; padding:7px 14px; font-size:13px;" onclick="approveBirthday('${g}', ${s.id}, true)">✅ Tasdiqlash</button>
+                                    <button class="danger-btn" onclick="approveBirthday('${g}', ${s.id}, false)">❌ Rad etish</button>
+                                </div>
+                            </li>`;
+                    }
+                });
+            });
+            if (!found) list.innerHTML = '<li>Hozircha tasdiqlanishi kerak bo\'lgan so\'rovlar yo\'q.</li>';
+        }
+
+        function approveBirthday(grade, studentId, isApprove) {
+            safeUpdateDB((data) => {
+                const s = data.students[grade].find(x => x.id === studentId);
+                if (!s) return;
+                if (isApprove) {
+                    s.birthday = s.pendingBirthday;
+                    s.birthdayConfirmed = true;
+                    s.pendingBirthday = "";
+                } else {
+                    s.pendingBirthday = "";
+                }
+            }).then(() => {
+                alert(isApprove ? "Tug'ilgan kun tasdiqlandi! ✅" : "So'rov rad etildi.");
+            }).catch(() => {});
+        }
+
+        // O'quvchi qo'shish/o'chirish
         function addNewStudent() {
             const name = document.getElementById('new-std-name').value.trim();
             const grade = document.getElementById('new-std-grade').value;
@@ -1303,8 +1421,11 @@
                 data.students[grade].push({ 
                     id: new Date().getTime(), name: name, password: pass, 
                     coins: 0, points: 0, isBlocked: false, 
-                    history: [], homeworkResults: {}, lastGamePlayed: 0, lastGame2Played: 0,
-                    avatar: "", lastDailyClaim: ""
+                    history: [], homeworkResults: {}, 
+                    lastGamePlayed: 0, lastGame2Played: 0, lastGame3Played: 0,
+                    avatar: "", lastDailyClaim: "",
+                    birthday: "2011-01-01", birthdayConfirmed: false, pendingBirthday: "", lastBirthdayBonusYear: 0,
+                    profileInfo: {}
                 });
             }).then(() => {
                 document.getElementById('new-std-name').value = ""; 
@@ -1315,48 +1436,128 @@
 
         function deleteStudent(grade, studentId) {
             if(confirm("Bu o'quvchini o'chirmoqchimisiz?")) {
-                safeUpdateDB((data) => { 
-                    data.students[grade] = data.students[grade].filter(s => s.id !== studentId); 
-                }).catch(()=>{});
+                safeUpdateDB((data) => { data.students[grade] = data.students[grade].filter(s => s.id !== studentId); }).catch(()=>{});
             }
         }
 
         function renderAdminStudentsList() {
             const list = document.getElementById('admin-students-list'); list.innerHTML = '';
-            ["3", "4", "5"].forEach(grade => {
-                if (platformData.students[grade]) {
-                    platformData.students[grade].forEach(student => {
-                        const stat = student.isBlocked ? "Bloklangan" : "Faol";
-                        const cls = student.isBlocked ? "status-blocked" : "status-active";
-                        list.innerHTML += `
-                            <li>
-                                <div class="li-header">
-                                    <strong>${student.name} (${grade}-sinf)</strong>
-                                    <span class="student-status ${cls}" onclick="toggleStudentStatus('${grade}', ${student.id})">${stat}</span>
-                                </div>
-                                <div class="li-actions">
-                                    <span style="font-size:14px; color:#64748b;">Parol: ${student.password} | ⭐ ${student.coins}</span>
-                                    <button class="danger-btn" onclick="deleteStudent('${grade}', ${student.id})">O'chirish</button>
-                                </div>
-                            </li>`;
-                    });
-                }
+            ALL_GRADES.forEach(grade => {
+                (platformData.students[grade] || []).forEach(student => {
+                    const stat = student.isBlocked ? "Bloklangan" : "Faol";
+                    const cls = student.isBlocked ? "status-blocked" : "status-active";
+                    list.innerHTML += `
+                        <li>
+                            <div class="li-header">
+                                <strong>${student.name} (${grade}-sinf)</strong>
+                                <span class="student-status ${cls}" onclick="toggleStudentStatus('${grade}', ${student.id})">${stat}</span>
+                            </div>
+                            <div class="li-actions">
+                                <span style="font-size:13px; color:var(--text-muted);">Parol: ${student.password} | ⭐ ${student.coins || 0}</span>
+                                <button class="danger-btn" onclick="deleteStudent('${grade}', ${student.id})">O'chirish</button>
+                            </div>
+                        </li>`;
+                });
             });
         }
 
         function toggleStudentStatus(grade, studentId) {
-            safeUpdateDB((data) => { 
-                const s = data.students[grade].find(s => s.id === studentId); 
-                if(s) s.isBlocked = !s.isBlocked; 
-            }).catch(()=>{});
+            safeUpdateDB((data) => { const s = data.students[grade].find(s => s.id === studentId); if(s) s.isBlocked = !s.isBlocked; }).catch(()=>{});
         }
 
-        // Uy vazifa va Video multi-upload
+        // --- ADMIN: OLDIN YUKLANGAN UY VAZIFA VA VIDEOLARNI KO'RISH VA O'CHIRISH ---
+        function renderAdminExistingUploads(type) {
+            const isHw = type === 'homework';
+            const grade = document.getElementById(isHw ? 'hw-target-grade' : 'vid-target-grade').value;
+            const wrap = document.getElementById(isHw ? 'admin-hw-existing-wrap' : 'admin-vid-existing-wrap');
+            const box = document.getElementById(isHw ? 'admin-hw-existing-list' : 'admin-vid-existing-list');
+
+            if (!grade) { wrap.style.display = 'none'; return; }
+            wrap.style.display = 'block';
+
+            const dict = isHw ? (platformData.homeworks[grade] || {}) : (platformData.videos[grade] || {});
+            const keys = Object.keys(dict).map(Number).sort((a, b) => a - b);
+
+            if (keys.length === 0) {
+                box.innerHTML = `<div style="font-size:13px; color:var(--text-muted);">Hozircha ${grade}-sinfga hech narsa yuklanmagan. (Keyingisi: 1-oy, 1-dars)</div>`;
+                return;
+            }
+
+            const lastIdx = keys[keys.length - 1];
+            const nextLabel = lastIdx < 119 ? formatLessonLabel(lastIdx + 1) : "Barcha 120 dars yuklangan!";
+            let html = `<div style="font-size:13px; font-weight:800; color:#10b981; margin-bottom:8px;">👉 Keyingi navbatdagi dars: ${nextLabel}</div>`;
+
+            keys.forEach(idx => {
+                const detail = isHw ? `(${dict[idx].questions ? dict[idx].questions.length : 0} savol)` : `(YouTube)`;
+                html += `
+                    <div style="display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid var(--border-color); font-size:14px;">
+                        <span>✅ <strong>${formatLessonLabel(idx)}</strong> <small style="color:var(--text-muted);">${detail}</small></span>
+                        <button class="danger-btn" style="padding:4px 8px; font-size:12px;" onclick="deleteUploadedItem('${type}', '${grade}', ${idx})">🗑️ O'chirish</button>
+                    </div>`;
+            });
+            box.innerHTML = html;
+        }
+
+        function deleteUploadedItem(type, grade, lessonIdx) {
+            if (!confirm(`${grade}-sinf ${formatLessonLabel(lessonIdx)} ni o'chirmoqchimisiz?`)) return;
+            safeUpdateDB((data) => {
+                if (type === 'homework' && data.homeworks[grade]) delete data.homeworks[grade][lessonIdx];
+                if (type === 'video' && data.videos[grade]) delete data.videos[grade][lessonIdx];
+            }).then(() => {
+                renderAdminExistingUploads(type);
+                alert("Muvaffaqiyatli o'chirildi! 🗑️");
+            }).catch(() => {});
+        }
+
+        // --- UY VAZIFA SAVOL QO'SHISH (TEST VARIANTLARI + RASM BILAN) ---
+        function createHwQuestionBlockHTML() {
+            return `
+                <div class="hw-item">
+                    <input type="text" class="hw-q" placeholder="Savol yoki masala matni...">
+                    <div style="margin-bottom:8px;">
+                        <label style="font-size:12px; font-weight:800; color:var(--text-muted); display:block; margin-bottom:4px;">🖼️ Savolga rasm qo'shish (ixtiyoriy):</label>
+                        <input type="file" accept="image/*" onchange="handleAdminHwImg(this)" style="font-size:12px; padding:6px; margin-bottom:4px;">
+                        <input type="hidden" class="hw-img-data" value="">
+                        <img class="hw-img-preview" src="" style="display:none; width:100%; max-height:180px; object-fit:contain; border-radius:10px; margin-top:4px;">
+                    </div>
+                    <div style="font-size:12px; font-weight:800; color:#8b5cf6; margin-bottom:6px;">📋 Test variantlari (ixtiyoriy — bo'sh qoldirilsa oddiy javob yozish bo'ladi):</div>
+                    <div class="grid-2col" style="gap:6px; margin-bottom:6px;">
+                        <input type="text" class="hw-opt-a" placeholder="A varianti..." style="margin-bottom:0; font-size:13px; padding:8px;">
+                        <input type="text" class="hw-opt-b" placeholder="B varianti..." style="margin-bottom:0; font-size:13px; padding:8px;">
+                        <input type="text" class="hw-opt-c" placeholder="C varianti..." style="margin-bottom:0; font-size:13px; padding:8px;">
+                        <input type="text" class="hw-opt-d" placeholder="D varianti..." style="margin-bottom:0; font-size:13px; padding:8px;">
+                    </div>
+                    <input type="text" class="hw-a" placeholder="To'g'ri javob (yoki A, B, C, D)..." style="margin-bottom:0; border-color:#10b981;">
+                </div>`;
+        }
+
+        function resetHwQuestionContainer() {
+            const c = document.getElementById('hw-questions-container');
+            if (c) c.innerHTML = createHwQuestionBlockHTML();
+        }
+
+        function addHwQuestionField() {
+            const c = document.getElementById('hw-questions-container');
+            const wrapper = document.createElement('div');
+            wrapper.innerHTML = createHwQuestionBlockHTML();
+            c.appendChild(wrapper.firstElementChild);
+        }
+
+        function handleAdminHwImg(inputEl) {
+            const file = inputEl.files[0];
+            if (!file) return;
+            const parent = inputEl.closest('.hw-item');
+            compressImageFile(file, 480, 0.7, (dataUrl) => {
+                parent.querySelector('.hw-img-data').value = dataUrl;
+                const img = parent.querySelector('.hw-img-preview');
+                img.src = dataUrl;
+                img.style.display = 'block';
+            });
+        }
+
         function renderHwTargets() {
             const div = document.getElementById('hw-targets-display'); div.innerHTML = '';
-            uploadHwTargets.forEach((t, i) => { 
-                div.innerHTML += `<div class="target-tag">${t.grade}-sinf: ${formatLessonLabel(t.lesson)} <span onclick="removeHwTarget(${i})">✕</span></div>`; 
-            });
+            uploadHwTargets.forEach((t, i) => { div.innerHTML += `<div class="target-tag">${t.grade}-sinf: ${formatLessonLabel(t.lesson)} <span onclick="removeHwTarget(${i})">✕</span></div>`; });
         }
         function addHwTarget() {
             const g = document.getElementById('hw-target-grade').value; 
@@ -1368,12 +1569,6 @@
         }
         function removeHwTarget(i) { uploadHwTargets.splice(i, 1); renderHwTargets(); }
 
-        function addHwQuestionField() {
-            const div = document.createElement('div'); div.className = 'hw-item';
-            div.innerHTML = `<input type="text" class="hw-q" placeholder="Savol..."><input type="text" class="hw-a" placeholder="To'g'ri javob...">`;
-            document.getElementById('hw-questions-container').appendChild(div);
-        }
-
         function uploadHomework() {
             if(uploadHwTargets.length === 0) return alert("Avval 'Ro'yxatga qo'shish' tugmasini bosing!");
             const deadlineVal = document.getElementById('hw-deadline').value;
@@ -1382,29 +1577,47 @@
 
             let qArr = [];
             document.querySelectorAll('#hw-questions-container .hw-item').forEach(item => {
-                const q = item.querySelector('.hw-q').value; 
-                const a = item.querySelector('.hw-a').value;
-                if(q.trim() && a.trim()) qArr.push({ question: q.trim(), answer: a.trim() });
+                const q = item.querySelector('.hw-q').value.trim(); 
+                const a = item.querySelector('.hw-a').value.trim();
+                const img = item.querySelector('.hw-img-data').value;
+                const optA = item.querySelector('.hw-opt-a').value.trim();
+                const optB = item.querySelector('.hw-opt-b').value.trim();
+                const optC = item.querySelector('.hw-opt-c').value.trim();
+                const optD = item.querySelector('.hw-opt-d').value.trim();
+                const opts = [optA, optB, optC, optD].filter(x => x !== "");
+
+                if((q || img) && a) {
+                    const obj = { question: q || "Rasmdagi topshiriqni bajaring:", answer: a };
+                    if (img) obj.image = img;
+                    if (opts.length >= 2) obj.options = [optA, optB, optC, optD];
+                    qArr.push(obj);
+                }
             });
-            if(qArr.length === 0) return alert("Kamida 1 ta savol va javob kiriting!");
+            if(qArr.length === 0) return alert("Kamida 1 ta savol (yoki rasm) va to'g'ri javob kiriting!");
 
             safeUpdateDB((data) => {
                 uploadHwTargets.forEach(t => {
                     if(!data.homeworks[t.grade]) data.homeworks[t.grade] = {};
                     data.homeworks[t.grade][t.lesson] = { questions: qArr, deadline: safeDeadline };
+                    data.notifications.push({
+                        id: Date.now() + Math.floor(Math.random() * 1000),
+                        grade: t.grade,
+                        type: 'homework',
+                        text: `Yangi uy vazifa yuklandi: ${formatLessonLabel(t.lesson)}!`,
+                        date: new Date().toLocaleDateString()
+                    });
                 });
             }).then(() => {
-                alert("Uyga vazifa muvaffaqiyatli yuklandi! ✅");
+                alert("Uyga vazifa yuklandi va o'quvchilarga xabar yuborildi! ✅");
                 uploadHwTargets = []; renderHwTargets();
-                document.getElementById('hw-questions-container').innerHTML = `<div class="hw-item"><input type="text" class="hw-q" placeholder="Savol..."><input type="text" class="hw-a" placeholder="To'g'ri javob..."></div>`;
+                resetHwQuestionContainer();
+                renderAdminExistingUploads('homework');
             }).catch(() => {});
         }
 
         function renderVidTargets() {
             const div = document.getElementById('vid-targets-display'); div.innerHTML = '';
-            uploadVidTargets.forEach((t, i) => { 
-                div.innerHTML += `<div class="target-tag">${t.grade}-sinf: ${formatLessonLabel(t.lesson)} <span onclick="removeVidTarget(${i})">✕</span></div>`; 
-            });
+            uploadVidTargets.forEach((t, i) => { div.innerHTML += `<div class="target-tag">${t.grade}-sinf: ${formatLessonLabel(t.lesson)} <span onclick="removeVidTarget(${i})">✕</span></div>`; });
         }
         function addVidTarget() {
             const g = document.getElementById('vid-target-grade').value; 
@@ -1426,11 +1639,19 @@
                 uploadVidTargets.forEach(t => {
                     if(!data.videos[t.grade]) data.videos[t.grade] = {};
                     data.videos[t.grade][t.lesson] = vidId;
+                    data.notifications.push({
+                        id: Date.now() + Math.floor(Math.random() * 1000),
+                        grade: t.grade,
+                        type: 'video',
+                        text: `Yangi video dars yuklandi: ${formatLessonLabel(t.lesson)}!`,
+                        date: new Date().toLocaleDateString()
+                    });
                 });
             }).then(() => {
-                alert("Video dars yuklandi! ✅"); 
+                alert("Video yuklandi va o'quvchilarga xabar yuborildi! ✅"); 
                 uploadVidTargets = []; renderVidTargets(); 
                 document.getElementById('vid-link').value = "";
+                renderAdminExistingUploads('video');
             }).catch(()=>{});
         }
 
@@ -1438,9 +1659,7 @@
             const g = document.getElementById('coin-grade-select').value; 
             const sel = document.getElementById('coin-student-select');
             sel.innerHTML = "<option value=''>O'quvchini tanlang...</option>";
-            if(g && platformData.students[g]) {
-                platformData.students[g].forEach(s => { sel.innerHTML += `<option value="${s.id}">${s.name}</option>`; });
-            }
+            if(g && platformData.students[g]) platformData.students[g].forEach(s => sel.innerHTML += `<option value="${s.id}">${s.name}</option>`);
         }
 
         function manageCoins() {
@@ -1456,10 +1675,7 @@
                 if(s) {
                     s.coins = (s.coins || 0) + (act === 'give' ? amt : -amt);
                     if(!s.history) s.history = [];
-                    s.history.push({ 
-                        type: act === 'give' ? 'Admin berdi' : 'Admin oldi', 
-                        amount: amt, reason: rsn, date: new Date().toLocaleDateString() 
-                    });
+                    s.history.push({ type: act === 'give' ? 'Admin berdi' : 'Admin oldi', amount: amt, reason: rsn, date: new Date().toLocaleDateString() });
                 }
             }).then(() => { 
                 alert("Coinlar yangilandi! ✅"); 
@@ -1476,21 +1692,37 @@
             if(!platformData.students[g]) return;
             
             platformData.students[g].forEach(s => {
-                const hasSub = s.homeworkResults && s.homeworkResults[l];
-                const text = hasSub 
-                    ? `<span style="color:#16a34a; font-weight:800;">✅ Topshirgan (+${s.homeworkResults[l].earnedCoin} coin)</span>` 
+                const res = s.homeworkResults && s.homeworkResults[l];
+                const text = res 
+                    ? `<span style="color:#16a34a; font-weight:800;">✅ Topshirgan (+${res.earnedCoin} coin)</span>` 
                     : `<span style="color:#dc2626; font-weight:800;">❌ Topshirmagan</span>`;
-                list.innerHTML += `<li><div class="li-header"><span>${s.name}</span> ${text}</div></li>`;
+                const photoBtn = (res && res.studentPhoto) 
+                    ? `<button class="gift-btn" style="width:auto; padding:5px 10px; font-size:12px;" onclick="viewSubmittedPhoto('${g}', ${s.id}, ${l})">🖼️ Rasm</button>` 
+                    : '';
+                list.innerHTML += `<li><div class="li-header"><span>${s.name}</span> <div style="display:flex; align-items:center; gap:6px;">${photoBtn} ${text}</div></div></li>`;
             });
+        }
+
+        function viewSubmittedPhoto(grade, studentId, lessonIdx) {
+            const s = platformData.students[grade]?.find(x => x.id === studentId);
+            const photo = s?.homeworkResults?.[lessonIdx]?.studentPhoto;
+            if (photo) {
+                document.getElementById('photo-modal-img').src = photo;
+                document.getElementById('photo-modal').style.display = 'flex';
+            }
+        }
+
+        function renderAvatarHTML(avatarUrl) {
+            return avatarUrl 
+                ? `<div class="lb-avatar"><img src="${avatarUrl}" alt="Foto"></div>` 
+                : `<div class="lb-avatar">👦</div>`;
         }
 
         function openAdminLeaderboard() {
             const list = document.getElementById('admin-leaderboard-list'); list.innerHTML = '';
             let all = []; 
-            ["3", "4", "5"].forEach(g => {
-                if (platformData.students[g]) {
-                    platformData.students[g].forEach(s => { all.push({ id: s.id, name: s.name, coins: s.coins || 0, grade: g }); });
-                }
+            ALL_GRADES.forEach(g => {
+                (platformData.students[g] || []).forEach(s => all.push({ id: s.id, name: s.name, coins: s.coins || 0, grade: g, avatar: s.avatar || "" }));
             });
             all.sort((a,b) => b.coins - a.coins);
             all.forEach((s,i) => {
@@ -1500,7 +1732,11 @@
                 li.onclick = () => showStudentHistoryModal(s.grade, s.id);
                 li.innerHTML = `
                     <div class="li-header">
-                        <span><strong>${medal} ${s.name}</strong> (${s.grade}-sinf)</span> 
+                        <div class="lb-user">
+                            <span style="min-width:24px; font-weight:900;">${medal}</span>
+                            ${renderAvatarHTML(s.avatar)}
+                            <span><strong>${s.name}</strong> <small style="color:var(--text-muted);">(${s.grade}-sinf)</small></span>
+                        </div>
                         <span class="coin-text">${s.coins} ⭐ ❯</span>
                     </div>`;
                 list.appendChild(li);
@@ -1511,43 +1747,37 @@
         function showStudentHistoryModal(grade, studentId) {
             const s = platformData.students[grade]?.find(x => x.id === studentId);
             if (!s) return;
-            document.getElementById('modal-student-name').innerText = `👦 ${s.name} (${grade}-sinf) | ⭐ ${s.coins} Coin`;
+            document.getElementById('modal-student-name').innerText = `👦 ${s.name} (${grade}-sinf) | ⭐ ${s.coins || 0}`;
+            const p = s.profileInfo || {};
+            document.getElementById('modal-student-info').innerHTML = `
+                🎂 Tug'ilgan kun: <strong>${formatDateUZ(s.birthday)}</strong> ${s.birthdayConfirmed ? '✅' : '(tasdiqlanmagan)'}<br>
+                📍 ${p.region || '-'}, ${p.district || '-'}, ${p.school || '-'} (${p.classLetter || '-'})<br>
+                👨‍👩‍👦 Ota: ${p.fatherName || '-'} | Ona: ${p.motherName || '-'}
+            `;
             const list = document.getElementById('modal-history-list');
             list.innerHTML = '';
             if (!s.history || s.history.length === 0) {
                 list.innerHTML = '<li>Hozircha coin tarixi mavjud emas.</li>';
             } else {
                 s.history.slice().reverse().forEach(h => {
-                    list.innerHTML += `
-                        <li>
-                            <div class="li-header">
-                                <strong>${h.type}</strong>
-                                <span class="coin-text">${h.amount} Coin</span>
-                            </div>
-                            <div style="font-size:14px; color:#475569;">💡 Sabab: ${h.reason} (${h.date})</div>
-                        </li>`;
+                    list.innerHTML += `<li><div class="li-header"><strong>${h.type}</strong><span class="coin-text">${h.amount} Coin</span></div><div style="font-size:13px; color:var(--text-muted);">💡 ${h.reason} (${h.date})</div></li>`;
                 });
             }
             document.getElementById('history-modal').style.display = 'flex';
         }
-
-        function closeHistoryModal() {
-            document.getElementById('history-modal').style.display = 'none';
-        }
+        function closeHistoryModal() { document.getElementById('history-modal').style.display = 'none'; }
 
         // --- O'QUVCHI KIRISH VA PROFIL ---
         function openStudentLogin(grade) {
             currentGrade = String(grade); 
             const list = document.getElementById('students-list'); list.innerHTML = '';
-            if(platformData.students[grade]) {
-                platformData.students[grade].forEach(s => {
-                    const li = document.createElement('li'); 
-                    li.innerHTML = `<div class="li-header"><span>👦 ${s.name}</span> <span>❯</span></div>`;
-                    li.style.cursor = 'pointer';
-                    li.onclick = () => { currentStudent = s; switchToView('student-login'); }; 
-                    list.appendChild(li);
-                });
-            }
+            (platformData.students[grade] || []).forEach(s => {
+                const li = document.createElement('li'); 
+                li.innerHTML = `<div class="li-header"><div class="lb-user">${renderAvatarHTML(s.avatar)}<span><strong>${s.name}</strong></span></div><span>❯</span></div>`;
+                li.style.cursor = 'pointer';
+                li.onclick = () => { currentStudent = s; switchToView('student-login'); }; 
+                list.appendChild(li);
+            });
             switchToView('student-selection');
         }
 
@@ -1564,8 +1794,49 @@
             updateStudentUI();
             switchToView('student-panel');
             switchBottomTab('asosiy');
-            setTimeout(() => claimDailyCoin(false), 600);
+            setTimeout(() => {
+                checkBirthdayAutoReward();
+                claimDailyCoin(false);
+            }, 600);
         }
+
+        // Xabarnomalarni tekshirish
+        function updateNotificationsUI() {
+            if (!currentStudent) return;
+            const myNotifs = (platformData.notifications || []).filter(n => String(n.grade) === String(currentGrade));
+            const lastSeenId = parseInt(localStorage.getItem('lastSeenNotif_' + currentStudent.id) || '0');
+            const unread = myNotifs.filter(n => n.id > lastSeenId);
+
+            const badge = document.getElementById('notif-badge-count');
+            const homeBanner = document.getElementById('home-notif-banner');
+            if (unread.length > 0) {
+                badge.innerText = unread.length;
+                badge.style.display = 'flex';
+                homeBanner.style.display = 'block';
+                document.getElementById('home-notif-text').innerText = unread[unread.length - 1].text;
+            } else {
+                badge.style.display = 'none';
+                homeBanner.style.display = 'none';
+            }
+        }
+
+        function openNotifModal() {
+            const myNotifs = (platformData.notifications || []).filter(n => String(n.grade) === String(currentGrade)).slice().reverse();
+            const list = document.getElementById('notif-list');
+            list.innerHTML = '';
+            if (myNotifs.length === 0) {
+                list.innerHTML = '<li>Hozircha yangi xabarlar yo\'q.</li>';
+            } else {
+                myNotifs.forEach(n => {
+                    const icon = n.type === 'homework' ? '📝' : '🎬';
+                    list.innerHTML += `<li><div class="li-header"><span>${icon} <strong>${n.text}</strong></span></div><small style="color:var(--text-muted);">${n.date}</small></li>`;
+                });
+                localStorage.setItem('lastSeenNotif_' + currentStudent.id, myNotifs[0].id.toString());
+            }
+            updateNotificationsUI();
+            document.getElementById('notif-modal').style.display = 'flex';
+        }
+        function closeNotifModal() { document.getElementById('notif-modal').style.display = 'none'; }
 
         function updateStudentUI() {
             if (!currentStudent) return;
@@ -1589,6 +1860,7 @@
                 document.getElementById('profile-avatar-placeholder').style.display = 'block';
             }
 
+            // Kunlik bonus
             const todayStr = new Date().toISOString().split('T')[0];
             const bonusEl = document.getElementById('daily-bonus-status');
             const chestEl = document.getElementById('daily-chest-emoji');
@@ -1600,10 +1872,103 @@
                 chestEl.innerText = "🎁";
             }
 
+            // Tug'ilgan kun qismi
+            const bday = currentStudent.birthday || "2011-01-01";
+            const daysLeft = getDaysUntilBirthday(bday);
+            document.getElementById('bday-current-text').innerText = `📅 Tug'ilgan sana: ${formatDateUZ(bday)}`;
+            document.getElementById('bday-countdown-text').innerText = daysLeft === 0 
+                ? "🎉 Bugun sizning tug'ilgan kuningiz! Tabriklaymiz!" 
+                : `⏳ Tug'ilgan kuningizgacha ${daysLeft} kun qoldi!`;
+
+            const editArea = document.getElementById('bday-edit-area');
+            const statusNote = document.getElementById('bday-status-note');
+            if (currentStudent.birthdayConfirmed) {
+                editArea.style.display = 'none';
+                statusNote.innerText = "✅ Ustoz tomonidan tasdiqlangan (o'zgartirib bo'lmaydi).";
+            } else if (currentStudent.pendingBirthday) {
+                editArea.style.display = 'none';
+                statusNote.innerText = `⏳ Tasdiqlash kutilmoqda: ${formatDateUZ(currentStudent.pendingBirthday)} (Ustoz ko'rib chiqmoqda)`;
+            } else {
+                editArea.style.display = 'block';
+                document.getElementById('student-bday-input').value = bday;
+                statusNote.innerText = "ℹ️ O'z tug'ilgan kuningizni kiriting, ustoz tasdiqlagach saqlanadi.";
+            }
+
+            // Shaxsiy ma'lumotlar
+            const p = currentStudent.profileInfo || {};
+            document.getElementById('prof-region').value = p.region || "";
+            document.getElementById('prof-district').value = p.district || "";
+            document.getElementById('prof-school').value = p.school || "";
+            document.getElementById('prof-class-letter').value = p.classLetter || "";
+            document.getElementById('prof-father').value = p.fatherName || "";
+            document.getElementById('prof-mother').value = p.motherName || "";
+
+            updateNotificationsUI();
             renderStudentHistory();
         }
 
-        // Kunlik +1 Coin berish (3D Xazina Sandig'i Animatsiyasi bilan!)
+        function requestBirthdayConfirm() {
+            const val = document.getElementById('student-bday-input').value;
+            if (!val) return alert("Iltimos, tug'ilgan kuningizni tanlang!");
+            safeUpdateDB((data) => {
+                const s = data.students[currentGrade].find(x => x.id === currentStudent.id);
+                if (s && !s.birthdayConfirmed) s.pendingBirthday = val;
+            }).then(() => {
+                showRewardCelebration("So'rov yuborildi! 📩", formatDateUZ(val), "Tug'ilgan kuningiz ustozga yuborildi. Ustoz tasdiqlagach profilga qo'yiladi!", "🎂", false);
+            }).catch(() => {});
+        }
+
+        // Tug'ilgan kunida avtomatik 30 $ (30 Coin) sovg'a berish
+        function checkBirthdayAutoReward() {
+            if (!currentStudent || !currentStudent.birthdayConfirmed) return;
+            const bday = currentStudent.birthday;
+            if (!bday) return;
+            const today = new Date();
+            const curYear = today.getFullYear();
+            const daysLeft = getDaysUntilBirthday(bday);
+
+            if (daysLeft === 0 && currentStudent.lastBirthdayBonusYear !== curYear) {
+                showRewardCelebration(
+                    "🎂 Tug'ilgan Kuningiz Bilan!",
+                    "+30 $ (30 ⭐ Coin)",
+                    "Ustozingiz sizni tug'ilgan kuningiz bilan tabriklaydi! Hisobingizga avtomatik 30 $ (30 Coin) sovg'a qo'shildi!",
+                    "🎉",
+                    true
+                );
+                safeUpdateDB((data) => {
+                    const s = data.students[currentGrade].find(x => x.id === currentStudent.id);
+                    if (s && s.lastBirthdayBonusYear !== curYear) {
+                        s.coins = (s.coins || 0) + 30;
+                        s.lastBirthdayBonusYear = curYear;
+                        if (!s.history) s.history = [];
+                        s.history.push({
+                            type: "🎂 Tug'ilgan kun",
+                            amount: 30,
+                            reason: "Ustozdan 30 $ (30 Coin) tug'ilgan kun sovg'asi",
+                            date: new Date().toLocaleDateString()
+                        });
+                    }
+                }).catch(() => {});
+            }
+        }
+
+        function saveStudentProfileInfo() {
+            const info = {
+                region: document.getElementById('prof-region').value.trim(),
+                district: document.getElementById('prof-district').value.trim(),
+                school: document.getElementById('prof-school').value.trim(),
+                classLetter: document.getElementById('prof-class-letter').value.trim(),
+                fatherName: document.getElementById('prof-father').value.trim(),
+                motherName: document.getElementById('prof-mother').value.trim()
+            };
+            safeUpdateDB((data) => {
+                const s = data.students[currentGrade].find(x => x.id === currentStudent.id);
+                if (s) s.profileInfo = info;
+            }).then(() => {
+                showRewardCelebration("Saqlandi! ✅", "📋 Profil", "Shaxsiy ma'lumotlaringiz muvaffaqiyatli saqlandi!", "👦", false);
+            }).catch(() => {});
+        }
+
         function claimDailyCoin(showModalIfTaken = false) {
             if (!currentStudent) return;
             const todayStr = new Date().toISOString().split('T')[0];
@@ -1611,25 +1976,13 @@
 
             if (currentStudent.lastDailyClaim === todayStr || localStorage.getItem(localKey)) {
                 if (showModalIfTaken) {
-                    showRewardCelebration(
-                        "Sandiq ochilgan! ✨",
-                        "✅ +1 Coin olingan",
-                        "Siz bugungi kunlik bonusni olgansiz. Ertaga kirib yana yangi sandiqni oching!",
-                        "⏳",
-                        false
-                    );
+                    showRewardCelebration("Sandiq ochilgan! ✨", "✅ +1 Coin olingan", "Siz bugungi kunlik bonusni olgansiz. Ertaga kirib yana yangi sandiqni oching!", "⏳", false);
                 }
                 return;
             }
 
             localStorage.setItem(localKey, "1");
-            showRewardCelebration(
-                "Kunlik Xazina Ochildi!",
-                "+1 ⭐ Coin",
-                "Har kuni platformaga kirganingiz uchun maxsus mukofot!",
-                "🎁",
-                true
-            );
+            showRewardCelebration("Kunlik Xazina Ochildi!", "+1 ⭐ Coin", "Har kuni platformaga kirganingiz uchun maxsus mukofot!", "🎁", true);
 
             safeUpdateDB((data) => {
                 const s = data.students[currentGrade].find(x => x.id === currentStudent.id);
@@ -1637,12 +1990,7 @@
                     s.coins = (s.coins || 0) + 1;
                     s.lastDailyClaim = todayStr;
                     if (!s.history) s.history = [];
-                    s.history.push({
-                        type: "Kunlik bonus",
-                        amount: 1,
-                        reason: "Har kuni saytga kirgani uchun",
-                        date: new Date().toLocaleDateString()
-                    });
+                    s.history.push({ type: "Kunlik bonus", amount: 1, reason: "Har kuni saytga kirgani uchun", date: new Date().toLocaleDateString() });
                 }
             }).catch(() => {});
         }
@@ -1650,35 +1998,14 @@
         function handleAvatarUpload(event) {
             const file = event.target.files[0];
             if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const img = new Image();
-                img.onload = function() {
-                    const canvas = document.createElement('canvas');
-                    const MAX_SIZE = 160;
-                    let w = img.width;
-                    let h = img.height;
-                    if (w > h) {
-                        if (w > MAX_SIZE) { h *= MAX_SIZE / w; w = MAX_SIZE; }
-                    } else {
-                        if (h > MAX_SIZE) { w *= MAX_SIZE / h; h = MAX_SIZE; }
-                    }
-                    canvas.width = w;
-                    canvas.height = h;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, w, h);
-                    const dataUrl = canvas.toDataURL('image/jpeg', 0.75);
-
-                    safeUpdateDB((data) => {
-                        const s = data.students[currentGrade].find(x => x.id === currentStudent.id);
-                        if (s) s.avatar = dataUrl;
-                    }).then(() => {
-                        showRewardCelebration("Rasm saqlandi!", "📸 Tayyor", "Profilingiz rasmi muvaffaqiyatli yangilandi!", "👦", false);
-                    }).catch(() => {});
-                };
-                img.src = e.target.result;
-            };
-            reader.readAsDataURL(file);
+            compressImageFile(file, 160, 0.75, (dataUrl) => {
+                safeUpdateDB((data) => {
+                    const s = data.students[currentGrade].find(x => x.id === currentStudent.id);
+                    if (s) s.avatar = dataUrl;
+                }).then(() => {
+                    showRewardCelebration("Rasm saqlandi!", "📸 Tayyor", "Profilingiz rasmi muvaffaqiyatli yangilandi!", "👦", false);
+                }).catch(() => {});
+            });
         }
 
         function renderStudentHistory() {
@@ -1689,27 +2016,19 @@
                 list.innerHTML = "<li>Hozircha coinlar tarixi bo'sh.</li>";
             } else {
                 currentStudent.history.slice().reverse().forEach(h => {
-                    list.innerHTML += `
-                        <li>
-                            <div class="li-header">
-                                <strong>📅 ${h.date} — ${h.type}</strong>
-                                <span class="coin-text">${h.amount} Coin</span>
-                            </div>
-                            <div style="font-size:14px; color:#475569;">💡 Sabab: ${h.reason}</div>
-                        </li>`;
+                    list.innerHTML += `<li><div class="li-header"><strong>📅 ${h.date} — ${h.type}</strong><span class="coin-text">${h.amount} Coin</span></div><div style="font-size:13px; color:var(--text-muted);">💡 Sabab: ${h.reason}</div></li>`;
                 });
             }
         }
 
         function logoutStudent() { 
-            clearInterval(gameInterval);
+            isGameActive = false; clearInterval(gameInterval);
             localStorage.removeItem('loggedInStudent'); 
             currentGrade = null; currentStudent = null; 
             switchToView('class-selection'); 
         }
 
-        // --- PASTKI MENYU TABLARINI ALMASHTIRISH ---
-        // Ketma-ketlik: Asosiy | Missiya (Uy vazifa) | O'rganish (Video) | O'yinlar | Profil
+        // --- PASTKI MENYU ---
         function switchBottomTab(tabName) {
             isGameActive = false;
             clearInterval(gameInterval);
@@ -1717,50 +2036,43 @@
 
             document.querySelectorAll('.tab-view').forEach(v => v.classList.remove('active'));
             document.getElementById('tab-' + tabName).classList.add('active');
+            document.querySelectorAll('.nav-tab').forEach(btn => btn.classList.toggle('active', btn.getAttribute('data-tab') === tabName));
 
-            document.querySelectorAll('.nav-tab').forEach(btn => {
-                btn.classList.toggle('active', btn.getAttribute('data-tab') === tabName);
-            });
-
-            if (tabName === 'missiya') {
-                showHwMonthsView();
-            } else if (tabName === 'organish') {
-                showVidMonthsView();
-            } else if (tabName === 'oyinlar') {
-                showGamesHub();
-            } else if (tabName === 'profil') {
-                updateStudentUI();
-            }
+            if (tabName === 'missiya') showHwMonthsView();
+            else if (tabName === 'organish') showVidMonthsView();
+            else if (tabName === 'oyinlar') showGamesHub();
+            else if (tabName === 'profil') updateStudentUI();
         }
 
-        // --- REYTING MODALI (O'QUVCHILAR UCHUN) ---
         function openStudentLeaderboardModal() {
             const list = document.getElementById('leaderboard-list'); list.innerHTML = '';
             let all = []; 
-            ["3", "4", "5"].forEach(g => {
-                if (platformData.students[g]) {
-                    platformData.students[g].forEach(s => all.push({name: s.name, coins: s.coins || 0, grade: g}));
-                }
+            ALL_GRADES.forEach(g => {
+                (platformData.students[g] || []).forEach(s => all.push({name: s.name, coins: s.coins || 0, grade: g, avatar: s.avatar || ""}));
             });
             all.sort((a,b) => b.coins - a.coins);
-            
             all.forEach((s,i) => { 
                 let m = i === 0 ? "🥇" : (i === 1 ? "🥈" : (i === 2 ? "🥉" : `${i+1}.`)); 
-                list.innerHTML += `<li><div class="li-header"><span><strong>${m} ${s.name}</strong> (${s.grade}-sinf)</span> <span class="coin-text">${s.coins} ⭐</span></div></li>`; 
+                list.innerHTML += `
+                    <li>
+                        <div class="li-header">
+                            <div class="lb-user">
+                                <span style="min-width:24px; font-weight:900;">${m}</span>
+                                ${renderAvatarHTML(s.avatar)}
+                                <span><strong>${s.name}</strong> <small style="color:var(--text-muted);">(${s.grade}-sinf)</small></span>
+                            </div>
+                            <span class="coin-text">${s.coins} ⭐</span>
+                        </div>
+                    </li>`; 
             });
             document.getElementById('student-leaderboard-modal').style.display = 'flex';
         }
+        function closeStudentLeaderboardModal() { document.getElementById('student-leaderboard-modal').style.display = 'none'; }
 
-        function closeStudentLeaderboardModal() {
-            document.getElementById('student-leaderboard-modal').style.display = 'none';
-        }
-
-        // --- MISSIYA BO'LIMI: UYGA VAZIFALAR (10 OY, 120 DARS) ---
+        // --- MISSIYA: UYGA VAZIFALAR ---
         function getHighestUploadedIndex(gradeDict) {
             let maxIdx = -1;
-            for (let i = 0; i < 120; i++) {
-                if (gradeDict && gradeDict[i]) maxIdx = i;
-            }
+            for (let i = 0; i < 120; i++) { if (gradeDict && gradeDict[i]) maxIdx = i; }
             return maxIdx;
         }
 
@@ -1773,31 +2085,17 @@
             const maxIdx = getHighestUploadedIndex(gradeDict);
             const activeMonth = maxIdx >= 0 ? Math.floor(maxIdx / 12) + 1 : 1;
 
-            const grid = document.getElementById('hw-months-grid');
-            grid.innerHTML = '';
-
+            const grid = document.getElementById('hw-months-grid'); grid.innerHTML = '';
             for (let m = 1; m <= 10; m++) {
                 const startIdx = (m - 1) * 12;
                 let uploadedCount = 0;
-                for (let i = startIdx; i < startIdx + 12; i++) {
-                    if (gradeDict[i]) uploadedCount++;
-                }
+                for (let i = startIdx; i < startIdx + 12; i++) if (gradeDict[i]) uploadedCount++;
 
-                let stateClass = 'state-red';
-                let statusSub = `${uploadedCount}/12 dars`;
-
-                if (uploadedCount === 12 && m < activeMonth) {
-                    stateClass = 'state-gray';
-                    statusSub = "Tugallangan (12/12)";
-                } else if (m === activeMonth && uploadedCount > 0) {
-                    stateClass = 'state-green';
-                    statusSub = `Joriy oy (${uploadedCount}/12)`;
-                } else if (uploadedCount === 12) {
-                    stateClass = 'state-gray';
-                    statusSub = "To'liq (12/12)";
-                } else if (uploadedCount > 0) {
-                    stateClass = 'state-green';
-                }
+                let stateClass = 'state-red', statusSub = `${uploadedCount}/12 dars`;
+                if (uploadedCount === 12 && m < activeMonth) { stateClass = 'state-gray'; statusSub = "Tugallangan (12/12)"; }
+                else if (m === activeMonth && uploadedCount > 0) { stateClass = 'state-green'; statusSub = `Joriy oy (${uploadedCount}/12)`; }
+                else if (uploadedCount === 12) { stateClass = 'state-gray'; statusSub = "To'liq (12/12)"; }
+                else if (uploadedCount > 0) { stateClass = 'state-green'; }
 
                 const btn = document.createElement('button');
                 btn.className = `lesson-card-btn ${stateClass}`;
@@ -1813,78 +2111,104 @@
             document.getElementById('homework-work-box').style.display = 'none';
             document.getElementById('hw-lessons-box').style.display = 'block';
 
-            document.getElementById('hw-lessons-title').innerText = `📝 ${monthNum}-oy vazifalari (12 ta dars)`;
+            document.getElementById('hw-lessons-title').innerText = `📝 ${monthNum}-oy vazifalari`;
             const gradeDict = (platformData.homeworks && platformData.homeworks[currentGrade]) ? platformData.homeworks[currentGrade] : {};
             const maxIdx = getHighestUploadedIndex(gradeDict);
 
-            const grid = document.getElementById('hw-lessons-grid');
-            grid.innerHTML = '';
-
+            const grid = document.getElementById('hw-lessons-grid'); grid.innerHTML = '';
             const startIdx = (monthNum - 1) * 12;
             for (let d = 1; d <= 12; d++) {
                 const globalIdx = startIdx + (d - 1);
                 const isUploaded = Boolean(gradeDict[globalIdx]);
 
-                let stateClass = 'state-red';
-                let subLabel = "Yuklanmagan";
-
+                let stateClass = 'state-red', subLabel = "Yuklanmagan";
                 if (isUploaded) {
-                    if (globalIdx === maxIdx) {
-                        stateClass = 'state-green';
-                        subLabel = "Yangi vazifa!";
-                    } else {
-                        stateClass = 'state-gray';
-                        subLabel = "Yuklangan";
-                    }
+                    if (globalIdx === maxIdx) { stateClass = 'state-green'; subLabel = "Yangi vazifa!"; }
+                    else { stateClass = 'state-gray'; subLabel = "Yuklangan"; }
                 }
-
-                if (currentStudent.homeworkResults && currentStudent.homeworkResults[globalIdx]) {
-                    subLabel = "✅ Topshirilgan";
-                }
+                if (currentStudent.homeworkResults && currentStudent.homeworkResults[globalIdx]) subLabel = "✅ Topshirilgan";
 
                 const btn = document.createElement('button');
                 btn.className = `lesson-card-btn ${stateClass}`;
                 btn.innerHTML = `<span>${d}-dars</span><small>${subLabel}</small>`;
                 btn.onclick = () => {
-                    if (!isUploaded) {
-                        showRewardCelebration("Yuklanmagan ⏳", `${d}-dars`, "Ustoz hali bu darsga uy vazifa yuklamagan.", "📝", false);
-                        return;
-                    }
+                    if (!isUploaded) { showRewardCelebration("Yuklanmagan ⏳", `${d}-dars`, "Ustoz hali bu darsga uy vazifa yuklamagan.", "📝", false); return; }
                     loadHomeworkArea(globalIdx, d);
                 };
                 grid.appendChild(btn);
             }
         }
 
+        function handleStudentHwPhoto(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            compressImageFile(file, 400, 0.65, (dataUrl) => {
+                pendingStudentHwPhoto = dataUrl;
+                const img = document.getElementById('student-hw-photo-preview');
+                img.src = dataUrl;
+                img.style.display = 'block';
+            });
+        }
+
+        function selectTestOption(qIdx, letter, optText, btnEl) {
+            const group = btnEl.closest('.student-hw-item');
+            group.querySelectorAll('.test-opt-btn').forEach(b => b.classList.remove('selected'));
+            btnEl.classList.add('selected');
+            group.querySelector('.student-answer-input').value = optText;
+            group.querySelector('.student-answer-input').setAttribute('data-letter', letter);
+        }
+
         function loadHomeworkArea(globalIdx, lessonNumInMonth) {
             activeLessonIndex = globalIdx;
+            pendingStudentHwPhoto = "";
+            document.getElementById('student-hw-photo-input').value = "";
+            document.getElementById('student-hw-photo-preview').style.display = 'none';
+
             document.getElementById('hw-lessons-box').style.display = 'none';
             document.getElementById('homework-work-box').style.display = 'block';
             document.getElementById('hw-current-title').innerText = `📝 ${selectedHwMonth}-oy, ${lessonNumInMonth}-dars vazifasi`;
             
             const area = document.getElementById('homework-questions-area'); area.innerHTML = '';
             const btn = document.getElementById('submit-hw-btn');
+            const photoBox = document.getElementById('student-hw-photo-box');
 
             if (currentStudent.homeworkResults && currentStudent.homeworkResults[globalIdx]) {
                 area.innerHTML = currentStudent.homeworkResults[globalIdx].html;
-                btn.style.display = 'none'; 
+                btn.style.display = 'none';
+                photoBox.style.display = 'none';
                 return;
             }
 
             const hwData = platformData.homeworks[currentGrade][globalIdx];
             const isLate = hwData.deadline && new Date().getTime() > hwData.deadline;
-
             if (isLate) {
                 area.innerHTML += `<div class="deadline-warning">⏳ Vazifa muddati tugagan! Javoblarni tekshirishingiz mumkin, ammo coin berilmaydi.</div>`;
             }
 
+            const letters = ['A', 'B', 'C', 'D'];
             hwData.questions.forEach((hw, i) => {
+                const imgHtml = hw.image ? `<img src="${hw.image}" style="width:100%; border-radius:12px; margin-bottom:10px;">` : '';
+                let inputHtml = `<input type="text" class="student-answer-input" data-index="${i}" placeholder="Javobingizni yozing..." style="margin-bottom:0;">`;
+
+                if (hw.options && hw.options.filter(x => x && x.trim()).length >= 2) {
+                    let optsHtml = `<input type="hidden" class="student-answer-input" data-index="${i}" value="">`;
+                    hw.options.forEach((optText, oIdx) => {
+                        if (optText && optText.trim()) {
+                            const safeVal = optText.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                            optsHtml += `<button type="button" class="test-opt-btn" onclick="selectTestOption(${i}, '${letters[oIdx]}', '${safeVal}', this)"><strong>${letters[oIdx]})</strong> ${optText}</button>`;
+                        }
+                    });
+                    inputHtml = optsHtml;
+                }
+
                 area.innerHTML += `
                     <div class="student-hw-item">
                         <p style="margin:0 0 8px;"><strong>${i+1}-savol:</strong> ${hw.question}</p>
-                        <input type="text" class="student-answer-input" data-index="${i}" placeholder="Javobingizni yozing..." style="margin-bottom:0;">
+                        ${imgHtml}
+                        ${inputHtml}
                     </div>`;
             });
+            photoBox.style.display = 'block';
             btn.style.display = 'block';
         }
 
@@ -1893,40 +2217,34 @@
             const inputs = document.querySelectorAll('.student-answer-input');
             const isLate = hwData.deadline && new Date().getTime() > hwData.deadline;
             
-            let corr = 0; 
-            let tot = hwData.questions.length; 
+            let corr = 0, tot = hwData.questions.length;
             let resHtml = "<h4>Natijalaringiz:</h4>";
 
             inputs.forEach(input => {
                 const i = input.getAttribute('data-index'); 
                 const sAns = input.value.trim().toLowerCase();
+                const sLetter = (input.getAttribute('data-letter') || "").toLowerCase();
                 const cAns = hwData.questions[i].answer.trim().toLowerCase(); 
                 const qTxt = hwData.questions[i].question;
                 
-                if(sAns === cAns) { 
+                const isRight = (sAns === cAns) || (sLetter && sLetter === cAns);
+                if(isRight) { 
                     corr++; 
-                    resHtml += `<div class="hw-result-item hw-correct">✅ <strong>${i*1+1}-savol:</strong> ${qTxt}<br>Javobingiz: ${sAns}</div>`; 
+                    resHtml += `<div class="hw-result-item hw-correct">✅ <strong>${i*1+1}-savol:</strong> ${qTxt}<br>Javobingiz: ${input.value || sLetter.toUpperCase()}</div>`; 
                 } else { 
-                    resHtml += `<div class="hw-result-item hw-incorrect">❌ <strong>${i*1+1}-savol:</strong> ${qTxt}<br>Javobingiz: ${sAns||"Bo'sh"}<br><i>To'g'ri javob: ${cAns}</i></div>`; 
+                    resHtml += `<div class="hw-result-item hw-incorrect">❌ <strong>${i*1+1}-savol:</strong> ${qTxt}<br>Javobingiz: ${input.value || "Bo'sh"}<br><i>To'g'ri javob: ${hwData.questions[i].answer}</i></div>`; 
                 }
             });
 
             const pct = (corr / tot) * 100; 
-            let coin = 0;
-
-            if (!isLate) {
-                coin = pct === 100 ? 2 : (pct >= 30 ? 1 : 0);
-            }
+            let coin = isLate ? 0 : (pct === 100 ? 2 : (pct >= 30 ? 1 : 0));
 
             let statusBanner = "";
-            if (isLate) {
-                statusBanner = `<div class="deadline-warning">⏳ Muddatdan kechikib topshirilgani uchun 0 Coin berildi.</div>`;
-            } else if (coin > 0) {
+            if (isLate) statusBanner = `<div class="deadline-warning">⏳ Muddatdan kechikib topshirilgani uchun 0 Coin berildi.</div>`;
+            else if (coin > 0) {
                 statusBanner = `<h3 style="color:#16a34a;">🎉 Barakalla! +${coin} Coin oldingiz!</h3>`;
                 showRewardCelebration("Vazifa bajarildi!", `+${coin} ⭐ Coin`, `${tot} tadan ${corr} ta savolga to'g'ri javob berdingiz!`, "🏆", true);
-            } else {
-                statusBanner = `<h3>💪 Yana harakat qiling!</h3>`;
-            }
+            } else statusBanner = `<h3>💪 Yana harakat qiling!</h3>`;
 
             resHtml = `<h3>${tot} tadan ${corr} ta to'g'ri!</h3>` + statusBanner + resHtml;
 
@@ -1934,25 +2252,24 @@
                 const s = data.students[currentGrade].find(x => x.id === currentStudent.id);
                 if(s) {
                     if(!s.homeworkResults) s.homeworkResults = {};
-                    s.homeworkResults[activeLessonIndex] = { html: resHtml, earnedCoin: coin };
+                    const resultObj = { html: resHtml, earnedCoin: coin };
+                    if (pendingStudentHwPhoto) resultObj.studentPhoto = pendingStudentHwPhoto;
+                    s.homeworkResults[activeLessonIndex] = resultObj;
                     if(coin > 0) { 
                         s.coins = (s.coins || 0) + coin; 
                         if(!s.history) s.history = [];
-                        s.history.push({ 
-                            type: 'Uyga vazifa', 
-                            amount: coin, 
-                            reason: formatLessonLabel(activeLessonIndex), 
-                            date: new Date().toLocaleDateString() 
-                        }); 
+                        s.history.push({ type: 'Uyga vazifa', amount: coin, reason: formatLessonLabel(activeLessonIndex), date: new Date().toLocaleDateString() }); 
                     }
                 }
             }).then(() => {
                 document.getElementById('homework-questions-area').innerHTML = resHtml;
                 document.getElementById('submit-hw-btn').style.display = 'none';
+                document.getElementById('student-hw-photo-box').style.display = 'none';
+                pendingStudentHwPhoto = "";
             }).catch(()=>{});
         }
 
-        // --- O'RGANISH BO'LIMI: VIDEO DARSLAR (10 OY, 120 DARS) ---
+        // --- O'RGANISH: VIDEO DARSLAR ---
         function showVidMonthsView() {
             document.getElementById('video-embed-container').innerHTML = '';
             document.getElementById('vid-lessons-box').style.display = 'none';
@@ -1963,31 +2280,17 @@
             const maxIdx = getHighestUploadedIndex(gradeDict);
             const activeMonth = maxIdx >= 0 ? Math.floor(maxIdx / 12) + 1 : 1;
 
-            const grid = document.getElementById('vid-months-grid');
-            grid.innerHTML = '';
-
+            const grid = document.getElementById('vid-months-grid'); grid.innerHTML = '';
             for (let m = 1; m <= 10; m++) {
                 const startIdx = (m - 1) * 12;
                 let uploadedCount = 0;
-                for (let i = startIdx; i < startIdx + 12; i++) {
-                    if (gradeDict[i]) uploadedCount++;
-                }
+                for (let i = startIdx; i < startIdx + 12; i++) if (gradeDict[i]) uploadedCount++;
 
-                let stateClass = 'state-red';
-                let statusSub = `${uploadedCount}/12 video`;
-
-                if (uploadedCount === 12 && m < activeMonth) {
-                    stateClass = 'state-gray';
-                    statusSub = "Tugallangan (12/12)";
-                } else if (m === activeMonth && uploadedCount > 0) {
-                    stateClass = 'state-green';
-                    statusSub = `Joriy oy (${uploadedCount}/12)`;
-                } else if (uploadedCount === 12) {
-                    stateClass = 'state-gray';
-                    statusSub = "To'liq (12/12)";
-                } else if (uploadedCount > 0) {
-                    stateClass = 'state-green';
-                }
+                let stateClass = 'state-red', statusSub = `${uploadedCount}/12 video`;
+                if (uploadedCount === 12 && m < activeMonth) { stateClass = 'state-gray'; statusSub = "Tugallangan (12/12)"; }
+                else if (m === activeMonth && uploadedCount > 0) { stateClass = 'state-green'; statusSub = `Joriy oy (${uploadedCount}/12)`; }
+                else if (uploadedCount === 12) { stateClass = 'state-gray'; statusSub = "To'liq (12/12)"; }
+                else if (uploadedCount > 0) { stateClass = 'state-green'; }
 
                 const btn = document.createElement('button');
                 btn.className = `lesson-card-btn ${stateClass}`;
@@ -2008,35 +2311,23 @@
             const gradeDict = (platformData.videos && platformData.videos[currentGrade]) ? platformData.videos[currentGrade] : {};
             const maxIdx = getHighestUploadedIndex(gradeDict);
 
-            const grid = document.getElementById('vid-lessons-grid');
-            grid.innerHTML = '';
-
+            const grid = document.getElementById('vid-lessons-grid'); grid.innerHTML = '';
             const startIdx = (monthNum - 1) * 12;
             for (let d = 1; d <= 12; d++) {
                 const globalIdx = startIdx + (d - 1);
                 const isUploaded = Boolean(gradeDict[globalIdx]);
 
-                let stateClass = 'state-red';
-                let subLabel = "Yuklanmagan";
-
+                let stateClass = 'state-red', subLabel = "Yuklanmagan";
                 if (isUploaded) {
-                    if (globalIdx === maxIdx) {
-                        stateClass = 'state-green';
-                        subLabel = "Yangi dars!";
-                    } else {
-                        stateClass = 'state-gray';
-                        subLabel = "Ko'rish";
-                    }
+                    if (globalIdx === maxIdx) { stateClass = 'state-green'; subLabel = "Yangi dars!"; }
+                    else { stateClass = 'state-gray'; subLabel = "Ko'rish"; }
                 }
 
                 const btn = document.createElement('button');
                 btn.className = `lesson-card-btn ${stateClass}`;
                 btn.innerHTML = `<span>${d}-dars</span><small>${subLabel}</small>`;
                 btn.onclick = () => {
-                    if (!isUploaded) {
-                        showRewardCelebration("Yuklanmagan ⏳", `${d}-dars`, "Ustoz hali bu darsga video yuklamagan.", "🎬", false);
-                        return;
-                    }
+                    if (!isUploaded) { showRewardCelebration("Yuklanmagan ⏳", `${d}-dars`, "Ustoz hali bu darsga video yuklamagan.", "🎬", false); return; }
                     loadVideoArea(globalIdx, d);
                 };
                 grid.appendChild(btn);
@@ -2048,60 +2339,35 @@
             document.getElementById('vid-lessons-box').style.display = 'none';
             document.getElementById('video-work-box').style.display = 'block'; 
             document.getElementById('video-current-title').innerText = `🎬 ${selectedVidMonth}-oy, ${lessonNumInMonth}-dars`;
-            
             const vidId = platformData.videos[currentGrade][globalIdx];
-            document.getElementById('video-embed-container').innerHTML = `
-                <iframe width="100%" height="280" src="https://www.youtube.com/embed/${vidId}?rel=0" frameborder="0" allowfullscreen style="border-radius:18px;"></iframe>`;
+            document.getElementById('video-embed-container').innerHTML = `<iframe width="100%" height="280" src="https://www.youtube.com/embed/${vidId}?rel=0" frameborder="0" allowfullscreen style="border-radius:18px;"></iframe>`;
         }
 
-        // --- O'YINLAR BO'LIMI (2 TA O'YIN + 100 BALLNI 1 COINGA ALMASHTIRISH) ---
-        let gameInterval = null; 
-        let gameTimer = 15; 
-        let gameScore = 0; 
-        let currentAnswer = null;
-        let isGameActive = false;
-        let activeGameType = 1;
+        // --- O'YINLAR (3 TA O'YIN, OSONLASHTIRILGAN, 100 BALL CHEGARASI) ---
+        let gameInterval = null, gameTimer = 25, gameScore = 0, currentAnswer = null, isGameActive = false, activeGameType = 1;
 
-        function rand(min, max) {
-            return Math.floor(Math.random() * (max - min + 1)) + min;
-        }
+        function rand(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
 
         function showGamesHub() {
-            isGameActive = false;
-            clearInterval(gameInterval);
+            isGameActive = false; clearInterval(gameInterval);
             document.getElementById('games-hub').style.display = 'block';
             document.getElementById('math-game-1-play').style.display = 'none';
             document.getElementById('math-game-2-play').style.display = 'none';
-            if (currentStudent) {
-                document.getElementById('hub-points-display').innerText = currentStudent.points || 0;
-            }
+            document.getElementById('math-game-3-play').style.display = 'none';
+            if (currentStudent) document.getElementById('hub-points-display').innerText = currentStudent.points || 0;
         }
 
-        // 100 ballni 1 Coinga almashtirish funksiyasi
         function exchangePointsToCoins() {
             if (!currentStudent) return;
             const pts = currentStudent.points || 0;
             if (pts < 100) {
-                showRewardCelebration(
-                    "Ball yetarli emas 🎯",
-                    `${pts} / 100 ball`,
-                    `1 Coin olish uchun yana ${100 - pts} ball to'plashingiz kerak. O'yinlarni o'ynab ball yig'ing!`,
-                    "🎯",
-                    false
-                );
+                showRewardCelebration("Ball yetarli emas 🎯", `${pts} / 100 ball`, `1 Coin olish uchun yana ${100 - pts} ball to'plashingiz kerak!`, "🎯", false);
                 return;
             }
-
             const coinsToConvert = Math.floor(pts / 100);
             const pointsSpent = coinsToConvert * 100;
 
-            showRewardCelebration(
-                "Ballar Coinga aylandi!",
-                `+${coinsToConvert} ⭐ Coin`,
-                `${pointsSpent} ball evaziga hisobingizga +${coinsToConvert} Coin qo'shildi!`,
-                "🪙",
-                true
-            );
+            showRewardCelebration("Ballar Coinga aylandi!", `+${coinsToConvert} ⭐ Coin`, `${pointsSpent} ball evaziga hisobingizga +${coinsToConvert} Coin qo'shildi!`, "🪙", true);
 
             safeUpdateDB((data) => {
                 const s = data.students[currentGrade].find(x => x.id === currentStudent.id);
@@ -2109,12 +2375,7 @@
                     s.points -= pointsSpent;
                     s.coins = (s.coins || 0) + coinsToConvert;
                     if (!s.history) s.history = [];
-                    s.history.push({
-                        type: "Ball almashinuvi",
-                        amount: coinsToConvert,
-                        reason: `${pointsSpent} o'yin balli almashtirildi`,
-                        date: new Date().toLocaleDateString()
-                    });
+                    s.history.push({ type: "Ball almashinuvi", amount: coinsToConvert, reason: `${pointsSpent} o'yin balli almashtirildi`, date: new Date().toLocaleDateString() });
                 }
             }).catch(() => {});
         }
@@ -2122,8 +2383,8 @@
         function checkAndStartGame(gameType) {
             activeGameType = gameType;
             const now = new Date().getTime();
-            const storageKey = gameType === 1 ? `lastGame1_${currentStudent.id}` : `lastGame2_${currentStudent.id}`;
-            const dbField = gameType === 1 ? (currentStudent.lastGamePlayed || 0) : (currentStudent.lastGame2Played || 0);
+            const storageKey = `lastGame${gameType}_${currentStudent.id}`;
+            const dbField = gameType === 1 ? (currentStudent.lastGamePlayed || 0) : (gameType === 2 ? (currentStudent.lastGame2Played || 0) : (currentStudent.lastGame3Played || 0));
             const localLastPlay = parseInt(localStorage.getItem(storageKey) || '0');
             const lastPlay = Math.max(dbField, localLastPlay);
             const diff = now - lastPlay;
@@ -2133,19 +2394,14 @@
                 const left = cooldown - diff;
                 const hours = Math.floor(left / (1000 * 60 * 60)); 
                 const mins = Math.floor((left % (1000 * 60 * 60)) / (1000 * 60));
-                showRewardCelebration(
-                    "Vaqt chegarasi ⏳",
-                    `${hours} soat ${mins} daq.`,
-                    "Siz bugun ushbu o'yinni o'ynab bo'lgansiz! Keyingi urinishgacha qolgan vaqt.",
-                    "🎮",
-                    false
-                );
+                showRewardCelebration("Vaqt chegarasi ⏳", `${hours} soat ${mins} daq.`, "Siz bugun ushbu o'yinni o'ynab bo'lgansiz! Keyingi urinishgacha qolgan vaqt.", "🎮", false);
                 return;
             }
             
             localStorage.setItem(storageKey, now.toString());
             if (gameType === 1) currentStudent.lastGamePlayed = now;
-            else currentStudent.lastGame2Played = now;
+            else if (gameType === 2) currentStudent.lastGame2Played = now;
+            else currentStudent.lastGame3Played = now;
 
             document.getElementById('games-hub').style.display = 'none';
             gameScore = 0; 
@@ -2155,55 +2411,118 @@
                 document.getElementById('math-game-1-play').style.display = 'block';
                 document.getElementById('game1-score').innerText = '0';
                 nextGame1Question();
-            } else {
+            } else if (gameType === 2) {
                 document.getElementById('math-game-2-play').style.display = 'block';
                 document.getElementById('game2-score').innerText = '0';
                 nextGame2Question();
+            } else {
+                document.getElementById('math-game-3-play').style.display = 'block';
+                document.getElementById('game3-score').innerText = '0';
+                nextGame3Round();
             }
         }
 
-        // --- 1-O'YIN: TEZKOR HISOBLAGICH ---
+        // --- 1-O'YIN: OSONLASHTIRILGAN MISOL VA SODDA MASALALAR (2, 3, 4, 5-SINF) ---
         function generateEasyGradeQuestion(grade) {
-            let qText = "";
-            let ans = 0;
-            let isDecimal = false;
+            let qText = "", ans = 0, isDecimal = false, isWordProblem = false;
+            const g = String(grade);
 
-            if (String(grade) === "3") {
-                const type = rand(1, 3);
+            if (g === "2") {
+                const type = rand(1, 4);
                 if (type === 1) {
-                    let a = rand(15, 65); let b = rand(10, 35);
+                    let a = rand(5, 30), b = rand(4, 25);
                     qText = `${a} + ${b} = ?`; ans = a + b;
                 } else if (type === 2) {
-                    let a = rand(40, 95); let b = rand(10, 35);
+                    let a = rand(18, 50), b = rand(5, 16);
                     qText = `${a} - ${b} = ?`; ans = a - b;
+                } else if (type === 3) {
+                    let a = rand(2, 5), b = rand(2, 6);
+                    qText = `${a} × ${b} = ?`; ans = a * b;
                 } else {
-                    let a = rand(2, 9); let b = rand(2, 9);
+                    isWordProblem = true;
+                    const wp = rand(1, 3);
+                    if (wp === 1) {
+                        let a = rand(6, 15), b = rand(4, 12);
+                        qText = `🍎 Savatda ${a} ta qizil va ${b} ta yashil olma bor. Jami nechta olma bor?`;
+                        ans = a + b;
+                    } else if (wp === 2) {
+                        let a = rand(14, 28), b = rand(4, 10);
+                        qText = `✏️ Alida ${a} ta qalam bor edi. U ${b} tasini do'stiga berdi. Nechta qoldi?`;
+                        ans = a - b;
+                    } else {
+                        let a = rand(2, 5), b = rand(2, 5);
+                        qText = `🐥 Har bir katakda ${a} tadan jo'ja bor. ${b} ta katakda jami nechta jo'ja bor?`;
+                        ans = a * b;
+                    }
+                }
+            } else if (g === "3") {
+                const type = rand(1, 4);
+                if (type === 1) {
+                    let a = rand(15, 55), b = rand(10, 35);
+                    qText = `${a} + ${b} = ?`; ans = a + b;
+                } else if (type === 2) {
+                    let a = rand(35, 85), b = rand(10, 30);
+                    qText = `${a} - ${b} = ?`; ans = a - b;
+                } else if (type === 3) {
+                    let a = rand(2, 8), b = rand(2, 8);
                     if (Math.random() < 0.5) { qText = `${a} × ${b} = ?`; ans = a * b; }
                     else { qText = `${a * b} ÷ ${b} = ?`; ans = a; }
+                } else {
+                    isWordProblem = true;
+                    const wp = rand(1, 3);
+                    if (wp === 1) {
+                        let a = rand(4, 9), b = rand(3, 7);
+                        qText = `📚 Har bir javonda ${a} tadan kitob bor. ${b} ta javonda jami nechta kitob bor?`;
+                        ans = a * b;
+                    } else if (wp === 2) {
+                        let b = rand(3, 6), q = rand(4, 9);
+                        qText = `🍬 ${b * q} ta konfetni ${b} ta bolaga teng bo'lib berishdi. Har biriga nechtadan tegdi?`;
+                        ans = q;
+                    } else {
+                        let a = rand(20, 45), b = rand(10, 25);
+                        qText = `🚌 Avtobusda ${a} kishi bor edi. Bekatda yana ${b} kishi chiqdi. Jami necha kishi bo'ldi?`;
+                        ans = a + b;
+                    }
                 }
-            } else if (String(grade) === "4") {
-                const type = rand(1, 3);
+            } else if (g === "4") {
+                const type = rand(1, 4);
                 if (type === 1) {
-                    let a = rand(11, 25); let b = rand(3, 6);
+                    let a = rand(10, 20), b = rand(2, 5);
                     qText = `${a} × ${b} = ?`; ans = a * b;
                 } else if (type === 2) {
-                    let b = rand(3, 8); let q = rand(10, 20);
+                    let b = rand(3, 6), q = rand(8, 16);
                     qText = `${b * q} ÷ ${b} = ?`; ans = q;
-                } else {
-                    let x = rand(10, 40); let a = rand(15, 50);
+                } else if (type === 3) {
+                    let x = rand(10, 35), a = rand(10, 40);
                     qText = `x + ${a} = ${x + a}\nx = ?`; ans = x;
+                } else {
+                    isWordProblem = true;
+                    const wp = rand(1, 3);
+                    if (wp === 1) {
+                        let v = rand(40, 70), t = rand(2, 4);
+                        qText = `🚗 Mashina soatiga ${v} km tezlik bilan ${t} soat yurdi. U necha km yo'l bosdi?`;
+                        ans = v * t;
+                    } else if (wp === 2) {
+                        let a = rand(5, 12), b = rand(4, 9);
+                        qText = `📐 To'g'ri to'rtburchakning bo'yi ${a} sm, eni ${b} sm. Uning yuzi necha sm²?`;
+                        ans = a * b;
+                    } else {
+                        let p = rand(3, 8) * 10, n = rand(2, 5);
+                        qText = `📓 Bitta daftar ${p} so'm tursa, ${n} ta daftar qancha turadi?`;
+                        ans = p * n;
+                    }
                 }
             } else {
                 const type = rand(1, 3);
                 if (type === 1) {
                     isDecimal = true;
-                    let a = rand(10, 50) / 10; let b = rand(5, 30) / 10;
+                    let a = rand(10, 45) / 10, b = rand(5, 25) / 10;
                     qText = `${a} + ${b} = ?`; ans = Number((a + b).toFixed(1));
                 } else if (type === 2) {
-                    let base = rand(1, 8) * 10;
+                    let base = rand(2, 10) * 10;
                     qText = `${base} ning 50% i nechaga teng?`; ans = base / 2;
                 } else {
-                    let den = rand(5, 12); let n1 = rand(1, den - 2); let n2 = rand(1, den - n1);
+                    let den = rand(5, 12), n1 = rand(1, den - 2), n2 = rand(1, den - n1);
                     qText = `${n1}/${den} + ${n2}/${den} = ?/${den}\n(Suratni toping)`; ans = n1 + n2;
                 }
             }
@@ -2212,50 +2531,47 @@
             opts.add(ans);
             while (opts.size < 4) {
                 let diff = rand(1, 6) * (Math.random() < 0.5 ? 1 : -1);
-                let candidate = isDecimal ? Number((ans + diff / 10).toFixed(1)) : ans + diff;
-                if (candidate >= 0 && candidate !== ans) opts.add(candidate);
+                let cand = isDecimal ? Number((ans + diff / 10).toFixed(1)) : ans + diff;
+                if (cand >= 0 && cand !== ans) opts.add(cand);
             }
 
             return {
                 question: qText,
                 answer: ans,
+                timeLimit: isWordProblem ? 35 : 25,
                 options: Array.from(opts).sort(() => Math.random() - 0.5)
             };
         }
 
         function nextGame1Question() {
             if (!isGameActive) return;
-            gameTimer = 15; 
-            document.getElementById('game1-timer').innerText = gameTimer;
-            
             const qData = generateEasyGradeQuestion(currentGrade);
+            gameTimer = qData.timeLimit;
             currentAnswer = qData.answer;
-            
+            document.getElementById('game1-timer').innerText = gameTimer;
             document.getElementById('game1-question').innerText = qData.question;
-            const area = document.getElementById('game1-options'); 
-            area.innerHTML = '';
-            
-            qData.options.forEach(o => {
-                area.innerHTML += `<button class="feature-btn" onclick="checkGame1Answer(${o})">${o}</button>`;
-            });
+
+            const area = document.getElementById('game1-options'); area.innerHTML = '';
+            qData.options.forEach(o => area.innerHTML += `<button class="feature-btn" onclick="checkGame1Answer(${o})">${o}</button>`);
             
             clearInterval(gameInterval);
             gameInterval = setInterval(() => { 
-                gameTimer--; 
-                document.getElementById('game1-timer').innerText = gameTimer; 
-                if(gameTimer <= 0) { 
-                    clearInterval(gameInterval);
-                    finishActiveGame("⏳ Vaqt tugadi!"); 
-                } 
+                gameTimer--; document.getElementById('game1-timer').innerText = gameTimer; 
+                if(gameTimer <= 0) { clearInterval(gameInterval); finishActiveGame("⏳ Vaqt tugadi!"); } 
             }, 1000);
         }
 
         function checkGame1Answer(chosen) { 
             if (!isGameActive) return;
             clearInterval(gameInterval); 
-            
             if (Number(chosen) === Number(currentAnswer)) { 
-                gameScore += (gameTimer > 7) ? 2 : 1; 
+                gameScore += (gameTimer > 12) ? 2 : 1; 
+                if (gameScore >= 100) {
+                    gameScore = 100;
+                    document.getElementById('game1-score').innerText = gameScore;
+                    finishActiveGame("🎉 Ajoyib! 100 ballga yetdingiz!\nKeyingi o'yinni 24 soatdan keyin davom ettirasiz.");
+                    return;
+                }
                 document.getElementById('game1-score').innerText = gameScore;
                 nextGame1Question(); 
             } else { 
@@ -2263,77 +2579,58 @@
             }
         }
 
-        // --- 2-O'YIN: TAQQOSLASH DUELI (> , = , <) ---
+        // --- 2-O'YIN: TAQQOSLASH DUELI ---
         function makeSimpleExpr(grade) {
-            if (String(grade) === "3") {
-                const t = rand(1, 2);
-                if (t === 1) {
-                    let a = rand(10, 45); let b = rand(10, 40);
-                    return { text: `${a} + ${b}`, val: a + b };
-                } else {
-                    let a = rand(3, 9); let b = rand(3, 8);
-                    return { text: `${a} × ${b}`, val: a * b };
-                }
-            } else if (String(grade) === "4") {
-                const t = rand(1, 2);
-                if (t === 1) {
-                    let a = rand(12, 25); let b = rand(3, 5);
-                    return { text: `${a} × ${b}`, val: a * b };
-                } else {
-                    let a = rand(40, 95); let b = rand(15, 35);
-                    return { text: `${a} - ${b}`, val: a - b };
-                }
+            const g = String(grade);
+            if (g === "2") {
+                let a = rand(4, 20), b = rand(3, 15);
+                return { text: `${a} + ${b}`, val: a + b };
+            } else if (g === "3") {
+                if (Math.random() < 0.5) { let a = rand(10, 35), b = rand(5, 25); return { text: `${a} + ${b}`, val: a + b }; }
+                let a = rand(2, 7), b = rand(2, 6); return { text: `${a} × ${b}`, val: a * b };
+            } else if (g === "4") {
+                if (Math.random() < 0.5) { let a = rand(10, 20), b = rand(2, 5); return { text: `${a} × ${b}`, val: a * b }; }
+                let a = rand(35, 80), b = rand(10, 30); return { text: `${a} - ${b}`, val: a - b };
             } else {
-                const t = rand(1, 2);
-                if (t === 1) {
-                    let a = rand(10, 40) / 10; let b = rand(10, 30) / 10;
-                    return { text: `${a} + ${b}`, val: Number((a + b).toFixed(1)) };
-                } else {
-                    let a = rand(4, 12); let b = rand(3, 6);
-                    return { text: `${a} × ${b}`, val: a * b };
-                }
+                let a = rand(10, 35) / 10, b = rand(10, 25) / 10;
+                return { text: `${a} + ${b}`, val: Number((a + b).toFixed(1)) };
             }
         }
 
         function nextGame2Question() {
             if (!isGameActive) return;
-            gameTimer = 15;
+            gameTimer = 25;
             document.getElementById('game2-timer').innerText = gameTimer;
 
             let left = makeSimpleExpr(currentGrade);
             let right = makeSimpleExpr(currentGrade);
-
-            // Ba'zan teng chiqish ehtimolini oshiramiz
             if (Math.random() < 0.25) {
-                let v = left.val;
-                let d = rand(2, 10);
-                right = { text: `${v + d} - ${d}`, val: v };
+                let v = left.val, d = rand(2, 8);
+                right = { text: `${Number((v + d).toFixed(1))} - ${d}`, val: v };
             }
 
             document.getElementById('comp-left').innerText = left.text;
             document.getElementById('comp-right').innerText = right.text;
-
-            if (left.val > right.val) currentAnswer = '>';
-            else if (left.val < right.val) currentAnswer = '<';
-            else currentAnswer = '=';
+            currentAnswer = left.val > right.val ? '>' : (left.val < right.val ? '<' : '=');
 
             clearInterval(gameInterval);
             gameInterval = setInterval(() => { 
-                gameTimer--; 
-                document.getElementById('game2-timer').innerText = gameTimer; 
-                if(gameTimer <= 0) { 
-                    clearInterval(gameInterval);
-                    finishActiveGame("⏳ Vaqt tugadi!"); 
-                } 
+                gameTimer--; document.getElementById('game2-timer').innerText = gameTimer; 
+                if(gameTimer <= 0) { clearInterval(gameInterval); finishActiveGame("⏳ Vaqt tugadi!"); } 
             }, 1000);
         }
 
         function checkGame2Answer(chosenSign) {
             if (!isGameActive) return;
             clearInterval(gameInterval);
-
             if (chosenSign === currentAnswer) {
-                gameScore += (gameTimer > 7) ? 2 : 1;
+                gameScore += (gameTimer > 12) ? 2 : 1;
+                if (gameScore >= 100) {
+                    gameScore = 100;
+                    document.getElementById('game2-score').innerText = gameScore;
+                    finishActiveGame("🎉 Ajoyib! 100 ballga yetdingiz!\nKeyingi o'yinni 24 soatdan keyin davom ettirasiz.");
+                    return;
+                }
                 document.getElementById('game2-score').innerText = gameScore;
                 nextGame2Question();
             } else {
@@ -2341,20 +2638,72 @@
             }
         }
 
-        // --- O'YIN TUGASHI VA BALLARNI SAQLASH ---
+        // --- 3-O'YIN: FARQLI EMOJINI TOP! (MATEMATIKAGA OID EMAS) ---
+        const EMOJI_PAIRS = [
+            ['🍎','🍅'], ['🐶','🐺'], ['🐱','🐯'], ['😀','😃'], ['🌞','🌻'],
+            ['⚽','🏀'], ['🚗','🚕'], ['🦋','🐝'], ['🍓','🍒'], ['🍉','🍈'],
+            ['🐸','🐢'], ['🦊','🐻'], ['🌙','🍌'], ['🎈','🏮'], ['🍩','🍪'],
+            ['⏰','🧭'], ['🎸','🎻'], ['🚀','✈️'], ['👑','🎩'], ['🐟','🐬'],
+            ['🌲','🌴'], ['🐼','🐨'], ['🍔','🥪'], ['🎲','🧩']
+        ];
+
+        function nextGame3Round() {
+            if (!isGameActive) return;
+            gameTimer = 15;
+            document.getElementById('game3-timer').innerText = gameTimer;
+
+            const pair = EMOJI_PAIRS[rand(0, EMOJI_PAIRS.length - 1)];
+            const mainEmoji = Math.random() < 0.5 ? pair[0] : pair[1];
+            const oddEmoji = mainEmoji === pair[0] ? pair[1] : pair[0];
+            const totalCells = 9;
+            const oddIdx = rand(0, totalCells - 1);
+            currentAnswer = oddIdx;
+
+            const grid = document.getElementById('emoji-game-grid');
+            grid.innerHTML = '';
+            for (let i = 0; i < totalCells; i++) {
+                const em = i === oddIdx ? oddEmoji : mainEmoji;
+                grid.innerHTML += `<button class="emoji-cell-btn" onclick="checkGame3Answer(${i})">${em}</button>`;
+            }
+
+            clearInterval(gameInterval);
+            gameInterval = setInterval(() => { 
+                gameTimer--; document.getElementById('game3-timer').innerText = gameTimer; 
+                if(gameTimer <= 0) { clearInterval(gameInterval); finishActiveGame("⏳ Vaqt tugadi!"); } 
+            }, 1000);
+        }
+
+        function checkGame3Answer(idx) {
+            if (!isGameActive) return;
+            clearInterval(gameInterval);
+            if (idx === currentAnswer) {
+                gameScore += (gameTimer > 8) ? 2 : 1;
+                if (gameScore >= 100) {
+                    gameScore = 100;
+                    document.getElementById('game3-score').innerText = gameScore;
+                    finishActiveGame("🎉 Ajoyib! 100 ballga yetdingiz!\nKeyingi o'yinni 24 soatdan keyin davom ettirasiz.");
+                    return;
+                }
+                document.getElementById('game3-score').innerText = gameScore;
+                nextGame3Round();
+            } else {
+                finishActiveGame("❌ Xato rasmni bosdingiz! O'yin tugadi.");
+            }
+        }
+
         function finishActiveGame(reasonText) {
             isGameActive = false;
             clearInterval(gameInterval);
             
             const nowTime = new Date().getTime();
-            const storageKey = activeGameType === 1 ? `lastGame1_${currentStudent.id}` : `lastGame2_${currentStudent.id}`;
+            const storageKey = `lastGame${activeGameType}_${currentStudent.id}`;
             localStorage.setItem(storageKey, nowTime.toString());
 
             showRewardCelebration(
-                "O'yin yakunlandi! 🎮",
+                gameScore >= 100 ? "🏆 100 Ballga Yetdingiz!" : "O'yin yakunlandi! 🎮",
                 `+${gameScore} 🎯 Ball`,
-                `${reasonText}\nYig'gan ballaringiz umumiy hisobingizga qo'shildi. 100 ball bo'lganda uni 1 Coinga almashtirib oling!`,
-                "🎯",
+                `${reasonText}\nYig'gan ballaringiz hisobingizga qo'shildi. 100 ballni 1 Coinga almashtirishingiz mumkin!`,
+                gameScore >= 100 ? "🏆" : "🎯",
                 gameScore >= 20
             );
 
@@ -2363,13 +2712,10 @@
                 if(s) { 
                     s.points = (s.points || 0) + gameScore; 
                     if (activeGameType === 1) s.lastGamePlayed = nowTime; 
-                    else s.lastGame2Played = nowTime;
+                    else if (activeGameType === 2) s.lastGame2Played = nowTime;
+                    else s.lastGame3Played = nowTime;
                 } 
-            }).then(() => {
-                showGamesHub();
-            }).catch(() => {
-                showGamesHub();
-            });
+            }).then(() => showGamesHub()).catch(() => showGamesHub());
         }
     </script>
 </body>
