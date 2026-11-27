@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3-sinf Matematika — 13-dars: O‘rganilganlarni takrorlash</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Fredoka, Nunito va JetBrains Mono -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700;800;900&family=JetBrains+Mono:wght@600;700&display=swap">
+  <!-- Font Awesome ikonkalar -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: #F1F5F9;
+      margin: 0;
+      padding: 0;
+    }
+    .font-fredoka { font-family: 'Fredoka', sans-serif; }
+    .font-mono-math { font-family: 'JetBrains Mono', monospace; }
+
+    /* Slaydlarni almashtirish animatsiyasi */
+    .slide {
+      display: none;
+      animation: fadeSlideIn 0.35s ease-out;
+    }
+    .slide.active {
+      display: flex;
+    }
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateY(10px) scale(0.99); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* To'liq ekran rejimida moslashish */
+    :fullscreen body, :-webkit-full-screen body {
+      background: #0F172A;
+    }
+    /* Scrollbarni chiroyli qilish */
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col text-slate-800">
+
+  <!-- TEPADAGI QULAY NAVIGATSIYA PANELI -->
+  <header class="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-slate-200 shadow-sm px-3 sm:px-6 py-2.5">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+      
+      <!-- Chap tomon: Sarlavha va Oldingi/Keyingi tugmalar -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <div class="flex items-center gap-2 bg-blue-50 text-blue-700 px-3.5 py-2 rounded-xl font-extrabold text-sm sm:text-base border border-blue-100">
+          <i class="fa-solid fa-book-open"></i>
+          <span>3-sinf Matematika</span>
+        </div>
+
+        <div class="flex items-center bg-slate-100 rounded-xl p-1 gap-1">
+          <button onclick="prevSlide()" title="Oldingi slayd (←)" class="w-9 h-9 flex items-center justify-center rounded-lg bg-white hover:bg-blue-600 hover:text-white text-slate-700 shadow-sm transition cursor-pointer">
+            <i class="fa-solid fa-chevron-left"></i>
+          </button>
+          <span id="slideCounter" class="px-2.5 font-extrabold text-sm text-slate-700 min-w-[60px] text-center">1 / 12</span>
+          <button onclick="nextSlide()" title="Keyingi slayd (→)" class="w-9 h-9 flex items-center justify-center rounded-lg bg-white hover:bg-blue-600 hover:text-white text-slate-700 shadow-sm transition cursor-pointer">
+            <i class="fa-solid fa-chevron-right"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- O'rta: Tezkor bet tanlash tugmalari -->
+      <nav id="quickNav" class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1 max-w-full">
+        <!-- JS orqali avtomatik yaratiladi -->
+      </nav>
+
+      <!-- O'ng tomon: To'liq ekran tugmasi -->
+      <button onclick="toggleFullscreen()" id="fsBtn" class="flex items-center gap-2 bg-slate-900 hover:bg-blue-600 text-white px-4 py-2 rounded-xl font-bold text-sm transition shadow-sm cursor-pointer">
+        <i class="fa-solid fa-expand"></i>
+        <span class="hidden sm:inline">To‘liq ekran</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ASOSIY SLAYD MAYDONI -->
+  <main class="flex-1 flex items-center justify-center p-3 sm:p-6">
+    <div id="presentationStage" class="w-full max-w-6xl min-h-[620px] sm:min-h-[650px] rounded-3xl shadow-2xl overflow-hidden border border-slate-200/80 bg-white flex flex-col">
+
+      <!-- ==================== 1-SLAYD: SARLAVHA ==================== -->
+      <section class="slide active flex-1 flex-col justify-between bg-gradient-to-br from-blue-700 via-blue-600 to-indigo-700 text-white p-6 sm:p-12">
+        <div class="flex items-center justify-between">
+          <div class="inline-flex items-center gap-2.5 bg-white/15 backdrop-blur px-4 py-2 rounded-full border border-white/20">
+            <i class="fa-solid fa-shapes text-yellow-300 text-lg"></i>
+            <span class="font-extrabold text-sm sm:text-base text-blue-50">3-sinf matematika · Ko‘p xonali sonlarni ko‘paytirish</span>
+          </div>
+          <span class="hidden sm:inline-block bg-yellow-400 text-blue-950 font-fredoka font-bold px-4 py-1.5 rounded-full text-sm shadow">
+            28–29-betlar
+          </span>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center my-8">
+          <div class="lg:col-span-7 space-y-5">
+            <div class="inline-block bg-yellow-300 text-blue-950 font-fredoka font-bold text-xl sm:text-2xl px-5 py-1.5 rounded-2xl shadow-md">
+              13-DARS
+            </div>
+            <h1 class="font-fredoka text-4xl sm:text-6xl font-bold leading-tight text-white drop-shadow-sm">
+              O‘rganilganlarni takrorlash
+            </h1>
+            <p class="text-lg sm:text-xl text-blue-100 font-bold leading-relaxed max-w-xl">
+              28–29-betlardagi barcha 1–10-mashqlar, qiziqarli masalalar, mantiqiy jumboqlar va uyga vazifalarning to‘liq yechimlari!
+            </p>
+            <div class="flex items-center gap-3 pt-2">
+              <div class="w-16 h-2.5 bg-yellow-300 rounded-full"></div>
+              <div class="w-9 h-2.5 bg-emerald-400 rounded-full"></div>
+              <div class="w-5 h-2.5 bg-rose-400 rounded-full"></div>
+            </div>
+          </div>
+
+          <!-- Bolalar uchun quvnoq geometrik shakllar va yulduzchalar SVG -->
+          <div class="lg:col-span-5 flex justify-center">
+            <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-6 w-full max-w-sm shadow-xl">
+              <svg viewBox="0 0 320 260" class="w-full h-auto" aria-label="Quvnoq geometrik shakllar">
+                <!-- Yulduzchalar -->
+                <polygon points="50,25 56,42 74,42 60,52 65,69 50,59 35,69 40,52 26,42 44,42" fill="#FDE047"/>
+                <polygon points="270,30 275,43 289,43 278,51 282,64 270,56 258,64 262,51 251,43 265,43" fill="#34D399"/>
+                <circle cx="160" cy="30" r="8" fill="#FB7185"/>
+                <!-- Tabassumli Kvadrat -->
+                <rect x="35" y="95" width="95" height="95" rx="18" fill="#38BDF8" stroke="#FFFFFF" stroke-width="4"/>
+                <circle cx="67" cy="132" r="5" fill="#0F172A"/>
+                <circle cx="98" cy="132" r="5" fill="#0F172A"/>
+                <path d="M68 154 Q82 167 97 154" fill="none" stroke="#0F172A" stroke-width="4" stroke-linecap="round"/>
+                <!-- Tabassumli Uchburchak -->
+                <polygon points="225,85 285,190 165,190" fill="#FB7185" stroke="#FFFFFF" stroke-width="4" stroke-linejoin="round"/>
+                <circle cx="212" cy="148" r="5" fill="#FFFFFF"/>
+                <circle cx="238" cy="148" r="5" fill="#FFFFFF"/>
+                <path d="M214 166 Q225 176 236 166" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round"/>
+                <!-- Pastki matn -->
+                <rect x="60" y="212" width="200" height="36" rx="18" fill="#FDE047"/>
+                <text x="160" y="236" text-anchor="middle" fill="#1E3A8A" font-family="Fredoka, sans-serif" font-weight="700" font-size="18">10 ta mashq + yechim!</text>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <footer class="flex flex-wrap items-center justify-between gap-2 border-t border-white/20 pt-4 text-sm sm:text-base">
+          <span class="text-blue-100 font-bold"><i class="fa-solid fa-star text-yellow-300 mr-1"></i> Boshlash uchun “Keyingi” tugmasini bosing</span>
+          <span class="font-extrabold text-yellow-300">Yaratuvchi, tuzuvchi: Akmaljon Jo‘raqo‘ziyev</span>
+        </footer>
+      </section>
+
+      <!-- ==================== 2-SLAYD: 1-MASALA ==================== -->
+      <section class="slide flex-1 flex-col justify-between bg-[#FFFDF5] p-6 sm:p-10">
+        <div class="flex items-center justify-between gap-4">
+          <div>
+            <span class="inline-block bg-sky-100 text-sky-700 font-extrabold text-xs sm:text-sm px-3 py-1 rounded-full mb-1">28-BET · 1-MASALA</span>
+            <h2 class="font-fredoka text-2xl sm:text-4xl font-bold text-slate-800">Kartochkalardan uch xonali son tuzish</h2>
+          </div>
+          <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-500 flex items-center justify-center text-2xl shrink-0">
+            <i class="fa-solid fa-puzzle-piece"></i>
+          </div>
+        </div>
+
+        <div class="my-5 space-y-6">
+          <p class="text-base sm:text-lg font-bold text-slate-600">
+            Jasurda raqamlar yozilgan 6 ta kartochka bor. U istalgan 3 ta kartochkani tanlab, <span class="text-blue-600">uch xonali son</span> tuzadi:
+          </p>
+
+          <!-- 6 ta rangli kartochka -->
+          <div class="flex flex-wrap justify-center gap-3 sm:gap-5">
+            <div class="w-16 h-16 sm:w-20 sm:h-20 bg-blue-100 border-2 border-blue-300 rounded-2xl flex items-center justify-center shadow-sm">
+              <span class="font-fredoka text-3xl sm:text-4xl font-bold text-blue-700">1</span>
+            </div>
+            <div class="w-16 h-16 sm:w-20 sm:h-20 bg-emerald-100 border-2 border-emerald-300 rounded-2xl flex items-center justify-center shadow-sm">
+              <span class="font-fredoka text-3xl sm:text-4xl font-bold text-emerald-700">3</span>
+            </div>
+            <div class="w-16 h-16 sm:w-20 sm:h-20 bg-amber-100 border-2 border-amber-300 rounded-2xl flex items-center justify-center shadow-sm">
+              <span class="font-fredoka text-3xl sm:text-4xl font-bold text-amber-700">5</span>
+            </div>
+            <div class="w-16 h-16 sm:w-20 sm:h-20 bg-purple-100 border-2 border-purple-300 rounded-2xl flex items-center justify-center shadow-sm">
+              <span class="font-fredoka text-3xl sm:text-4xl font-bold text-purple-700">7</span>
+            </div>
+            <div class="w-16 h-16 sm:w-20 sm:h-20 bg-pink-100 border-2 border-pink-300 rounded-2xl flex items-center justify-center shadow-sm">
+              <span class="font-fredoka text-3xl sm:text-4xl font-bold text-pink-700">9</span>
+            </div>
+            <div class="w-16 h-16 sm:w-20 sm:h-20 bg-orange-100 border-2 border-orange-300 rounded-2xl flex items-center justify-center shadow-sm ring-4 ring-orange-200">
+              <span class="font-fredoka text-3xl sm:text-4xl font-bold text-orange-700">2</span>
+            </div>
+          </div>
+
+          <!-- 4 ta javob kartochkasi -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="bg-sky-100 border-2 border-sky-200 rounded-2xl p-5 text-center">
+              <h3 class="font-extrabold text-sky-800 text-lg mb-2">a) Eng katta son</h3>
+              <p class="font-fredoka text-5xl font-bold text-sky-950 my-2">975</p>
+              <p class="text-sm font-bold text-sky-700">Eng katta 3 ta raqam</p>
+            </div>
+            <div class="bg-emerald-100 border-2 border-emerald-200 rounded-2xl p-5 text-center">
+              <h3 class="font-extrabold text-emerald-800 text-lg mb-2">b) Eng kichik son</h3>
+              <p class="font-fredoka text-5xl font-bold text-emerald-950 my-2">123</p>
+              <p class="text-sm font-bold text-emerald-700">Eng kichik 3 ta raqam</p>
+            </div>
+            <div class="bg-amber-100 border-2 border-amber-200 rounded-2xl p-5 text-center">
+              <h3 class="font-extrabold text-amber-800 text-lg mb-2">d) Eng kichik juft</h3>
+              <p class="font-fredoka text-5xl font-bold text-amber-950 my-2">132</p>
+              <p class="text-sm font-bold text-amber-700">Oxirgi raqam 2</p>
+            </div>
+            <div class="bg-rose-100 border-2 border-rose-200 rounded-2xl p-5 text-center">
+              <h3 class="font-extrabold text-rose-800 text-lg mb-2">e) Eng katta juft</h3>
+              <p class="font-fredoka text-5xl font-bold text-rose-950 my-2">972</p>
+              <p class="text-sm font-bold text-rose-700">Oxirgi raqam 2</p>
+            </div>
+          </div>
+        </div>
+
+        <footer class="flex flex-wrap items-center justify-between gap-2 border-t-2 border-amber-200 pt-3 text-sm sm:text-base">
+          <span class="font-bold text-slate-600"><i class="fa-solid fa-lightbulb text-amber-500 mr-1"></i> Eslatma: 2 — kartochkalar ichidagi yagona juft raqam!</span>
+          <span class="font-extrabold text-blue-600">Yaratuvchi, tuzuvchi: Akmaljon Jo‘raqo‘ziyev</span>
+        </footer>
+      </section>
+
+      <!-- ==================== 3-SLAYD: 2-MISOL ==================== -->
+      <section class="slide flex-1 flex-col justify-between bg-[#F4FAFF] p-6 sm:p-10">
+        <div class="flex items-center justify-between gap-4">
+          <div>
+            <span class="inline-block bg-emerald-100 text-emerald-700 font-extrabold text-xs sm:text-sm px-3 py-1 rounded-full mb-1">28-BET · 2-MISOL</span>
+            <h2 class="font-fredoka text-2xl sm:text-4xl font-bold text-slate-800">Ko‘paytirishni ustun ko‘rinishida bajaring</h2>
+          </div>
+          <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-2xl shrink-0">
+            <i class="fa-solid fa-pencil"></i>
+          </div>
+        </div>
+
+        <!-- 6 ta ustun ko'rinishidagi misol -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 my-6">
+          <!-- 1 -->
+          <div class="bg-emerald-100/80 border-2 border-emerald-200 rounded-2xl p-5 flex items-center justify-between">
+            <div class="font-mono-math text-2xl font-bold text-slate-800 text-right leading-snug bg-white px-4 py-2 rounded-xl shadow-sm">
+              <div>103</div>
+              <div class="border-b-4 border-emerald-500">×&nbsp;&nbsp;&nbsp;4</div>
+              <div class="text-emerald-700">412</div>
+            </div>
+            <div class="text-right">
+              <span class="text-xs font-extrabold text-emerald-700 uppercase">Javob</span>
+              <p class="font-fredoka text-2xl font-bold text-emerald-900">103 · 4 = 412</p>
+            </div>
+          </div>
+
+          <!-- 2 -->
+          <div class="bg-sky-100/80 border-2 border-sky-200 rounded-2xl p-5 flex items-center justify-between">
+            <div class="font-mono-math text-2xl font-bold text-slate-800 text-right leading-snug bg-white px-4 py-2 rounded-xl shadow-sm">
+              <div>504</div>
+              <div class="border-b-4 border-sky-500">×&nbsp;&nbsp;&nbsp;7</div>
+              <div class="text-sky-700">3528</div>
+            </div>
+            <div class="text-right">
+              <span class="text-xs font-extrabold text-sky-700 uppercase">Javob</span>
+              <p class="font-fredoka text-2xl font-bold text-sky-900">504 · 7 = 3528</p>
+            </div>
+          </div>
+
+          <!-- 3 -->
+          <div class="bg-amber-100/80 border-2 border-amber-200 rounded-2xl p-5 flex items-center justify-between">
+            <div class="font-mono-math text-2xl font-bold text-slate-800 text-right leading-snug bg-white px-4 py-2 rounded-xl shadow-sm">
+              <div>209</div>
+              <div class="border-b-4 border-amber-500">×&nbsp;&nbsp;&nbsp;7</div>
+              <div class="text-amber-700">1463</div>
+            </div>
+            <div class="text-right">
+              <span class="text-xs font-extrabold text-amber-700 uppercase">Javob</span>
+              <p class="font-fredoka text-2xl font-bold text-amber-900">209 · 7 = 1463</p>
+            </div>
+          </div>
+
+          <!-- 4 -->
+          <div class="bg-purple-100/80 border-2 border-purple-200 rounded-2xl p-5 flex items-center justify-between">
+            <div class="font-mono-math text-2xl font-bold text-slate-800 text-right leading-snug bg-white px-4 py-2 rounded-xl shadow-sm">
+              <div>202</div>
+              <div class="border-b-4 border-purple-500">×&nbsp;&nbsp;&nbsp;5</div>
+              <div class="text-purple-700">1010</div>
+            </div>
+            <div class="text-right">
+              <span class="text-xs font-extrabold text-purple-700 uppercase">Javob</span>
+              <p class="font-fredoka text-2xl font-bold text-purple-900">202 · 5 = 1010</p>
+            </div>
+          </div>
+
+          <!-- 5 -->
+          <div class="bg-rose-100/80 border-2 border-rose-200 rounded-2xl p-5 flex items-center justify-between">
+            <div class="font-mono-math text-2xl font-bold text-slate-800 text-right leading-snug bg-white px-4 py-2 rounded-xl shadow-sm">
+              <div>308</div>
+              <div class="border-b-4 border-rose-500">×&nbsp;&nbsp;&nbsp;6</div>
+              <div class="text-rose-700">1848</div>
+            </div>
+            <div class="text-right">
+              <span class="text-xs font-extrabold text-rose-700 uppercase">Javob</span>
+              <p class="font-fredoka text-2xl font-bold text-rose-900">308 · 6 = 1848</p>
+            </div>
+          </div>
+
+          <!-- 6 -->
+          <div class="bg-orange-100/80 border-2 border-orange-200 rounded-2xl p-5 flex items-center justify-between">
+            <div class="font-mono-math text-2xl font-bold text-slate-800 text-right leading-snug bg-white px-4 py-2 rounded-xl shadow-sm">
+              <div>604</div>
+              <div class="border-b-4 border-orange-500">×&nbsp;&nbsp;&nbsp;8</div>
+              <div class="text-orange-700">4832</div>
+            </div>
+            <div class="text-right">
+              <span class="text-xs font-extrabold text-orange-700 uppercase">Javob</span>
+              <p class="font-fredoka text-2xl font-bold text-orange-900">604 · 8 = 4832</p>
+            </div>
+          </div>
+        </div>
+
+        <footer class="flex flex-wrap items-center justify-between gap-2 border-t-2 border-sky-200 pt-3 text-sm sm:text-base">
+          <span class="font-bold text-slate-600">Qoida: birlar, o‘nlar va yuzlar xonasini navbat bilan ko‘paytiring!</span>
+          <span class="font-extrabold text-blue-600">Yaratuvchi, tuzuvchi: Akmaljon Jo‘raqo‘ziyev</span>
+        </footer>
+      </section>
+
+      <!-- ==================== 4-SLAYD: 3-MASALA ==================== -->
+      <section class="slide flex-1 flex-col justify-between bg-[#FFFDF5] p-6 sm:p-10">
+        <div class="flex items-center justify-between gap-4">
+          <div>
+            <span class="inline-block bg-amber-100 text-amber-700 font-extrabold text-xs sm:text-sm px-3 py-1 rounded-full mb-1">28-BET · 3-MASALA</span>
+            <h2 class="font-fredoka text-2xl sm:text-4xl font-bold text-slate-800">Muntazam ko‘pburchaklarning perimetrlari</h2>
+          </div>
+          <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center text-2xl shrink-0">
+            <i class="fa-solid fa-ruler-combined"></i>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 my-6">
+          <!-- Kvadrat -->
+          <div class="bg-sky-100 border-2 border-sky-200 rounded-3xl p-6 flex flex-col items-center text-center">
+            <svg width="130" height="130" viewBox="0 0 144 144" aria-label="Quvnoq kvadrat">
+              <rect x="20" y="20" width="104" height="104" rx="14" fill="#2563EB"/>
+              <circle cx="54" cy="64" r="6" fill="#FFFFFF"/><circle cx="90" cy="64" r="6" fill="#FFFFFF"/>
+              <circle cx="56" cy="64" r="3" fill="#1E293B"/><circle cx="92" cy="64" r="3" fill="#1E293B"/>
+              <path d="M58 86 Q72 98 86 86" fill="none" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round"/>
+            </svg>
+            <h3 class="font-fredoka text-2xl font-bold text-blue-900 mt-3">Kvadrat (4 tomon)</h3>
+            <p class="text-lg font-bold text-sky-700 mb-3">a = 417 cm</p>
+            <div class="bg-white rounded-2xl px-5 py-3 w-full shadow-sm">
+              <p class="font-mono-math text-lg font-bold text-slate-700">P = 417 · 4</p>
+              <p class="font-fredoka text-3xl font-bold text-orange-600">1668 cm</p>
+            </div>
+          </div>
+
+          <!-- Uchburchak -->
+          <div class="bg-rose-100 border-2 border-rose-200 rounded-3xl p-6 flex flex-col items-center text-center">
+            <svg width="130" height="130" viewBox="0 0 144 144" aria-label="Quvnoq uchburchak">
+              <polygon points="72,14 132,124 12,124" fill="#E11D48" stroke="#E11D48" stroke-width="10" stroke-linejoin="round"/>
+              <circle cx="57" cy="84" r="6" fill="#FFFFFF"/><circle cx="87" cy="84" r="6" fill="#FFFFFF"/>
+              <circle cx="59" cy="84" r="3" fill="#1E293B"/><circle cx="89" cy="84" r="3" fill="#1E293B"/>
+              <path d="M60 102 Q72 112 84 102" fill="none" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round"/>
+            </svg>
+            <h3 class="font-fredoka text-2xl font-bold text-rose-900 mt-3">Uchburchak (3 tomon)</h3>
+            <p class="text-lg font-bold text-rose-700 mb-3">a = 508 cm</p>
+            <div class="bg-white rounded-2xl px-5 py-3 w-full shadow-sm">
+              <p class="font-mono-math text-lg font-bold text-slate-700">P = 508 · 3</p>
+              <p class="font-fredoka text-3xl font-bold text-orange-600">1524 cm</p>
+            </div>
+          </div>
+
+          <!-- Oltiburchak -->
+          <div class="bg-emerald-100 border-2 border-emerald-200 rounded-3xl p-6 flex flex-col items-center text-center">
+            <svg width="130" height="130" viewBox="0 0 144 144" aria-label="Quvnoq oltiburchak">
+              <polygon points="72,14 126,44 126,100 72,130 18,100 18,44" fill="#16A34A" stroke="#16A34A" stroke-width="8" stroke-linejoin="round"/>
+              <circle cx="54" cy="68" r="6" fill="#FFFFFF"/><circle cx="90" cy="68" r="6" fill="#FFFFFF"/>
+              <circle cx="56" cy="68" r="3" fill="#1E293B"/><circle cx="92" cy="68" r="3" fill="#1E293B"/>
+              <path d="M58 90 Q72 102 86 90" fill="none" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round"/>
+            </svg>
+            <h3 class="font-fredoka text-2xl font-bold text-emerald-900 mt-3">Oltiburchak (6 tomon)</h3>
+            <p class="text-lg font-bold text-emerald-700 mb-3">a = 225 cm</p>
+            <div class="bg-white rounded-2xl px-5 py-3 w-full shadow-sm">
+              <p class="font-mono-math text-lg font-bold text-slate-700">P = 225 · 6</p>
+              <p class="font-fredoka text-3xl font-bold text-orange-600">1350 cm</p>
+            </div>
+          </div>
+        </div>
+
+        <footer class="flex flex-wrap items-center justify-between gap-2 border-t-2 border-amber-200 pt-3 text-sm sm:text-base">
+          <span class="font-bold text-slate-600">Formula: Perimetr = bitta tomon uzunligi × tomonlar soni.</span>
+          <span class="font-extrabold text-blue-600">Yaratuvchi, tuzuvchi: Akmaljon Jo‘raqo‘ziyev</span>
+        </footer>
+      </section>
+
+      <!-- ==================== 5-SLAYD: 4-MASALA ==================== -->
+      <section class="slide flex-1 flex-col justify-between bg-[#F5FBF7] p-6 sm:p-10">
+        <div class="flex items-center justify-between gap-4">
+          <div>
+            <span class="inline-block bg-pink-100 text-pink-700 font-extrabold text-xs sm:text-sm px-3 py-1 rounded-full mb-1">28-BET · 4-MASALA</span>
+            <h2 class="font-fredoka text-2xl sm:text-4xl font-bold text-slate-800">To‘rt fasl fotosuratlari jadvali</h2>
+          </div>
+          <div class="w-12 h-12 rounded-2xl bg-pink-100 text-pink-600 flex items-center justify-center text-2xl shrink-0">
+            <i class="fa-solid fa-camera-retro"></i>
+          </div>
+        </div>
+
+        <div class="space-y-6 my-5">
+          <!-- Jadval -->
+          <div class="overflow-x-auto rounded-2xl shadow-md border border-slate-200">
+            <table class="w-full text-center border-collapse bg-white">
+              <thead>
+                <tr class="text-white text-base sm:text-lg">
+                  <th class="p-4 bg-sky-600"><i class="fa-solid fa-snowflake mr-1"></i> Qishki</th>
+                  <th class="p-4 bg-emerald-600"><i class="fa-solid fa-seedling mr-1"></i> Bahorgi</th>
+                  <th class="p-4 bg-amber-500"><i class="fa-solid fa-sun mr-1"></i> Yozgi</th>
+                  <th class="p-4 bg-orange-600"><i class="fa-solid fa-leaf mr-1"></i> Kuzgi</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="border-b-2 border-slate-100 font-fredoka text-2xl sm:text-3xl font-bold">
+                  <td class="p-5 text-sky-700">1182 ta</td>
+                  <td class="p-5 text-emerald-700">1325 ta</td>
+                  <td class="p-5 text-amber-600">3228 ta</td>
+                  <td class="p-5 text-orange-600 bg-orange-50">? ta</td>
+                </tr>
+                <tr class="bg-yellow-100">
+                  <td colspan="4" class="p-3.5 font-extrabold text-lg sm:text-xl text-amber-900">
+                    Jami ko‘rgazmada: 8441 ta fotosurat
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Yechim bosqichlari -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div class="bg-sky-100 border-2 border-sky-200 rounded-2xl p-5">
+              <p class="font-extrabold text-sky-800 text-lg mb-2">1-amal: Qish, bahor va yoz jami</p>
+              <p class="font-mono-math text-xl sm:text-2xl font-bold text-slate-800">1182 + 1325 + 3228 = 5735</p>
+            </div>
+            <div class="bg-orange-100 border-2 border-orange-200 rounded-2xl p-5">
+              <p class="font-extrabold text-orange-800 text-lg mb-2">2-amal: Kuzgi manzaralar soni</p>
+              <p class="font-mono-math text-xl sm:text-2xl font-bold text-orange-700">8441 − 5735 = 2706 ta</p>
+            </div>
+          </div>
+        </div>
+
+        <footer class="flex flex-wrap items-center justify-between gap-2 border-t-2 border-emerald-200 pt-3 text-sm sm:text-base">
+          <span class="font-extrabold text-emerald-700">Javob: 2706 ta kuzgi manzara fotosurati!</span>
+          <span class="font-extrabold text-blue-600">Yaratuvchi, tuzuvchi: Akmaljon Jo‘raqo‘ziyev</span>
+        </footer>
+      </section>
+
+      <!-- ==================== 6-SLAYD: 5-MASALA ==================== -->
+      <section class="slide flex-1 flex-col justify-between bg-[#FAF8FF] p-6 sm:p-10">
+        <div class="flex items-center justify-between gap-4">
+          <div>
+            <span class="inline-block bg-purple-100 text-purple-700 font-extrabold text-xs sm:text-sm px-3 py-1 rounded-full mb-1">28-BET · 5-MASALA</span>
+            <h2 class="font-fredoka text-2xl sm:text-4xl font-bold text-slate-800">Sirli sonni top: tenglama tuzamiz!</h2>
+          </div>
+          <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-500 flex items-center justify-center text-2xl shrink-0">
+            <i class="fa-solid fa-lightbulb"></i>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
+          <!-- Madina -->
+          <div class="bg-pink-100 border-2 border-pink-200 rounded-3xl p-6 sm:p-8 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center gap-3 mb-3">
+                <i class="fa-solid fa-face-smile-beam text-3xl text-pink-600"></i>
+                <h3 class="font-fredoka text-2xl font-bold text-pink-900">a) Madina o‘ylagan son</h3>
+              </div>
+              <p class="text-base sm:text-lg font-bold text-pink-800 mb-5">
+                Madina bir son o‘yladi va uni 200 ga ko‘paytirdi, natijada 1800 hosil bo‘ldi.
+              </p>
+            </div>
+            <div class="bg-white rounded-2xl p-5 shadow-sm space-y-2">
+              <p class="font-mono-math text-xl sm:text-2xl font-bold text-slate-800">x · 200 = 1800</p>
+              <p class="font-mono-math text-xl sm:text-2xl font-bold text-pink-600">x = 1800 : 200</p>
+              <p class="font-fredoka text-4xl font-bold text-orange-600 pt-1">x = 9</p>
+              <p class="text-sm font-bold text-slate-500">Tekshirish: 9 · 200 = 1800</p>
+            </div>
+          </div>
+
+          <!-- Jasur -->
+          <div class="bg-sky-100 border-2 border-sky-200 rounded-3xl p-6 sm:p-8 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center gap-3 mb-3">
+                <i class="fa-solid fa-rocket text-3xl text-sky-600"></i>
+                <h3 class="font-fredoka text-2xl font-bold text-sky-900">b) Jasur o‘ylagan son</h3>
+              </div>
+              <p class="text-base sm:text-lg font-bold text-sky-800 mb-5">
+                Jasur bir son o‘yladi va uni 30 ga bo‘ldi, natijada 70 hosil bo‘ldi.
+              </p>
+            </div>
+            <div class="bg-white rounded-2xl p-5 shadow-sm space-y-2">
+              <p class="font-mono-math text-xl sm:text-2xl font-bold text-slate-800">x : 30 = 70</p>
+              <p class="font-mono-math text-xl sm:text-2xl font-bold text-sky-600">x = 70 · 30</p>
+              <p class="font-fredoka text-4xl font-bold text-orange-600 pt-1">x = 2100</p>
+              <p class="text-sm font-bold text-slate-500">Tekshirish: 2100 : 30 = 70</p>
+            </div>
+          </div>
+        </div>
+
+        <footer class="flex flex-wrap items-center justify-between gap-2 border-t-2 border-purple-200 pt-3 text-sm sm:text-base">
+          <span class="font-extrabold text-purple-700">Javob: Madina — 9, Jasur — 2100 sonini o‘ylagan!</span>
+          <span class="font-extrabold text-blue-600">Yaratuvchi, tuzuvchi: Akmaljon Jo‘raqo‘ziyev</span>
+        </footer>
+      </section>
+
+      <!-- ==================== 7-SLAYD: 6-MASALA ==================== -->
+      <section class="slide flex-1 flex-col justify-between bg-[#FFFDF2] p-6 sm:p-10">
+        <div class="flex items-center justify-between gap-4">
+          <div>
+            <span class="inline-block bg-emerald-100 text-emerald-700 font-extrabold text-xs sm:text-sm px-3 py-1 rounded-full mb-1">29-BET · 6-MASALA</span>
+            <h2 class="font-fredoka text-2xl sm:text-4xl font-bold text-slate-800">Moychechak va qo‘ng‘iroqgul orasidagi masofa</h2>
+          </div>
+          <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-500 flex items-center justify-center text-2xl shrink-0">
+            <i class="fa-solid fa-sun"></i>
+          </div>
+        </div>
+
+        <div class="space-y-5 my-4">
+          <!-- Kitobdagidek gullar SVG chizmasi -->
+          <div class="bg-cyan-50 border-2 border-cyan-200 rounded-3xl p-4 sm:p-5">
+            <div class="flex flex-wrap justify-between gap-2 text-sm sm:text-base font-extrabold mb-2">
+              <span class="text-sky-700">Moychechak – Beda: 8 dm 2 cm = 82 cm</span>
+              <span class="text-emerald-700">Zubturum – Beda: 2 dm 7 cm = 27 cm</span>
+              <span class="text-orange-700">Zubturum – Qo‘ng‘iroqgul: 5 dm 6 cm = 56 cm</span>
+            </div>
+
+            <svg viewBox="0 0 1080 155" class="w-full h-auto" aria-label="Moychechak, zubturum, beda va qo'ng'iroqgul">
+              <rect x="20" y="116" width="1040" height="22" rx="11" fill="#86EFAC"/>
+              <rect x="20" y="128" width="1040" height="12" rx="6" fill="#B45309"/>
+              <!-- Moychechak -->
+              <line x1="120" y1="62" x2="120" y2="122" stroke="#16A34A" stroke-width="6" stroke-linecap="round"/>
+              <ellipse cx="102" cy="100" rx="16" ry="7" fill="#22C55E"/><ellipse cx="138" cy="104" rx="16" ry="7" fill="#22C55E"/>
+              <circle cx="120" cy="40" r="10" fill="#FFFFFF"/><circle cx="120" cy="72" r="10" fill="#FFFFFF"/>
+              <circle cx="104" cy="56" r="10" fill="#FFFFFF"/><circle cx="136" cy="56" r="10" fill="#FFFFFF"/>
+              <circle cx="109" cy="45" r="9" fill="#FFFFFF"/><circle cx="131" cy="45" r="9" fill="#FFFFFF"/>
+              <circle cx="109" cy="67" r="9" fill="#FFFFFF"/><circle cx="131" cy="67" r="9" fill="#FFFFFF"/>
+              <circle cx="120" cy="56" r="12" fill="#FACC15"/>
+              <!-- Zubturum -->
+              <line x1="420" y1="26" x2="420" y2="122" stroke="#15803D" stroke-width="5"/>
+              <line x1="402" y1="38" x2="416" y2="120" stroke="#16A34A" stroke-width="4"/>
+              <line x1="438" y1="38" x2="424" y2="120" stroke="#16A34A" stroke-width="4"/>
+              <ellipse cx="420" cy="34" rx="6" ry="16" fill="#65A30D"/>
+              <ellipse cx="401" cy="44" rx="5" ry="12" fill="#84CC16"/><ellipse cx="439" cy="44" rx="5" ry="12" fill="#84CC16"/>
+              <ellipse cx="390" cy="100" rx="26" ry="12" fill="#16A34A"/><ellipse cx="450" cy="100" rx="26" ry="12" fill="#16A34A"/>
+              <ellipse cx="420" cy="106" rx="24" ry="12" fill="#22C55E"/>
+              <!-- Beda -->
+              <line x1="700" y1="54" x2="700" y2="122" stroke="#15803D" stroke-width="5"/>
+              <line x1="678" y1="68" x2="698" y2="120" stroke="#16A34A" stroke-width="4"/>
+              <line x1="722" y1="68" x2="702" y2="120" stroke="#16A34A" stroke-width="4"/>
+              <circle cx="678" cy="60" r="13" fill="#EC4899"/><circle cx="722" cy="60" r="13" fill="#F43F5E"/>
+              <circle cx="700" cy="48" r="15" fill="#DB2777"/>
+              <circle cx="684" cy="106" r="12" fill="#22C55E"/><circle cx="716" cy="106" r="12" fill="#22C55E"/>
+              <!-- Qo'ng'iroqgul -->
+              <line x1="960" y1="44" x2="960" y2="122" stroke="#15803D" stroke-width="5"/>
+              <polygon points="944,48 960,34 976,48 972,66 948,66" fill="#7C3AED"/>
+              <polygon points="924,74 940,60 952,74 946,92 926,90" fill="#8B5CF6"/>
+              <polygon points="968,74 982,60 996,74 994,90 974,92" fill="#6366F1"/>
+              <ellipse cx="944" cy="108" rx="16" ry="7" fill="#22C55E"/><ellipse cx="976" cy="108" rx="16" ry="7" fill="#22C55E"/>
+            </svg>
+
+            <div class="grid grid-cols-4 text-center font-fredoka text-base sm:text-xl font-bold mt-1">
+              <span class="text-slate-800">Moychechak</span>
+              <span class="text-emerald-700">Zubturum</span>
+              <span class="text-pink-700">Beda</span>
+              <span class="text-violet-700">Qo‘ng‘iroqgul</span>
+            </div>
+          </div>
+
+          <!-- 3 ta yechim kartochkasi -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="bg-sky-100 border-2 border-sky-200 rounded-2xl p-4">
+              <p class="font-extrabold text-sky-800 mb-1">1. Santimetrga o‘tish</p>
+              <p class="font-mono-math text-lg font-bold text-slate-800">82 cm · 56 cm · 27 cm</p>
+            </div>
+            <div class="bg-emerald-100 border-2 border-emerald-200 rounded-2xl p-4">
+              <p class="font-extrabold text-emerald-800 mb-1">2. Moychechak – Zubturum</p>
+              <p class="font-mono-math text-xl font-bold text-slate-800">82 − 27 = 55 cm</p>
+            </div>
+            <div class="bg-orange-100 border-2 border-orange-200 rounded-2xl p-4">
+              <p class="font-extrabold text-orange-800 mb-1">3. Jami masofa</p>
+              <p class="font-fredoka text-2xl font-bold text-orange-600">55 + 56 = 111 cm</p>
+            </div>
+          </div>
+        </div>
+
+        <footer class="flex flex-wrap items-center justify-between gap-2 border-t-2 border-amber-200 pt-3 text-sm sm:text-base">
+          <span class="font-extrabold text-emerald-700">Javob: 111 cm (yoki 11 dm 1 cm)!</span>
+          <span class="font-extrabold text-blue-600">Yaratuvchi, tuzuvchi: Akmaljon Jo‘raqo‘ziyev</span>
+        </footer>
+      </section>
+
+      <!-- ==================== 8-SLAYD: 7-MASALA ==================== -->
+      <section class="slide flex-1 flex-col justify-between bg-[#F4FAFF] p-6 sm:p-10">
+        <div class="flex items-center justify-between gap-4">
+          <div>
+            <span class="inline-block bg-sky-100 text-sky-700 font-extrabold text-xs sm:text-sm px-3 py-1 rounded-full mb-1">29-BET · 7-MASALA</span>
+            <h2 class="font-fredoka text-2xl sm:text-4xl font-bold text-slate-800">Usta yasagan ikkita sakkiz burchakli yulduz</h2>
+          </div>
+          <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-500 flex items-center justify-center text-2xl shrink-0">
+            <i class="fa-solid fa-star"></i>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center my-5">
+          <!-- Yulduzlar SVG -->
+          <div class="lg:col-span-5 bg-white border-2 border-sky-100 rounded-3xl p-5 flex flex-col items-center shadow-sm">
+            <svg viewBox="0 0 390 250" class="w-full h-auto" aria-label="Katta va kichik yulduzlar">
+              <polygon points="128,15 156,50 200,43 193,87 228,115 193,143 200,187 156,180 128,215 100,180 56,187 63,143 28,115 63,87 56,43 100,50" fill="#DBEAFE" stroke="#2563EB" stroke-width="6" stroke-linejoin="round"/>
+              <polygon points="310,117 324,134 346,131 343,153 360,167 343,181 346,203 324,200 310,217 296,200 274,203 277,181 260,167 277,153 274,131 296,134" fill="#FFE4E6" stroke="#E11D48" stroke-width="5" stroke-linejoin="round"/>
+              <circle cx="268" cy="50" r="7" fill="#FACC15"/>
+              <circle cx="332" cy="70" r="5" fill="#34D399"/>
+              <circle cx="44" cy="210" r="6" fill="#F472B6"/>
+            </svg>
+            <div class="flex gap-6 font-fredoka text-lg font-bold mt-2">
+              <span class="text-blue-600">Katta: 10 cm</span>
+              <span class="text-rose-600">Kichik: 5 cm</span>
+            </div>
+            <p class="text-sm font-bold text-slate-500 mt-1">Har bir yulduzda 16 ta teng bo‘g‘in bor</p>
+          </div>
+
+          <!-- 4 ta amal -->
+          <div class="lg:col-span-7 space-y-3.5">
+            <div class="bg-sky-100 border-2 border-sky-200 rounded-2xl p-4 flex flex-wrap justify-between items-center gap-2">
+              <span class="font-extrabold text-sky-800 text-lg">1) Kichik yulduz bo‘g‘ini</span>
+              <span class="font-mono-math text-xl font-bold text-slate-800">10 : 2 = 5 cm</span>
+            </div>
+            <div class="bg-emerald-100 border-2 border-emerald-200 rounded-2xl p-4 flex flex-wrap justify-between items-center gap-2">
+              <span class="font-extrabold text-emerald-800 text-lg">2) Katta yulduz simi</span>
+              <span class="font-mono-math text-xl font-bold text-slate-800">16 · 10 = 160 cm</span>
+            </div>
+            <div class="bg-amber-100 border-2 border-amber-200 rounded-2xl p-4 flex flex-wrap justify-between items-center gap-2">
+              <span class="font-extrabold text-amber-800 text-lg">3) Kichik yulduz simi</span>
+              <span class="font-mono-math text-xl font-bold text-slate-800">16 · 5 = 80 cm</span>
+            </div>
+            <div class="bg-orange-100 border-2 border-orange-200 rounded-2xl p-4 flex flex-wrap justify-between items-center gap-2">
+              <span class="font-extrabold text-orange-800 text-lg">4) Qancha ko‘p sim kerak?</span>
+              <span class="font-fredoka text-2xl sm:text-3xl font-bold text-orange-600">160 − 80 = 80 cm</span>
+            </div>
+          </div>
+        </div>
+
+        <footer class="flex flex-wrap items-center justify-between gap-2 border-t-2 border-sky-200 pt-3 text-sm sm:text-base">
+          <span class="font-extrabold text-sky-700">Javob: katta yulduz uchun 80 cm ko‘p sim kerak!</span>
+          <span class="font-extrabold text-blue-600">Yaratuvchi, tuzuvchi: Akmaljon Jo‘raqo‘ziyev</span>
+        </footer>
+      </section>
+
+      <!-- ==================== 9-SLAYD: 8-MASALA ==================== -->
+      <section class="slide flex-1 flex-col justify-between bg-[#F5FBF7] p-6 sm:p-10">
+        <div class="flex items-center justify-between gap-4">
+          <div>
+            <span class="inline-block bg-emerald-100 text-emerald-700 font-extrabold text-xs sm:text-sm px-3 py-1 rounded-full mb-1">29-BET · 8-MASALA (MANTIQIY JUMBOQ)</span>
+            <h2 class="font-fredoka text-2xl sm:text-4xl font-bold text-slate-800">Ko‘zgu siri: so‘roq o‘rnidagi shakl!</h2>
+          </div>
+          <div class="w-12 h-12 rounded-2xl bg-purple-100 text-purple-600 flex items-center justify-center text-2xl shrink-0">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+          </div>
+        </div>
+
+        <div class="space-y-5 my-5">
+          <!-- 1-qator: 3 + 6 = 9 -->
+          <div class="bg-white border-2 border-emerald-100 rounded-3xl p-4 sm:p-5 flex flex-wrap items-center justify-around gap-4 shadow-sm">
+            <div class="text-center">
+              <svg width="95" height="88" viewBox="0 0 110 100">
+                <line x1="55" y1="4" x2="55" y2="96" stroke="#CBD5E1" stroke-width="2" stroke-dasharray="5,4"/>
+                <line x1="20" y1="12" x2="90" y2="12" stroke="#2563EB" stroke-width="6" stroke-linecap="round"/>
+                <line x1="55" y1="12" x2="18" y2="48" stroke="#2563EB" stroke-width="6" stroke-linecap="round"/>
+                <line x1="55" y1="12" x2="92" y2="48" stroke="#2563EB" stroke-width="6" stroke-linecap="round"/>
+                <line x1="18" y1="48" x2="92" y2="48" stroke="#2563EB" stroke-width="6" stroke-linecap="round"/>
+                <line x1="55" y1="48" x2="18" y2="88" stroke="#2563EB" stroke-width="6" stroke-linecap="round"/>
+                <line x1="55" y1="48" x2="92" y2="88" stroke="#2563EB" stroke-width="6" stroke-linecap="round"/>
+              </svg>
+              <p class="font-fredoka text-2xl font-bold text-blue-600">3</p>
+            </div>
+            <span class="font-fredoka text-4xl font-bold text-slate-400">+</span>
+            <div class="text-center">
+              <svg width="95" height="88" viewBox="0 0 110 100">
+                <line x1="55" y1="4" x2="55" y2="96" stroke="#CBD5E1" stroke-width="2" stroke-dasharray="5,4"/>
+                <line x1="55" y1="12" x2="18" y2="48" stroke="#16A34A" stroke-width="6" stroke-linecap="round"/>
+                <line x1="55" y1="12" x2="92" y2="48" stroke="#16A34A" stroke-width="6" stroke-linecap="round"/>
+                <rect x="18" y="48" width="74" height="40" fill="none" stroke="#16A34A" stroke-width="6" stroke-linejoin="round"/>
+                <line x1="55" y1="48" x2="55" y2="88" stroke="#16A34A" stroke-width="6"/>
+              </svg>
+              <p class="font-fredoka text-2xl font-bold text-emerald-600">6</p>
+            </div>
+            <span class="font-fredoka text-4xl font-bold text-slate-400">=</span>
+            <div class="text-center">
+              <svg width="95" height="88" viewBox="0 0 110 100">
+                <line x1="55" y1="4" x2="55" y2="96" stroke="#CBD5E1" stroke-width="2" stroke-dasharray="5,4"/>
+                <rect x="18" y="12" width="74" height="38" fill="none" stroke="#9333EA" stroke-width="6" stroke-linejoin="round"/>
+                <line x1="55" y1="12" x2="55" y2="88" stroke="#9333EA" stroke-width="6"/>
+                <line x1="18" y1="88" x2="92" y2="88" stroke="#9333EA" stroke-width="6" stroke-linecap="round"/>
+              </svg>
+              <p class="font-fredoka text-2xl font-bold text-purple-600">9</p>
+            </div>
+          </div>
+
+          <!-- 2-qator: 1 + 2 = 3 -->
+          <div class="bg-amber-100 border-2 border-amber-200 rounded-3xl p-4 sm:p-5 flex flex-wrap items-center justify-around gap-4">
+            <div class="text-center">
+              <svg width="95" height="88" viewBox="0 0 110 100">
+                <line x1="55" y1="4" x2="55" y2="96" stroke="#F59E0B" stroke-width="2" stroke-dasharray="5,4"/>
+                <line x1="55" y1="12" x2="55" y2="88" stroke="#0284C7" stroke-width="6" stroke-linecap="round"/>
+                <line x1="55" y1="12" x2="20" y2="46" stroke="#0284C7" stroke-width="6" stroke-linecap="round"/>
+                <line x1="55" y1="12" x2="90" y2="46" stroke="#0284C7" stroke-width="6" stroke-linecap="round"/>
+              </svg>
+              <p class="font-fredoka text-2xl font-bold text-sky-700">1</p>
+            </div>
+            <span class="font-fredoka text-4xl font-bold text-amber-700">+</span>
+            <div class="text-center">
+              <svg width="95" height="88" viewBox="0 0 110 100">
+                <line x1="55" y1="4" x2="55" y2="96" stroke="#F59E0B" stroke-width="2" stroke-dasharray="5,4"/>
+                <line x1="20" y1="12" x2="90" y2="12" stroke="#DB2777" stroke-width="6" stroke-linecap="round"/>
+                <line x1="55" y1="12" x2="55" y2="48" stroke="#DB2777" stroke-width="6"/>
+                <polygon points="55,48 90,88 20,88" fill="none" stroke="#DB2777" stroke-width="6" stroke-linejoin="round"/>
+              </svg>
+              <p class="font-fredoka text-2xl font-bold text-pink-600">2</p>
+            </div>
+            <span class="font-fredoka text-4xl font-bold text-amber-700">=</span>
+            <div class="text-center bg-white rounded-2xl px-6 py-2 shadow-md ring-4 ring-orange-300">
+              <svg width="95" height="88" viewBox="0 0 110 100">
+                <line x1="20" y1="12" x2="90" y2="12" stroke="#EA580C" stroke-width="7" stroke-linecap="round"/>
+                <line x1="55" y1="12" x2="18" y2="48" stroke="#EA580C" stroke-width="7" stroke-linecap="round"/>
+                <line x1="55" y1="12" x2="92" y2="48" stroke="#EA580C" stroke-width="7" stroke-linecap="round"/>
+                <line x1="18" y1="48" x2="92" y2="48" stroke="#EA580C" stroke-width="7" stroke-linecap="round"/>
+                <line x1="55" y1="48" x2="18" y2="88" stroke="#EA580C" stroke-width="7" stroke-linecap="round"/>
+                <line x1="55" y1="48" x2="92" y2="88" stroke="#EA580C" stroke-width="7" stroke-linecap="round"/>
+              </svg>
+              <p class="font-fredoka text-2xl font-bold text-orange-600">Javob: 3</p>
+            </div>
+          </div>
+        </div>
+
+        <footer class="flex flex-wrap items-center justify-between gap-2 border-t-2 border-emerald-200 pt-3 text-sm sm:text-base">
+          <span class="font-extrabold text-emerald-700">Har bir shakl — ko‘zguda juftlangan raqam! Javob: 3 shakli.</span>
+          <span class="font-extrabold text-blue-600">Yaratuvchi, tuzuvchi: Akmaljon Jo‘raqo‘ziyev</span>
+        </footer>
+      </section>
+
+      <!-- ==================== 10-SLAYD: 9-MISOL (UYGA VAZIFA) ==================== -->
+      <section class="slide flex-1 flex-col justify-between bg-[#FFFDF5] p-6 sm:p-10">
+        <div class="flex items-center justify-between gap-4">
+          <div>
+            <span class="inline-block bg-orange-100 text-orange-700 font-extrabold text-xs sm:text-sm px-3 py-1 rounded-full mb-1">29-BET · UYGA VAZIFA · 9-MISOL</span>
+            <h2 class="font-fredoka text-2xl sm:text-4xl font-bold text-slate-800">Ustun ko‘rinishida ko‘paytirish</h2>
+          </div>
+          <div class="w-12 h-12 rounded-2xl bg-orange-100 text-orange-600 flex items-center justify-center text-2xl shrink-0">
+            <i class="fa-solid fa-house-chimney"></i>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 my-6">
+          <div class="bg-sky-100 border-2 border-sky-200 rounded-2xl p-6 text-center">
+            <p class="font-mono-math text-2xl font-bold text-slate-700 mb-2">205 · 4</p>
+            <p class="font-fredoka text-4xl font-bold text-orange-600">= 820</p>
+          </div>
+          <div class="bg-emerald-100 border-2 border-emerald-200 rounded-2xl p-6 text-center">
+            <p class="font-mono-math text-2xl font-bold text-slate-700 mb-2">306 · 3</p>
+            <p class="font-fredoka text-4xl font-bold text-emerald-700">= 918</p>
+          </div>
+          <div class="bg-amber-100 border-2 border-amber-200 rounded-2xl p-6 text-center">
+            <p class="font-mono-math text-2xl font-bold text-slate-700 mb-2">407 · 9</p>
+            <p class="font-fredoka text-4xl font-bold text-amber-700">= 3663</p>
+          </div>
+          <div class="bg-purple-100 border-2 border-purple-200 rounded-2xl p-6 text-center">
+            <p class="font-mono-math text-2xl font-bold text-slate-700 mb-2">178 · 2</p>
+            <p class="font-fredoka text-4xl font-bold text-purple-700">= 356</p>
+          </div>
+          <div class="bg-rose-100 border-2 border-rose-200 rounded-2xl p-6 text-center">
+            <p class="font-mono-math text-2xl font-bold text-slate-700 mb-2">542 · 5</p>
+            <p class="font-fredoka text-4xl font-bold text-rose-700">= 2710</p>
+          </div>
+          <div class="bg-orange-100 border-2 border-orange-200 rounded-2xl p-6 text-center">
+            <p class="font-mono-math text-2xl font-bold text-slate-700 mb-2">845 · 6</p>
+            <p class="font-fredoka text-4xl font-bold text-orange-700">= 5070</p>
+          </div>
+        </div>
+
+        <footer class="flex flex-wrap items-center justify-between gap-2 border-t-2 border-amber-200 pt-3 text-sm sm:text-base">
+          <span class="font-bold text-slate-600">Maslahat: daftaringizga ustun shaklida chiroyli yozib tekshiring!</span>
+          <span class="font-extrabold text-blue-600">Yaratuvchi, tuzuvchi: Akmaljon Jo‘raqo‘ziyev</span>
+        </footer>
+      </section>
+
+      <!-- ==================== 11-SLAYD: 10-MASALA (UYGA VAZIFA) ==================== -->
+      <section class="slide flex-1 flex-col justify-between bg-[#FFF9F5] p-6 sm:p-10">
+        <div class="flex items-center justify-between gap-4">
+          <div>
+            <span class="inline-block bg-orange-100 text-orange-700 font-extrabold text-xs sm:text-sm px-3 py-1 rounded-full mb-1">29-BET · UYGA VAZIFA · 10-MASALA</span>
+            <h2 class="font-fredoka text-2xl sm:text-4xl font-bold text-slate-800">Usta simi va uchburchak</h2>
+          </div>
+          <div class="w-12 h-12 rounded-2xl bg-orange-100 text-orange-600 flex items-center justify-center text-2xl shrink-0">
+            <i class="fa-solid fa-scissors"></i>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center my-6">
+          <!-- Katta javob kartochkasi + SVG uchburchak -->
+          <div class="lg:col-span-5 bg-amber-100 border-2 border-amber-200 rounded-3xl p-8 flex flex-col items-center text-center">
+            <svg width="130" height="110" viewBox="0 0 130 110" aria-label="Simdan yasalgan uchburchak">
+              <polygon points="65,12 118,98 12,98" fill="#FFEDD5" stroke="#EA580C" stroke-width="8" stroke-linejoin="round"/>
+            </svg>
+            <p class="text-sm font-extrabold text-amber-800 uppercase tracking-wider mt-4">Ortib qolgan sim</p>
+            <p class="font-fredoka text-7xl font-bold text-orange-600 my-1">44 cm</p>
+            <p class="text-base font-bold text-amber-900">80 cm dan 36 cm ishlatildi</p>
+          </div>
+
+          <!-- Yechim qadamlari -->
+          <div class="lg:col-span-7 space-y-5">
+            <p class="text-lg sm:text-xl font-bold text-slate-700 leading-relaxed">
+              Ustada <span class="text-orange-600">80 cm</span> uzunlikdagi sim bor. U bu simdan tomonlari <span class="text-blue-600">12 cm</span> bo‘lgan uchburchak yasadi. Ustada necha santimetr sim ortib qoldi?
+            </p>
+            <div class="bg-sky-100 border-2 border-sky-200 rounded-2xl p-5 flex flex-wrap justify-between items-center gap-2">
+              <span class="font-extrabold text-sky-800 text-lg">1) Uchburchak perimetri</span>
+              <span class="font-mono-math text-2xl font-bold text-slate-800">12 · 3 = 36 cm</span>
+            </div>
+            <div class="bg-emerald-100 border-2 border-emerald-200 rounded-2xl p-5 flex flex-wrap justify-between items-center gap-2">
+              <span class="font-extrabold text-emerald-800 text-lg">2) Ortib qolgan sim</span>
+              <span class="font-fredoka text-3xl font-bold text-emerald-700">80 − 36 = 44 cm</span>
+            </div>
+          </div>
+        </div>
+
+        <footer class="flex flex-wrap items-center justify-between gap-2 border-t-2 border-orange-200 pt-3 text-sm sm:text-base">
+          <span class="font-extrabold text-orange-700">Javob: ustada 44 cm sim ortib qoldi!</span>
+          <span class="font-extrabold text-blue-600">Yaratuvchi, tuzuvchi: Akmaljon Jo‘raqo‘ziyev</span>
+        </footer>
+      </section>
+
+      <!-- ==================== 12-SLAYD: YAKUN ==================== -->
+      <section class="slide flex-1 flex-col justify-center items-center text-center bg-gradient-to-br from-blue-700 via-indigo-700 to-blue-800 text-white p-8 sm:p-14">
+        <svg width="160" height="120" viewBox="0 0 160 120" class="mb-5" aria-label="Yulduzchalar">
+          <polygon points="80,10 88,30 110,30 92,42 98,64 80,50 62,64 68,42 50,30 72,30" fill="#FDE047"/>
+          <polygon points="28,36 33,48 46,48 36,56 40,68 28,60 16,68 20,56 10,48 23,48" fill="#34D399"/>
+          <polygon points="132,36 137,48 150,48 140,56 144,68 132,60 120,68 124,56 114,48 127,48" fill="#FB7185"/>
+          <rect x="64" y="84" width="32" height="10" rx="5" fill="#FDE047"/>
+          <rect x="54" y="96" width="52" height="12" rx="6" fill="#F59E0B"/>
+        </svg>
+
+        <h2 class="font-fredoka text-4xl sm:text-6xl font-bold text-white mb-4">
+          Barakalla, bilimli bolajonlar!
+        </h2>
+        <p class="text-lg sm:text-2xl text-blue-100 font-bold max-w-2xl mb-8 leading-relaxed">
+          Siz 13-darsdagi barcha 10 ta mashq va masalalarni a’lo darajada bajardingiz!
+        </p>
+
+        <div class="flex items-center gap-3 mb-8">
+          <div class="w-12 h-2.5 bg-yellow-300 rounded-full"></div>
+          <div class="w-12 h-2.5 bg-emerald-400 rounded-full"></div>
+          <div class="w-12 h-2.5 bg-rose-400 rounded-full"></div>
+        </div>
+
+        <div class="bg-white/15 backdrop-blur border border-white/25 px-6 py-3 rounded-2xl">
+          <p class="font-fredoka text-xl sm:text-2xl font-bold text-yellow-300">
+            Yaratuvchi, tuzuvchi: Akmaljon Jo‘raqo‘ziyev
+          </p>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    const slideCounter = document.getElementById('slideCounter');
+    const quickNav = document.getElementById('quickNav');
+    const fsBtn = document.getElementById('fsBtn');
+    const labels = ['Bosh', '1-m', '2-m', '3-m', '4-m', '5-m', '6-m', '7-m', '8-m', '9-m', '10-m', 'Yakun'];
+    let currentIndex = 0;
+
+    // Tezkor bet tanlash tugmalarini yaratish
+    function buildQuickNav() {
+      quickNav.innerHTML = '';
+      labels.forEach((label, idx) => {
+        const btn = document.createElement('button');
+        btn.textContent = label;
+        btn.onclick = () => showSlide(idx);
+        btn.className = 'px-3 py-1.5 rounded-xl text-xs sm:text-sm font-extrabold transition cursor-pointer shrink-0 ' +
+          (idx === currentIndex
+            ? 'bg-blue-600 text-white shadow-sm'
+            : 'bg-slate-100 text-slate-600 hover:bg-blue-50 hover:text-blue-600');
+        quickNav.appendChild(btn);
+      });
+    }
+
+    // Slaydni ko'rsatish
+    function showSlide(index) {
+      slides[currentIndex].classList.remove('active');
+      currentIndex = (index + slides.length) % slides.length;
+      slides[currentIndex].classList.add('active');
+      slideCounter.textContent = `${currentIndex + 1} / ${slides.length}`;
+      buildQuickNav();
+    }
+
+    function nextSlide() { showSlide(currentIndex + 1); }
+    function prevSlide() { showSlide(currentIndex - 1); }
+
+    // To'liq ekran (Fullscreen) funksiyasi
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+
+    document.addEventListener('fullscreenchange', () => {
+      if (document.fullscreenElement) {
+        fsBtn.innerHTML = '<i class="fa-solid fa-compress"></i><span class="hidden sm:inline">Chiqish</span>';
+      } else {
+        fsBtn.innerHTML = '<i class="fa-solid fa-expand"></i><span class="hidden sm:inline">To‘liq ekran</span>';
+      }
+    });
+
+    // Klaviatura strelkalari bilan boshqarish
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        prevSlide();
+      }
+    });
+
+    // Dastlabki ishga tushirish
+    buildQuickNav();
+  </script>
+</body>
+</html>
